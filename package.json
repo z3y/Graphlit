@@ -1,0 +1,17 @@
+{
+  "name": "com.z3y.myshadergraph",
+  "description": "",
+  "version": "0.0.1",
+  "unity": "2022.3",
+  "displayName": "z3y - myshadergraph",
+  "hideInEditor": false,
+  "gitDependencies": {},
+  "vpmDependencies": {},
+  "legacyFolders": {},
+  "legacyFiles": {},
+  "type": "tool",
+  "author": {
+    "name": "z3y",
+    "url": "https://github.com/z3y"
+  }
+}

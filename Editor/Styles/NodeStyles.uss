@@ -1,0 +1,5 @@
+.zs-node__extension-container
+{
+    background-color: #1D1D1E;
+    padding: 2px;
+}
