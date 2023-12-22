@@ -26,8 +26,8 @@ namespace z3y.ShaderGraph
             this.AddManipulator(CreateGroupContextualMenu());
 
             // nodes
-            this.AddManipulator(CreateNodeContextualMenu<ShaderNode>("Default"));
-            this.AddManipulator(CreateNodeContextualMenu<MultiplyNode>("Multiply"));
+            //this.AddManipulator(CreateNodeContextualMenu<ShaderNode>("Default"));
+            //this.AddManipulator(CreateNodeContextualMenu<MultiplyNode>("Multiply"));
 
             // background
             var gridBackground = new GridBackground();
@@ -48,13 +48,13 @@ namespace z3y.ShaderGraph
 
         }
 
-        private IManipulator CreateNodeContextualMenu<T>(string actionTitle) where T : ShaderNode, new()
+       /* private IManipulator CreateNodeContextualMenu<T>(string actionTitle) where T : ShaderNode, new()
         {
             return new ContextualMenuManipulator(
                 menuEvent => menuEvent.menu.AppendAction(actionTitle, actionEvent => AddElement(CreateNode<T>(actionEvent.eventInfo.localMousePosition)))
             );
         }
-
+*/
         private IManipulator CreateGroupContextualMenu()
         {
             return new ContextualMenuManipulator(
@@ -74,22 +74,23 @@ namespace z3y.ShaderGraph
             return group;
         }
 
-        public Node CreateNode<T>(Vector2 position) where T : ShaderNode, new()
+      /*  public Node CreateNode<T>(Vector2 position) where T : ShaderNode, new()
         {
             TransformMousePositionToLocalSpace(ref position, false);
             var sn = new T();
             sn.InitializeInternal(position);
             sn.AddDefaultElements();
             return sn;
-        }
+        }*/
         public void CreateNode(Type type, Vector2 position)
         {
             TransformMousePositionToLocalSpace(ref position, true);
-
-            var sn = (ShaderNode)Activator.CreateInstance(type);
-            sn.InitializeInternal(position);
-            sn.AddDefaultElements();
-            AddElement(sn);
+            var snv = new ShaderNodeVisualElement();
+            snv.Initialize(type, position);
+            //var sn = (ShaderNodeVisualElement)Activator.CreateInstance(type);
+            //sn.InitializeInternal(position);
+            //sn.AddDefaultElements();
+            AddElement(snv);
         }
 
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)

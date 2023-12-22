@@ -11,17 +11,17 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void AddElements()
         {
-            var portA = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(float));
+            var portA = Node.InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(float));
             portA.portName = "A";
-            inputContainer.Add(portA);
+            Node.inputContainer.Add(portA);
 
-            var portB = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(float));
+            var portB = Node.InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(float));
             portB.portName = "B";
-            inputContainer.Add(portB);
+            Node.inputContainer.Add(portB);
 
-            var portC = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
+            var portC = Node.InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
             portC.portName = "C";
-            outputContainer.Add(portC);
+            Node.outputContainer.Add(portC);
         }
     }
 }
