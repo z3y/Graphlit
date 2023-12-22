@@ -6,15 +6,11 @@ namespace z3y.ShaderGraph.Nodes
 { 
     public class MultiplyNode : ShaderNode
     {
-        public override void Initialize()
-        {
-        }
+        public override string Title => "Multiply";
+        public override string Tooltip => "C = A * B";
 
-        public override void Draw()
+        public override void AddElements()
         {
-            var textField = new Label { text = "Multiply" };
-            titleContainer.Insert(0, textField);
-
             var portA = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(float));
             portA.portName = "A";
             inputContainer.Add(portA);

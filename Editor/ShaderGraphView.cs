@@ -12,9 +12,9 @@ namespace z3y.ShaderGraph
 
     public class ShaderGraphView : GraphView
     {
-        public const string ROOT = "Packages/com.z3y.myshadergraph/Editor/";
         private ShaderNodeSearchWindow _searchWindow;
         private ShaderGraphWindow _editorWindow;
+
         public ShaderGraphView(ShaderGraphWindow editorWindow)
         {
             _editorWindow = editorWindow;
@@ -34,13 +34,6 @@ namespace z3y.ShaderGraph
             gridBackground.StretchToParentSize();
             Insert(0, gridBackground);
 
-            //styles
-            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ROOT + "Styles/GraphViewStyle.uss");
-            var nodeStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>(ROOT + "Styles/NodeStyles.uss");
-
-            styleSheets.Add(styleSheet);
-            styleSheets.Add(nodeStyle);
-
             // search window
             if (_searchWindow == null)
             {
@@ -48,6 +41,10 @@ namespace z3y.ShaderGraph
                 _searchWindow.Initialize(this);
             }
             nodeCreationRequest = context => SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), _searchWindow);
+
+            //test
+
+            CreateNode(typeof(Nodes.MultiplyNode), Vector2.zero);
 
         }
 
@@ -82,7 +79,7 @@ namespace z3y.ShaderGraph
             TransformMousePositionToLocalSpace(ref position, false);
             var sn = new T();
             sn.InitializeInternal(position);
-            sn.DrawInternal();
+            sn.AddDefaultElements();
             return sn;
         }
         public void CreateNode(Type type, Vector2 position)
@@ -91,7 +88,7 @@ namespace z3y.ShaderGraph
 
             var sn = (ShaderNode)Activator.CreateInstance(type);
             sn.InitializeInternal(position);
-            sn.DrawInternal();
+            sn.AddDefaultElements();
             AddElement(sn);
         }
 

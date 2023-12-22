@@ -1,0 +1,21 @@
+Toolbar
+{
+	background-color: var(--sg-colors-window-dark-gray-5);
+	height: var(--metrics-window-pixels-35);
+}
+
+TextField
+{
+	padding: 4;
+}
+
+Button
+{
+	background-color: var(--sg-colors-window-dark-gray-button);
+}
+
+.unity-text-field__label
+{
+	padding: 4;
+	font-size: var(--sg-font-size-title);
+}

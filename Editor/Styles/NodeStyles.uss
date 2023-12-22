@@ -1,5 +1,19 @@
-.zs-node__extension-container
+.sg-node__extension-container
 {
-    background-color: #1D1D1E;
-    padding: 2px;
+    background-color: var(--sg-colors-window-dark-gray-2);
+   /* padding: 1px; */
+}
+
+.sg-node__title-container
+{
+    /* background-color: var(--sg-colors-window-dark-gray-2); */
+    /* top: 2px; */
+    padding-left: 6px;
+}
+.sg-node__input-container
+{
+    background-color: var(--sg-colors-window-dark-gray-5);
+}
+.sg-node__output-container
+{
 }
