@@ -6,6 +6,7 @@ using UnityEngine.UIElements;
 using UnityEditor.UIElements;
 using z3y.ShaderGraph.Nodes;
 using System.IO;
+using UnityEditor.Experimental.GraphView;
 
 namespace z3y.ShaderGraph
 {
@@ -32,15 +33,19 @@ namespace z3y.ShaderGraph
 
         public void OpenInGraphView()
         {
-            ShaderGraphWindow.impoterInstance = this;
-            ShaderGraphWindow.importerPath = assetPath;
-            ShaderGraphWindow.ShowWindow();
+            var win = ShaderGraphWindow.InitializeEditor(this);
+
+            if (win.nodesLoaded)
+            {
+                return;
+            }
 
             foreach (var node in shaderNodes)
             {
-                ShaderGraphWindow._graphView.AddNode(node);
+                win.graphView.AddNode(node);
             }
 
+            win.nodesLoaded = true;
         }
 
         public static void SaveGraphData(ShaderGraphView graphView, string importerPath)
@@ -60,7 +65,7 @@ namespace z3y.ShaderGraph
                         importer.shaderNodes.Add(shaderNode);
                     }
                 }
-                importer.shaderName = ShaderGraphWindow.shaderNameTextField.value;
+                //importer.shaderName = ShaderGraphWindow.shaderNameTextField.value;
 
                 EditorUtility.SetDirty(importer);
                 importer.SaveAndReimport();

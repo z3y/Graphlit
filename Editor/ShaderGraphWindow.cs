@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -9,34 +10,46 @@ namespace z3y.ShaderGraph
     {
         public const string ROOT = "Packages/com.z3y.myshadergraph/Editor/";
 
-        [MenuItem("z3y/Shader Graph Window")]
-        public static void ShowWindow()
+        public ShaderGraphView graphView;
+        private ShaderGraphImporter _impoterInstance;
+        public bool nodesLoaded = false;
+        //public TextField shaderNameTextField;
+        private static Dictionary<ShaderGraphImporter, ShaderGraphWindow> _instances = new();
+        public static ShaderGraphWindow InitializeEditor(ShaderGraphImporter importer)
         {
-            ShaderGraphWindow win = GetWindow<ShaderGraphWindow>();
-            win.titleContent = new GUIContent("Shader Graph");
-        }
-        public static ShaderGraphView _graphView; // temp
-        public static ShaderGraphImporter impoterInstance;
-        public static TextField shaderNameTextField;
-        public static string importerPath;
+            if (_instances.TryGetValue(importer, out var window) && window != null)
+            {
+                window.Show();
+                return window;
+            }
 
-        private void OnEnable()
-        {
-            AddStyleVariables();
-            AddGraphView();
-            AddToolbar();
+            ShaderGraphWindow win = CreateInstance<ShaderGraphWindow>();
+            win.titleContent = new GUIContent(importer.shaderName);
+            win._impoterInstance = importer;
+
+            _instances[importer] = win;
+
+            win.AddStyleVariables();
+            win.AddGraphView();
+            win.AddToolbar();
+
+            win.Show();
+            return win;
         }
+
 
         private void AddToolbar()
         {
             var toolbar = new Toolbar();
 
             var saveButton = new Button() { text = "Save" };
-            saveButton.clicked += () => ShaderGraphImporter.SaveGraphData(_graphView, importerPath);
+            saveButton.clicked += () => ShaderGraphImporter.SaveGraphData(graphView, _impoterInstance.assetPath);
             toolbar.Add(saveButton);
 
-            var shaderName = new TextField("Name") { value = impoterInstance.shaderName };
-            shaderNameTextField = shaderName;
+            var shaderName = new TextField("Name") { value = _impoterInstance.shaderName };
+            //TODO: bind
+            //shaderName.Bind 
+            //shaderNameTextField = shaderName;
             toolbar.Add(shaderName);
 
             var styles = AssetDatabase.LoadAssetAtPath<StyleSheet>(ROOT + "Styles/ToolbarStyles.uss");
@@ -62,7 +75,7 @@ namespace z3y.ShaderGraph
             graphView.styleSheets.Add(nodeStyle);
 
             rootVisualElement.Add(graphView);
-            _graphView = graphView;
+            this.graphView = graphView;
         }
 
     }

@@ -19,7 +19,7 @@ namespace z3y.ShaderGraph
         {
             _editorWindow = editorWindow;
             // manipulators
-            SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
+            SetupZoom(0.15f, 2.0f);
             this.AddManipulator(new ContentDragger());
             this.AddManipulator(new SelectionDragger());
             this.AddManipulator(new RectangleSelector());

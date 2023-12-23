@@ -4,33 +4,31 @@ using UnityEngine;
 namespace z3y.ShaderGraph.Nodes
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class DisplayName : Attribute
+    public class NodeInfo : Attribute
     {
-        public string text;
-        public DisplayName(string text)
-        {
-            this.text = text;
-        }
-    }
+        public string name;
+        public string tooltip;
+        public Texture2D icon;
 
-    [AttributeUsage(AttributeTargets.Class)]
-    public class Tooltip : Attribute
-    {
-        public string text;
-        public Tooltip(string text)
+        public NodeInfo(string name, string tooltip, Texture2D texture)
         {
-            this.text = text;
+            this.name = name;
+            this.tooltip = tooltip;
+            this.icon = texture;
         }
-    }
 
-    [AttributeUsage(AttributeTargets.Class)]
-    public class IndentationIcon : Attribute
-    {
-        public Texture2D texture;
-        public IndentationIcon(Texture2D texture)
+        public NodeInfo(string name)
         {
-            this.texture = texture;
+            this.name = name;
+            this.tooltip = null;
+            this.icon = null;
+        }
+
+        public NodeInfo(string name, string tooltip)
+        {
+            this.name = name;
+            this.tooltip = tooltip;
+            this.icon = null;
         }
     }
-    
 }

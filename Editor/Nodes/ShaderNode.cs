@@ -41,18 +41,27 @@ namespace z3y.ShaderGraph.Nodes
         }
         private void AddTitleElement()
         {
-            var type = shaderNode.GetType();
-            var displayName = type.GetCustomAttribute<DisplayName>();
-            var tooltip = type.GetCustomAttribute<DisplayName>();
+            var nodeInfo = shaderNode.GetNodeInfo();
 
-            var titleLabel = new Label {
-                text = displayName == null ? "Default Title" : displayName.text,
-                tooltip = tooltip == null ? "Default Title" : tooltip.text
-            };
+            var titleLabel = new Label { text = nodeInfo.name, tooltip = nodeInfo.tooltip };
             titleLabel.style.fontSize = 13;
             var centerAlign = new StyleEnum<Align> { value = Align.Center };
             titleLabel.style.alignSelf = centerAlign;
             titleContainer.Insert(0, titleLabel);
+
+            /*var noRadius = new StyleLength { value = 0 };
+            var borderStyle = this.ElementAt(0).style;
+            var borderSelectionStyle = this.ElementAt(1).style;
+
+            borderStyle.borderBottomLeftRadius = noRadius;
+            borderStyle.borderBottomRightRadius = noRadius;
+            borderStyle.borderTopLeftRadius = noRadius;
+            borderStyle.borderTopRightRadius = noRadius;
+
+            borderSelectionStyle.borderBottomLeftRadius = noRadius;
+            borderSelectionStyle.borderBottomRightRadius = noRadius;
+            borderSelectionStyle.borderTopLeftRadius = noRadius;
+            borderSelectionStyle.borderTopRightRadius = noRadius;*/
         }
         private void SetNodePosition(Vector2 position)
         {
@@ -61,7 +70,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [System.Serializable]
-    [@DisplayName("Default Title")]
+    [@NodeInfo("Default Title")]
     public class ShaderNode
     {
         public void Initialize(ShaderNodeVisualElement node, Vector2 position)
@@ -82,13 +91,9 @@ namespace z3y.ShaderGraph.Nodes
             var rect = Node.GetPosition();
             Position = new Vector2(rect.x, rect.y);
         }
-        public static DisplayName GetDisplayNameAttribute(Type type) => _displayNameAttribute ??= type.GetCustomAttribute<DisplayName>();
-        public static Tooltip GetTooltipAttribute(Type type) => _tooltopAttribute ??= type.GetCustomAttribute<Tooltip>();
-        public static IndentationIcon GetIndentationIconAttribute(Type type) => _indentationIconAttribute ??= type.GetCustomAttribute<IndentationIcon>();
 
-        private static DisplayName _displayNameAttribute = null;
-        private static Tooltip _tooltopAttribute = null;
-        private static IndentationIcon _indentationIconAttribute = null;
+        public NodeInfo GetNodeInfo() => _nodeInfo ??= GetType().GetCustomAttribute<NodeInfo>();
+        private NodeInfo _nodeInfo = null;
 
         public ShaderNodeVisualElement Node { get; private set; }
 

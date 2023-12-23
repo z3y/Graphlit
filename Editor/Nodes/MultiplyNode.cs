@@ -3,7 +3,7 @@ using UnityEditor.Experimental.GraphView;
 
 namespace z3y.ShaderGraph.Nodes
 {
-    [@DisplayName("Multiply"), @Tooltip("C = A * B")]
+    [NodeInfo("Multiply", "C = A * B")]
     public class MultiplyNode : ShaderNode
     {
         public override void AddElements()
@@ -22,7 +22,7 @@ namespace z3y.ShaderGraph.Nodes
         }
     }
 
-    [@DisplayName("Add"), @Tooltip("C = A + B")]
+    [NodeInfo("Add", "C = A + B")]
     public class AddNode : ShaderNode
     {
         public override void AddElements()

@@ -35,13 +35,11 @@ namespace z3y.ShaderGraph
             for (int i = 0; i < _existingNodeTypes.Length; i++)
             {
                 var t = _existingNodeTypes[i];
-                var displayName = t.GetCustomAttribute<DisplayName>();
-                //var tooltip = t.GetCustomAttribute<DisplayName>();
-                var icon = t.GetCustomAttribute<IndentationIcon>();
+                var nodeInfo = t.GetCustomAttribute<NodeInfo>();
 
                 entries.Add(new SearchTreeEntry(
-                    new GUIContent(displayName == null ? "Default" : displayName.text,
-                    icon == null ? _nodeIndentationIcon : icon.texture)
+                    new GUIContent(nodeInfo.name == null ? "Default" : nodeInfo.name,
+                    nodeInfo.icon == null ? _nodeIndentationIcon : nodeInfo.icon)
                     ) { level = 1, userData = t });
             }
 
