@@ -15,15 +15,12 @@ namespace z3y.ShaderGraph
         public const string EXTENSION = "zsg";
 
         [SerializeReference, HideInInspector] public List<Nodes.ShaderNode> shaderNodes;
-        [SerializeField] public string shaderName;
+        [SerializeField, HideInInspector] public string shaderName;
 
         public override void OnImportAsset(AssetImportContext ctx)
         {
-            /* _shaderNodes = new List<ShaderNode>();
-             _shaderNodes.Add(new MultiplyNode());
-             _shaderNodes.Add(new ShaderNode());
- */
 
+            //var shader = ShaderUtil.CreateShaderAsset(ctx, "uhh", false);
             ctx.AddObjectToAsset("Main Asset", new TextAsset("asdf"));
         }
 

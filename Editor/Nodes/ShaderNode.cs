@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -40,7 +41,14 @@ namespace z3y.ShaderGraph.Nodes
         }
         private void AddTitleElement()
         {
-            var titleLabel = new Label { text = shaderNode.Title, tooltip = shaderNode.Tooltip };
+            var type = shaderNode.GetType();
+            var displayName = type.GetCustomAttribute<DisplayName>();
+            var tooltip = type.GetCustomAttribute<DisplayName>();
+
+            var titleLabel = new Label {
+                text = displayName == null ? "Default Title" : displayName.text,
+                tooltip = tooltip == null ? "Default Title" : tooltip.text
+            };
             titleLabel.style.fontSize = 13;
             var centerAlign = new StyleEnum<Align> { value = Align.Center };
             titleLabel.style.alignSelf = centerAlign;
@@ -53,6 +61,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [System.Serializable]
+    [@DisplayName("Default Title")]
     public class ShaderNode
     {
         public void Initialize(ShaderNodeVisualElement node, Vector2 position)
@@ -73,10 +82,16 @@ namespace z3y.ShaderGraph.Nodes
             var rect = Node.GetPosition();
             Position = new Vector2(rect.x, rect.y);
         }
+        public static DisplayName GetDisplayNameAttribute(Type type) => _displayNameAttribute ??= type.GetCustomAttribute<DisplayName>();
+        public static Tooltip GetTooltipAttribute(Type type) => _tooltopAttribute ??= type.GetCustomAttribute<Tooltip>();
+        public static IndentationIcon GetIndentationIconAttribute(Type type) => _indentationIconAttribute ??= type.GetCustomAttribute<IndentationIcon>();
 
-        public virtual string Title { get; } = "Default Node";
-        public virtual string Tooltip { get; } = string.Empty;
+        private static DisplayName _displayNameAttribute = null;
+        private static Tooltip _tooltopAttribute = null;
+        private static IndentationIcon _indentationIconAttribute = null;
+
         public ShaderNodeVisualElement Node { get; private set; }
+
 
         public virtual void AddElements()
         {

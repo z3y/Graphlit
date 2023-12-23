@@ -6,6 +6,8 @@ using UnityEngine;
 
 namespace z3y.ShaderGraph
 {
+    using System.Linq;
+    using System.Reflection;
     using z3y.ShaderGraph.Nodes;
     public class ShaderNodeSearchWindow : ScriptableObject, ISearchWindowProvider
     {
@@ -19,14 +21,31 @@ namespace z3y.ShaderGraph
             _nodeIndentationIcon.SetPixel(0,0, Color.clear);
             _nodeIndentationIcon.Apply();
         }
+        private static Type[] _existingNodeTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(domainAssembly => domainAssembly.GetTypes())
+                .Where(type => typeof(ShaderNode).IsAssignableFrom(type)
+                ).ToArray();
+
         public List<SearchTreeEntry> CreateSearchTree(SearchWindowContext context)
         {
             var entries = new List<SearchTreeEntry>();
             entries.Add(new SearchTreeGroupEntry(new GUIContent("Create Element")));
             //entries.Add(new SearchTreeGroupEntry(new GUIContent("Node"), 1));
-            entries.Add(new SearchTreeEntry(new GUIContent("Default", _nodeIndentationIcon)) {level = 1, userData = typeof(ShaderNode)});
-            entries.Add(new SearchTreeEntry(new GUIContent("Multiply", _nodeIndentationIcon)) {level = 1, userData = typeof(MultiplyNode)});
 
+            for (int i = 0; i < _existingNodeTypes.Length; i++)
+            {
+                var t = _existingNodeTypes[i];
+                var displayName = t.GetCustomAttribute<DisplayName>();
+                //var tooltip = t.GetCustomAttribute<DisplayName>();
+                var icon = t.GetCustomAttribute<IndentationIcon>();
+
+                entries.Add(new SearchTreeEntry(
+                    new GUIContent(displayName == null ? "Default" : displayName.text,
+                    icon == null ? _nodeIndentationIcon : icon.texture)
+                    ) { level = 1, userData = t });
+            }
+
+            //entries.Add(new SearchTreeEntry(new GUIContent("Multiply", _nodeIndentationIcon)) { level = 1, userData = typeof(MultiplyNode) });
             return entries;
         }
 
