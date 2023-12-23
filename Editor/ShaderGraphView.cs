@@ -42,10 +42,6 @@ namespace z3y.ShaderGraph
             }
             nodeCreationRequest = context => SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), _searchWindow);
 
-            //test
-
-            CreateNode(typeof(Nodes.MultiplyNode), Vector2.zero);
-
         }
 
        /* private IManipulator CreateNodeContextualMenu<T>(string actionTitle) where T : ShaderNode, new()
@@ -74,23 +70,20 @@ namespace z3y.ShaderGraph
             return group;
         }
 
-      /*  public Node CreateNode<T>(Vector2 position) where T : ShaderNode, new()
-        {
-            TransformMousePositionToLocalSpace(ref position, false);
-            var sn = new T();
-            sn.InitializeInternal(position);
-            sn.AddDefaultElements();
-            return sn;
-        }*/
         public void CreateNode(Type type, Vector2 position)
         {
+            //TODO: check type
             TransformMousePositionToLocalSpace(ref position, true);
-            var snv = new ShaderNodeVisualElement();
-            snv.Initialize(type, position);
-            //var sn = (ShaderNodeVisualElement)Activator.CreateInstance(type);
-            //sn.InitializeInternal(position);
-            //sn.AddDefaultElements();
-            AddElement(snv);
+            var node = new ShaderNodeVisualElement();
+            node.Initialize(type, position);
+            AddElement(node);
+        }
+
+        public void AddNode(ShaderNode shaderNode)
+        {
+            var node = new ShaderNodeVisualElement();
+            node.AddAlreadyInitialized(shaderNode);
+            AddElement(node);
         }
 
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)

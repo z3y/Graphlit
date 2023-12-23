@@ -1,30 +1,28 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.IO.Compression;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization;
 using UnityEditor.AssetImporters;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.Playables;
-using z3y.ShaderGraph.Nodes;
 using UnityEditor;
+using UnityEngine.UIElements;
+using UnityEditor.UIElements;
+using z3y.ShaderGraph.Nodes;
+using System.IO;
 
 namespace z3y.ShaderGraph
 {
     [ScriptedImporter(1, EXTENSION, 0)]
-    public class Importer : ScriptedImporter
+    public class ShaderGraphImporter : ScriptedImporter
     {
         public const string EXTENSION = "zsg";
-        [SerializeField] private List<ShaderNode> _shaderNodes;
+
+        [SerializeReference, HideInInspector] public List<Nodes.ShaderNode> shaderNodes;
+        [SerializeField] public string shaderName;
 
         public override void OnImportAsset(AssetImportContext ctx)
         {
-           /* _shaderNodes = new List<ShaderNode>();
-            _shaderNodes.Add(new MultiplyNode());
-            _shaderNodes.Add(new ShaderNode());
-*/
+            /* _shaderNodes = new List<ShaderNode>();
+             _shaderNodes.Add(new MultiplyNode());
+             _shaderNodes.Add(new ShaderNode());
+ */
 
             ctx.AddObjectToAsset("Main Asset", new TextAsset("asdf"));
         }
@@ -34,5 +32,85 @@ namespace z3y.ShaderGraph
         {
             ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.{EXTENSION}", string.Empty);
         }
+
+        public void OpenInGraphView()
+        {
+            ShaderGraphWindow.impoterInstance = this;
+            ShaderGraphWindow.importerPath = assetPath;
+            ShaderGraphWindow.ShowWindow();
+
+            foreach (var node in shaderNodes)
+            {
+                ShaderGraphWindow._graphView.AddNode(node);
+            }
+
+        }
+
+        public static void SaveGraphData(ShaderGraphView graphView, string importerPath)
+        {
+            var selection = Selection.objects;
+            Selection.objects = null;
+            {
+                var importer = (ShaderGraphImporter)AssetImporter.GetAtPath(importerPath);
+                importer.shaderNodes = new List<ShaderNode>();
+                var elements = graphView.graphElements;
+                foreach (var node in elements)
+                {
+                    if (node is ShaderNodeVisualElement shaderNodeVisualElement)
+                    {
+                        var shaderNode = shaderNodeVisualElement.shaderNode;
+                        shaderNode.UpdateSerializedPosition();
+                        importer.shaderNodes.Add(shaderNode);
+                    }
+                }
+                importer.shaderName = ShaderGraphWindow.shaderNameTextField.value;
+
+                EditorUtility.SetDirty(importer);
+                importer.SaveAndReimport();
+            }
+            Selection.objects = selection;
+        }
+    }
+
+    [CustomEditor(typeof(ShaderGraphImporter))]
+    internal class ShaderGraphImporterEditor : ScriptedImporterEditor
+    {
+        /*public override VisualElement CreateInspectorGUI()
+        {
+            var importer = (ShaderGraphImporter)serializedObject.targetObject;
+            var assetPath = AssetDatabase.GetAssetPath(importer);
+
+            var root = new VisualElement();
+            root.Add(new ObjectField());
+
+            var revertGui = new IMGUIContainer(RevertGUI);
+            root.Add(revertGui);
+            return root;
+        }
+
+        private void RevertGUI()
+        {
+            ApplyRevertGUI();
+        }*/
+
+        public override void OnInspectorGUI()
+        {
+            var importer = (ShaderGraphImporter)serializedObject.targetObject;
+
+            if (GUILayout.Button("Edit Shader"))
+            {
+                importer.OpenInGraphView();
+            }
+
+            base.OnInspectorGUI();
+        }
+
+/*        protected override bool OnApplyRevertGUI()
+        {
+            return false;
+            //return base.OnApplyRevertGUI();
+        }*/
+
+        protected override bool needsApplyRevert => false;
     }
 }

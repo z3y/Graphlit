@@ -10,11 +10,16 @@ namespace z3y.ShaderGraph
         public const string ROOT = "Packages/com.z3y.myshadergraph/Editor/";
 
         [MenuItem("z3y/Shader Graph Window")]
-        public static void ShowExample()
+        public static void ShowWindow()
         {
             ShaderGraphWindow win = GetWindow<ShaderGraphWindow>();
             win.titleContent = new GUIContent("Shader Graph");
         }
+        public static ShaderGraphView _graphView; // temp
+        public static ShaderGraphImporter impoterInstance;
+        public static TextField shaderNameTextField;
+        public static string importerPath;
+
         private void OnEnable()
         {
             AddStyleVariables();
@@ -27,9 +32,11 @@ namespace z3y.ShaderGraph
             var toolbar = new Toolbar();
 
             var saveButton = new Button() { text = "Save" };
+            saveButton.clicked += () => ShaderGraphImporter.SaveGraphData(_graphView, importerPath);
             toolbar.Add(saveButton);
 
-            var shaderName = new TextField("Name") { value = "Default Shader" };
+            var shaderName = new TextField("Name") { value = impoterInstance.shaderName };
+            shaderNameTextField = shaderName;
             toolbar.Add(shaderName);
 
             var styles = AssetDatabase.LoadAssetAtPath<StyleSheet>(ROOT + "Styles/ToolbarStyles.uss");
@@ -55,6 +62,7 @@ namespace z3y.ShaderGraph
             graphView.styleSheets.Add(nodeStyle);
 
             rootVisualElement.Add(graphView);
+            _graphView = graphView;
         }
 
     }

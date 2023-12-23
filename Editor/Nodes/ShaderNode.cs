@@ -13,22 +13,31 @@ namespace z3y.ShaderGraph.Nodes
         {
             shaderNode = (ShaderNode)Activator.CreateInstance(type);
             shaderNode.Initialize(this, position);
-            SetPosition(new Rect(position, Vector3.one));
-
-            extensionContainer.AddToClassList("sg-node__extension-container");
-            titleContainer.AddToClassList("sg-node__title-container");
-            inputContainer.AddToClassList("sg-node__input-container");
-            outputContainer.AddToClassList("sg-node__output-container");
-
             AddDefaultElements();
+            SetNodePosition(position);
+        }
+
+        public void AddAlreadyInitialized(ShaderNode shaderNode)
+        {
+            shaderNode.SetNodeVisualElement(this);
+            this.shaderNode = shaderNode;
+            AddDefaultElements();
+            SetNodePosition(shaderNode.Position);
         }
         private void AddDefaultElements()
         {
+            AddStyles();
             AddTitleElement();
             shaderNode.AddElements();
             RefreshExpandedState();
         }
-
+        private void AddStyles()
+        {
+            extensionContainer.AddToClassList("sg-node__extension-container");
+            titleContainer.AddToClassList("sg-node__title-container");
+            inputContainer.AddToClassList("sg-node__input-container");
+            outputContainer.AddToClassList("sg-node__output-container");
+        }
         private void AddTitleElement()
         {
             var titleLabel = new Label { text = shaderNode.Title, tooltip = shaderNode.Tooltip };
@@ -36,6 +45,10 @@ namespace z3y.ShaderGraph.Nodes
             var centerAlign = new StyleEnum<Align> { value = Align.Center };
             titleLabel.style.alignSelf = centerAlign;
             titleContainer.Insert(0, titleLabel);
+        }
+        private void SetNodePosition(Vector2 position)
+        {
+            SetPosition(new Rect(position, Vector3.one));
         }
     }
 
@@ -49,8 +62,17 @@ namespace z3y.ShaderGraph.Nodes
             Node = node;
             Position = position;
         }
+        internal void SetNodeVisualElement(ShaderNodeVisualElement node)
+        {
+            this.Node = node;
+        }
         [field: SerializeField] public string ID { get; private set; }
         [field: SerializeField] public Vector2 Position { get; set; }
+        internal void UpdateSerializedPosition()
+        {
+            var rect = Node.GetPosition();
+            Position = new Vector2(rect.x, rect.y);
+        }
 
         public virtual string Title { get; } = "Default Node";
         public virtual string Tooltip { get; } = string.Empty;
@@ -67,9 +89,14 @@ namespace z3y.ShaderGraph.Nodes
             textFoldout.Add(new TextField { value = "sometitle xd" });
             customDataContainer.Add(textFoldout);
 
-            customDataContainer.AddToClassList("zs-node__extension-container");
+            customDataContainer.AddToClassList("sg-node__extension-container");
 
             Node.extensionContainer.Add(customDataContainer);
+        }
+
+        public virtual void Visit()
+        {
+
         }
     }
 }
