@@ -88,6 +88,21 @@ namespace z3y.ShaderGraph.Nodes
         public Vector2 GetSerializedPosition() => _position;
         public List<NodeConnection> GetSerializedConnections() => _connections;
 
+        [NonSerialized] public Dictionary<int, string> varibleNames = new();
+        private static int _uniqueVariableID = 0;
+        public static void ResetUniqueVariableIDs() => _uniqueVariableID = 0;
+        public string GetVariableName(int portID)
+        {
+            if (varibleNames.TryGetValue(portID, out string value))
+            {
+                return value;
+            }
+
+            var varibleName = "var" + _uniqueVariableID++;
+            varibleNames.Add(portID, varibleName);
+            return varibleName;
+        }
+
 
         internal void SetNodeVisualElement(ShaderNodeVisualElement node)
         {
@@ -96,6 +111,11 @@ namespace z3y.ShaderGraph.Nodes
 
         public void OnBeforeSerialize()
         {
+            if (Node is null)
+            {
+                return;
+            }
+
             var rect = Node.GetPosition();
             _position = new Vector2(rect.x, rect.y);
             _connections = new List<NodeConnection>();
@@ -154,7 +174,7 @@ namespace z3y.ShaderGraph.Nodes
                 return null;
             }
             _addedPortIds.Add(id);
-            var inPort = Node.InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(float));
+            var inPort = Node.InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, type);
             inPort.portName = name;
             inPort.userData = id;
 
@@ -162,6 +182,7 @@ namespace z3y.ShaderGraph.Nodes
             return inPort;
         }
 
+        public int outputPortsCount { get; private set; }
         public Port AddOutput(Type type, int id, string name = "")
         {
             if (_addedPortIds.Contains(id))
@@ -170,18 +191,20 @@ namespace z3y.ShaderGraph.Nodes
                 return null;
             }
             _addedPortIds.Add(id);
-            var outPort = Node.InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
+            var outPort = Node.InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, type);
             outPort.portName = name;
             outPort.userData = id;
 
             Node.outputContainer.Add(outPort);
+            outputPortsCount++;
             return outPort;
         }
 
-
-        public virtual void Visit(Port[] ports)
+        // evaluate the output id for the node
+        public List<int> visitedPorts = new List<int>();
+        public virtual string Visit(int outID)
         {
-
+            return string.Empty;
         }
 
     }

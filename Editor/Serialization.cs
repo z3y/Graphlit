@@ -8,9 +8,10 @@ namespace z3y.ShaderGraph
     [System.Serializable]
     public class SerializedGraphData
     {
-        [SerializeReference] public List<ShaderNode> shaderNodes;
+        [SerializeReference] public ShaderNode[] shaderNodes;
         [SerializeField] public string shaderName;
     }
+
 
     [System.Serializable]
     public struct NodeConnection

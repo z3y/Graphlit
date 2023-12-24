@@ -3,10 +3,10 @@ using UnityEditor.AssetImporters;
 using UnityEngine;
 using UnityEditor;
 using z3y.ShaderGraph.Nodes;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using UnityEditor.Experimental.GraphView;
-using UnityEngine.UIElements;
+using System.Text;
+using System;
 
 namespace z3y.ShaderGraph
 {
@@ -15,18 +15,61 @@ namespace z3y.ShaderGraph
     {
         public const string EXTENSION = "zsg";
 
-        private SerializedGraphData ReadGraphData()
+        [NonSerialized] internal SerializedGraphData _cachedGraphData = null;
+        private SerializedGraphData ReadGraphData(bool useCache)
         {
+            if (_cachedGraphData != null && useCache)
+            {
+                Debug.Log("using cached data");
+                return _cachedGraphData;
+            }
             var text = File.ReadAllText(assetPath);
-            var data = JsonUtility.FromJson<SerializedGraphData>(text);
+            var data = new SerializedGraphData();
+            EditorJsonUtility.FromJsonOverwrite(text, data);
+            _cachedGraphData = data;
             return data;
         }
 
+        private void VisitConenctedNode(StringBuilder sb, ShaderNode node)
+        {
+            var connections = node.GetSerializedConnections();
+            foreach (var connection in connections)
+            {
+                var visitedPorts = connection.inNode.visitedPorts;
+                if (visitedPorts.Contains(connection.inID))
+                {
+                    node.varibleNames[connection.outID] = connection.inNode.GetVariableName(connection.inID);
+                    continue;
+                }
+                VisitConenctedNode(sb, connection.inNode);
+
+                node.varibleNames[connection.outID] = connection.inNode.GetVariableName(connection.inID);
+
+                //connection.inNode.varibleNames[0] = "a";
+                //sb.AppendLine($"{connection.inNode.GetType().Name}[{connection.inID}] is connected to {node.GetType().Name}");
+                sb.AppendLine(connection.inNode.Visit(connection.inID));
+
+                visitedPorts.Add(connection.inID);
+            }
+        }
         public override void OnImportAsset(AssetImportContext ctx)
         {
             var text = File.ReadAllText(assetPath);
             //var shader = ShaderUtil.CreateShaderAsset(ctx, "uhh", false);
-            ctx.AddObjectToAsset("Main Asset", new TextAsset(text));
+            var sb = new StringBuilder();
+            var data = ReadGraphData(false);
+
+            ShaderNode.ResetUniqueVariableIDs();
+            foreach (var node in data.shaderNodes )
+            {
+                if (node.GetType() == typeof(OutputNode))
+                {
+                    VisitConenctedNode(sb, node);
+                    break;
+                }
+            }
+
+            ctx.AddObjectToAsset("Main Asset", new TextAsset(sb.ToString()));
         }
 
         [MenuItem("Assets/Create/z3y/Shader Graph")]
@@ -38,13 +81,25 @@ namespace z3y.ShaderGraph
         public void OpenInGraphView()
         {
             var win = ShaderGraphWindow.InitializeEditor(this);
-            var data = ReadGraphData();
+            var data = ReadGraphData(false);
             var graph = win.graphView;
 
             if (win.nodesLoaded)
             {
                 return;
             }
+
+            // remove null elements that prevent graph from loading
+            /*for (int i = 0; i < data.shaderNodes.Length; i++)
+            {
+                ShaderNode node = data.shaderNodes[i];
+                if (node is null)
+                {
+                    Debug.Log($"Node {i} is null.");
+                    //data.shaderNodes.RemoveAt(i);
+                    //i--;
+                }
+            }*/
 
             // create nodes
             foreach (var node in data.shaderNodes)
@@ -55,6 +110,7 @@ namespace z3y.ShaderGraph
             // create connections
             foreach (var node in data.shaderNodes)
             {
+
                 foreach (var connection in node.GetSerializedConnections())
                 {
                     var graphNode = node.Node;
@@ -69,7 +125,7 @@ namespace z3y.ShaderGraph
                             continue;
                         }
 
-                        if (((int)port.userData) != outID)
+                        if (port.userData == null || ((int)port.userData) != outID)
                         {
                             continue;
                         }
@@ -101,7 +157,6 @@ namespace z3y.ShaderGraph
             var data = new SerializedGraphData();
             data.shaderName = "uhhh";
             var shaderNodes = new List<ShaderNode>();
-            data.shaderNodes = shaderNodes;
 
             var elements = graphView.graphElements;
             foreach (var node in elements)
@@ -112,7 +167,13 @@ namespace z3y.ShaderGraph
                     shaderNodes.Add(shaderNode);
                 }
             }
-            var jsonData = JsonUtility.ToJson(data, true);
+
+            data.shaderNodes = shaderNodes.ToArray();
+
+            var importer = (ShaderGraphImporter)AssetImporter.GetAtPath(importerPath);
+            importer._cachedGraphData = data;
+
+            var jsonData = EditorJsonUtility.ToJson(data, true);
             File.WriteAllText(importerPath, jsonData);
             AssetDatabase.ImportAsset(importerPath, ImportAssetOptions.ForceUpdate);
         }
