@@ -143,8 +143,15 @@ namespace z3y.ShaderGraph.Nodes
             Node.extensionContainer.Add(customDataContainer);
         }
 
+        private List<int> _addedPortIds = new List<int>();
         public Port AddInput(Type type, int id, string name = "")
         {
+            if (_addedPortIds.Contains(id))
+            {
+                Debug.LogError($"Port {name} with ID:{id} already exists.");
+                return null;
+            }
+            _addedPortIds.Add(id);
             var inPort = Node.InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(float));
             inPort.portName = name;
             inPort.userData = id;
@@ -155,6 +162,12 @@ namespace z3y.ShaderGraph.Nodes
 
         public Port AddOutput(Type type, int id, string name = "")
         {
+            if (_addedPortIds.Contains(id))
+            {
+                Debug.LogError($"Port {name} with ID:{id} already exists.");
+                return null;
+            }
+            _addedPortIds.Add(id);
             var outPort = Node.InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
             outPort.portName = name;
             outPort.userData = id;

@@ -72,6 +72,11 @@ namespace z3y.ShaderGraph
                                 continue;
                             }
 
+                            if (((int)port.userData) != id)
+                            {
+                                continue;
+                            }
+
                             foreach (var ve2 in connectedInputPort.node.Node.inputContainer.Children())
                             {
                                 if (ve2 is not Port inputPort)

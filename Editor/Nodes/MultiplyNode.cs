@@ -65,6 +65,7 @@ namespace z3y.ShaderGraph.Nodes
         {
             AddInput(typeof(float), 0, "adsfgs");
             AddOutput(typeof(float), 1);
+            AddOutput(typeof(float), 2, "cool");
         }
     }
 }
