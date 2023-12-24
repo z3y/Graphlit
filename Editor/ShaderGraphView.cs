@@ -14,6 +14,7 @@ namespace z3y.ShaderGraph
     {
         private ShaderNodeSearchWindow _searchWindow;
         private ShaderGraphWindow _editorWindow;
+        private Color _accentColor = Color.magenta;
 
         public ShaderGraphView(ShaderGraphWindow editorWindow)
         {

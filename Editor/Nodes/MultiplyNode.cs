@@ -3,41 +3,68 @@ using UnityEditor.Experimental.GraphView;
 
 namespace z3y.ShaderGraph.Nodes
 {
-    [NodeInfo("Multiply", "C = A * B")]
+    [@NodeInfo("*", "a * b")]
     public class MultiplyNode : ShaderNode
     {
         public override void AddElements()
         {
-            var portA = Node.InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(float));
-            portA.portName = "A";
-            Node.inputContainer.Add(portA);
-
-            var portB = Node.InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(float));
-            portB.portName = "B";
-            Node.inputContainer.Add(portB);
-
-            var portC = Node.InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
-            portC.portName = "C";
-            Node.outputContainer.Add(portC);
+            AddInput(typeof(float), 0, "a");
+            AddInput(typeof(float), 1, "b");
+            AddOutput(typeof(float), 2);
         }
     }
 
-    [NodeInfo("Add", "C = A + B")]
+    [@NodeInfo("+", "a + b")]
     public class AddNode : ShaderNode
     {
         public override void AddElements()
         {
-            var portA = Node.InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(float));
-            portA.portName = "A";
-            Node.inputContainer.Add(portA);
+            AddInput(typeof(float), 0, "a");
+            AddInput(typeof(float), 1, "b");
+            AddOutput(typeof(float), 2);
+        }
+    }
 
-            var portB = Node.InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(float));
-            portB.portName = "B";
-            Node.inputContainer.Add(portB);
+    [@NodeInfo("dot", "dot(a, b)")]
+    public class DotNode : ShaderNode
+    {
+        public override void AddElements()
+        {
+            AddInput(typeof(float), 0, "a");
+            AddInput(typeof(float), 1, "b");
+            AddOutput(typeof(float), 2);
+        }
 
-            var portC = Node.InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
-            portC.portName = "C";
-            Node.outputContainer.Add(portC);
+        public override void Visit(Port[] ports)
+        {
+            var a = ports[0];
+            var b = ports[1];
+
+
+            var result = ports[2];
+        }
+    }
+
+    [@NodeInfo("mad", "mad(a, b, c)")]
+    public class MadNode : ShaderNode
+    {
+        public override void AddElements()
+        {
+            AddInput(typeof(float), 0, "a");
+            AddInput(typeof(float), 1, "b");
+            AddInput(typeof(float), 2, "c");
+            AddOutput(typeof(float), 3);
+        }
+    }
+
+    [@NodeInfo("some custom data/test")]
+    public class TestNode : ShaderNode
+    {
+        [UnityEngine.SerializeField] string meow = "meowww";
+        public override void AddElements()
+        {
+            AddInput(typeof(float), 0, "adsfgs");
+            AddOutput(typeof(float), 1);
         }
     }
 }

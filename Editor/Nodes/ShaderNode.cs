@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.MemoryProfiler;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -13,17 +15,19 @@ namespace z3y.ShaderGraph.Nodes
         public void Initialize(Type type, Vector2 position)
         {
             shaderNode = (ShaderNode)Activator.CreateInstance(type);
-            shaderNode.Initialize(this, position);
-            AddDefaultElements();
+            shaderNode.Initialize(this);
+
             SetNodePosition(position);
+            AddDefaultElements();
         }
 
         public void AddAlreadyInitialized(ShaderNode shaderNode)
         {
-            shaderNode.SetNodeVisualElement(this);
             this.shaderNode = shaderNode;
+            shaderNode.Initialize(this);
+
+            SetNodePosition(shaderNode.GetSerializedPosition());
             AddDefaultElements();
-            SetNodePosition(shaderNode.Position);
         }
         private void AddDefaultElements()
         {
@@ -47,6 +51,7 @@ namespace z3y.ShaderGraph.Nodes
             titleLabel.style.fontSize = 13;
             var centerAlign = new StyleEnum<Align> { value = Align.Center };
             titleLabel.style.alignSelf = centerAlign;
+            titleLabel.style.alignItems = centerAlign;
             titleContainer.Insert(0, titleLabel);
 
             /*var noRadius = new StyleLength { value = 0 };
@@ -71,32 +76,54 @@ namespace z3y.ShaderGraph.Nodes
 
     [System.Serializable]
     [@NodeInfo("Default Title")]
-    public class ShaderNode
+    public class ShaderNode : ISerializationCallbackReceiver
     {
-        public void Initialize(ShaderNodeVisualElement node, Vector2 position)
+        public void Initialize(ShaderNodeVisualElement node)
         {
-            ID = System.Guid.NewGuid().ToString();
-            Debug.Log("Created new node ID " + ID);
             Node = node;
-            Position = position;
         }
+
+        [SerializeField] private Vector2 _position;
+        [SerializeField] private List<Connection> _connections;
+        public Vector2 GetSerializedPosition() => _position;
+
         internal void SetNodeVisualElement(ShaderNodeVisualElement node)
         {
             this.Node = node;
         }
-        [field: SerializeField] public string ID { get; private set; }
-        [field: SerializeField] public Vector2 Position { get; set; }
-        internal void UpdateSerializedPosition()
+
+        public void OnBeforeSerialize()
         {
             var rect = Node.GetPosition();
-            Position = new Vector2(rect.x, rect.y);
+            _position = new Vector2(rect.x, rect.y);
+            _connections = new List<Connection>();
+
+            foreach (var ve in Node.outputContainer.Children())
+            {
+                if (!(ve is Port port && port.connected))
+                {
+                    continue;
+                }
+
+                var connectionPorts = new List<ConnectionPorts>();
+                foreach (var edge in port.connections)
+                {
+                    var connectedToPort = edge.input;
+                    connectionPorts.Add(new ConnectionPorts(((ShaderNodeVisualElement)connectedToPort.node).shaderNode, (int)connectedToPort.userData));
+                }
+
+                _connections.Add(new Connection((int)port.userData, connectionPorts));
+            }
+        }
+
+        public void OnAfterDeserialize()
+        {
         }
 
         public NodeInfo GetNodeInfo() => _nodeInfo ??= GetType().GetCustomAttribute<NodeInfo>();
         private NodeInfo _nodeInfo = null;
 
         public ShaderNodeVisualElement Node { get; private set; }
-
 
         public virtual void AddElements()
         {
@@ -114,9 +141,31 @@ namespace z3y.ShaderGraph.Nodes
             Node.extensionContainer.Add(customDataContainer);
         }
 
-        public virtual void Visit()
+        public Port AddInput(Type type, int id, string name = "")
+        {
+            var inPort = Node.InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(float));
+            inPort.portName = name;
+            inPort.userData = id;
+
+            Node.inputContainer.Add(inPort);
+            return inPort;
+        }
+
+        public Port AddOutput(Type type, int id, string name = "")
+        {
+            var outPort = Node.InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
+            outPort.portName = name;
+            outPort.userData = id;
+
+            Node.outputContainer.Add(outPort);
+            return outPort;
+        }
+
+
+        public virtual void Visit(Port[] ports)
         {
 
         }
+
     }
 }

@@ -2,9 +2,8 @@ using System.Collections.Generic;
 using UnityEditor.AssetImporters;
 using UnityEngine;
 using UnityEditor;
-using UnityEngine.UIElements;
-using UnityEditor.UIElements;
 using z3y.ShaderGraph.Nodes;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using UnityEditor.Experimental.GraphView;
 
@@ -15,14 +14,18 @@ namespace z3y.ShaderGraph
     {
         public const string EXTENSION = "zsg";
 
-        [SerializeReference, HideInInspector] public List<Nodes.ShaderNode> shaderNodes;
-        [SerializeField, HideInInspector] public string shaderName;
+        private SerializedGraphData ReadGraphData()
+        {
+            var text = File.ReadAllText(assetPath);
+            var data = JsonUtility.FromJson<SerializedGraphData>(text);
+            return data;
+        }
 
         public override void OnImportAsset(AssetImportContext ctx)
         {
-
+            var text = File.ReadAllText(assetPath);
             //var shader = ShaderUtil.CreateShaderAsset(ctx, "uhh", false);
-            ctx.AddObjectToAsset("Main Asset", new TextAsset("asdf"));
+            ctx.AddObjectToAsset("Main Asset", new TextAsset(text));
         }
 
         [MenuItem("Assets/Create/z3y/Shader Graph")]
@@ -34,13 +37,14 @@ namespace z3y.ShaderGraph
         public void OpenInGraphView()
         {
             var win = ShaderGraphWindow.InitializeEditor(this);
+            var data = ReadGraphData();
 
             if (win.nodesLoaded)
             {
                 return;
             }
 
-            foreach (var node in shaderNodes)
+            foreach (var node in data.shaderNodes)
             {
                 win.graphView.AddNode(node);
             }
@@ -50,27 +54,23 @@ namespace z3y.ShaderGraph
 
         public static void SaveGraphData(ShaderGraphView graphView, string importerPath)
         {
-            var selection = Selection.objects;
-            Selection.objects = null;
-            {
-                var importer = (ShaderGraphImporter)AssetImporter.GetAtPath(importerPath);
-                importer.shaderNodes = new List<ShaderNode>();
-                var elements = graphView.graphElements;
-                foreach (var node in elements)
-                {
-                    if (node is ShaderNodeVisualElement shaderNodeVisualElement)
-                    {
-                        var shaderNode = shaderNodeVisualElement.shaderNode;
-                        shaderNode.UpdateSerializedPosition();
-                        importer.shaderNodes.Add(shaderNode);
-                    }
-                }
-                //importer.shaderName = ShaderGraphWindow.shaderNameTextField.value;
+            var data = new SerializedGraphData();
+            data.shaderName = "uhhh";
+            var shaderNodes = new List<ShaderNode>();
+            data.shaderNodes = shaderNodes;
 
-                EditorUtility.SetDirty(importer);
-                importer.SaveAndReimport();
+            var elements = graphView.graphElements;
+            foreach (var node in elements)
+            {
+                if (node is ShaderNodeVisualElement shaderNodeVisualElement)
+                {
+                    var shaderNode = shaderNodeVisualElement.shaderNode;
+                    shaderNodes.Add(shaderNode);
+                }
             }
-            Selection.objects = selection;
+            var jsonData = JsonUtility.ToJson(data, true);
+            File.WriteAllText(importerPath, jsonData);
+            AssetDatabase.ImportAsset(importerPath, ImportAssetOptions.ForceUpdate);
         }
     }
 
