@@ -15,6 +15,7 @@ namespace z3y.ShaderGraph
     {
         public const string EXTENSION = "zsg";
 
+        private string _testShaderPath = "Assets/UnlitTest.shader";
 
         [NonSerialized] internal SerializedGraphData _cachedGraphData = null;
         private SerializedGraphData ReadGraphData(bool useCache)
