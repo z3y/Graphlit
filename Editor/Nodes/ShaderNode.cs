@@ -84,9 +84,9 @@ namespace z3y.ShaderGraph.Nodes
         }
 
         [SerializeField] private Vector2 _position;
-        [SerializeField] private List<Connection> _connections;
+        [SerializeField] private List<NodeConnection> _connections;
         public Vector2 GetSerializedPosition() => _position;
-        public List<Connection> GetSerializedConnections() => _connections;
+        public List<NodeConnection> GetSerializedConnections() => _connections;
 
 
         internal void SetNodeVisualElement(ShaderNodeVisualElement node)
@@ -98,23 +98,25 @@ namespace z3y.ShaderGraph.Nodes
         {
             var rect = Node.GetPosition();
             _position = new Vector2(rect.x, rect.y);
-            _connections = new List<Connection>();
+            _connections = new List<NodeConnection>();
 
-            foreach (var ve in Node.outputContainer.Children())
+            foreach (var ve in Node.inputContainer.Children())
             {
                 if (!(ve is Port port && port.connected))
                 {
                     continue;
                 }
 
-                var connectionPorts = new List<ConnectionPorts>();
+                int outID = (int)port.userData;
+                
                 foreach (var edge in port.connections)
                 {
-                    var connectedToPort = edge.input;
-                    connectionPorts.Add(new ConnectionPorts(((ShaderNodeVisualElement)connectedToPort.node).shaderNode, (int)connectedToPort.userData));
+                    var inPort = edge.output;
+                    int inID = (int)inPort.userData;
+                    _connections.Add(new NodeConnection(outID, inID, ((ShaderNodeVisualElement)inPort.node).shaderNode));
+                    break; // only 1 connection allowed for input
                 }
 
-                _connections.Add(new Connection((int)port.userData, connectionPorts));
             }
         }
 

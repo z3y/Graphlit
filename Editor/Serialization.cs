@@ -13,26 +13,16 @@ namespace z3y.ShaderGraph
     }
 
     [System.Serializable]
-    public struct Connection
+    public struct NodeConnection
     {
-        public Connection(int portID, List<ConnectionPorts> ports)
+        public NodeConnection(int outID, int inID, ShaderNode outNode)
         {
-            this.portID = portID;
-            this.ports = ports;
+            this.outID = outID;
+            this.inID = inID;
+            this.inNode = outNode;
         }
-        public int portID;
-        public List<ConnectionPorts> ports;
-    }
-
-    [System.Serializable]
-    public struct ConnectionPorts
-    {
-        public ConnectionPorts(ShaderNode node, int portID)
-        {
-            this.node = node;
-            this.portID = portID;
-        }
-        [SerializeReference] public ShaderNode node;
-        public int portID;
+        public int outID;
+        public int inID;
+        [SerializeReference] public ShaderNode inNode;
     }
 }

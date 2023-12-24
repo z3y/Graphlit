@@ -58,42 +58,38 @@ namespace z3y.ShaderGraph
                 foreach (var connection in node.GetSerializedConnections())
                 {
                     var graphNode = node.Node;
-                    var id = connection.portID;
-                    var connectedInputPorts = connection.ports;
+                    var outID = connection.outID;
+                    var inID = connection.inID;
+                    var inNode = connection.inNode;
 
-                    foreach (var connectedInputPort in connectedInputPorts)
+                    foreach (var ve in graphNode.inputContainer.Children())
                     {
-
-
-                        foreach (var ve in graphNode.outputContainer.Children())
+                        if (ve is not Port port)
                         {
-                            if (ve is not Port port)
+                            continue;
+                        }
+
+                        if (((int)port.userData) != outID)
+                        {
+                            continue;
+                        }
+
+                        foreach (var ve2 in inNode.Node.outputContainer.Children())
+                        {
+                            if (ve2 is not Port outPort)
                             {
                                 continue;
                             }
 
-                            if (((int)port.userData) != id)
+                            if ((int)outPort.userData == inID)
                             {
-                                continue;
-                            }
-
-                            foreach (var ve2 in connectedInputPort.node.Node.inputContainer.Children())
-                            {
-                                if (ve2 is not Port inputPort)
-                                {
-                                    continue;
-                                }
-
-                                var inputID = (int)inputPort.userData;
-                                if (inputID == connectedInputPort.portID)
-                                {
-                                    var newEdge = port.ConnectTo(inputPort);
-                                    graph.AddElement(newEdge);
-                                    break;
-                                }
+                                var newEdge = outPort.ConnectTo(port);
+                                graph.AddElement(newEdge);
+                                break;
                             }
                         }
                     }
+
                 }
             }
 
