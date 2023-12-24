@@ -22,7 +22,7 @@ namespace z3y.ShaderGraph.Nodes
             var b = GetVariableName(1);
             var c = GetVariableName(2);
 
-            return $"float {c} = {a} * {b}";
+            return $"float {c} = {a} * {b};";
         }
     }
 

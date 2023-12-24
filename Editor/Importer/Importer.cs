@@ -15,6 +15,7 @@ namespace z3y.ShaderGraph
     {
         public const string EXTENSION = "zsg";
 
+
         [NonSerialized] internal SerializedGraphData _cachedGraphData = null;
         private SerializedGraphData ReadGraphData(bool useCache)
         {
@@ -65,11 +66,26 @@ namespace z3y.ShaderGraph
                 if (node.GetType() == typeof(OutputNode))
                 {
                     VisitConenctedNode(sb, node);
+                    sb.Append("col = " + node.varibleNames[0] + ";");
                     break;
                 }
             }
 
-            ctx.AddObjectToAsset("Main Asset", new TextAsset(sb.ToString()));
+           /* var sh = File.ReadAllLines(_testShaderPath);
+            for (int i = 0; i < sh.Length; i++)
+            {
+                if (sh[i].TrimStart().StartsWith("//result"))
+                {
+                    sh[i] = sb.ToString();
+                    break;
+                }
+            }*/
+
+            //var result = string.Join('\n', sh);
+            //var shader = ShaderUtil.CreateShaderAsset(ctx, result, false);
+            ctx.AddObjectToAsset("text", new TextAsset(sb.ToString()));
+            //ctx.AddObjectToAsset("Main Asset", shader);
+
         }
 
         [MenuItem("Assets/Create/z3y/Shader Graph")]
