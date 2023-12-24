@@ -86,6 +86,8 @@ namespace z3y.ShaderGraph.Nodes
         [SerializeField] private Vector2 _position;
         [SerializeField] private List<Connection> _connections;
         public Vector2 GetSerializedPosition() => _position;
+        public List<Connection> GetSerializedConnections() => _connections;
+
 
         internal void SetNodeVisualElement(ShaderNodeVisualElement node)
         {

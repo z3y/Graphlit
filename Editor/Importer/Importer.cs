@@ -6,6 +6,7 @@ using z3y.ShaderGraph.Nodes;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using UnityEditor.Experimental.GraphView;
+using UnityEngine.UIElements;
 
 namespace z3y.ShaderGraph
 {
@@ -38,15 +39,57 @@ namespace z3y.ShaderGraph
         {
             var win = ShaderGraphWindow.InitializeEditor(this);
             var data = ReadGraphData();
+            var graph = win.graphView;
 
             if (win.nodesLoaded)
             {
                 return;
             }
 
+            // create nodes
             foreach (var node in data.shaderNodes)
             {
                 win.graphView.AddNode(node);
+            }
+
+            // create connections
+            foreach (var node in data.shaderNodes)
+            {
+                foreach (var connection in node.GetSerializedConnections())
+                {
+                    var graphNode = node.Node;
+                    var id = connection.portID;
+                    var connectedInputPorts = connection.ports;
+
+                    foreach (var connectedInputPort in connectedInputPorts)
+                    {
+
+
+                        foreach (var ve in graphNode.outputContainer.Children())
+                        {
+                            if (ve is not Port port)
+                            {
+                                continue;
+                            }
+
+                            foreach (var ve2 in connectedInputPort.node.Node.inputContainer.Children())
+                            {
+                                if (ve2 is not Port inputPort)
+                                {
+                                    continue;
+                                }
+
+                                var inputID = (int)inputPort.userData;
+                                if (inputID == connectedInputPort.portID)
+                                {
+                                    var newEdge = port.ConnectTo(inputPort);
+                                    graph.AddElement(newEdge);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             win.nodesLoaded = true;
@@ -98,13 +141,13 @@ namespace z3y.ShaderGraph
         public override void OnInspectorGUI()
         {
             var importer = (ShaderGraphImporter)serializedObject.targetObject;
+            base.OnInspectorGUI();
+
 
             if (GUILayout.Button("Edit Shader"))
             {
                 importer.OpenInGraphView();
             }
-
-            base.OnInspectorGUI();
         }
 
 /*        protected override bool OnApplyRevertGUI()
