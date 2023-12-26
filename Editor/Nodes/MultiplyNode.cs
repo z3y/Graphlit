@@ -16,13 +16,13 @@ namespace z3y.ShaderGraph.Nodes
             AddInput(typeof(float), 1, "b");
             AddOutput(typeof(float), 2);
         }
-        public override string Visit(int outID)
+        public override void Visit(System.Text.StringBuilder sb, int outID)
         {
             var a = GetVariableName(0);
             var b = GetVariableName(1);
-            var c = GetVariableName(2);
+            var c = GetVariableName(2, "multiply");
 
-            return $"float {c} = {a} * {b};";
+            sb.AppendLine($"float {c} = {a} * {b};");
         }
     }
 
@@ -36,13 +36,13 @@ namespace z3y.ShaderGraph.Nodes
             AddOutput(typeof(float), 2);
         }
 
-        public override string Visit(int outID)
+        public override void Visit(System.Text.StringBuilder sb, int outID)
         {
             var a = GetVariableName(0);
             var b = GetVariableName(1);
-            var c = GetVariableName(2);
+            var c = GetVariableName(2, "add");
 
-            return $"float {c} = {a} + {b};";
+            sb.AppendLine($"float {c} = {a} + {b};");
         }
     }
 
@@ -55,17 +55,17 @@ namespace z3y.ShaderGraph.Nodes
             AddInput(typeof(float), 1, "b");
             AddOutput(typeof(float), 2);
         }
-        public override string Visit(int outID)
+        public override void Visit(System.Text.StringBuilder sb, int outID)
         {
             var a = GetVariableName(0);
             var b = GetVariableName(1);
-            var c = GetVariableName(2);
+            var c = GetVariableName(2, "dot");
 
-            return $"float {c} = dot({a}, {b});";
+            sb.AppendLine($"float {c} = dot({a}, {b});");
         }
     }
 
-    [@NodeInfo("mad", "mad(a, b, c)")]
+ /*   [@NodeInfo("mad", "mad(a, b, c)")]
     public class MadNode : ShaderNode
     {
         public override void AddElements()
@@ -75,9 +75,9 @@ namespace z3y.ShaderGraph.Nodes
             AddInput(typeof(float), 2, "c");
             AddOutput(typeof(float), 3);
         }
-    }
+    }*/
 
-    [@NodeInfo("some custom data/test")]
+/*    [@NodeInfo("some custom data/test")]
     public class TestNode : ShaderNode
     {
         [UnityEngine.SerializeField] string persistentField = "asdfg";
@@ -95,8 +95,8 @@ namespace z3y.ShaderGraph.Nodes
             Node.extensionContainer.Add(f);
         }
     }
-
-    [@NodeInfo("float3")]
+*/
+    /*[@NodeInfo("float3")]
     public class Float3Node : ShaderNode
     {
         [SerializeField] Vector3 data;
@@ -111,7 +111,7 @@ namespace z3y.ShaderGraph.Nodes
             });
             Node.extensionContainer.Add(f);
         }
-    }
+    }*/
 
     [@NodeInfo("float")]
     public class FloatNode : ShaderNode
@@ -127,17 +127,11 @@ namespace z3y.ShaderGraph.Nodes
                 data = evt.newValue;
             });
             Node.extensionContainer.Add(f);
-
-            /*var b = new Button();
-            b.clicked += () => { Debug.Log(EditorJsonUtility.ToJson((FloatNode)this)); };
-            Node.extensionContainer.Add(b);*/
         }
 
-        public override string Visit(int outID)
+        public override void Visit(System.Text.StringBuilder sb, int outID)
         {
-            var c = GetVariableName(0);
-
-            return $"float {c} = {data};";
+            varibleNames[0] = data.ToString("R");
         }
     }
 
@@ -147,6 +141,11 @@ namespace z3y.ShaderGraph.Nodes
         public override void AddElements()
         {
             AddInput(typeof(float), 0, "Result");
+        }
+
+        public override void Visit(System.Text.StringBuilder sb, int outID)
+        {
+            sb.AppendLine($"col = {GetVariableName(0)};");
         }
     }
 }

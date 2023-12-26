@@ -7,6 +7,7 @@ using System.IO;
 using UnityEditor.Experimental.GraphView;
 using System.Text;
 using System;
+using UnityEditor.MemoryProfiler;
 
 namespace z3y.ShaderGraph
 {
@@ -45,11 +46,12 @@ namespace z3y.ShaderGraph
                 }
                 VisitConenctedNode(sb, connection.inNode);
 
-                node.varibleNames[connection.outID] = connection.inNode.GetVariableName(connection.inID);
 
                 //connection.inNode.varibleNames[0] = "a";
                 //sb.AppendLine($"{connection.inNode.GetType().Name}[{connection.inID}] is connected to {node.GetType().Name}");
-                sb.AppendLine(connection.inNode.Visit(connection.inID));
+                //sb.AppendLine(connection.inNode.Visit(sb, connection.inID));
+                connection.inNode.Visit(sb, connection.inID);
+                node.varibleNames[connection.outID] = connection.inNode.GetVariableName(connection.inID);
 
                 visitedPorts.Add(connection.inID);
             }
@@ -67,7 +69,8 @@ namespace z3y.ShaderGraph
                 if (node.GetType() == typeof(OutputNode))
                 {
                     VisitConenctedNode(sb, node);
-                    sb.Append("col = " + node.varibleNames[0] + ";");
+                    //sb.Append("col = " + node.varibleNames[0] + ";");
+                    node.Visit(sb, 0);
                     break;
                 }
             }

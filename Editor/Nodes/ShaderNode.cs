@@ -91,14 +91,14 @@ namespace z3y.ShaderGraph.Nodes
         [NonSerialized] public Dictionary<int, string> varibleNames = new();
         private static int _uniqueVariableID = 0;
         public static void ResetUniqueVariableIDs() => _uniqueVariableID = 0;
-        public string GetVariableName(int portID)
+        public string GetVariableName(int portID, string prefix = null)
         {
             if (varibleNames.TryGetValue(portID, out string value))
             {
                 return value;
             }
 
-            var varibleName = "var" + _uniqueVariableID++;
+            var varibleName = (prefix ?? "var") + _uniqueVariableID++;
             varibleNames.Add(portID, varibleName);
             return varibleName;
         }
@@ -202,9 +202,8 @@ namespace z3y.ShaderGraph.Nodes
 
         // evaluate the output id for the node
         public List<int> visitedPorts = new List<int>();
-        public virtual string Visit(int outID)
+        public virtual void Visit(System.Text.StringBuilder sb, int outID)
         {
-            return string.Empty;
         }
 
     }
