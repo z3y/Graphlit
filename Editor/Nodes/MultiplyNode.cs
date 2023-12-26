@@ -22,10 +22,9 @@ namespace z3y.ShaderGraph.Nodes
             var a = GetVariableName(0);
             var b = GetVariableName(1);
 
-            var result = GetVariableName(2, "multiply");
-            int components = Mathf.Max(((PortType.DynamicFloat)portTypes[0]).components, ((PortType.DynamicFloat)portTypes[1]).components);
-            portTypes[2] = new PortType.DynamicFloat(components);
-            sb.AppendLine($"float{components} {result} = {a} * {b};");
+            var result = GetVariableName(2, "Multiply");
+            var type = InheritDynamicFloatMax(2, 0, 1).ToString();
+            sb.AppendLine($"{type} {result} = {a} * {b};");
         }
     }
 
@@ -44,10 +43,9 @@ namespace z3y.ShaderGraph.Nodes
             var a = GetVariableName(0);
             var b = GetVariableName(1);
 
-            var result = GetVariableName(2, "add");
-            int components = Mathf.Max(((PortType.DynamicFloat)portTypes[0]).components, ((PortType.DynamicFloat)portTypes[1]).components);
-            portTypes[2] = new PortType.DynamicFloat(components);
-            sb.AppendLine($"float{components} {result} = {a} + {b};");
+            var result = GetVariableName(2, "Add");
+            var type = InheritDynamicFloatMax(2, 0, 1);
+            sb.AppendLine($"{type} {result} = {a} + {b};");
         }
     }
 
@@ -65,10 +63,11 @@ namespace z3y.ShaderGraph.Nodes
             var a = GetVariableName(0);
             var b = GetVariableName(1);
 
-            var result = GetVariableName(2, "dot");
-            int components = Mathf.Max(((PortType.DynamicFloat)portTypes[0]).components, ((PortType.DynamicFloat)portTypes[1]).components);
-            portTypes[2] = new PortType.DynamicFloat(components);
-            sb.AppendLine($"float{components} {result} = dot({a}, {b});");
+            var result = GetVariableName(2, "Dot");
+            var type = InheritDynamicFloatMax(2, 0, 1);
+            type.components = 1;
+            portTypes[2] = type;
+            sb.AppendLine($"{type} {result} = dot({a}, {b});");
         }
     }
 
@@ -91,7 +90,7 @@ namespace z3y.ShaderGraph.Nodes
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
             var a = GetVariableName(0);
-            if (a.EndsWith(")"))
+            if (a.EndsWith(")") || !char.IsDigit(a[0]))
             {
                 varibleNames[1] = a + "." + swizzle;
             }
@@ -116,13 +115,59 @@ namespace z3y.ShaderGraph.Nodes
             f.RegisterValueChangedCallback((evt) => {
                 value = evt.newValue;
             });
-            Node.extensionContainer.Add(f);
+            Node.inputContainer.Add(f);
         }
 
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
             varibleNames[0] =  "float3" + value.ToString("R");
-            portTypes[0] = new PortType.DynamicFloat(3);
+            portTypes[0] = new PortType.DynamicFloat(3, false);
+        }
+    }
+
+    [@NodeInfo("float4")]
+    public class Float4Node : ShaderNode
+    {
+        [SerializeField] Vector4 value;
+
+        public override void AddElements()
+        {
+            AddOutput(typeof(PortType.DynamicFloat), 0);
+
+            var f = new Vector4Field { value = value };
+            f.RegisterValueChangedCallback((evt) => {
+                value = evt.newValue;
+            });
+            Node.inputContainer.Add(f);
+        }
+
+        public override void Visit(System.Text.StringBuilder sb, int outID)
+        {
+            varibleNames[0] = "float4" + value.ToString("R");
+            portTypes[0] = new PortType.DynamicFloat(4, false);
+        }
+    }
+
+    [@NodeInfo("float2")]
+    public class Float2Node : ShaderNode
+    {
+        [SerializeField] Vector2 value;
+
+        public override void AddElements()
+        {
+            AddOutput(typeof(PortType.DynamicFloat), 0);
+
+            var f = new Vector2Field { value = value };
+            f.RegisterValueChangedCallback((evt) => {
+                value = evt.newValue;
+            });
+            Node.inputContainer.Add(f);
+        }
+
+        public override void Visit(System.Text.StringBuilder sb, int outID)
+        {
+            varibleNames[0] = "float2" + value.ToString("R");
+            portTypes[0] = new PortType.DynamicFloat(2, false);
         }
     }
 
@@ -139,13 +184,13 @@ namespace z3y.ShaderGraph.Nodes
             f.RegisterValueChangedCallback((evt) => {
                 value = evt.newValue;
             });
-            Node.extensionContainer.Add(f);
+            Node.inputContainer.Add(f);
         }
 
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
             varibleNames[0] = value.ToString("R");
-            portTypes[0] = new PortType.DynamicFloat(1);
+            portTypes[0] = new PortType.DynamicFloat(1, false);
         }
     }
 

@@ -104,6 +104,26 @@ namespace z3y.ShaderGraph.Nodes
         }
 
         [NonSerialized] public Dictionary<int, object> portTypes = new();
+        public PortType.DynamicFloat InheritDynamicFloatMax(int outID, int inputIDa, int inputIDb)
+        {
+            var typeA = (PortType.DynamicFloat)portTypes[inputIDa];
+            var typeB = (PortType.DynamicFloat)portTypes[inputIDb];
+
+            int components = Mathf.Max(typeA.components, typeB.components);
+            var dynamicFloat = new PortType.DynamicFloat(components);
+           // dynamicFloat.fullPrecision = typeA.fullPrecision || typeB.fullPrecision;
+            portTypes[outID] = dynamicFloat;
+            return dynamicFloat;
+        }
+        public PortType.DynamicFloat InheritDynamicFloat(int outID, int inID)
+        {
+            var inType = (PortType.DynamicFloat)portTypes[inID];
+            int components = inType.components;
+            var dynamicFloat = new PortType.DynamicFloat(components);
+            portTypes[outID] = dynamicFloat;
+          //  dynamicFloat.fullPrecision = inType.fullPrecision;
+            return dynamicFloat;
+        }
 
         internal void SetNodeVisualElement(ShaderNodeVisualElement node)
         {
