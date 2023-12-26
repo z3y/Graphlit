@@ -89,14 +89,7 @@ namespace z3y.ShaderGraph.Nodes
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
             var a = GetVariableName(0);
-            if (a.EndsWith(")") || !char.IsDigit(a[0]))
-            {
-                varibleNames[1] = a + "." + swizzle;
-            }
-            else
-            {
-                varibleNames[1] = "(" + a + ")." + swizzle;
-            }
+            varibleNames[1] = "(" + a + ")." + swizzle;
             portTypes[1] = new PortType.DynamicFloat(swizzle.Length);
         }
     }
@@ -166,7 +159,7 @@ namespace z3y.ShaderGraph.Nodes
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
             varibleNames[0] = "float2" + value.ToString("R");
-            portTypes[0] = new PortType.DynamicFloat(2, false);
+            portTypes[0] = new PortType.DynamicFloat(2);
         }
     }
 
@@ -189,7 +182,22 @@ namespace z3y.ShaderGraph.Nodes
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
             varibleNames[0] = value.ToString("R");
-            portTypes[0] = new PortType.DynamicFloat(1, false);
+            portTypes[0] = new PortType.DynamicFloat(1);
+        }
+    }
+
+    [@NodeInfo("Property")]
+    public class PropertyNode : ShaderNode
+    {
+        public override void AddElements()
+        {
+            AddOutput(typeof(PortType.DynamicFloat), 0, "_Color");
+        }
+
+        public override void Visit(System.Text.StringBuilder sb, int outID)
+        {
+            varibleNames[0] = "_Color";
+            portTypes[0] = new PortType.DynamicFloat(4);
         }
     }
 

@@ -144,7 +144,9 @@ namespace z3y.ShaderGraph.Nodes
             // upcast
             if (components == 1)
             {
-                name = "(" + name + ").xxxx"[..(targetComponent + 2)];
+                // no need to upcast
+                // name = "(" + name + ").xxxx"[..(targetComponent + 2)];
+                return;
             }
             else if (components == 2)
             {
