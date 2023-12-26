@@ -103,6 +103,7 @@ namespace z3y.ShaderGraph.Nodes
             return varibleName;
         }
 
+        [NonSerialized] public Dictionary<int, object> portTypes = new();
 
         internal void SetNodeVisualElement(ShaderNodeVisualElement node)
         {
@@ -149,21 +150,6 @@ namespace z3y.ShaderGraph.Nodes
 
         public ShaderNodeVisualElement Node { get; private set; }
 
-        public virtual void AddElements()
-        {
-            var inputPort = Node.InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(bool));
-            inputPort.portName = "Input Value";
-            Node.inputContainer.Add(inputPort);
-
-            var customDataContainer = new VisualElement();
-            var textFoldout = new Foldout { text = "cool" };
-            textFoldout.Add(new TextField { value = "sometitle xd" });
-            customDataContainer.Add(textFoldout);
-
-            customDataContainer.AddToClassList("sg-node__extension-container");
-
-            Node.extensionContainer.Add(customDataContainer);
-        }
 
         private List<int> _addedPortIds = new List<int>();
         public Port AddInput(Type type, int id, string name = "")
@@ -205,6 +191,8 @@ namespace z3y.ShaderGraph.Nodes
         public virtual void Visit(System.Text.StringBuilder sb, int outID)
         {
         }
-
+        public virtual void AddElements()
+        {
+        }
     }
 }

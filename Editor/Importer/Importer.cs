@@ -42,6 +42,8 @@ namespace z3y.ShaderGraph
                 if (visitedPorts.Contains(connection.inID))
                 {
                     node.varibleNames[connection.outID] = connection.inNode.GetVariableName(connection.inID);
+                    node.portTypes[connection.outID] = connection.inNode.portTypes[connection.inID];
+
                     continue;
                 }
                 VisitConenctedNode(sb, connection.inNode);
@@ -52,6 +54,7 @@ namespace z3y.ShaderGraph
                 //sb.AppendLine(connection.inNode.Visit(sb, connection.inID));
                 connection.inNode.Visit(sb, connection.inID);
                 node.varibleNames[connection.outID] = connection.inNode.GetVariableName(connection.inID);
+                node.portTypes[connection.outID] = connection.inNode.portTypes[connection.inID];
 
                 visitedPorts.Add(connection.inID);
             }
