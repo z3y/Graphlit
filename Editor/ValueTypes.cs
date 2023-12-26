@@ -1,5 +1,3 @@
-
-
 using UnityEngine;
 
 namespace z3y.ShaderGraph.Nodes
@@ -44,7 +42,7 @@ namespace z3y.ShaderGraph.Nodes
                         _ => null,
                     };
                 }
-            } 
+            }
         };
 
         public enum Texture2D { }

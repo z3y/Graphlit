@@ -124,6 +124,47 @@ namespace z3y.ShaderGraph.Nodes
           //  dynamicFloat.fullPrecision = inType.fullPrecision;
             return dynamicFloat;
         }
+        public void CastVariableName(ref string name, int portID, int targetComponent)
+        {
+            var type = (PortType.DynamicFloat)portTypes[portID];
+            var components = type.components;
+            string typeName = type.fullPrecision ? "float" : "half";
+            if (components == targetComponent)
+            {
+                return;
+            }
+
+            // downcast
+            if (components > targetComponent)
+            {
+                name = "(" + name + ").xyz"[..(targetComponent + 2)];
+                return;
+            }
+
+            // upcast
+            if (components == 1)
+            {
+                name = "(" + name + ").xxxx"[..(targetComponent + 2)];
+            }
+            else if (components == 2)
+            {
+                if (targetComponent == 3)
+                {
+                    name = typeName + "3(" + name + ", 0)";
+                }
+                if (targetComponent == 4)
+                {
+                    name = typeName + "4(" + name + ", 0, 0)";
+                }
+            }
+            else if (components == 3)
+            {
+                if (targetComponent == 4)
+                {
+                    name = typeName + "4(" + name + ", 0)";
+                }
+            }
+        }
 
         internal void SetNodeVisualElement(ShaderNodeVisualElement node)
         {

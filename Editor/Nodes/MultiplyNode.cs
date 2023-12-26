@@ -1,10 +1,5 @@
-using UnityEditor;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static UnityEngine.Networking.UnityWebRequest;
-
 
 namespace z3y.ShaderGraph.Nodes
 {
@@ -19,11 +14,13 @@ namespace z3y.ShaderGraph.Nodes
         }
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
-            var a = GetVariableName(0);
-            var b = GetVariableName(1);
+            string a = GetVariableName(0);
+            string b = GetVariableName(1);
 
             var result = GetVariableName(2, "Multiply");
-            var type = InheritDynamicFloatMax(2, 0, 1).ToString();
+            var type = InheritDynamicFloatMax(2, 0, 1);
+            CastVariableName(ref a, 0, type.components);
+            CastVariableName(ref b, 1, type.components);
             sb.AppendLine($"{type} {result} = {a} * {b};");
         }
     }
@@ -45,6 +42,8 @@ namespace z3y.ShaderGraph.Nodes
 
             var result = GetVariableName(2, "Add");
             var type = InheritDynamicFloatMax(2, 0, 1);
+            CastVariableName(ref a, 0, type.components);
+            CastVariableName(ref b, 1, type.components);
             sb.AppendLine($"{type} {result} = {a} + {b};");
         }
     }
@@ -102,29 +101,6 @@ namespace z3y.ShaderGraph.Nodes
         }
     }
 
-    [@NodeInfo("float3")]
-    public class Float3Node : ShaderNode
-    {
-        [SerializeField] Vector3 value;
-
-        public override void AddElements()
-        {
-            AddOutput(typeof(PortType.DynamicFloat), 0);
-
-            var f = new Vector3Field { value = value };
-            f.RegisterValueChangedCallback((evt) => {
-                value = evt.newValue;
-            });
-            Node.inputContainer.Add(f);
-        }
-
-        public override void Visit(System.Text.StringBuilder sb, int outID)
-        {
-            varibleNames[0] =  "float3" + value.ToString("R");
-            portTypes[0] = new PortType.DynamicFloat(3, false);
-        }
-    }
-
     [@NodeInfo("float4")]
     public class Float4Node : ShaderNode
     {
@@ -145,6 +121,29 @@ namespace z3y.ShaderGraph.Nodes
         {
             varibleNames[0] = "float4" + value.ToString("R");
             portTypes[0] = new PortType.DynamicFloat(4, false);
+        }
+    }
+
+    [@NodeInfo("float3")]
+    public class Float3Node : ShaderNode
+    {
+        [SerializeField] Vector3 value;
+
+        public override void AddElements()
+        {
+            AddOutput(typeof(PortType.DynamicFloat), 0);
+
+            var f = new Vector3Field { value = value };
+            f.RegisterValueChangedCallback((evt) => {
+                value = evt.newValue;
+            });
+            Node.inputContainer.Add(f);
+        }
+
+        public override void Visit(System.Text.StringBuilder sb, int outID)
+        {
+            varibleNames[0] = "float3" + value.ToString("R");
+            portTypes[0] = new PortType.DynamicFloat(3, false);
         }
     }
 
