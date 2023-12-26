@@ -5,6 +5,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEditor.MemoryProfiler;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static z3y.ShaderGraph.Nodes.PortType;
 
 namespace z3y.ShaderGraph.Nodes
 {
@@ -168,6 +169,37 @@ namespace z3y.ShaderGraph.Nodes
             }
         }
 
+        public void UpdateDynamicFloatComponent(int portID, object portType)
+        {
+            if (Node == null)
+            {
+                return;
+            }
+            if (portType is not DynamicFloat dynamicFloat)
+            {
+                return;
+            }
+
+
+            var color = GetComponentColor(dynamicFloat.components);
+            Debug.Log(color);
+
+            foreach (var ve in Node.inputContainer.Children())
+            {
+                if (ve is Port port && portID == (int)port.userData)
+                {
+                    port.portColor = color;
+                }
+            }
+            foreach (var ve in Node.outputContainer.Children())
+            {
+                if (ve is Port port && portID == (int)port.userData)
+                {
+                    port.portColor = color;
+                }
+            }
+        }
+
         internal void SetNodeVisualElement(ShaderNodeVisualElement node)
         {
             this.Node = node;
@@ -226,6 +258,7 @@ namespace z3y.ShaderGraph.Nodes
             var inPort = Node.InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, type);
             inPort.portName = name;
             inPort.userData = id;
+            inPort.portColor = PortType.GetPortColor(type);
 
             Node.inputContainer.Add(inPort);
             return inPort;
@@ -243,6 +276,7 @@ namespace z3y.ShaderGraph.Nodes
             var outPort = Node.InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, type);
             outPort.portName = name;
             outPort.userData = id;
+            outPort.portColor = PortType.GetPortColor(type);
 
             Node.outputContainer.Add(outPort);
             outputPortsCount++;

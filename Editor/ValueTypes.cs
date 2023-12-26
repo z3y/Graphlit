@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace z3y.ShaderGraph.Nodes
@@ -47,5 +48,54 @@ namespace z3y.ShaderGraph.Nodes
 
         public enum Texture2D { }
         public enum SamplerState { }
+
+        public static Color Float1Color = Color.red;
+        public static Color Float2Color = Color.green;
+        public static Color Float3Color = Color.blue;
+        public static Color Float4Color = Color.yellow;
+        public static Color GetComponentColor(int component)
+        {
+            return component switch
+            {
+                1 => Float1Color,
+                2 => Float2Color,
+                3 => Float3Color,
+                4 => Float4Color,
+                _ => Color.white,
+            };
+        }
+
+        public static Color GetPortColor(Type type)
+        {
+            if (type == typeof(DynamicFloat))
+            {
+                return Float4Color;
+            }
+            else if (type == typeof(Texture2D))
+            {
+                return Color.blue;
+            }
+            else if (type == typeof(SamplerState))
+            {
+                return Color.gray;
+            }
+
+
+            return Color.white;
+        }
+    }
+
+    public enum PropertyType
+    {
+        Float,
+        Float2,
+        Float3,
+        Float4,
+        Color,
+        Intiger,
+        Texture2D,
+        TextureAny,
+        TextureCube,
+        // etc
     }
 }

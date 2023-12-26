@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -189,14 +190,29 @@ namespace z3y.ShaderGraph.Nodes
     [@NodeInfo("Property")]
     public class PropertyNode : ShaderNode
     {
+        [SerializeField] string displayName = string.Empty;
+        [SerializeField] PropertyType propertyType = PropertyType.Float;
+
         public override void AddElements()
         {
-            AddOutput(typeof(PortType.DynamicFloat), 0, "_Color");
+            var f = new TextField { value = displayName };
+            f.RegisterValueChangedCallback((evt) => {
+                displayName = evt.newValue;
+            });
+            Node.inputContainer.Add(f);
+
+            var e = new EnumField("Type", propertyType);
+            e.RegisterValueChangedCallback((ChangeEvent<Enum> evt) => {
+                propertyType = (PropertyType)evt.newValue;
+            });
+            Node.extensionContainer.Add(e);
+
+            AddOutput(typeof(PortType.DynamicFloat), 0);
         }
 
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
-            varibleNames[0] = "_Color";
+            varibleNames[0] = '_' + displayName;
             portTypes[0] = new PortType.DynamicFloat(4);
         }
     }

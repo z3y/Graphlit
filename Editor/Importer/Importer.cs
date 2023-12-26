@@ -43,16 +43,12 @@ namespace z3y.ShaderGraph
                 {
                     node.varibleNames[connection.outID] = connection.inNode.GetVariableName(connection.inID);
                     node.portTypes[connection.outID] = connection.inNode.portTypes[connection.inID];
-
                     continue;
                 }
                 VisitConenctedNode(sb, connection.inNode);
 
-
-                //connection.inNode.varibleNames[0] = "a";
-                //sb.AppendLine($"{connection.inNode.GetType().Name}[{connection.inID}] is connected to {node.GetType().Name}");
-                //sb.AppendLine(connection.inNode.Visit(sb, connection.inID));
                 connection.inNode.Visit(sb, connection.inID);
+
                 node.varibleNames[connection.outID] = connection.inNode.GetVariableName(connection.inID);
                 node.portTypes[connection.outID] = connection.inNode.portTypes[connection.inID];
 
