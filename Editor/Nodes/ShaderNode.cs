@@ -199,20 +199,17 @@ namespace z3y.ShaderGraph.Nodes
 
 
             var color = GetComponentColor(dynamicFloat.components);
-            Debug.Log(color);
 
             foreach (var ve in Node.inputContainer.Children())
             {
                 if (ve is Port port && portID == (int)port.userData)
                 {
                     port.portColor = color;
-                }
-            }
-            foreach (var ve in Node.outputContainer.Children())
-            {
-                if (ve is Port port && portID == (int)port.userData)
-                {
-                    port.portColor = color;
+
+                    foreach (var connection in port.connections)
+                    {
+                        connection.output.portColor = color;
+                    }
                 }
             }
         }

@@ -49,10 +49,10 @@ namespace z3y.ShaderGraph.Nodes
         public enum Texture2D { }
         public enum SamplerState { }
 
-        public static Color Float1Color = Color.red;
-        public static Color Float2Color = Color.green;
-        public static Color Float3Color = Color.blue;
-        public static Color Float4Color = Color.yellow;
+        public static Color Float1Color = Color.grey;
+        public static Color Float2Color = new Color(194 / 255.0f, 165 / 255.0f, 50 / 255.0f);
+        public static Color Float3Color = new Color(50 / 255.0f, 163 / 255.0f, 194 / 255.0f);
+        public static Color Float4Color = new Color(194 / 255.0f, 50 / 255.0f, 86 / 255.0f);
         public static Color GetComponentColor(int component)
         {
             return component switch
@@ -69,7 +69,7 @@ namespace z3y.ShaderGraph.Nodes
         {
             if (type == typeof(DynamicFloat))
             {
-                return Float4Color;
+                return Float1Color;
             }
             else if (type == typeof(Texture2D))
             {

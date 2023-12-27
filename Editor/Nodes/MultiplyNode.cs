@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static z3y.ShaderGraph.Nodes.PortType;
 
 namespace z3y.ShaderGraph.Nodes
 {
@@ -13,6 +14,7 @@ namespace z3y.ShaderGraph.Nodes
             AddInput(typeof(PortType.DynamicFloat), 1, "b");
             AddOutput(typeof(PortType.DynamicFloat), 2);
         }
+
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
             string a = GetInputVariable(0);
@@ -23,6 +25,12 @@ namespace z3y.ShaderGraph.Nodes
             CastVariableName(ref a, 0, type.components);
             CastVariableName(ref b, 1, type.components);
             sb.AppendLine($"{type} {result} = {a} * {b};");
+        }
+
+        public override void DefaultInputValue(int portID)
+        {
+            varibleNames[portID] = "1";
+            portTypes[portID] = new PortType.DynamicFloat(1);
         }
     }
 
@@ -46,6 +54,46 @@ namespace z3y.ShaderGraph.Nodes
             CastVariableName(ref a, 0, type.components);
             CastVariableName(ref b, 1, type.components);
             sb.AppendLine($"{type} {result} = {a} + {b};");
+        }
+    }
+
+    [@NodeInfo("++", "a + b")]
+    public class AddMoreNode : ShaderNode
+    {
+        public override void AddVisualElements()
+        {
+            AddInput(typeof(PortType.DynamicFloat), 0, "a");
+            AddInput(typeof(PortType.DynamicFloat), 1, "b");
+            AddOutput(typeof(PortType.DynamicFloat), 2, "default");
+            AddOutput(typeof(PortType.DynamicFloat), 3, "more");
+        }
+
+        public override void Visit(System.Text.StringBuilder sb, int outID)
+        {
+            var a = GetInputVariable(0);
+            var b = GetInputVariable(1);
+
+            if (outID == 2)
+            {
+                var result = GetOutputVariable(2, "Default");
+                var result2 = GetOutputVariable(3, "More");
+
+                var type = InheritDynamicFloatMax(2, 0, 1);
+                CastVariableName(ref a, 0, type.components);
+                CastVariableName(ref b, 1, type.components);
+                sb.AppendLine($"{type} {result} = {a} + {b};");
+            }
+            else if (outID == 3)
+            {
+                var result = GetOutputVariable(3, "More");
+
+                var type = new PortType.DynamicFloat(4);
+                portTypes[3] = type;
+                CastVariableName(ref a, 0, type.components);
+                CastVariableName(ref b, 1, type.components);
+                sb.AppendLine($"{type} {result} = {a} + {b};");
+            }
+            
         }
     }
 
