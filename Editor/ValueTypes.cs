@@ -3,13 +3,15 @@ using UnityEngine;
 
 namespace z3y.ShaderGraph.Nodes
 {
-    public struct PortType
+    public interface IPortType { }
+    public struct PortType : IPortType
     {
-        public struct DynamicFloat
+        public class Float : IPortType
         {
-            public int components;
-            public bool fullPrecision;
-            public DynamicFloat(int components, bool fullPrecision = true)
+            public int components = 1;
+            public bool fullPrecision = true;
+            public bool dynamic = true;
+            public Float(int components, bool fullPrecision = true)
             {
                 if (components < 1 || components > 4)
                 {
@@ -17,9 +19,17 @@ namespace z3y.ShaderGraph.Nodes
                 }
                 this.components = components;
                 this.fullPrecision = fullPrecision;
+                this.dynamic = false;
             }
 
-            public override readonly string ToString()
+            public Float()
+            {
+                this.components = 1;
+                this.fullPrecision = true;
+                this.dynamic = true;
+            }
+
+            public override string ToString()
             {
                 if (fullPrecision)
                 {
@@ -46,8 +56,8 @@ namespace z3y.ShaderGraph.Nodes
             }
         };
 
-        public enum Texture2D { }
-        public enum SamplerState { }
+        public struct Texture2D : IPortType { }
+        public struct SamplerState : IPortType { }
 
         public static Color Float1Color = Color.grey;
         public static Color Float2Color = new Color(232 / 255.0f, 255 / 255.0f, 183 / 255.0f); // yellow
@@ -67,7 +77,7 @@ namespace z3y.ShaderGraph.Nodes
 
         public static Color GetPortColor(Type type)
         {
-            if (type == typeof(DynamicFloat))
+            if (type == typeof(Float))
             {
                 return Float1Color;
             }

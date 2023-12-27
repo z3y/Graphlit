@@ -46,10 +46,9 @@ namespace z3y.ShaderGraph
                 if (visitedPorts.Contains(connection.inID))
                 {
                     // copy
-                    node.portNames[connection.outID] = connection.inNode.SetOutputVariable(connection.inID);
-                    var portType = connection.inNode.portTypes[connection.inID];
-                    node.portTypes[connection.outID] = portType;
-                    node.UpdateDynamicFloatComponent(connection.outID, portType);
+                    node.PortNames[connection.outID] = connection.inNode.SetOutputString(connection.inID);
+                    var portType = connection.inNode.PortsTypes[connection.inID];
+                    node.PortsTypes[connection.outID] = portType;
 
                     continue;
                 }
@@ -59,10 +58,9 @@ namespace z3y.ShaderGraph
 
                 {
                     // copy
-                    node.portNames[connection.outID] = connection.inNode.SetOutputVariable(connection.inID);
-                    var portType = connection.inNode.portTypes[connection.inID];
-                    node.portTypes[connection.outID] = portType;
-                    node.UpdateDynamicFloatComponent(connection.outID, portType);
+                    node.PortNames[connection.outID] = connection.inNode.SetOutputString(connection.inID);
+                    var portType = connection.inNode.PortsTypes[connection.inID];
+                    node.PortsTypes[connection.outID] = portType;
                 }
 
                 visitedPorts.Add(connection.inID);
@@ -84,9 +82,9 @@ namespace z3y.ShaderGraph
 
             foreach (var node in data.shaderNodes)
             {
-                node.portNames.Clear();
+                node.PortNames.Clear();
                 node.visitedPorts.Clear();
-                node.portTypes.Clear();
+                node.Reset();
             }
 
             foreach (var node in data.shaderNodes)
