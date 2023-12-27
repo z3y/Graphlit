@@ -82,6 +82,7 @@ namespace z3y.ShaderGraph.Nodes
         {
             Node = node;
             Initialize();
+            AddVisualElements();
         }
 
         [SerializeField] private Vector2 _position;
@@ -130,8 +131,7 @@ namespace z3y.ShaderGraph.Nodes
             var dynamicFloat = new Float(components);
             PortsTypes[outID] = dynamicFloat;
 
-            var color = GetComponentColor(components);
-            Ports[outID].portColor = color;
+            UpdatePortComponentColor(outID, components);
 
             return dynamicFloat;
         }
@@ -143,16 +143,34 @@ namespace z3y.ShaderGraph.Nodes
 
         private void UpdatePortComponentCount(int portID)
         {
-            if (!Ports[portID].connected)
+            if (Node != null && Ports[portID].connected)
             {
-                var defaultType = PortsTypes[portID] = _defaultPortsTypes[portID];
-                PortNames[portID] = SetDefaultInputString(portID);
-                if (defaultType is Float floatType)
+                return;
+            }
+            else foreach (var connection in _connections)
+            {
+                if (connection.outID == portID)
                 {
-                    var color = GetComponentColor(floatType.components);
-                    Ports[portID].portColor = color;
+                    return;
                 }
             }
+
+            var defaultType = PortsTypes[portID] = _defaultPortsTypes[portID];
+            PortNames[portID] = SetDefaultInputString(portID);
+            if (defaultType is Float floatType)
+            {
+                UpdatePortComponentColor(portID, floatType.components);
+            }
+        }
+        private void UpdatePortComponentColor(int portID, int components)
+        {
+            if (Node == null)
+            {
+                return;
+            }
+
+            var color = GetComponentColor(components);
+            Ports[portID].portColor = color;
         }
 
         /* public PortType.DynamicFloat InheritDynamicFloat(int outID, int inID)
@@ -171,8 +189,7 @@ namespace z3y.ShaderGraph.Nodes
             var components = type.components;
             string typeName = type.fullPrecision ? "float" : "half";
 
-            var color = GetComponentColor(targetComponent);
-            Ports[portID].portColor = color;
+            UpdatePortComponentColor(portID, components);
 
             if (components == targetComponent)
             {
@@ -214,7 +231,7 @@ namespace z3y.ShaderGraph.Nodes
             return name;
         }
 
-        public bool IsConnected(int id) => Ports[id].connected;
+        //public bool IsConnected(int id) => Ports[id].connected;
         public NodeInfo GetNodeInfo() => _nodeInfo ??= GetType().GetCustomAttribute<NodeInfo>();
         internal void SetNodeVisualElement(ShaderNodeVisualElement node)
         {
@@ -272,8 +289,8 @@ namespace z3y.ShaderGraph.Nodes
                 return;
             }
 
-            PortsTypes.Add(id, portType);
-            _defaultPortsTypes.Add(id, portType);
+            PortsTypes[id] = portType;
+            _defaultPortsTypes[id] = portType;
 
             if (Node is null)
             {
@@ -328,7 +345,7 @@ namespace z3y.ShaderGraph.Nodes
         {
         }
 
-        public void Repaint()
+        /*public void Repaint()
         {
             if (Node is null)
             {
@@ -342,6 +359,6 @@ namespace z3y.ShaderGraph.Nodes
                     child.MarkDirtyRepaint();
                 }
             }
-        }
+        }*/
     }
 }

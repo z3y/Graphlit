@@ -87,6 +87,12 @@ namespace z3y.ShaderGraph
                 node.PortNames.Clear();
                 node.visitedPorts.Clear();
                 node.Reset();
+
+                if (node.Node is null)
+                {
+                    node.PortsTypes.Clear();
+                    node.Initialize();
+                }
             }
 
             foreach (var node in data.shaderNodes)

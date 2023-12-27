@@ -147,8 +147,35 @@ namespace z3y.ShaderGraph.Nodes
         public override void Initialize()
         {
             AddPort(Direction.Output, new PortType.Float(4), OUT);
+        }
 
+        public override void AddVisualElements()
+        {
             var f = new Vector4Field { value = value };
+            f.RegisterValueChangedCallback((evt) => {
+                value = evt.newValue;
+            });
+            Node.inputContainer.Add(f);
+        }
+        public override void Visit(System.Text.StringBuilder sb, int outID)
+        {
+            PortNames[0] = "float4" + value.ToString("R");
+        }
+    }
+    [@NodeInfo("float3")]
+    public class Float3Node : ShaderNode
+    {
+        const int OUT = 0;
+        [SerializeField] Vector3 value;
+
+        public override void Initialize()
+        {
+            AddPort(Direction.Output, new PortType.Float(3), OUT);
+        }
+
+        public override void AddVisualElements()
+        {
+            var f = new Vector3Field { value = value };
             f.RegisterValueChangedCallback((evt) => {
                 value = evt.newValue;
             });
@@ -157,7 +184,7 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
-            PortNames[0] = "float4" + value.ToString("R");
+            PortNames[0] = "float3" + value.ToString("R");
         }
     }
 
@@ -170,7 +197,10 @@ namespace z3y.ShaderGraph.Nodes
         public override void Initialize()
         {
             AddPort(Direction.Output, new PortType.Float(2), OUT);
+        }
 
+        public override void AddVisualElements()
+        {
             var f = new Vector2Field { value = value };
             f.RegisterValueChangedCallback((evt) => {
                 value = evt.newValue;
@@ -193,7 +223,10 @@ namespace z3y.ShaderGraph.Nodes
         public override void Initialize()
         {
             AddPort(Direction.Output, new PortType.Float(1), OUT);
+        }
 
+        public override void AddVisualElements()
+        {
             var f = new FloatField { value = value };
             f.RegisterValueChangedCallback((evt) => {
                 value = evt.newValue;
