@@ -7,7 +7,7 @@ namespace z3y.ShaderGraph.Nodes
     [@NodeInfo("*", "a * b")]
     public class MultiplyNode : ShaderNode
     {
-        public override void AddElements()
+        public override void AddVisualElements()
         {
             AddInput(typeof(PortType.DynamicFloat), 0, "a");
             AddInput(typeof(PortType.DynamicFloat), 1, "b");
@@ -15,10 +15,10 @@ namespace z3y.ShaderGraph.Nodes
         }
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
-            string a = GetVariableName(0);
-            string b = GetVariableName(1);
+            string a = GetInputVariable(0);
+            string b = GetInputVariable(1);
 
-            var result = GetVariableName(2, "Multiply");
+            var result = GetOutputVariable(2, "Multiply");
             var type = InheritDynamicFloatMax(2, 0, 1);
             CastVariableName(ref a, 0, type.components);
             CastVariableName(ref b, 1, type.components);
@@ -29,7 +29,7 @@ namespace z3y.ShaderGraph.Nodes
     [@NodeInfo("+", "a + b")]
     public class AddNode : ShaderNode
     {
-        public override void AddElements()
+        public override void AddVisualElements()
         {
             AddInput(typeof(PortType.DynamicFloat), 0, "a");
             AddInput(typeof(PortType.DynamicFloat), 1, "b");
@@ -38,10 +38,10 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
-            var a = GetVariableName(0);
-            var b = GetVariableName(1);
+            var a = GetInputVariable(0);
+            var b = GetInputVariable(1);
 
-            var result = GetVariableName(2, "Add");
+            var result = GetOutputVariable(2, "Add");
             var type = InheritDynamicFloatMax(2, 0, 1);
             CastVariableName(ref a, 0, type.components);
             CastVariableName(ref b, 1, type.components);
@@ -52,7 +52,7 @@ namespace z3y.ShaderGraph.Nodes
     [@NodeInfo("dot", "dot(a, b)")]
     public class DotNode : ShaderNode
     {
-        public override void AddElements()
+        public override void AddVisualElements()
         {
             AddInput(typeof(PortType.DynamicFloat), 0, "a");
             AddInput(typeof(PortType.DynamicFloat), 1, "b");
@@ -60,14 +60,20 @@ namespace z3y.ShaderGraph.Nodes
         }
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
-            var a = GetVariableName(0);
-            var b = GetVariableName(1);
+            var a = GetInputVariable(0);
+            var b = GetInputVariable(1);
 
-            var result = GetVariableName(2, "Dot");
+            var result = GetOutputVariable(2, "Dot");
             var type = InheritDynamicFloatMax(2, 0, 1);
             type.components = 1;
             portTypes[2] = type;
             sb.AppendLine($"{type} {result} = dot({a}, {b});");
+        }
+
+        public override void DefaultInputValue(int portID)
+        {
+            varibleNames[portID] = "1";
+            portTypes[portID] = new PortType.DynamicFloat(1);
         }
     }
 
@@ -75,7 +81,7 @@ namespace z3y.ShaderGraph.Nodes
     public class SwizzleNode : ShaderNode
     {
         [UnityEngine.SerializeField] string swizzle = "x";
-        public override void AddElements()
+        public override void AddVisualElements()
         {
             AddInput(typeof(PortType.DynamicFloat), 0);
             AddOutput(typeof(PortType.DynamicFloat), 1);
@@ -89,7 +95,7 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
-            var a = GetVariableName(0);
+            var a = GetInputVariable(0);
             varibleNames[1] = "(" + a + ")." + swizzle;
             portTypes[1] = new PortType.DynamicFloat(swizzle.Length);
         }
@@ -100,7 +106,7 @@ namespace z3y.ShaderGraph.Nodes
     {
         [SerializeField] Vector4 value;
 
-        public override void AddElements()
+        public override void AddVisualElements()
         {
             AddOutput(typeof(PortType.DynamicFloat), 0);
 
@@ -123,7 +129,7 @@ namespace z3y.ShaderGraph.Nodes
     {
         [SerializeField] Vector3 value;
 
-        public override void AddElements()
+        public override void AddVisualElements()
         {
             AddOutput(typeof(PortType.DynamicFloat), 0);
 
@@ -146,7 +152,7 @@ namespace z3y.ShaderGraph.Nodes
     {
         [SerializeField] Vector2 value;
 
-        public override void AddElements()
+        public override void AddVisualElements()
         {
             AddOutput(typeof(PortType.DynamicFloat), 0);
 
@@ -169,7 +175,7 @@ namespace z3y.ShaderGraph.Nodes
     {
         [SerializeField] float value;
 
-        public override void AddElements()
+        public override void AddVisualElements()
         {
             AddOutput(typeof(PortType.DynamicFloat), 0);
 
@@ -193,7 +199,7 @@ namespace z3y.ShaderGraph.Nodes
         [SerializeField] string displayName = string.Empty;
         [SerializeField] PropertyType propertyType = PropertyType.Float;
 
-        public override void AddElements()
+        public override void AddVisualElements()
         {
             var f = new TextField { value = displayName };
             f.RegisterValueChangedCallback((evt) => {
@@ -220,14 +226,14 @@ namespace z3y.ShaderGraph.Nodes
     [@NodeInfo("Result")]
     public class OutputNode : ShaderNode
     {
-        public override void AddElements()
+        public override void AddVisualElements()
         {
             AddInput(typeof(PortType.DynamicFloat), 0, "Result");
         }
 
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
-            sb.AppendLine($"col = {GetVariableName(0)};");
+            sb.AppendLine($"col = {GetInputVariable(0)};");
         }
     }
 }

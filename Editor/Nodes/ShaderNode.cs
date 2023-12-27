@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Xml.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.MemoryProfiler;
 using UnityEngine;
@@ -34,7 +35,7 @@ namespace z3y.ShaderGraph.Nodes
         {
             AddStyles();
             AddTitleElement();
-            shaderNode.AddElements();
+            shaderNode.AddVisualElements();
             RefreshExpandedState();
         }
         private void AddStyles()
@@ -92,16 +93,31 @@ namespace z3y.ShaderGraph.Nodes
         [NonSerialized] public Dictionary<int, string> varibleNames = new();
         private static int _uniqueVariableID = 0;
         public static void ResetUniqueVariableIDs() => _uniqueVariableID = 0;
-        public string GetVariableName(int portID, string prefix = null)
+        private string GetVariableName(int portID, string prefix = null)
         {
             if (varibleNames.TryGetValue(portID, out string value))
             {
                 return value;
             }
 
+
             var varibleName = (prefix ?? "var") + _uniqueVariableID++;
             varibleNames.Add(portID, varibleName);
             return varibleName;
+        }
+        public string GetInputVariable(int portID)
+        {
+            if (!portTypes.ContainsKey(portID))
+            {
+                DefaultInputValue(portID);
+                return varibleNames[portID];
+            }
+
+            return GetVariableName(portID);
+        }
+        public string GetOutputVariable(int portID, string prefix = null)
+        {
+            return GetVariableName(portID, prefix);
         }
 
         [NonSerialized] public Dictionary<int, object> portTypes = new();
@@ -116,6 +132,7 @@ namespace z3y.ShaderGraph.Nodes
             portTypes[outID] = dynamicFloat;
             return dynamicFloat;
         }
+
         public PortType.DynamicFloat InheritDynamicFloat(int outID, int inID)
         {
             var inType = (PortType.DynamicFloat)portTypes[inID];
@@ -288,8 +305,13 @@ namespace z3y.ShaderGraph.Nodes
         public virtual void Visit(System.Text.StringBuilder sb, int outID)
         {
         }
-        public virtual void AddElements()
+        public virtual void AddVisualElements()
         {
+        }
+        public virtual void DefaultInputValue(int portID)
+        {
+            varibleNames[portID] = "0";
+            portTypes[portID] = new PortType.DynamicFloat(1);
         }
     }
 }
