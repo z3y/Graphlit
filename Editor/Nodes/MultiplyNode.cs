@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static z3y.ShaderGraph.Nodes.PortType;
 
 namespace z3y.ShaderGraph.Nodes
 {
@@ -191,7 +190,7 @@ namespace z3y.ShaderGraph.Nodes
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
             varibleNames[0] = "float3" + value.ToString("R");
-            portTypes[0] = new PortType.DynamicFloat(3, false);
+            portTypes[0] = new PortType.DynamicFloat(3);
         }
     }
 
@@ -241,6 +240,32 @@ namespace z3y.ShaderGraph.Nodes
         }
     }
 
+    [@NodeInfo("SampleTexture2D")]
+    public class SampleTexture2DNode : ShaderNode
+    {
+        public override void AddVisualElements()
+        {
+            AddInput(typeof(PortType.Texture2D), 0);
+            AddOutput(typeof(PortType.DynamicFloat), 1);
+        }
+
+        public override void Visit(System.Text.StringBuilder sb, int outID)
+        {
+            var result = GetOutputVariable(1, "TexSample");
+            var type = portTypes[1] = new PortType.DynamicFloat(4);
+            if (varibleNames.ContainsKey(0)) // is connected
+            {
+                var a = GetInputVariable(0);
+                sb.AppendLine($"{type} {result} = {a}.Sample(sampler{a}, i.uv.xy);");
+            }
+            else
+            {
+                sb.AppendLine($"{type} {result} = float4(1, 1, 1, 1);");
+            }
+
+        }
+    }
+
     [@NodeInfo("Property")]
     public class PropertyNode : ShaderNode
     {
@@ -261,13 +286,13 @@ namespace z3y.ShaderGraph.Nodes
             });
             Node.extensionContainer.Add(e);
 
-            AddOutput(typeof(PortType.DynamicFloat), 0);
+            AddOutput(typeof(PortType.Texture2D), 0);
         }
 
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
             varibleNames[0] = '_' + displayName;
-            portTypes[0] = new PortType.DynamicFloat(4);
+            portTypes[0] = new PortType.Texture2D();
         }
     }
 

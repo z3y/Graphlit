@@ -50,9 +50,9 @@ namespace z3y.ShaderGraph.Nodes
         public enum SamplerState { }
 
         public static Color Float1Color = Color.grey;
-        public static Color Float2Color = new Color(194 / 255.0f, 165 / 255.0f, 50 / 255.0f);
-        public static Color Float3Color = new Color(50 / 255.0f, 163 / 255.0f, 194 / 255.0f);
-        public static Color Float4Color = new Color(194 / 255.0f, 50 / 255.0f, 86 / 255.0f);
+        public static Color Float2Color = new Color(232 / 255.0f, 255 / 255.0f, 183 / 255.0f); // yellow
+        public static Color Float3Color = new Color(196 / 255.0f, 245 / 255.0f, 252 / 255.0f); // cyan
+        public static Color Float4Color = new Color(226 / 255.0f, 160 / 255.0f, 255 / 255.0f); // magenta
         public static Color GetComponentColor(int component)
         {
             return component switch
@@ -73,7 +73,7 @@ namespace z3y.ShaderGraph.Nodes
             }
             else if (type == typeof(Texture2D))
             {
-                return Color.blue;
+                return Color.cyan;
             }
             else if (type == typeof(SamplerState))
             {
