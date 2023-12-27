@@ -58,6 +58,11 @@ namespace z3y.ShaderGraph.Nodes
             AppendOutputLine(OUT, sb, $"{a} * {b}");
         }
 
+        public override string SetDefaultInputString(int portID)
+        {
+            return "1";
+        }
+
     }
 
     /*[@NodeInfo("+", "a + b")]

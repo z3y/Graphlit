@@ -65,6 +65,8 @@ namespace z3y.ShaderGraph
 
                 visitedPorts.Add(connection.inID);
             }
+
+            //node.Repaint();
         }
 
         public override void OnImportAsset(AssetImportContext ctx)
@@ -98,15 +100,15 @@ namespace z3y.ShaderGraph
                 }
             }
 
-           /* var sh = File.ReadAllLines(_testShaderPath);
-            for (int i = 0; i < sh.Length; i++)
-            {
-                if (sh[i].TrimStart().StartsWith("//result"))
-                {
-                    sh[i] = sb.ToString();
-                    break;
-                }
-            }*/
+            /* var sh = File.ReadAllLines(_testShaderPath);
+             for (int i = 0; i < sh.Length; i++)
+             {
+                 if (sh[i].TrimStart().StartsWith("//result"))
+                 {
+                     sh[i] = sb.ToString();
+                     break;
+                 }
+             }*/
 
             //var result = string.Join('\n', sh);
             //var shader = ShaderUtil.CreateShaderAsset(ctx, result, false);
@@ -218,6 +220,8 @@ namespace z3y.ShaderGraph
             var jsonData = EditorJsonUtility.ToJson(data, true);
             File.WriteAllText(importerPath, jsonData);
             AssetDatabase.ImportAsset(importerPath, ImportAssetOptions.ForceUpdate);
+
+            graphView.MarkDirtyRepaint();
         }
     }
 

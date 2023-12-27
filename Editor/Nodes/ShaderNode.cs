@@ -1,16 +1,10 @@
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
 using UnityEditor.Experimental.GraphView;
-using UnityEditor.MemoryProfiler;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static UnityEditor.Experimental.GraphView.Port;
-using static UnityEngine.Networking.UnityWebRequest;
 using static z3y.ShaderGraph.Nodes.PortType;
 
 namespace z3y.ShaderGraph.Nodes
@@ -111,8 +105,17 @@ namespace z3y.ShaderGraph.Nodes
         }
         public string GetInputString(int portID)
         {
-            UpdatePortComponentCount(portID);
-            return TryGetVariableName(portID);
+            /*if (PortsTypes[portID] is Float @float && !@float.dynamic)
+            {
+                TryGetVariableName(portID);
+                return GetCastInputString(portID, @float.components);
+                //return TryGetVariableName(portID);
+            }
+            else
+            {*/
+                UpdatePortComponentCount(portID);
+                return TryGetVariableName(portID);
+            //}
         }
         public string SetOutputString(int portID, string prefix = null)
         {
@@ -143,7 +146,7 @@ namespace z3y.ShaderGraph.Nodes
             if (!Ports[portID].connected)
             {
                 var defaultType = PortsTypes[portID] = _defaultPortsTypes[portID];
-                SetDefaultInputString(portID);
+                PortNames[portID] = SetDefaultInputString(portID);
                 if (defaultType is Float floatType)
                 {
                     var color = GetComponentColor(floatType.components);
@@ -151,44 +154,6 @@ namespace z3y.ShaderGraph.Nodes
                 }
             }
         }
-
-        /*private string GetVariableName(int portID, string prefix = null)
-        {
-            if (portNames.TryGetValue(portID, out string value))
-            {
-                return value;
-            }
-
-
-            var varibleName = (prefix ?? "var") + _uniqueVariableID++;
-            portNames.Add(portID, varibleName);
-            return varibleName;
-        }
-
-
-        public string SetOutputVariable(int portID, string prefix = null)
-        {
-            return GetVariableName(portID, prefix);
-        }
-        public void SetOutputType(int portID, object type)
-        {
-            portTypes[portID] = type;
-        }
-        *
-
-        //public Dictionary<int, object> portTypes { get; set; } = new();
-
-        /* public PortType.DynamicFloat InheritDynamicFloatMax(int outID, int inputIDa, int inputIDb)
-         {
-             var typeA = (PortType.DynamicFloat)portTypes[inputIDa];
-             var typeB = (PortType.DynamicFloat)portTypes[inputIDb];
-
-             int components = Mathf.Max(typeA.components, typeB.components);
-             var dynamicFloat = new PortType.DynamicFloat(components);
-            // dynamicFloat.fullPrecision = typeA.fullPrecision || typeB.fullPrecision;
-             portTypes[outID] = dynamicFloat;
-             return dynamicFloat;
-         }*/
 
         /* public PortType.DynamicFloat InheritDynamicFloat(int outID, int inID)
          {
@@ -249,45 +214,7 @@ namespace z3y.ShaderGraph.Nodes
             return name;
         }
 
-        // public bool IsConnected(int inID) => portNames.ContainsKey(inID);
-
-        /* public void UpdateDynamicFloatComponent(int portID, object portType)
-         {
-             if (Node == null)
-             {
-                 return;
-             }
-             if (portType is not DynamicFloat dynamicFloat)
-             {
-                 return;
-             }
-
-             var color = GetComponentColor(dynamicFloat.components);
-             //UpdatePortComponents(Node.outputContainer, portID, color);
-
-             foreach (var ve in Node.inputContainer.Children())
-             {
-                 if (ve is Port port && portID == (int)port.userData)
-                 {
-                     foreach (var connection in port.connections)
-                     {
-                         connection.output.portColor = color;
-                         break;
-                     }
-                 }
-             }
-         }
-         public void UpdatePortComponents(VisualElement container, int portID, Color color)
-         {
-             foreach (var ve in container.Children())
-             {
-                 if (ve is Port port && portID == (int)port.userData)
-                 {
-                     port.portColor = color;
-                 }
-             }
-         }
- */
+        public bool IsConnected(int id) => Ports[id].connected;
         public NodeInfo GetNodeInfo() => _nodeInfo ??= GetType().GetCustomAttribute<NodeInfo>();
         internal void SetNodeVisualElement(ShaderNodeVisualElement node)
         {
@@ -333,42 +260,6 @@ namespace z3y.ShaderGraph.Nodes
         {
         }
 
-        /*private List<int> _addedPortIds = new List<int>();
-        public Port AddInput(Type type, int id, string name = "")
-        {
-            if (_addedPortIds.Contains(id))
-            {
-                Debug.LogError($"Port {name} with ID:{id} already exists.");
-                return null;
-            }
-            _addedPortIds.Add(id);
-            var inPort = Node.InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, type);
-            inPort.portName = name;
-            inPort.userData = id;
-            inPort.portColor = PortType.GetPortColor(type);
-
-            Node.inputContainer.Add(inPort);
-            return inPort;
-        }
-
-        public int outputPortsCount { get; private set; }
-        public Port AddOutput(Type type, int id, string name = "")
-        {
-            if (_addedPortIds.Contains(id))
-            {
-                Debug.LogError($"Port {name} with ID:{id} already exists.");
-                return null;
-            }
-            _addedPortIds.Add(id);
-            var outPort = Node.InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, type);
-            outPort.portName = name;
-            outPort.userData = id;
-            outPort.portColor = PortType.GetPortColor(type);
-
-            Node.outputContainer.Add(outPort);
-            outputPortsCount++;
-            return outPort;
-        }*/
         public Dictionary<int, IPortType> PortsTypes { get; private set; } = new();
         private Dictionary<int, IPortType> _defaultPortsTypes = new();
         public Dictionary<int, Port> Ports { get; private set; } = new();
@@ -416,9 +307,9 @@ namespace z3y.ShaderGraph.Nodes
         {
         }
 
-        public virtual void SetDefaultInputString(int portID)
+        public virtual string SetDefaultInputString(int portID)
         {
-            PortNames[portID] = "0";
+            return "0";
         }
         public void Reset()
         {
@@ -435,6 +326,22 @@ namespace z3y.ShaderGraph.Nodes
 
         public virtual void Visit(System.Text.StringBuilder sb, int outID)
         {
+        }
+
+        public void Repaint()
+        {
+            if (Node is null)
+            {
+                return;
+            }
+            Node.MarkDirtyRepaint();
+            foreach (var port in Ports)
+            {
+                foreach (var child in port.Value.connections)
+                {
+                    child.MarkDirtyRepaint();
+                }
+            }
         }
     }
 }
