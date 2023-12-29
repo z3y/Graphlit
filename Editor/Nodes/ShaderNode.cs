@@ -128,7 +128,7 @@ namespace z3y.ShaderGraph.Nodes
             for (int i = 0; i < inID.Length; i++)
             {
                 var inType = (Float)PortsTypes[inID[i]];
-                Mathf.Max(max, inType.components);
+                max = Mathf.Max(max, inType.components);
             }
 
             if (PortsTypes[outID] is Float @float)
