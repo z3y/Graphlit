@@ -114,7 +114,7 @@ namespace z3y.ShaderGraph.Nodes
             }
             else
             {*/
-                UpdatePortComponentCount(portID);
+                UpdatePortDefaultString(portID);
                 return TryGetVariableName(portID);
             //}
         }
@@ -128,12 +128,15 @@ namespace z3y.ShaderGraph.Nodes
             var typeB = (Float)PortsTypes[inIDb];
 
             int components = Mathf.Max(typeA.components, typeB.components);
-            var dynamicFloat = new Float(components);
-            PortsTypes[outID] = dynamicFloat;
+            if (PortsTypes[outID] is Float @float)
+            {
+                @float.components = components;
+                PortsTypes[outID] = @float; // cannot modify the result of an unboxing conversion
+                return @float;
+            }
 
-            UpdatePortComponentColor(outID, components);
 
-            return dynamicFloat;
+            return new Float(components, true);
         }
 
         public void AppendOutputLine(int portID, System.Text.StringBuilder sb, string text)
@@ -141,36 +144,37 @@ namespace z3y.ShaderGraph.Nodes
             sb.AppendLine($"{(Float)PortsTypes[portID]} {PortNames[portID]} = {text};");
         }
 
-        private void UpdatePortComponentCount(int portID)
+        public void UpdateGraphView()
         {
-            if (Node != null && Ports[portID].connected)
+            // previews, port colors etc
+            if (Node is null)
             {
                 return;
             }
-            else foreach (var connection in _connections)
+
+            foreach (var port in Ports)
+            {
+                if (_defaultPortsTypes[port.Key] is Float defaultFloatType && defaultFloatType.dynamic)
+                {
+                    var floatType = (Float)PortsTypes[port.Key];
+                    var color = GetComponentColor(floatType.components);
+                    Ports[port.Key].portColor = color;
+                }
+            }
+        }
+
+        private void UpdatePortDefaultString(int portID)
+        {
+            foreach (var connection in _connections)
             {
                 if (connection.outID == portID)
                 {
-                    return;
+                    return; // connected
                 }
             }
 
-            var defaultType = PortsTypes[portID] = _defaultPortsTypes[portID];
+            PortsTypes[portID] = _defaultPortsTypes[portID];
             PortNames[portID] = SetDefaultInputString(portID);
-            if (defaultType is Float floatType)
-            {
-                UpdatePortComponentColor(portID, floatType.components);
-            }
-        }
-        private void UpdatePortComponentColor(int portID, int components)
-        {
-            if (Node == null)
-            {
-                return;
-            }
-
-            var color = GetComponentColor(components);
-            Ports[portID].portColor = color;
         }
 
         /* public PortType.DynamicFloat InheritDynamicFloat(int outID, int inID)
@@ -189,12 +193,14 @@ namespace z3y.ShaderGraph.Nodes
             var components = type.components;
             string typeName = type.fullPrecision ? "float" : "half";
 
-            UpdatePortComponentColor(portID, components);
 
             if (components == targetComponent)
             {
                 return name;
             }
+
+            type.components = targetComponent;
+            PortsTypes[portID] = type;
 
             // downcast
             if (components > targetComponent)
@@ -207,7 +213,7 @@ namespace z3y.ShaderGraph.Nodes
             if (components == 1)
             {
                 // no need to upcast
-                // name = "(" + name + ").xxxx"[..(targetComponent + 2)];
+                name = "(" + name + ").xxxx"[..(targetComponent + 2)];
                 return name;
             }
             else if (components == 2)
@@ -328,13 +334,13 @@ namespace z3y.ShaderGraph.Nodes
         {
             return "0";
         }
-        public void Reset()
+        public void ResetAfterVisit()
         {
-            visitedPorts = new();
-            PortNames = new();
-            foreach (var port in Ports)
+            PortNames.Clear();
+            visitedPorts.Clear();
+            foreach (var port in _defaultPortsTypes)
             {
-                UpdatePortComponentCount(port.Key);
+                PortsTypes[port.Key] = _defaultPortsTypes[port.Key];
             }
         }
 

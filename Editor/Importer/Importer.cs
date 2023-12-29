@@ -42,31 +42,32 @@ namespace z3y.ShaderGraph
             var connections = node.GetSerializedConnections();
             foreach (var connection in connections)
             {
-                var visitedPorts = connection.inNode.visitedPorts;
+                var inNode = connection.inNode;
+                var visitedPorts = inNode.visitedPorts;
                 if (visitedPorts.Contains(connection.inID))
                 {
                     // copy
-                    node.PortNames[connection.outID] = connection.inNode.SetOutputString(connection.inID);
+                    node.PortNames[connection.outID] = inNode.SetOutputString(connection.inID);
                     var portType = connection.inNode.PortsTypes[connection.inID];
                     node.PortsTypes[connection.outID] = portType;
 
                     continue;
                 }
-                VisitConenctedNode(sb, connection.inNode);
+                VisitConenctedNode(sb, inNode);
 
-                connection.inNode.Visit(sb, connection.inID);
+                inNode.Visit(sb, connection.inID);
 
                 {
                     // copy
                     node.PortNames[connection.outID] = connection.inNode.SetOutputString(connection.inID);
-                    var portType = connection.inNode.PortsTypes[connection.inID];
+                    var portType = inNode.PortsTypes[connection.inID];
                     node.PortsTypes[connection.outID] = portType;
                 }
 
+                inNode.UpdateGraphView();
                 visitedPorts.Add(connection.inID);
             }
 
-            //node.Repaint();
         }
 
         public override void OnImportAsset(AssetImportContext ctx)
@@ -84,13 +85,8 @@ namespace z3y.ShaderGraph
 
             foreach (var node in data.shaderNodes)
             {
-                node.PortNames.Clear();
-                node.visitedPorts.Clear();
-                node.Reset();
-
-                if (node.Node is null)
+                if (node.PortsTypes.Count == 0)
                 {
-                    node.PortsTypes.Clear();
                     node.Initialize();
                 }
             }
@@ -105,6 +101,13 @@ namespace z3y.ShaderGraph
                     break;
                 }
             }
+
+            foreach (var node in data.shaderNodes)
+            {
+                node.ResetAfterVisit();
+            }
+
+
 
             /* var sh = File.ReadAllLines(_testShaderPath);
              for (int i = 0; i < sh.Length; i++)

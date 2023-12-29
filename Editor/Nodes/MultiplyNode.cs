@@ -43,9 +43,9 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void Initialize()
         {
-            AddPort(Direction.Input, new PortType.Float(), A, "A");
-            AddPort(Direction.Input, new PortType.Float(), B, "B");
-            AddPort(Direction.Output, new PortType.Float(), OUT);
+            AddPort(Direction.Input, new PortType.Float(1, true), A, "A");
+            AddPort(Direction.Input, new PortType.Float(1, true), B, "B");
+            AddPort(Direction.Output, new PortType.Float(1, true), OUT);
         }
 
         public override void Visit(System.Text.StringBuilder sb, int outID)
@@ -88,31 +88,34 @@ namespace z3y.ShaderGraph.Nodes
         }
     }*/
 
-    /*[@NodeInfo("dot", "dot(a, b)")]
+    [@NodeInfo("dot", "dot(a, b)")]
     public class DotNode : ShaderNode
     {
-        public override void AddVisualElements()
+        const int A = 0;
+        const int B = 1;
+        const int OUT = 2;
+
+        public override void Initialize()
         {
-            AddInput(typeof(PortType.DynamicFloat), 0, "a");
-            AddInput(typeof(PortType.DynamicFloat), 1, "b");
-            AddOutput(typeof(PortType.DynamicFloat), 2);
+            AddPort(Direction.Input, new PortType.Float(1, true), A, "A");
+            AddPort(Direction.Input, new PortType.Float(1, true), B, "B");
+            AddPort(Direction.Output, new PortType.Float(1), OUT);
         }
+
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
-            var a = GetInputVariable(0);
-            var b = GetInputVariable(1);
+            var a = GetInputString(A);
+            var b = GetInputString(B);
 
-            SetOutputVariable(2, "Dot");
-            SetOutputType(2, new PortType.DynamicFloat(1));
-            AppendOutputLine(2, sb, $"dot({a}, {b})");
+            SetOutputString(OUT, "Dot");
+            AppendOutputLine(OUT, sb, $"dot({a}, {b})");
         }
 
-        public override void DefaultInputValue(int portID)
+        public override string SetDefaultInputString(int portID)
         {
-            portNames[portID] = "1";
-            portTypes[portID] = new PortType.DynamicFloat(1);
+            return "1";
         }
-    }*/
+    }
 
     /*[@NodeInfo("swizzle")]
     public class SwizzleNode : ShaderNode

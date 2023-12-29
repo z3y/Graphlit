@@ -6,12 +6,12 @@ namespace z3y.ShaderGraph.Nodes
     public interface IPortType { }
     public struct PortType : IPortType
     {
-        public class Float : IPortType
+        public struct Float : IPortType
         {
-            public int components = 1;
-            public bool fullPrecision = true;
-            public bool dynamic = true;
-            public Float(int components, bool fullPrecision = true)
+            public int components;
+            public bool fullPrecision;
+            public bool dynamic;
+            public Float(int components, bool dynamic = false, bool fullPrecision = true)
             {
                 if (components < 1 || components > 4)
                 {
@@ -19,14 +19,7 @@ namespace z3y.ShaderGraph.Nodes
                 }
                 this.components = components;
                 this.fullPrecision = fullPrecision;
-                this.dynamic = false;
-            }
-
-            public Float()
-            {
-                this.components = 1;
-                this.fullPrecision = true;
-                this.dynamic = true;
+                this.dynamic = dynamic;
             }
 
             public override string ToString()
