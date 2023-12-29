@@ -49,9 +49,9 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void Visit(StringBuilder sb)
         {
-            var type = InheritFloatComponentsMax(OUT, new[] { A, B });
-            var a = GetCastInputString(A, type.components);
-            var b = GetCastInputString(B, type.components);
+            var components = ImplicitTruncation(new[] { A, B }, OUT);
+            var a = GetCastInputString(A, components);
+            var b = GetCastInputString(B, components);
 
             AppendOutputLine(sb, OUT, "Add", $"{a} + {b}");
         }

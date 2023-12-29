@@ -124,7 +124,7 @@ namespace z3y.ShaderGraph.Nodes
         {
             return TryGetVariableName(portID, prefix);
         }
-        public Float InheritFloatComponentsMax(int outID, int[] inID)
+        /*public Float InheritFloatComponentsMax(int outID, int[] inID)
         {
             int max = 1;
             for (int i = 0; i < inID.Length; i++)
@@ -142,7 +142,7 @@ namespace z3y.ShaderGraph.Nodes
 
 
             return new Float(max, true);
-        }
+        }*/
 
         public int ImplicitTruncation(int[] IDs, int outputID = -1)
         {

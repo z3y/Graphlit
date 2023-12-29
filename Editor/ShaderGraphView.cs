@@ -8,16 +8,18 @@ using UnityEngine.UIElements;
 
 namespace z3y.ShaderGraph
 {
+    using NUnit.Framework.Internal.Execution;
     using z3y.ShaderGraph.Nodes;
 
     public class ShaderGraphView : GraphView
     {
         private ShaderNodeSearchWindow _searchWindow;
         private ShaderGraphWindow _editorWindow;
-        private Color _accentColor = Color.magenta;
 
         public ShaderGraphView(ShaderGraphWindow editorWindow)
         {
+
+
             _editorWindow = editorWindow;
             // manipulators
             SetupZoom(0.15f, 2.0f);
@@ -25,10 +27,6 @@ namespace z3y.ShaderGraph
             this.AddManipulator(new SelectionDragger());
             this.AddManipulator(new RectangleSelector());
             this.AddManipulator(CreateGroupContextualMenu());
-
-            // nodes
-            //this.AddManipulator(CreateNodeContextualMenu<ShaderNode>("Default"));
-            //this.AddManipulator(CreateNodeContextualMenu<MultiplyNode>("Multiply"));
 
             // background
             var gridBackground = new GridBackground();
@@ -43,15 +41,12 @@ namespace z3y.ShaderGraph
             }
             nodeCreationRequest = context => SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), _searchWindow);
 
+            RegisterCallback<KeyDownEvent>(NodeHotkeyKeyDown);
+            RegisterCallback<KeyUpEvent>(NodeHotkeyUpDown);
+
+            RegisterCallback<ClickEvent>(NodeHotkey);
         }
 
-       /* private IManipulator CreateNodeContextualMenu<T>(string actionTitle) where T : ShaderNode, new()
-        {
-            return new ContextualMenuManipulator(
-                menuEvent => menuEvent.menu.AppendAction(actionTitle, actionEvent => AddElement(CreateNode<T>(actionEvent.eventInfo.localMousePosition)))
-            );
-        }
-*/
         private IManipulator CreateGroupContextualMenu()
         {
             return new ContextualMenuManipulator(
@@ -71,10 +66,10 @@ namespace z3y.ShaderGraph
             return group;
         }
 
-        public void CreateNode(Type type, Vector2 position)
+        public void CreateNode(Type type, Vector2 position, bool transform = true)
         {
             //TODO: check type
-            TransformMousePositionToLocalSpace(ref position, true);
+            if (transform) TransformMousePositionToLocalSpace(ref position, true);
             var node = new ShaderNodeVisualElement();
             node.Initialize(type, position);
             AddElement(node);
@@ -130,5 +125,41 @@ namespace z3y.ShaderGraph
             }
             position = contentViewContainer.WorldToLocal(position);
         }
+
+        private KeyCode _lastKeyCode = KeyCode.None;
+        private void NodeHotkeyKeyDown(KeyDownEvent e)
+        {
+            var key = e.keyCode;
+            if (key != KeyCode.None) _lastKeyCode = e.keyCode;
+        }
+
+        private void NodeHotkeyUpDown(KeyUpEvent evt)
+        {
+            _lastKeyCode = KeyCode.None;
+        }
+
+        private void NodeHotkey(ClickEvent e)
+        {
+            if (e.target is not ShaderGraphView || e.button != (int)MouseButton.LeftMouse)
+            {
+                return;
+            }
+
+            Vector2 localPosition = e.localPosition;
+            Vector2 position = viewTransform.matrix.inverse.MultiplyPoint(localPosition);
+
+            switch (_lastKeyCode)
+            {
+                case KeyCode.Alpha1: CreateNode(typeof(FloatNode), position, false); break;
+                case KeyCode.Alpha2: CreateNode(typeof(Float2Node), position, false); break;
+                case KeyCode.Alpha3: CreateNode(typeof(Float3Node), position, false); break;
+                case KeyCode.Alpha4: CreateNode(typeof(Float4Node), position, false); break;
+                case KeyCode.M: CreateNode(typeof(MultiplyNode), position, false); break;
+                case KeyCode.A: CreateNode(typeof(AddNode), position, false); break;
+                case KeyCode.Period: CreateNode(typeof(DotNode), position, false); break;
+                case KeyCode.Z: CreateNode(typeof(SwizzleNode), position, false); break;
+            }
+        }
+
     }
 }
