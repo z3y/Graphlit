@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 namespace z3y.ShaderGraph.Nodes
 {
     [@NodeInfo("*", "a * b")]
-    public class MultiplyNode : ShaderNode
+    public sealed class MultiplyNode : ShaderNode
     {
         const int A = 0;
         const int B = 1;
@@ -34,7 +34,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [@NodeInfo("+", "a + b")]
-    public class AddNode : ShaderNode
+    public sealed class AddNode : ShaderNode
     {
         const int A = 0;
         const int B = 1;
@@ -58,7 +58,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [@NodeInfo("dot", "dot(a, b)")]
-    public class DotNode : ShaderNode
+    public sealed class DotNode : ShaderNode
     {
         const int A = 0;
         const int B = 1;
@@ -73,7 +73,7 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void Visit(StringBuilder sb)
         {
-            var components = ImplicitTruncation(new[] {A, B } );
+            var components = ImplicitTruncation(new[] {A, B} );
             var a = GetCastInputString(A, components);
             var b = GetCastInputString(B, components);
 
@@ -87,7 +87,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [@NodeInfo("swizzle")]
-    public class SwizzleNode : ShaderNode
+    public sealed class SwizzleNode : ShaderNode
     {
         const int IN = 0;
         const int OUT = 1;
@@ -119,7 +119,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [@NodeInfo("float4")]
-    public class Float4Node : ShaderNode
+    public sealed class Float4Node : ShaderNode
     {
         const int OUT = 0;
         [SerializeField] Vector4 value;
@@ -143,7 +143,7 @@ namespace z3y.ShaderGraph.Nodes
         }
     }
     [@NodeInfo("float3")]
-    public class Float3Node : ShaderNode
+    public sealed class Float3Node : ShaderNode
     {
         const int OUT = 0;
         [SerializeField] Vector3 value;
@@ -169,7 +169,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [@NodeInfo("float2")]
-    public class Float2Node : ShaderNode
+    public sealed class Float2Node : ShaderNode
     {
         const int OUT = 0;
         [SerializeField] Vector2 value;
@@ -195,7 +195,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [@NodeInfo("float")]
-    public class FloatNode : ShaderNode
+    public sealed class FloatNode : ShaderNode
     {
         const int OUT = 0;
         [SerializeField] float value;
@@ -221,7 +221,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [@NodeInfo("Result")]
-    public class OutputNode : ShaderNode
+    public sealed class OutputNode : ShaderNode
     {
         const int IN = 0;
 

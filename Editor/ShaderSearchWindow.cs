@@ -36,6 +36,10 @@ namespace z3y.ShaderGraph
             {
                 var t = _existingNodeTypes[i];
                 var nodeInfo = t.GetCustomAttribute<NodeInfo>();
+                if (nodeInfo is null)
+                {
+                    continue;
+                }
 
                 entries.Add(new SearchTreeEntry(
                     new GUIContent(nodeInfo.name == null ? "Default" : nodeInfo.name,

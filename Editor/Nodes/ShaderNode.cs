@@ -76,8 +76,7 @@ namespace z3y.ShaderGraph.Nodes
         }
     }
 
-    [System.Serializable]
-    [@NodeInfo("Default Title")]
+    [Serializable]
     public class ShaderNode : ISerializationCallbackReceiver
     {
         public void InitializeVisualElement(ShaderNodeVisualElement node)

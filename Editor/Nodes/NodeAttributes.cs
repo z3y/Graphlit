@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace z3y.ShaderGraph.Nodes
 {
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class NodeInfo : Attribute
     {
         public string name;
