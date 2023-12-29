@@ -6,8 +6,8 @@ using System.Text;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
+using z3y.ShaderGraph.Nodes.PortType;
 using static UnityEditor.Experimental.GraphView.Port;
-using static z3y.ShaderGraph.Nodes.PortType;
 
 namespace z3y.ShaderGraph.Nodes
 {
@@ -193,7 +193,7 @@ namespace z3y.ShaderGraph.Nodes
                 if (_defaultPortsTypes[port.Key] is Float defaultFloatType && defaultFloatType.dynamic)
                 {
                     var floatType = (Float)PortsTypes[port.Key];
-                    var color = GetComponentColor(floatType.components);
+                    var color = floatType.GetPortColor();
                     Ports[port.Key].portColor = color;
                 }
             }
@@ -370,12 +370,12 @@ namespace z3y.ShaderGraph.Nodes
             port.userData = id;
             if (portType is Float @float)
             {
-                var color = GetComponentColor(@float.components);
+                var color = @float.GetPortColor();
                 port.portColor = color;
             }
             else
             {
-                port.portColor = GetPortColor(type);
+                port.portColor = portType.GetPortColor();
             }
             Ports.Add(id, port);
 
