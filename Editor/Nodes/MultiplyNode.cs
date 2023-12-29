@@ -51,7 +51,8 @@ namespace z3y.ShaderGraph.Nodes
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
             SetOutputString(OUT, "Multiply");
-            var type = InheritFloatComponentsMax(OUT, A, B);
+            var type = InheritFloatComponentsMax(OUT, new []{ A, B });
+
             var a = GetCastInputString(A, type.components);
             var b = GetCastInputString(B, type.components);
 
@@ -104,9 +105,12 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void Visit(System.Text.StringBuilder sb, int outID)
         {
-            var a = GetInputString(A);
-            var b = GetInputString(B);
+            var typaA = (PortType.Float)PortsTypes[A];
+            var typaB = (PortType.Float)PortsTypes[B];
 
+            int components = Mathf.Max(typaA.components, typaB.components);
+            var a = GetCastInputString(A, components);
+            var b = GetCastInputString(B, components);
             SetOutputString(OUT, "Dot");
             AppendOutputLine(OUT, sb, $"dot({a}, {b})");
         }

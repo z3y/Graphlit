@@ -122,21 +122,24 @@ namespace z3y.ShaderGraph.Nodes
         {
             return TryGetVariableName(portID, prefix);
         }
-        public Float InheritFloatComponentsMax(int outID, int inIDa, int inIDb)
+        public Float InheritFloatComponentsMax(int outID, int[] inID)
         {
-            var typeA = (Float)PortsTypes[inIDa];
-            var typeB = (Float)PortsTypes[inIDb];
+            int max = 1;
+            for (int i = 0; i < inID.Length; i++)
+            {
+                var inType = (Float)PortsTypes[inID[i]];
+                Mathf.Max(max, inType.components);
+            }
 
-            int components = Mathf.Max(typeA.components, typeB.components);
             if (PortsTypes[outID] is Float @float)
             {
-                @float.components = components;
+                @float.components = max;
                 PortsTypes[outID] = @float; // cannot modify the result of an unboxing conversion
                 return @float;
             }
 
 
-            return new Float(components, true);
+            return new Float(max, true);
         }
 
         public void AppendOutputLine(int portID, System.Text.StringBuilder sb, string text)
