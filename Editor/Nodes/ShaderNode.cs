@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection;
 using System.Text;
 using UnityEditor.Experimental.GraphView;
@@ -143,7 +144,37 @@ namespace z3y.ShaderGraph.Nodes
             return new Float(max, true);
         }
 
-        public void AppendOutputLine(int outID, string prefix, System.Text.StringBuilder sb, string text)
+        public int ImplicitTruncation(int[] IDs, int outputID = -1)
+        {
+            int trunc = 4;
+            int max = 1;
+            for (int i = 0; i < IDs.Length; i++)
+            {
+                var ID = IDs[i];
+                var type = (Float)PortsTypes[ID];
+                var components = type.components;
+                if (components == 1)
+                {
+                    continue;
+                }
+                max = Mathf.Max(max, components);
+                trunc = Mathf.Min(trunc, components);
+            }
+            trunc = Mathf.Min(trunc, max);
+
+            if (outputID >= 0)
+            {
+                if (PortsTypes[outputID] is Float @float)
+                {
+                    @float.components = trunc;
+                    PortsTypes[outputID] = @float;
+                }
+            }
+
+            return trunc;
+        }
+
+        public void AppendOutputLine(StringBuilder sb, int outID, string prefix, string text)
         {
             SetOutputString(outID, prefix);
             sb.AppendLine($"{(Float)PortsTypes[outID]} {PortNames[outID]} = {text};");

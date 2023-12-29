@@ -20,11 +20,11 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void Visit(StringBuilder sb)
         {
-            var type = InheritFloatComponentsMax(OUT, new []{ A, B }); // error in hlsl, no implicit casting
-            var a = GetCastInputString(A, type.components);
-            var b = GetCastInputString(B, type.components);
+            var components = ImplicitTruncation(new[] { A, B }, OUT);
+            var a = GetCastInputString(A, components);
+            var b = GetCastInputString(B, components);
 
-            AppendOutputLine(OUT, "Multiply", sb, $"{a} * {b}");
+            AppendOutputLine(sb, OUT, "Multiply", $"{a} * {b}");
         }
 
         public override string SetDefaultInputString(int portID)
@@ -49,11 +49,11 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void Visit(StringBuilder sb)
         {
-            var type = InheritFloatComponentsMax(OUT, new[] { A, B }); // error in hlsl, no implicit casting
+            var type = InheritFloatComponentsMax(OUT, new[] { A, B });
             var a = GetCastInputString(A, type.components);
             var b = GetCastInputString(B, type.components);
 
-            AppendOutputLine(OUT, "Add", sb, $"{a} + {b}");
+            AppendOutputLine(sb, OUT, "Add", $"{a} + {b}");
         }
     }
 
@@ -73,25 +73,11 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void Visit(StringBuilder sb)
         {
-            var componentsA = GetComponentCount(A);
-            var componentsB = GetComponentCount(B);
+            var components = ImplicitTruncation(new[] {A, B } );
+            var a = GetCastInputString(A, components);
+            var b = GetCastInputString(B, components);
 
-            // implicit truncation of A and B
-            string a;
-            string b;
-            if (componentsA > 1 && componentsB > 1)
-            {
-                int components = Mathf.Min(componentsA, componentsB);
-                a = GetCastInputString(A, components);
-                b = GetCastInputString(B, components);
-            }
-            else
-            {
-                a = GetInputString(A);
-                b = GetInputString(B);
-            }
-
-            AppendOutputLine(OUT, "Dot", sb, $"dot({a}, {b})");
+            AppendOutputLine(sb, OUT, "Dot", $"dot({a}, {b})");
         }
 
         public override string SetDefaultInputString(int portID)
