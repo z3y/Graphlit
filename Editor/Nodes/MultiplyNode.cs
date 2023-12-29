@@ -31,31 +31,31 @@ namespace z3y.ShaderGraph.Nodes
         {
             return "1";
         }
-
     }
 
-    /*[@NodeInfo("+", "a + b")]
+    [@NodeInfo("+", "a + b")]
     public class AddNode : ShaderNode
     {
-        public override void AddVisualElements()
+        const int A = 0;
+        const int B = 1;
+        const int OUT = 2;
+
+        public override void Initialize()
         {
-            AddInput(typeof(PortType.DynamicFloat), 0, "a");
-            AddInput(typeof(PortType.DynamicFloat), 1, "b");
-            AddOutput(typeof(PortType.DynamicFloat), 2);
+            AddPort(Direction.Input, new PortType.Float(1, true), A, "A");
+            AddPort(Direction.Input, new PortType.Float(1, true), B, "B");
+            AddPort(Direction.Output, new PortType.Float(1, true), OUT);
         }
 
-        public override void Visit(System.Text.StringBuilder sb, int outID)
+        public override void Visit(StringBuilder sb)
         {
-            var a = GetInputVariable(0);
-            var b = GetInputVariable(1);
+            var type = InheritFloatComponentsMax(OUT, new[] { A, B }); // error in hlsl, no implicit casting
+            var a = GetCastInputString(A, type.components);
+            var b = GetCastInputString(B, type.components);
 
-            var result = SetOutputVariable(2, "Add");
-            var type = InheritDynamicFloatMax(2, 0, 1);
-            CastVariableName(ref a, 0, type.components);
-            CastVariableName(ref b, 1, type.components);
-            sb.AppendLine($"{type} {result} = {a} + {b};");
+            AppendOutputLine(OUT, "Add", sb, $"{a} + {b}");
         }
-    }*/
+    }
 
     [@NodeInfo("dot", "dot(a, b)")]
     public class DotNode : ShaderNode
@@ -100,15 +100,21 @@ namespace z3y.ShaderGraph.Nodes
         }
     }
 
-    /*[@NodeInfo("swizzle")]
+    [@NodeInfo("swizzle")]
     public class SwizzleNode : ShaderNode
     {
-        [UnityEngine.SerializeField] string swizzle = "x";
+        const int IN = 0;
+        const int OUT = 1;
+        [SerializeField] string swizzle = "x";
+
+        public override void Initialize()
+        {
+            AddPort(Direction.Input, new PortType.Float(1, true), IN);
+            AddPort(Direction.Output, new PortType.Float(1, true), OUT);
+        }
+
         public override void AddVisualElements()
         {
-            AddInput(typeof(PortType.DynamicFloat), 0);
-            AddOutput(typeof(PortType.DynamicFloat), 1);
-
             var f = new TextField { value = swizzle };
             f.RegisterValueChangedCallback((evt) => {
                 swizzle = evt.newValue;
@@ -116,13 +122,15 @@ namespace z3y.ShaderGraph.Nodes
             Node.extensionContainer.Add(f);
         }
 
-        public override void Visit(System.Text.StringBuilder sb, int outID)
+        public override void Visit(StringBuilder sb)
         {
-            var a = GetInputVariable(0);
-            portNames[1] = "(" + a + ")." + swizzle;
-            portTypes[1] = new PortType.DynamicFloat(swizzle.Length);
+            int components = swizzle.Length;
+            var a = GetInputString(IN);
+            PortNames[OUT] = "(" + a + ")." + swizzle;
+            PortsTypes[OUT] = new PortType.Float(components);
+            PortsTypes[IN] = PortsTypes[OUT];
         }
-    }*/
+    }
 
     [@NodeInfo("float4")]
     public class Float4Node : ShaderNode
@@ -230,20 +238,14 @@ namespace z3y.ShaderGraph.Nodes
     public class OutputNode : ShaderNode
     {
         const int IN = 0;
-        //const int IN2 = 1;
-
 
         public override void Initialize()
         {
             AddPort(Direction.Input, new PortType.Float(4), IN);
-            //AddPort(Direction.Input, new PortType.Float(2), IN2);
-
         }
         public override void Visit(StringBuilder sb)
         {
             var col = GetCastInputString(IN, 4);
-            //var col2 = GetCastInputString(IN, 2);
-            //sb.AppendLine($"float2 col2 = {col2};");
             sb.AppendLine($"col = {col};");
         }
     }
