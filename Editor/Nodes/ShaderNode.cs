@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -142,9 +143,10 @@ namespace z3y.ShaderGraph.Nodes
             return new Float(max, true);
         }
 
-        public void AppendOutputLine(int portID, System.Text.StringBuilder sb, string text)
+        public void AppendOutputLine(int outID, string prefix, System.Text.StringBuilder sb, string text)
         {
-            sb.AppendLine($"{(Float)PortsTypes[portID]} {PortNames[portID]} = {text};");
+            SetOutputString(outID, prefix);
+            sb.AppendLine($"{(Float)PortsTypes[outID]} {PortNames[outID]} = {text};");
         }
 
         public void UpdateGraphView()
@@ -180,6 +182,23 @@ namespace z3y.ShaderGraph.Nodes
             PortNames[portID] = SetDefaultInputString(portID);
         }
 
+        public bool IsConnected(int inputID)
+        {
+            foreach (var connection in _connections)
+            {
+                if (connection.outID == inputID)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        public int GetComponentCount(int portID)
+        {
+            return ((Float)PortsTypes[portID]).components;
+        }
+
         /* public PortType.DynamicFloat InheritDynamicFloat(int outID, int inID)
          {
              var inType = (PortType.DynamicFloat)portTypes[inID];
@@ -202,41 +221,42 @@ namespace z3y.ShaderGraph.Nodes
                 return name;
             }
 
-            type.components = targetComponent;
-            PortsTypes[portID] = type;
-
             // downcast
             if (components > targetComponent)
             {
                 name = "(" + name + ").xyz"[..(targetComponent + 2)];
-                return name;
+            }
+            else
+            {
+                // upcast
+                if (components == 1)
+                {
+                    // no need to upcast
+                    // name = "(" + name + ").xxxx"[..(targetComponent + 2)];
+                    return name;
+                }
+                else if (components == 2)
+                {
+                    if (targetComponent == 3)
+                    {
+                        name = typeName + "3(" + name + ", 0)";
+                    }
+                    if (targetComponent == 4)
+                    {
+                        name = typeName + "4(" + name + ", 0, 0)";
+                    }
+                }
+                else if (components == 3)
+                {
+                    if (targetComponent == 4)
+                    {
+                        name = typeName + "4(" + name + ", 0)";
+                    }
+                }
             }
 
-            // upcast
-            if (components == 1)
-            {
-                // no need to upcast
-                name = "(" + name + ").xxxx"[..(targetComponent + 2)];
-                return name;
-            }
-            else if (components == 2)
-            {
-                if (targetComponent == 3)
-                {
-                    name = typeName + "3(" + name + ", 0)";
-                }
-                if (targetComponent == 4)
-                {
-                    name = typeName + "4(" + name + ", 0, 0)";
-                }
-            }
-            else if (components == 3)
-            {
-                if (targetComponent == 4)
-                {
-                    name = typeName + "4(" + name + ", 0)";
-                }
-            }
+            type.components = targetComponent;
+            PortsTypes[portID] = type;
             return name;
         }
 
@@ -265,7 +285,7 @@ namespace z3y.ShaderGraph.Nodes
             {
                 Port port = keyValue.Value;
 
-                if (port.direction != Direction.Input)
+                if ((Direction)port.direction != Direction.Input)
                 {
                     continue;
                 }
@@ -290,6 +310,12 @@ namespace z3y.ShaderGraph.Nodes
         private Dictionary<int, IPortType> _defaultPortsTypes = new();
         public Dictionary<int, Port> Ports { get; private set; } = new();
 
+        public enum Direction
+        {
+            Input,
+            Output
+        }
+
         public void AddPort(Direction direction, IPortType portType, int id, string name = "")
         {
             if (PortsTypes.ContainsKey(id))
@@ -308,7 +334,7 @@ namespace z3y.ShaderGraph.Nodes
 
             var type = portType.GetType();
             var capacity = direction == Direction.Input ? Capacity.Single : Capacity.Multi;
-            var port = Node.InstantiatePort(Orientation.Horizontal, direction, capacity, type);
+            var port = Node.InstantiatePort(Orientation.Horizontal, (UnityEditor.Experimental.GraphView.Direction)direction, capacity, type);
             port.portName = name;
             port.userData = id;
             if (portType is Float @float)
@@ -337,20 +363,20 @@ namespace z3y.ShaderGraph.Nodes
         {
             return "0";
         }
+        public bool visited = false;
         public void ResetAfterVisit()
         {
+            visited = false;
             PortNames.Clear();
-            visitedPorts.Clear();
             foreach (var port in _defaultPortsTypes)
             {
                 PortsTypes[port.Key] = _defaultPortsTypes[port.Key];
             }
         }
 
-        [NonSerialized] public List<int> visitedPorts = new();
         [NonSerialized] public Dictionary<int, string> PortNames = new();
 
-        public virtual void Visit(System.Text.StringBuilder sb, int outID)
+        public virtual void Visit(StringBuilder sb)
         {
         }
 

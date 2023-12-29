@@ -43,8 +43,7 @@ namespace z3y.ShaderGraph
             foreach (var connection in connections)
             {
                 var inNode = connection.inNode;
-                var visitedPorts = inNode.visitedPorts;
-                if (visitedPorts.Contains(connection.inID))
+                if (inNode.visited)
                 {
                     // copy
                     node.PortNames[connection.outID] = inNode.SetOutputString(connection.inID);
@@ -55,8 +54,7 @@ namespace z3y.ShaderGraph
                 }
                 VisitConenctedNode(sb, inNode);
 
-                inNode.Visit(sb, connection.inID);
-
+                inNode.Visit(sb);
                 {
                     // copy
                     node.PortNames[connection.outID] = connection.inNode.SetOutputString(connection.inID);
@@ -65,7 +63,7 @@ namespace z3y.ShaderGraph
                 }
 
                 inNode.UpdateGraphView();
-                visitedPorts.Add(connection.inID);
+                inNode.visited = true;
             }
 
         }
@@ -97,7 +95,7 @@ namespace z3y.ShaderGraph
                 {
                     VisitConenctedNode(sb, node);
                     //sb.Append("col = " + node.varibleNames[0] + ";");
-                    node.Visit(sb, 0);
+                    node.Visit(sb);
                     break;
                 }
             }

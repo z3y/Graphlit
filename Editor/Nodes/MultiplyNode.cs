@@ -1,39 +1,9 @@
-using System;
-using UnityEditor.Experimental.GraphView;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace z3y.ShaderGraph.Nodes
 {
-    /*[@NodeInfo("*", "a * b")]
-    public class MultiplyNode : ShaderNode
-    {
-        public override void AddVisualElements()
-        {
-            AddInput(typeof(PortType.DynamicFloat), 0, "a");
-            AddInput(typeof(PortType.DynamicFloat), 1, "b");
-            AddOutput(typeof(PortType.DynamicFloat), 2);
-        }
-
-        public override void Visit(System.Text.StringBuilder sb, int outID)
-        {
-            string a = GetInputVariable(0);
-            string b = GetInputVariable(1);
-
-            var result = SetOutputVariable(2, "Multiply");
-            var type = InheritDynamicFloatMax(2, 0, 1);
-            CastVariableName(ref a, 0, type.components);
-            CastVariableName(ref b, 1, type.components);
-            sb.AppendLine($"{type} {result} = {a} * {b};");
-        }
-
-        public override void DefaultInputValue(int portID)
-        {
-            portNames[portID] = "1";
-            portTypes[portID] = new PortType.DynamicFloat(1);
-        }
-    }*/
-
     [@NodeInfo("*", "a * b")]
     public class MultiplyNode : ShaderNode
     {
@@ -48,15 +18,13 @@ namespace z3y.ShaderGraph.Nodes
             AddPort(Direction.Output, new PortType.Float(1, true), OUT);
         }
 
-        public override void Visit(System.Text.StringBuilder sb, int outID)
+        public override void Visit(StringBuilder sb)
         {
-            SetOutputString(OUT, "Multiply");
-            var type = InheritFloatComponentsMax(OUT, new []{ A, B });
-
+            var type = InheritFloatComponentsMax(OUT, new []{ A, B }); // error in hlsl, no implicit casting
             var a = GetCastInputString(A, type.components);
             var b = GetCastInputString(B, type.components);
 
-            AppendOutputLine(OUT, sb, $"{a} * {b}");
+            AppendOutputLine(OUT, "Multiply", sb, $"{a} * {b}");
         }
 
         public override string SetDefaultInputString(int portID)
@@ -103,16 +71,27 @@ namespace z3y.ShaderGraph.Nodes
             AddPort(Direction.Output, new PortType.Float(1), OUT);
         }
 
-        public override void Visit(System.Text.StringBuilder sb, int outID)
+        public override void Visit(StringBuilder sb)
         {
-            var typaA = (PortType.Float)PortsTypes[A];
-            var typaB = (PortType.Float)PortsTypes[B];
+            var componentsA = GetComponentCount(A);
+            var componentsB = GetComponentCount(B);
 
-            int components = Mathf.Max(typaA.components, typaB.components);
-            var a = GetCastInputString(A, components);
-            var b = GetCastInputString(B, components);
-            SetOutputString(OUT, "Dot");
-            AppendOutputLine(OUT, sb, $"dot({a}, {b})");
+            // implicit truncation of A and B
+            string a;
+            string b;
+            if (componentsA > 1 && componentsB > 1)
+            {
+                int components = Mathf.Min(componentsA, componentsB);
+                a = GetCastInputString(A, components);
+                b = GetCastInputString(B, components);
+            }
+            else
+            {
+                a = GetInputString(A);
+                b = GetInputString(B);
+            }
+
+            AppendOutputLine(OUT, "Dot", sb, $"dot({a}, {b})");
         }
 
         public override string SetDefaultInputString(int portID)
@@ -164,7 +143,7 @@ namespace z3y.ShaderGraph.Nodes
             });
             Node.inputContainer.Add(f);
         }
-        public override void Visit(System.Text.StringBuilder sb, int outID)
+        public override void Visit(StringBuilder sb)
         {
             PortNames[0] = "float4" + value.ToString("R");
         }
@@ -189,7 +168,7 @@ namespace z3y.ShaderGraph.Nodes
             Node.inputContainer.Add(f);
         }
 
-        public override void Visit(System.Text.StringBuilder sb, int outID)
+        public override void Visit(StringBuilder sb)
         {
             PortNames[0] = "float3" + value.ToString("R");
         }
@@ -215,7 +194,7 @@ namespace z3y.ShaderGraph.Nodes
             Node.inputContainer.Add(f);
         }
 
-        public override void Visit(System.Text.StringBuilder sb, int outID)
+        public override void Visit(StringBuilder sb)
         {
             PortNames[0] = "float2" + value.ToString("R");
         }
@@ -241,7 +220,7 @@ namespace z3y.ShaderGraph.Nodes
             Node.inputContainer.Add(f);
         }
 
-        public override void Visit(System.Text.StringBuilder sb, int outID)
+        public override void Visit(StringBuilder sb)
         {
             PortNames[0] = value.ToString("R");
         }
@@ -260,7 +239,7 @@ namespace z3y.ShaderGraph.Nodes
             //AddPort(Direction.Input, new PortType.Float(2), IN2);
 
         }
-        public override void Visit(System.Text.StringBuilder sb, int outID)
+        public override void Visit(StringBuilder sb)
         {
             var col = GetCastInputString(IN, 4);
             //var col2 = GetCastInputString(IN, 2);
