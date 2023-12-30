@@ -223,16 +223,24 @@ namespace z3y.ShaderGraph.Nodes
     [@NodeInfo("Result")]
     public sealed class OutputNode : ShaderNode
     {
-        const int IN = 0;
+        const int ALBEDO = 0;
+        const int ALPHA = 1;
+        const int ROUGHNESS = 2;
+        const int METALLIC = 3;
 
         public override void Initialize()
         {
-            AddPort(Direction.Input, new PortType.Float(4), IN);
+            AddPort(Direction.Input, new PortType.Float(3), ALBEDO, "Albedo");
+            AddPort(Direction.Input, new PortType.Float(1), ALPHA, "Alpha");
+            AddPort(Direction.Input, new PortType.Float(1), ROUGHNESS, "Roughness");
+            AddPort(Direction.Input, new PortType.Float(1), METALLIC, "Metallic");
         }
         public override void Visit(StringBuilder sb)
         {
-            var col = GetCastInputString(IN, 4);
-            sb.AppendLine($"col = {col};");
+            sb.AppendLine($"float3 albedo = {GetInputString(ALBEDO)};");
+            sb.AppendLine($"float alpha = {GetInputString(ALPHA)};");
+            sb.AppendLine($"float roughness = {GetInputString(ROUGHNESS)};");
+            sb.AppendLine($"float metallic = {GetInputString(METALLIC)};");
         }
     }
 }

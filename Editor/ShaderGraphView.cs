@@ -74,7 +74,7 @@ namespace z3y.ShaderGraph
             var data = JsonUtility.FromJson<SerializedGraphData>(jsonData);
 
             //Vector2 mousePosition = Vector2.left;
-            Vector2 mousePosition = new Vector2(100, 100);
+            Vector2 mousePosition = new Vector2(-200, -200);
             ShaderGraphImporter.DeserializeNodesToGraph(data, this, mousePosition);
 
             foreach (var node in data.shaderNodes)
@@ -86,7 +86,7 @@ namespace z3y.ShaderGraph
         private SerializedGraphDataSo _serializedGraphDataSo;
         // fucking manually implement undo because graph view is amazing
         private List<string> _undoStates = new();
-        private void RecordUndo()
+        public void RecordUndo()
         {
             if (_serializedGraphDataSo == null)
             {
@@ -142,6 +142,7 @@ namespace z3y.ShaderGraph
             //TODO: check type
 
             //RegisterCompleteObjectUndo("Add node");
+            RecordUndo();
 
             if (transform) TransformMousePositionToLocalSpace(ref position, true);
             var node = new ShaderNodeVisualElement();

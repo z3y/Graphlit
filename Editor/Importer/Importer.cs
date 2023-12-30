@@ -153,6 +153,11 @@ namespace z3y.ShaderGraph
 
             DeserializeNodesToGraph(data, graph);
 
+            // wtf
+            EditorApplication.delayCall += () =>
+            {
+                graph.FrameAll();
+            };
             win.nodesLoaded = true;
         }
 

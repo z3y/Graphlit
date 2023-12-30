@@ -5,5 +5,5 @@
 	--sg-colors-window-dark-gray-5: rgba(43,43,43,255);
 	--sg-colors-window-dark-gray-6: rgba(45,45,45,255);
 	--sg-colors-window-dark-gray-button: rgba(55,55,55,255);
-	--sg-font-size-title: 13px;
+	--sg-font-size-title: 14px;
 }

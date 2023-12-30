@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -50,7 +51,7 @@ namespace z3y.ShaderGraph.Nodes
             var nodeInfo = shaderNode.GetNodeInfo();
 
             var titleLabel = new Label { text = nodeInfo.name, tooltip = nodeInfo.tooltip };
-            titleLabel.style.fontSize = 13;
+            titleLabel.style.fontSize = 14;
             var centerAlign = new StyleEnum<Align> { value = Align.Center };
             titleLabel.style.alignSelf = centerAlign;
             titleLabel.style.alignItems = centerAlign;
@@ -177,13 +178,8 @@ namespace z3y.ShaderGraph.Nodes
                         caps.style.borderLeftColor = color;
                         caps.style.borderRightColor = color;
                     }
-
                 }
             }
-
-            //Node.MarkDirtyRepaint();
-            //Node.RefreshExpandedState();
-            //Node.RefreshPorts();
         }
 
         private void UpdatePortDefaultString(int portID)
@@ -383,7 +379,7 @@ namespace z3y.ShaderGraph.Nodes
         {
             return "0";
         }
-        public bool visited = false;
+        [NonSerialized] public bool visited = false;
         public void ResetAfterVisit()
         {
             visited = false;
