@@ -1,15 +1,13 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
+using z3y.ShaderGraph.Nodes;
 
 namespace z3y.ShaderGraph
 {
-    using NUnit.Framework.Internal.Execution;
-    using z3y.ShaderGraph.Nodes;
 
     public class ShaderGraphView : GraphView
     {
@@ -45,7 +43,80 @@ namespace z3y.ShaderGraph
             RegisterCallback<KeyUpEvent>(NodeHotkeyUpDown);
 
             RegisterCallback<ClickEvent>(NodeHotkey);
+
+            serializeGraphElements = SerializeGraphElementsImpl;
+            unserializeAndPaste = UnserializeAndPasteImpl;
         }
+
+        public string SerializeGraphElementsImpl(IEnumerable<GraphElement> elements)
+        {
+            var data = new SerializedGraphData();
+            var shaderNodes = new List<ShaderNode>();
+
+            foreach (var node in elements)
+            {
+                if (node is ShaderNodeVisualElement shaderNodeVisualElement)
+                {
+                    var shaderNode = shaderNodeVisualElement.shaderNode;
+                    shaderNodes.Add(shaderNode);
+                }
+            }
+
+            data.shaderNodes = shaderNodes.ToArray();
+            var jsonData = JsonUtility.ToJson(data, false);
+            return jsonData;
+        }
+
+        public void UnserializeAndPasteImpl(string operationName, string jsonData)
+        {
+            RecordUndo();
+
+            var data = JsonUtility.FromJson<SerializedGraphData>(jsonData);
+
+            //Vector2 mousePosition = Vector2.left;
+            Vector2 mousePosition = new Vector2(100, 100);
+            ShaderGraphImporter.DeserializeNodesToGraph(data, this, mousePosition);
+
+            foreach (var node in data.shaderNodes)
+            {
+                AddToSelection(node.Node);
+            }
+        }
+
+        private SerializedGraphDataSo _serializedGraphDataSo;
+        // fucking manually implement undo because graph view is amazing
+        private List<string> _undoStates = new();
+        private void RecordUndo()
+        {
+            if (_serializedGraphDataSo == null)
+            {
+                _serializedGraphDataSo = ScriptableObject.CreateInstance<SerializedGraphDataSo>();
+            }
+            Undo.RegisterCompleteObjectUndo(_serializedGraphDataSo, "Graph Undo");
+
+            var jsonData = SerializeGraphElementsImpl(graphElements);
+            _undoStates.Add(jsonData);
+
+            _serializedGraphDataSo.graphView = this;
+            EditorUtility.SetDirty(_serializedGraphDataSo);
+            _serializedGraphDataSo.Init();
+        }
+
+        public void OnUndoPerformed()
+        {
+            if (_undoStates.Count < 1)
+            {
+                return;
+            }
+
+            var jsonData = _undoStates[^1];
+            _undoStates.RemoveAt(_undoStates.Count-1);
+
+            DeleteElements(graphElements);
+            var data = JsonUtility.FromJson<SerializedGraphData>(jsonData);
+            ShaderGraphImporter.DeserializeNodesToGraph(data, this);
+        }
+
 
         private IManipulator CreateGroupContextualMenu()
         {
@@ -69,6 +140,9 @@ namespace z3y.ShaderGraph
         public void CreateNode(Type type, Vector2 position, bool transform = true)
         {
             //TODO: check type
+
+            //RegisterCompleteObjectUndo("Add node");
+
             if (transform) TransformMousePositionToLocalSpace(ref position, true);
             var node = new ShaderNodeVisualElement();
             node.Initialize(type, position);

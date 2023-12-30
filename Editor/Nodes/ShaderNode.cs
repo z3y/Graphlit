@@ -37,6 +37,7 @@ namespace z3y.ShaderGraph.Nodes
             AddStyles();
             AddTitleElement();
             RefreshExpandedState();
+            RefreshPorts();
         }
         private void AddStyles()
         {
@@ -89,6 +90,7 @@ namespace z3y.ShaderGraph.Nodes
         [SerializeField] private Vector2 _position;
         [SerializeField] private List<NodeConnection> _connections;
         public Vector2 GetSerializedPosition() => _position;
+        public void SetPosition(Vector2 position) => _position = position;
         public List<NodeConnection> GetSerializedConnections() => _connections;
 
 

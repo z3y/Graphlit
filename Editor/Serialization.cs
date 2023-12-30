@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using z3y.ShaderGraph.Nodes;
 
@@ -11,7 +12,16 @@ namespace z3y.ShaderGraph
         [SerializeReference] public ShaderNode[] shaderNodes;
         [SerializeField] public string shaderName;
     }
-
+    
+    public class SerializedGraphDataSo : ScriptableObject
+    {
+        public void Init()
+        {
+            Undo.undoRedoPerformed -= graphView.OnUndoPerformed;
+            Undo.undoRedoPerformed += graphView.OnUndoPerformed;
+        }
+        public ShaderGraphView graphView;
+    }
 
     [System.Serializable]
     public struct NodeConnection

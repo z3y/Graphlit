@@ -9,6 +9,7 @@ using System.Text;
 using System;
 using UnityEditor.MemoryProfiler;
 using System.Security.Cryptography;
+using UnityEngine.UIElements;
 
 namespace z3y.ShaderGraph
 {
@@ -153,16 +154,55 @@ namespace z3y.ShaderGraph
                 }
             }*/
 
+            DeserializeNodesToGraph(data, graph);
+
+            win.nodesLoaded = true;
+        }
+
+        public static void DeserializeNodesToGraph(SerializedGraphData data, ShaderGraphView graphView, Vector2 mousePosition = new Vector2())
+        {
+            // offset for paste
+
+            Vector2 minBounds = new Vector2();
+            Vector2 maxBounds = new Vector2();
+            bool offset = mousePosition != Vector2.zero;
+
+            if (offset)
+            {
+                foreach (var node in data.shaderNodes)
+                {
+                    var position = node.GetSerializedPosition();
+
+                    if (minBounds == Vector2.zero)
+                    {
+                        minBounds = position;
+                        maxBounds = position;
+                    }
+                    minBounds = Vector2.Min(minBounds, position);
+                    maxBounds = Vector2.Min(maxBounds, position);
+                }
+            }
+            Vector2 boundCenter = (maxBounds - minBounds) / 2.0f;
+            //var positionOffset = Vector2.Distance(mousePosition, boundCenter);
+            //var positionDirection = ()
+
             // create nodes
+
             foreach (var node in data.shaderNodes)
             {
-                win.graphView.AddNode(node);
+                if (offset)
+                {
+                    var currentPosition = node.GetSerializedPosition();
+                    currentPosition -= boundCenter;
+                    currentPosition += mousePosition;
+                    node.SetPosition(currentPosition);
+                }
+                graphView.AddNode(node);
             }
 
             // create connections
             foreach (var node in data.shaderNodes)
             {
-
                 foreach (var connection in node.GetSerializedConnections())
                 {
                     var graphNode = node.Node;
@@ -182,6 +222,11 @@ namespace z3y.ShaderGraph
                             continue;
                         }
 
+                        if (inNode.Node is null)
+                        {
+                            continue;
+                        }
+
                         foreach (var ve2 in inNode.Node.outputContainer.Children())
                         {
                             if (ve2 is not Port outPort)
@@ -192,16 +237,13 @@ namespace z3y.ShaderGraph
                             if ((int)outPort.userData == inID)
                             {
                                 var newEdge = outPort.ConnectTo(port);
-                                graph.AddElement(newEdge);
+                                graphView.AddElement(newEdge);
                                 break;
                             }
                         }
                     }
-
                 }
             }
-
-            win.nodesLoaded = true;
         }
 
         public static void SaveGraphData(ShaderGraphView graphView, string importerPath)
