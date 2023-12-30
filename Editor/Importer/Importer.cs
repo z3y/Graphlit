@@ -7,9 +7,6 @@ using System.IO;
 using UnityEditor.Experimental.GraphView;
 using System.Text;
 using System;
-using UnityEditor.MemoryProfiler;
-using System.Security.Cryptography;
-using UnityEngine.UIElements;
 
 namespace z3y.ShaderGraph
 {
@@ -38,7 +35,7 @@ namespace z3y.ShaderGraph
             return data;
         }
 
-        private void VisitConenctedNode(StringBuilder sb, ShaderNode node)
+        public static void VisitConenctedNode(StringBuilder sb, ShaderNode node)
         {
             var connections = node.GetSerializedConnections();
             foreach (var connection in connections)

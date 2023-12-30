@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Reflection;
 using System.Text;
 using UnityEditor.Experimental.GraphView;
@@ -109,41 +108,13 @@ namespace z3y.ShaderGraph.Nodes
         }
         public string GetInputString(int portID)
         {
-            /*if (PortsTypes[portID] is Float @float && !@float.dynamic)
-            {
-                TryGetVariableName(portID);
-                return GetCastInputString(portID, @float.components);
-                //return TryGetVariableName(portID);
-            }
-            else
-            {*/
-                UpdatePortDefaultString(portID);
-                return TryGetVariableName(portID);
-            //}
+            UpdatePortDefaultString(portID);
+            return TryGetVariableName(portID);
         }
         public string SetOutputString(int portID, string prefix = null)
         {
             return TryGetVariableName(portID, prefix);
         }
-        /*public Float InheritFloatComponentsMax(int outID, int[] inID)
-        {
-            int max = 1;
-            for (int i = 0; i < inID.Length; i++)
-            {
-                var inType = (Float)PortsTypes[inID[i]];
-                max = Mathf.Max(max, inType.components);
-            }
-
-            if (PortsTypes[outID] is Float @float)
-            {
-                @float.components = max;
-                PortsTypes[outID] = @float; // cannot modify the result of an unboxing conversion
-                return @float;
-            }
-
-
-            return new Float(max, true);
-        }*/
 
         public int ImplicitTruncation(int[] IDs, int outputID = -1)
         {
@@ -196,8 +167,23 @@ namespace z3y.ShaderGraph.Nodes
                     var floatType = (Float)PortsTypes[port.Key];
                     var color = floatType.GetPortColor();
                     Ports[port.Key].portColor = color;
+
+                    // caps not getting updated
+                    var caps = Ports[port.Key].Q("connector");
+                    if (caps is not null)
+                    {
+                        caps.style.borderBottomColor = color;
+                        caps.style.borderTopColor = color;
+                        caps.style.borderLeftColor = color;
+                        caps.style.borderRightColor = color;
+                    }
+
                 }
             }
+
+            //Node.MarkDirtyRepaint();
+            //Node.RefreshExpandedState();
+            //Node.RefreshPorts();
         }
 
         private void UpdatePortDefaultString(int portID)
@@ -366,7 +352,9 @@ namespace z3y.ShaderGraph.Nodes
 
             var type = portType.GetType();
             var capacity = direction == Direction.Input ? Capacity.Single : Capacity.Multi;
-            var port = Node.InstantiatePort(Orientation.Horizontal, (UnityEditor.Experimental.GraphView.Direction)direction, capacity, type);
+
+            var port = Node.InstantiatePort(UnityEditor.Experimental.GraphView.Orientation.Horizontal, (UnityEditor.Experimental.GraphView.Direction)direction, capacity, type);
+            port.AddManipulator(new EdgeConnector<Edge>(new EdgeConnectorListener()));
             port.portName = name;
             port.userData = id;
             if (portType is Float @float)
@@ -427,5 +415,43 @@ namespace z3y.ShaderGraph.Nodes
                 }
             }
         }*/
+    }
+
+    internal class EdgeConnectorListener : IEdgeConnectorListener
+    {
+        public void OnDrop(GraphView graphView, Edge edge)
+        {
+            //throw new NotImplementedException();
+
+            if (graphView is not ShaderGraphView shaderGraphView)
+            {
+                return;
+            }
+            //var sb = new StringBuilder();
+
+            // temp
+            /*ShaderNode.ResetUniqueVariableIDs();
+            graphView.graphElements.ForEach(e => {
+                if (e is ShaderNodeVisualElement shaderNodeVe)
+                {
+                    shaderNodeVe.shaderNode.OnBeforeSerialize();
+                    shaderNodeVe.shaderNode.ResetAfterVisit();
+                }
+            });
+
+            graphView.graphElements.ForEach(e => {
+                if (e is ShaderNodeVisualElement shaderNodeVe)
+                {
+                    ShaderGraphImporter.VisitConenctedNode(sb, shaderNodeVe.shaderNode);
+                }
+            });
+
+            Debug.Log(sb);*/
+        }
+
+
+        public void OnDropOutsidePort(Edge edge, Vector2 position)
+        {
+        }
     }
 }
