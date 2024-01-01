@@ -35,7 +35,7 @@ namespace z3y.ShaderGraph
             return data;
         }
 
-        public static void VisitConenctedNode(StringBuilder sb, ShaderNode node)
+        public static void VisitConenctedNode(NodeVisitor visitor, ShaderNode node)
         {
             var connections = node.GetSerializedConnections();
             foreach (var connection in connections)
@@ -50,9 +50,9 @@ namespace z3y.ShaderGraph
 
                     continue;
                 }
-                VisitConenctedNode(sb, inNode);
+                VisitConenctedNode(visitor, inNode);
 
-                inNode.Visit(sb);
+                inNode.Visit(visitor);
                 {
                     // copy
                     node.PortNames[connection.outID] = connection.inNode.SetOutputString(connection.inID);
@@ -69,7 +69,9 @@ namespace z3y.ShaderGraph
         public override void OnImportAsset(AssetImportContext ctx)
         {
             //var shader = ShaderUtil.CreateShaderAsset(ctx, "uhh", false);
-            var sb = new StringBuilder();
+            var builder = new ShaderBuilder();
+            builder.passBuilders.Add(new PassBuilder("FORWARD"));
+            var visitor = new NodeVisitor(builder);
             var data = ReadGraphData(true);
 
             ShaderNode.ResetUniqueVariableIDs();
@@ -87,13 +89,33 @@ namespace z3y.ShaderGraph
                 }
             }
 
+            
             foreach (var node in data.shaderNodes)
             {
                 if (node.GetType() == typeof(OutputNode))
                 {
-                    VisitConenctedNode(sb, node);
+                    VisitConenctedNode(visitor, node);
                     //sb.Append("col = " + node.varibleNames[0] + ";");
-                    node.Visit(sb);
+                    node.Visit(visitor);
+                    break;
+                }
+            }
+
+            ShaderNode.ResetUniqueVariableIDs();
+            foreach (var node in data.shaderNodes)
+            {
+                node.ResetAfterVisit();
+            }
+
+            visitor.GenerationStage = GenerationStage.Fragment;
+
+            foreach (var node in data.shaderNodes)
+            {
+                if (node.GetType() == typeof(OutputNode))
+                {
+                    VisitConenctedNode(visitor, node);
+                    //sb.Append("col = " + node.varibleNames[0] + ";");
+                    node.Visit(visitor);
                     break;
                 }
             }
@@ -117,7 +139,7 @@ namespace z3y.ShaderGraph
 
             //var result = string.Join('\n', sh);
             //var shader = ShaderUtil.CreateShaderAsset(ctx, result, false);
-            ctx.AddObjectToAsset("text", new TextAsset(sb.ToString()));
+            ctx.AddObjectToAsset("text", new TextAsset(builder.ToString()));
             //ctx.AddObjectToAsset("Main Asset", shader);
             _cachedGraphData.Clear();
         }

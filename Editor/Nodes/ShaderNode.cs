@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -78,7 +77,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [Serializable]
-    public class ShaderNode : ISerializationCallbackReceiver
+    public abstract class ShaderNode : ISerializationCallbackReceiver
     {
         public void InitializeVisualElement(ShaderNodeVisualElement node)
         {
@@ -147,10 +146,10 @@ namespace z3y.ShaderGraph.Nodes
             return trunc;
         }
 
-        public void AppendOutputLine(StringBuilder sb, int outID, string prefix, string text)
+        public string FormatOutput(int outID, string prefix, string text)
         {
             SetOutputString(outID, prefix);
-            sb.AppendLine($"{(Float)PortsTypes[outID]} {PortNames[outID]} = {text};");
+            return $"{(Float)PortsTypes[outID]} {PortNames[outID]} = {text};";
         }
 
         public void UpdateGraphView()
@@ -367,9 +366,7 @@ namespace z3y.ShaderGraph.Nodes
             if (direction == Direction.Input) Node.inputContainer.Add(port);
             else Node.outputContainer.Add(port);
         }
-        public virtual void Initialize()
-        {
-        }
+        public abstract void Initialize();
 
         public virtual void AddVisualElements()
         {
@@ -392,9 +389,7 @@ namespace z3y.ShaderGraph.Nodes
 
         [NonSerialized] public Dictionary<int, string> PortNames = new();
 
-        public virtual void Visit(StringBuilder sb)
-        {
-        }
+        public abstract void Visit(NodeVisitor sb);
 
         /*public void Repaint()
         {

@@ -18,19 +18,20 @@ namespace z3y.ShaderGraph.Nodes
             AddPort(Direction.Output, new PortType.Float(1, true), OUT);
         }
 
-        public override void Visit(StringBuilder sb)
+        public override string SetDefaultInputString(int portID)
+        {
+            return "1";
+        }
+
+        public override void Visit(NodeVisitor visitor)
         {
             var components = ImplicitTruncation(new[] { A, B }, OUT);
             var a = GetCastInputString(A, components);
             var b = GetCastInputString(B, components);
 
-            AppendOutputLine(sb, OUT, "Multiply", $"{a} * {b}");
+            visitor.AppendLine(FormatOutput(OUT, "Multiply", $"{a} * {b}"));
         }
 
-        public override string SetDefaultInputString(int portID)
-        {
-            return "1";
-        }
     }
 
     [@NodeInfo("+", "a + b")]
@@ -47,13 +48,13 @@ namespace z3y.ShaderGraph.Nodes
             AddPort(Direction.Output, new PortType.Float(1, true), OUT);
         }
 
-        public override void Visit(StringBuilder sb)
+        public override void Visit(NodeVisitor visitor)
         {
             var components = ImplicitTruncation(new[] { A, B }, OUT);
             var a = GetCastInputString(A, components);
             var b = GetCastInputString(B, components);
 
-            AppendOutputLine(sb, OUT, "Add", $"{a} + {b}");
+            visitor.AppendLine(FormatOutput(OUT, "Add", $"{a} + {b}"));
         }
     }
 
@@ -71,13 +72,13 @@ namespace z3y.ShaderGraph.Nodes
             AddPort(Direction.Output, new PortType.Float(1), OUT);
         }
 
-        public override void Visit(StringBuilder sb)
+        public override void Visit(NodeVisitor visitor)
         {
             var components = ImplicitTruncation(new[] {A, B} );
             var a = GetCastInputString(A, components);
             var b = GetCastInputString(B, components);
 
-            AppendOutputLine(sb, OUT, "Dot", $"dot({a}, {b})");
+            visitor.AppendLine(FormatOutput(OUT, "Dot", $"dot({a}, {b})"));
         }
 
         public override string SetDefaultInputString(int portID)
@@ -108,7 +109,7 @@ namespace z3y.ShaderGraph.Nodes
             Node.extensionContainer.Add(f);
         }
 
-        public override void Visit(StringBuilder sb)
+        public override void Visit(NodeVisitor visitor)
         {
             int components = swizzle.Length;
             var a = GetInputString(IN);
@@ -137,7 +138,7 @@ namespace z3y.ShaderGraph.Nodes
             });
             Node.inputContainer.Add(f);
         }
-        public override void Visit(StringBuilder sb)
+        public override void Visit(NodeVisitor visitor)
         {
             PortNames[0] = "float4" + value.ToString("R");
         }
@@ -162,7 +163,7 @@ namespace z3y.ShaderGraph.Nodes
             Node.inputContainer.Add(f);
         }
 
-        public override void Visit(StringBuilder sb)
+        public override void Visit(NodeVisitor visitor)
         {
             PortNames[0] = "float3" + value.ToString("R");
         }
@@ -188,7 +189,7 @@ namespace z3y.ShaderGraph.Nodes
             Node.inputContainer.Add(f);
         }
 
-        public override void Visit(StringBuilder sb)
+        public override void Visit(NodeVisitor visitor)
         {
             PortNames[0] = "float2" + value.ToString("R");
         }
@@ -214,7 +215,7 @@ namespace z3y.ShaderGraph.Nodes
             Node.inputContainer.Add(f);
         }
 
-        public override void Visit(StringBuilder sb)
+        public override void Visit(NodeVisitor visitor)
         {
             PortNames[0] = value.ToString("R");
         }
@@ -235,12 +236,12 @@ namespace z3y.ShaderGraph.Nodes
             AddPort(Direction.Input, new PortType.Float(1), ROUGHNESS, "Roughness");
             AddPort(Direction.Input, new PortType.Float(1), METALLIC, "Metallic");
         }
-        public override void Visit(StringBuilder sb)
+        public override void Visit(NodeVisitor visitor)
         {
-            sb.AppendLine($"float3 albedo = {GetInputString(ALBEDO)};");
-            sb.AppendLine($"float alpha = {GetInputString(ALPHA)};");
-            sb.AppendLine($"float roughness = {GetInputString(ROUGHNESS)};");
-            sb.AppendLine($"float metallic = {GetInputString(METALLIC)};");
+            visitor.AppendLine($"float3 albedo = {GetInputString(ALBEDO)};");
+            visitor.AppendLine($"float alpha = {GetInputString(ALPHA)};");
+            visitor.AppendLine($"float roughness = {GetInputString(ROUGHNESS)};");
+            visitor.AppendLine($"float metallic = {GetInputString(METALLIC)};");
         }
     }
 }
