@@ -11,6 +11,7 @@ namespace z3y.ShaderGraph
         Vertex,
         Fragment
     }
+
     public class NodeVisitor
     {
         public NodeVisitor(ShaderBuilder sb)

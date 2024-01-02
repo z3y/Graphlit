@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor.Hardware;
 
 namespace z3y.ShaderGraph
 {
@@ -30,7 +31,9 @@ namespace z3y.ShaderGraph
                 _sb.AppendLine("SubShader");
                 _sb.Indent();
                 {
-                    AppendSubshader();
+                    AppendTags(subshaderTags);
+
+                    AppendPasses();
                 }
                 _sb.UnIndent();
             }
@@ -49,13 +52,6 @@ namespace z3y.ShaderGraph
             {
                 _sb.AppendLine(property);
             }
-        }
-
-        private void AppendSubshader()
-        {
-            AppendTags(subshaderTags);
-
-            AppendPasses();
         }
 
         private void AppendTags(Dictionary<string, string> tags)
@@ -99,11 +95,19 @@ namespace z3y.ShaderGraph
         {
             _sb.AppendLine("// Pragmas");
 
-            _sb.AppendLine("// Attributes");
-            _sb.AppendLine("// Varyings");
+            _sb.AppendLine("struct Attributes");
+            _sb.Indent();
+            _sb.UnIndent("};");
+
+            _sb.AppendLine("struct Varyings");
+            _sb.Indent();
+            _sb.UnIndent("};");
 
             AppendVertexDescription(pass);
             AppendSurfaceDescription(pass);
+
+            _sb.AppendLine("#include \"" + pass.vertexShaderPath + '"');
+            _sb.AppendLine("#include \"" + pass.fragmentShaderPath + '"');
         }
 
         private void AppendSurfaceDescription(PassBuilder pass)

@@ -23,10 +23,10 @@ namespace z3y.ShaderGraph
             AppendLine("{");
             indentLevel++;
         }
-        public void UnIndent()
+        public void UnIndent(string end = "}")
         {
             indentLevel--;
-            AppendLine("}");
+            AppendLine(end);
             _sb.AppendLine();
         }
 

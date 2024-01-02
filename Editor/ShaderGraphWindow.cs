@@ -23,9 +23,10 @@ namespace z3y.ShaderGraph
                 return window;
             }
 
-            ShaderGraphWindow win = CreateInstance<ShaderGraphWindow>();
+            ShaderGraphWindow win = CreateWindow<ShaderGraphWindow>(typeof(ShaderGraphWindow), typeof(ShaderGraphWindow));
             win.titleContent = new GUIContent("sasf");
             win._impoterInstance = importer;
+
 
             _instances[importer] = win;
 
@@ -34,6 +35,7 @@ namespace z3y.ShaderGraph
             win.AddToolbar();
 
             win.Show();
+            win.Focus();
             return win;
         }
 
@@ -42,7 +44,7 @@ namespace z3y.ShaderGraph
             var toolbar = new Toolbar();
 
             var saveButton = new Button() { text = "Save" };
-            saveButton.clicked += () => ShaderGraphImporter.SaveGraphData(graphView, _impoterInstance.assetPath);
+            saveButton.clicked += () => ShaderGraphImporter.SaveGraphAndReimport(graphView, _impoterInstance.assetPath);
             toolbar.Add(saveButton);
 
             var shaderName = new TextField("Name") { value = "uhhh" };

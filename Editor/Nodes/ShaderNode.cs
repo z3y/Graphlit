@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -10,74 +9,7 @@ using static UnityEditor.Experimental.GraphView.Port;
 
 namespace z3y.ShaderGraph.Nodes
 {
-    public class ShaderNodeVisualElement : Node
-    {
-        public ShaderNode shaderNode;
-
-        public void Initialize(Type type, Vector2 position)
-        {
-            shaderNode = (ShaderNode)Activator.CreateInstance(type);
-            shaderNode.InitializeVisualElement(this);
-
-            SetNodePosition(position);
-            AddDefaultElements();
-        }
-
-        public void AddAlreadyInitialized(ShaderNode shaderNode)
-        {
-            this.shaderNode = shaderNode;
-            shaderNode.InitializeVisualElement(this);
-
-            SetNodePosition(shaderNode.GetSerializedPosition());
-            AddDefaultElements();
-        }
-        private void AddDefaultElements()
-        {
-            AddStyles();
-            AddTitleElement();
-            RefreshExpandedState();
-            RefreshPorts();
-        }
-        private void AddStyles()
-        {
-            extensionContainer.AddToClassList("sg-node__extension-container");
-            titleContainer.AddToClassList("sg-node__title-container");
-            inputContainer.AddToClassList("sg-node__input-container");
-            outputContainer.AddToClassList("sg-node__output-container");
-        }
-        private void AddTitleElement()
-        {
-            var nodeInfo = shaderNode.GetNodeInfo();
-
-            var titleLabel = new Label { text = nodeInfo.name, tooltip = nodeInfo.tooltip };
-            titleLabel.style.fontSize = 14;
-            var centerAlign = new StyleEnum<Align> { value = Align.Center };
-            titleLabel.style.alignSelf = centerAlign;
-            titleLabel.style.alignItems = centerAlign;
-            titleContainer.Insert(0, titleLabel);
-
-            /*var noRadius = new StyleLength { value = 0 };
-            var borderStyle = this.ElementAt(0).style;
-            var borderSelectionStyle = this.ElementAt(1).style;
-
-            borderStyle.borderBottomLeftRadius = noRadius;
-            borderStyle.borderBottomRightRadius = noRadius;
-            borderStyle.borderTopLeftRadius = noRadius;
-            borderStyle.borderTopRightRadius = noRadius;
-
-            borderSelectionStyle.borderBottomLeftRadius = noRadius;
-            borderSelectionStyle.borderBottomRightRadius = noRadius;
-            borderSelectionStyle.borderTopLeftRadius = noRadius;
-            borderSelectionStyle.borderTopRightRadius = noRadius;*/
-        }
-        private void SetNodePosition(Vector2 position)
-        {
-            SetPosition(new Rect(position, Vector3.one));
-        }
-    }
-
-    [Serializable]
-    public abstract class ShaderNode : ISerializationCallbackReceiver
+    public abstract class ShaderNode
     {
         public void InitializeVisualElement(ShaderNodeVisualElement node)
         {
@@ -85,13 +17,6 @@ namespace z3y.ShaderGraph.Nodes
             Initialize();
             AddVisualElements();
         }
-
-        [SerializeField] private Vector2 _position;
-        [SerializeField] private List<NodeConnection> _connections;
-        public Vector2 GetSerializedPosition() => _position;
-        public void SetPosition(Vector2 position) => _position = position;
-        public List<NodeConnection> GetSerializedConnections() => _connections;
-
 
         private static int _uniqueVariableID = 0;
         public static void ResetUniqueVariableIDs() => _uniqueVariableID = 0;
@@ -106,17 +31,19 @@ namespace z3y.ShaderGraph.Nodes
             PortNames.Add(portID, name);
             return name;
         }
+
         public string GetInputString(int portID)
         {
             UpdatePortDefaultString(portID);
             return TryGetVariableName(portID);
         }
+
         public string SetOutputString(int portID, string prefix = null)
         {
             return TryGetVariableName(portID, prefix);
         }
 
-        public int ImplicitTruncation(int[] IDs, int outputID = -1)
+        public int ImplicitTruncation(int? outputID = null, params int[] IDs)
         {
             int trunc = 4;
             int max = 1;
@@ -134,12 +61,12 @@ namespace z3y.ShaderGraph.Nodes
             }
             trunc = Mathf.Min(trunc, max);
 
-            if (outputID >= 0)
+            if (outputID is int outputIDInt)
             {
-                if (PortsTypes[outputID] is Float @float)
+                if (PortsTypes[outputIDInt] is Float @float)
                 {
                     @float.components = trunc;
-                    PortsTypes[outputID] = @float;
+                    PortsTypes[outputIDInt] = @float;
                 }
             }
 
@@ -183,7 +110,7 @@ namespace z3y.ShaderGraph.Nodes
 
         private void UpdatePortDefaultString(int portID)
         {
-            foreach (var connection in _connections)
+            /*foreach (var connection in _connections)
             {
                 if (connection.outID == portID)
                 {
@@ -192,10 +119,10 @@ namespace z3y.ShaderGraph.Nodes
             }
 
             PortsTypes[portID] = _defaultPortsTypes[portID];
-            PortNames[portID] = SetDefaultInputString(portID);
+            PortNames[portID] = SetDefaultInputString(portID);*/
         }
 
-        public bool IsConnected(int inputID)
+      /*  public bool IsConnected(int inputID)
         {
             foreach (var connection in _connections)
             {
@@ -206,7 +133,7 @@ namespace z3y.ShaderGraph.Nodes
             }
 
             return false;
-        }
+        }*/
         public int GetComponentCount(int portID)
         {
             return ((Float)PortsTypes[portID]).components;
@@ -282,42 +209,6 @@ namespace z3y.ShaderGraph.Nodes
 
         private NodeInfo _nodeInfo = null;
         public ShaderNodeVisualElement Node { get; private set; }
-
-        public void OnBeforeSerialize()
-        {
-            if (Node is null)
-            {
-                return;
-            }
-
-            var rect = Node.GetPosition();
-            _position = new Vector2(rect.x, rect.y);
-            _connections = new List<NodeConnection>();
-
-            foreach (var keyValue in Ports)
-            {
-                Port port = keyValue.Value;
-
-                if ((Direction)port.direction != Direction.Input)
-                {
-                    continue;
-                }
-
-                int id = keyValue.Key;
-
-                foreach (var edge in port.connections)
-                {
-                    var inPort = edge.output;
-                    int inID = (int)inPort.userData;
-                    _connections.Add(new NodeConnection(id, inID, ((ShaderNodeVisualElement)inPort.node).shaderNode));
-                    break; // only 1 connection allowed for input
-                }
-            }
-        }
-
-        public void OnAfterDeserialize()
-        {
-        }
 
         public Dictionary<int, IPortType> PortsTypes { get; private set; } = new();
         private Dictionary<int, IPortType> _defaultPortsTypes = new();

@@ -16,8 +16,6 @@ namespace z3y.ShaderGraph
 
         public ShaderGraphView(ShaderGraphWindow editorWindow)
         {
-
-
             _editorWindow = editorWindow;
             // manipulators
             SetupZoom(0.15f, 2.0f);
@@ -44,11 +42,11 @@ namespace z3y.ShaderGraph
 
             RegisterCallback<ClickEvent>(NodeHotkey);
 
-            serializeGraphElements = SerializeGraphElementsImpl;
-            unserializeAndPaste = UnserializeAndPasteImpl;
+            //serializeGraphElements = SerializeGraphElementsImpl;
+            //unserializeAndPaste = UnserializeAndPasteImpl;
         }
 
-        public string SerializeGraphElementsImpl(IEnumerable<GraphElement> elements)
+/*        public string SerializeGraphElementsImpl(IEnumerable<GraphElement> elements)
         {
             var data = new SerializedGraphData();
             var shaderNodes = new List<ShaderNode>();
@@ -65,9 +63,9 @@ namespace z3y.ShaderGraph
             data.shaderNodes = shaderNodes.ToArray();
             var jsonData = JsonUtility.ToJson(data, false);
             return jsonData;
-        }
+        }*/
 
-        public void UnserializeAndPasteImpl(string operationName, string jsonData)
+   /*     public void UnserializeAndPasteImpl(string operationName, string jsonData)
         {
             RecordUndo();
 
@@ -82,8 +80,8 @@ namespace z3y.ShaderGraph
                 AddToSelection(node.Node);
             }
         }
-
-        private SerializedGraphDataSo _serializedGraphDataSo;
+*/
+/*        private SerializedGraphDataSo _serializedGraphDataSo;
         // fucking manually implement undo because graph view is amazing
         private List<string> _undoStates = new();
         public void RecordUndo()
@@ -116,7 +114,7 @@ namespace z3y.ShaderGraph
             var data = JsonUtility.FromJson<SerializedGraphData>(jsonData);
             ShaderGraphImporter.DeserializeNodesToGraph(data, this);
         }
-
+*/
 
         private IManipulator CreateGroupContextualMenu()
         {
@@ -139,21 +137,18 @@ namespace z3y.ShaderGraph
 
         public void CreateNode(Type type, Vector2 position, bool transform = true)
         {
-            //TODO: check type
-
-            //RegisterCompleteObjectUndo("Add node");
-            RecordUndo();
+            //RecordUndo();
 
             if (transform) TransformMousePositionToLocalSpace(ref position, true);
             var node = new ShaderNodeVisualElement();
-            node.Initialize(type, position);
+            node.Create(type, position);
             AddElement(node);
         }
 
-        public void AddNode(ShaderNode shaderNode)
+        public void AddNode(SerializableNode seriazableNode)
         {
             var node = new ShaderNodeVisualElement();
-            node.AddAlreadyInitialized(shaderNode);
+            node.Add(seriazableNode);
             AddElement(node);
         }
 

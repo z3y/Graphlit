@@ -1,3 +1,5 @@
+using System;
+using System.Runtime.Serialization;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -25,7 +27,7 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void Visit(NodeVisitor visitor)
         {
-            var components = ImplicitTruncation(new[] { A, B }, OUT);
+            var components = ImplicitTruncation(OUT, A, B);
             var a = GetCastInputString(A, components);
             var b = GetCastInputString(B, components);
 
@@ -50,7 +52,7 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void Visit(NodeVisitor visitor)
         {
-            var components = ImplicitTruncation(new[] { A, B }, OUT);
+            var components = ImplicitTruncation(OUT, A, B);
             var a = GetCastInputString(A, components);
             var b = GetCastInputString(B, components);
 
@@ -74,7 +76,7 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void Visit(NodeVisitor visitor)
         {
-            var components = ImplicitTruncation(new[] {A, B} );
+            var components = ImplicitTruncation(null, A, B);
             var a = GetCastInputString(A, components);
             var b = GetCastInputString(B, components);
 
@@ -87,7 +89,7 @@ namespace z3y.ShaderGraph.Nodes
         }
     }
 
-    [@NodeInfo("swizzle")]
+    [@NodeInfo("swizzle"), Serializable]
     public sealed class SwizzleNode : ShaderNode
     {
         const int IN = 0;
@@ -103,8 +105,9 @@ namespace z3y.ShaderGraph.Nodes
         public override void AddVisualElements()
         {
             var f = new TextField { value = swizzle };
-            f.RegisterValueChangedCallback((evt) => {
-                swizzle = evt.newValue;
+            f.RegisterValueChangedCallback((evt) =>
+            {
+                swizzle = Swizzle.ValidateSwizzle(evt, f);
             });
             Node.extensionContainer.Add(f);
         }
@@ -119,7 +122,7 @@ namespace z3y.ShaderGraph.Nodes
         }
     }
 
-    [@NodeInfo("float4")]
+    [@NodeInfo("float4"), Serializable]
     public sealed class Float4Node : ShaderNode
     {
         const int OUT = 0;
@@ -143,7 +146,7 @@ namespace z3y.ShaderGraph.Nodes
             PortNames[0] = "float4" + value.ToString("R");
         }
     }
-    [@NodeInfo("float3")]
+    [@NodeInfo("float3"), Serializable]
     public sealed class Float3Node : ShaderNode
     {
         const int OUT = 0;
@@ -169,7 +172,7 @@ namespace z3y.ShaderGraph.Nodes
         }
     }
 
-    [@NodeInfo("float2")]
+    [@NodeInfo("float2"), Serializable]
     public sealed class Float2Node : ShaderNode
     {
         const int OUT = 0;
@@ -195,7 +198,7 @@ namespace z3y.ShaderGraph.Nodes
         }
     }
 
-    [@NodeInfo("float")]
+    [@NodeInfo("float"), Serializable]
     public sealed class FloatNode : ShaderNode
     {
         const int OUT = 0;
