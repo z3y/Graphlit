@@ -50,7 +50,6 @@ namespace z3y.ShaderGraph
 
         }
 
-
         public void OnEnable()
         {
             if (!string.IsNullOrEmpty(_importerGuid) && graphView is null)
@@ -58,7 +57,6 @@ namespace z3y.ShaderGraph
                 Initialize(_importerGuid, false);
             }
         }
-
 
         public void AddToolbar()
         {

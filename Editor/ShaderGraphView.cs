@@ -225,7 +225,7 @@ namespace z3y.ShaderGraph
                 case KeyCode.Alpha2: CreateNode(typeof(Float2Node), position, false); break;
                 case KeyCode.Alpha3: CreateNode(typeof(Float3Node), position, false); break;
                 case KeyCode.Alpha4: CreateNode(typeof(Float4Node), position, false); break;
-                case KeyCode.M: CreateNode(typeof(MultiplyNode), position, false); break;
+                //case KeyCode.M: CreateNode(typeof(MultiplyNode), position, false); break;
                 case KeyCode.A: CreateNode(typeof(AddNode), position, false); break;
                 case KeyCode.Period: CreateNode(typeof(DotNode), position, false); break;
                 case KeyCode.Z: CreateNode(typeof(SwizzleNode), position, false); break;

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
-using UnityEngine;
 using z3y.ShaderGraph.Nodes;
 
 namespace z3y.ShaderGraph
@@ -26,13 +25,16 @@ namespace z3y.ShaderGraph
                 if (node is ShaderNodeVisualElement shaderNodeVisualElement)
                 {
                     var shaderNode = shaderNodeVisualElement.shaderNode;
+                    if (shaderNode is null)
+                    {
+                        continue;
+                    }
                     seriazableGraph.nodes.Add(new SerializableNode(shaderNode));
                 }
             }
 
             return seriazableGraph;
         }
-
 
         public void Deserialize(ShaderGraphView graphView)
         {
@@ -51,6 +53,11 @@ namespace z3y.ShaderGraph
                     var inID = connection.GetPortIDForInputNode();
                     var outID = connection.GetPortIDForThisNode();
                     var inNode = graphView.GetNodeByGuid(connection.GetInputNodeGuid());
+
+                    if (graphNode is null)
+                    {
+                        continue;
+                    }
 
                     foreach (var ve in graphNode.inputContainer.Children())
                     {
@@ -86,57 +93,6 @@ namespace z3y.ShaderGraph
                     }
                 }
             }
-        }
-    }
-
-    [Serializable]
-    public struct SerializableNode
-    {
-        public string type;
-        public string guid;
-        public Vector2 position;
-        public List<NodeConnection> connections;
-        public string data;
-
-        public SerializableNode(ShaderNode node)
-        {
-            var type = node.GetType();
-
-            this.type = type.FullName;
-            this.guid = node.Node.viewDataKey;
-            this.position = node.Node.GetPosition().position;
-            this.connections = NodeConnection.GetConnections(node);
-
-            var seriazableAttribute = Attribute.GetCustomAttribute(type, typeof(SerializableAttribute));
-            if (seriazableAttribute is not null)
-            {
-                data = JsonUtility.ToJson(node);
-            }
-            else
-            {
-                data = string.Empty;
-            }
-        }
-
-        public readonly bool TryDeserialize(out ShaderNode shaderNode)
-        {
-            Type type = Type.GetType(this.type);
-            var instance = Activator.CreateInstance(type);
-            if (instance is null)
-            {
-                Debug.LogError($"Node of type {this.type} not found");
-                shaderNode = null;
-                return false;
-            }
-
-            if (!string.IsNullOrEmpty(data))
-            {
-                JsonUtility.FromJsonOverwrite(data, instance);
-            }
-
-            shaderNode = (ShaderNode)instance;
-
-            return true;
         }
     }
 }
