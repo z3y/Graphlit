@@ -34,19 +34,17 @@ namespace z3y.ShaderGraph
             return b;
         }
 
-        public static List<NodeConnection> GetConnections(ShaderNode node)
+        public static List<NodeConnection> GetConnections(IEnumerable<Port> ports)
         {
             var connections = new List<NodeConnection>();
-            foreach (var keyValue in node.Ports)
+            foreach (var port in ports)
             {
-                Port port = keyValue.Value;
-
                 if (port.direction != Direction.Input)
                 {
                     continue;
                 }
 
-                int id = keyValue.Key;
+                int id = port.GetPortID();
 
                 foreach (var edge in port.connections)
                 {

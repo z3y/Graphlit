@@ -2,30 +2,16 @@ using System;
 using UnityEngine.UIElements;
 using UnityEngine;
 using UnityEditor.Experimental.GraphView;
+using System.Collections.Generic;
+using static UnityEditor.Experimental.GraphView.Port;
+using z3y.ShaderGraph.Nodes.PortType;
+using System.Linq;
 
 namespace z3y.ShaderGraph.Nodes
 {
     public class ShaderNodeVisualElement : Node
     {
         public ShaderNode shaderNode;
-
-       /* public void Initialize(Type type, Vector2 position)
-        {
-            shaderNode = (ShaderNode)Activator.CreateInstance(type);
-            shaderNode.InitializeVisualElement(this);
-
-            SetNodePosition(position);
-            AddDefaultElements();
-        }
-
-        public void AddAlreadyInitialized(ShaderNode shaderNode)
-        {
-            this.shaderNode = shaderNode;
-            shaderNode.InitializeVisualElement(this);
-
-            SetNodePosition(shaderNode.GetSerializedPosition());
-            AddDefaultElements();
-        }*/
 
         public void Create(Type type, Vector2 position)
         {
@@ -50,12 +36,39 @@ namespace z3y.ShaderGraph.Nodes
 
         private void AddDefaultElements()
         {
-            shaderNode.InitializeVisualElement(this);
-
+            AddPortElements();
+            shaderNode.AddElements(this);
             AddStyles();
             AddTitleElement();
             RefreshExpandedState();
             RefreshPorts();
+        }
+
+        private void AddPortElements()
+        {
+            foreach (var portDescriptor in shaderNode.Ports)
+            {
+                var container = portDescriptor.Direction == PortDirection.Input ? inputContainer : outputContainer;
+
+                var type = portDescriptor.Type.GetType();
+                var capacity = portDescriptor.Direction == PortDirection.Input ? Capacity.Single : Capacity.Multi;
+
+                var port = InstantiatePort(Orientation.Horizontal, (Direction)portDescriptor.Direction, capacity, type);
+                //portElement.AddManipulator(new EdgeConnector<Edge>(new EdgeConnectorListener()));
+                port.portName = portDescriptor.Name;
+                port.userData = portDescriptor.ID;
+                if (portDescriptor.Type is Float @float)
+                {
+                    var color = @float.GetPortColor();
+                    port.portColor = color;
+                }
+                else
+                {
+                    port.portColor = portDescriptor.Type.GetPortColor();
+                }
+
+                container.Add(port);
+            }
         }
         private void AddStyles()
         {
@@ -66,7 +79,7 @@ namespace z3y.ShaderGraph.Nodes
         }
         private void AddTitleElement()
         {
-            var nodeInfo = shaderNode.GetNodeInfo();
+            var nodeInfo = shaderNode.Info;
 
             var titleLabel = new Label { text = nodeInfo.name, tooltip = nodeInfo.tooltip };
             titleLabel.style.fontSize = 14;
@@ -89,9 +102,19 @@ namespace z3y.ShaderGraph.Nodes
             borderSelectionStyle.borderTopLeftRadius = noRadius;
             borderSelectionStyle.borderTopRightRadius = noRadius;*/
         }
+
         private void SetPosition(Vector2 position)
         {
             base.SetPosition(new Rect(position, Vector3.one));
+        }
+
+        public IEnumerable<Port> Ports
+        {
+            get
+            {
+                return inputContainer.Children().Concat(outputContainer.Children())
+                    .Where(x => x is Port).Cast<Port>();
+            }
         }
     }
 }

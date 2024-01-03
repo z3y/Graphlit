@@ -14,14 +14,14 @@ namespace z3y.ShaderGraph
         public List<NodeConnection> connections;
         public string data;
 
-        public SerializableNode(ShaderNode node)
+        public SerializableNode(ShaderNodeVisualElement node)
         {
-            var type = node.GetType();
+            var type = node.shaderNode.GetType();
 
             this.type = type.FullName;
-            this.guid = node.Node.viewDataKey;
-            this.position = node.Node.GetPosition().position;
-            this.connections = NodeConnection.GetConnections(node);
+            this.guid = node.viewDataKey;
+            this.position = node.GetPosition().position;
+            this.connections = NodeConnection.GetConnections(node.Ports);
 
             var seriazableAttribute = Attribute.GetCustomAttribute(type, typeof(SerializableAttribute));
             if (seriazableAttribute is not null)

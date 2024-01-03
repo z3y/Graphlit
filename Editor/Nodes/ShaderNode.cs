@@ -1,21 +1,24 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Xml.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 using z3y.ShaderGraph.Nodes.PortType;
 using static UnityEditor.Experimental.GraphView.Port;
 
+/*
 namespace z3y.ShaderGraph.Nodes
 {
+
     public abstract class ShaderNode
     {
         public void InitializeVisualElement(ShaderNodeVisualElement node)
         {
             Node = node;
             Initialize();
-            AddVisualElements();
+            AddVisualElements(Node);
         }
 
         private static int _uniqueVariableID = 0;
@@ -110,7 +113,7 @@ namespace z3y.ShaderGraph.Nodes
 
         private void UpdatePortDefaultString(int portID)
         {
-            /*foreach (var connection in _connections)
+            *//*foreach (var connection in _connections)
             {
                 if (connection.outID == portID)
                 {
@@ -119,10 +122,10 @@ namespace z3y.ShaderGraph.Nodes
             }
 
             PortsTypes[portID] = _defaultPortsTypes[portID];
-            PortNames[portID] = SetDefaultInputString(portID);*/
+            PortNames[portID] = SetDefaultInputString(portID);*//*
         }
 
-      /*  public bool IsConnected(int inputID)
+      *//*  public bool IsConnected(int inputID)
         {
             foreach (var connection in _connections)
             {
@@ -133,13 +136,13 @@ namespace z3y.ShaderGraph.Nodes
             }
 
             return false;
-        }*/
+        }*//*
         public int GetComponentCount(int portID)
         {
             return ((Float)PortsTypes[portID]).components;
         }
 
-        /* public PortType.DynamicFloat InheritDynamicFloat(int outID, int inID)
+        *//* public PortType.DynamicFloat InheritDynamicFloat(int outID, int inID)
          {
              var inType = (PortType.DynamicFloat)portTypes[inID];
              int components = inType.components;
@@ -147,7 +150,7 @@ namespace z3y.ShaderGraph.Nodes
              portTypes[outID] = dynamicFloat;
            //  dynamicFloat.fullPrecision = inType.fullPrecision;
              return dynamicFloat;
-         }*/
+         }*//*
         public string GetCastInputString(int portID, int targetComponent)
         {
             var name = GetInputString(portID);
@@ -259,8 +262,9 @@ namespace z3y.ShaderGraph.Nodes
         }
         public abstract void Initialize();
 
-        public virtual void AddVisualElements()
+        public virtual void AddVisualElements(ShaderNodeVisualElement node)
         {
+
         }
 
         public virtual string SetDefaultInputString(int portID)
@@ -282,7 +286,7 @@ namespace z3y.ShaderGraph.Nodes
 
         public abstract void Visit(NodeVisitor sb);
 
-        /*public void Repaint()
+        *//*public void Repaint()
         {
             if (Node is null)
             {
@@ -296,7 +300,7 @@ namespace z3y.ShaderGraph.Nodes
                     child.MarkDirtyRepaint();
                 }
             }
-        }*/
+        }*//*
     }
 
     internal class EdgeConnectorListener : IEdgeConnectorListener
@@ -312,7 +316,7 @@ namespace z3y.ShaderGraph.Nodes
             //var sb = new StringBuilder();
 
             // temp
-            /*ShaderNode.ResetUniqueVariableIDs();
+            *//*ShaderNode.ResetUniqueVariableIDs();
             graphView.graphElements.ForEach(e => {
                 if (e is ShaderNodeVisualElement shaderNodeVe)
                 {
@@ -328,12 +332,67 @@ namespace z3y.ShaderGraph.Nodes
                 }
             });
 
-            Debug.Log(sb);*/
+            Debug.Log(sb);*//*
         }
 
 
         public void OnDropOutsidePort(Edge edge, Vector2 position)
         {
+        }
+    }
+}*/
+
+namespace z3y.ShaderGraph.Nodes
+{
+    public enum PortDirection
+    {
+        Input,
+        Output
+    }
+
+    public struct PortDescriptor
+    {
+        public PortDescriptor(PortDirection direction, IPortType type, int id, string name = "")
+        {
+            Direction = direction;
+            Type = type;
+            ID = id;
+            Name = name;
+        }
+
+        public PortDirection Direction { get; }
+        public IPortType Type { get; }
+        public int ID { get; }
+        public string Name { get; }
+    }
+
+    public abstract class ShaderNode
+    {
+        public ShaderNode()
+        {
+            Ports = AddPorts();
+        }
+
+        public NodeInfo Info { get { return GetType().GetCustomAttribute<NodeInfo>(); } }
+        public PortDescriptor[] Ports { get; }
+        public virtual void AddElements(ShaderNodeVisualElement node) { }
+        public abstract PortDescriptor[] AddPorts();
+        public abstract void Visit(NodeVisitor visitor);
+    }
+
+    public sealed class TestNode : ShaderNode
+    {
+        public override PortDescriptor[] AddPorts()
+        {
+            return new PortDescriptor[] {
+                new(PortDirection.Input, new Float(1, true), 0),
+                new(PortDirection.Input, new Float(1, true), 0),
+            };
+        }
+
+        public override void Visit(NodeVisitor visitor)
+        {
+            
         }
     }
 }

@@ -1,11 +1,31 @@
-using System;
-using System.Text;
-using UnityEngine;
-using UnityEngine.UIElements;
-
 namespace z3y.ShaderGraph.Nodes
 {
     [@NodeInfo("*", "a * b")]
+    public sealed class MultiplyNode : ShaderNode
+    {
+        const int A = 0;
+        const int B = 1;
+        const int OUT = 2;
+
+        public override PortDescriptor[] AddPorts()
+        {
+            var type = new PortType.Float(1, true);
+            return new PortDescriptor[]
+            {
+                new(PortDirection.Input, type, A, "A"),
+                new(PortDirection.Input, type, B, "B"),
+                new(PortDirection.Output, type, OUT),
+            };
+        }
+
+        public override void Visit(NodeVisitor visitor)
+        {
+
+        }
+
+    }
+    /*
+     * [@NodeInfo("*", "a * b")]
     public sealed class MultiplyNode : ShaderNode
     {
         const int A = 0;
@@ -34,7 +54,6 @@ namespace z3y.ShaderGraph.Nodes
         }
 
     }
-
     [@NodeInfo("+", "a + b")]
     public sealed class AddNode : ShaderNode
     {
@@ -208,7 +227,7 @@ namespace z3y.ShaderGraph.Nodes
             AddPort(Direction.Output, new PortType.Float(1), OUT);
         }
 
-        public override void AddVisualElements()
+        public override void AddVisualElements(ShaderNodeVisualElement node)
         {
             var f = new FloatField { value = value };
             f.RegisterValueChangedCallback((evt) => {
@@ -245,5 +264,5 @@ namespace z3y.ShaderGraph.Nodes
             visitor.AppendLine($"float roughness = {GetInputString(ROUGHNESS)};");
             visitor.AppendLine($"float metallic = {GetInputString(METALLIC)};");
         }
-    }
+    }*/
 }

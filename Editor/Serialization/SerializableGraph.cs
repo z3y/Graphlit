@@ -13,7 +13,7 @@ namespace z3y.ShaderGraph
 
         public static SerializableGraph StoreGraph(ShaderGraphView graphView)
         {
-            var seriazableGraph = new SerializableGraph
+            var serializableGraph = new SerializableGraph
             {
                 data = graphView.graphData,
                 nodes = new List<SerializableNode>()
@@ -29,11 +29,11 @@ namespace z3y.ShaderGraph
                     {
                         continue;
                     }
-                    seriazableGraph.nodes.Add(new SerializableNode(shaderNode));
+                    serializableGraph.nodes.Add(new SerializableNode(shaderNodeVisualElement));
                 }
             }
 
-            return seriazableGraph;
+            return serializableGraph;
         }
 
         public void PopulateGraph(ShaderGraphView graphView)
@@ -94,5 +94,11 @@ namespace z3y.ShaderGraph
                 }
             }
         }
+
+        public void ConnectPort(ShaderNodeVisualElement node, NodeConnection connection)
+        {
+
+        }
+
     }
 }
