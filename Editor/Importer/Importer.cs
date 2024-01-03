@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System;
+using UnityEditor.Callbacks;
 
 namespace z3y.ShaderGraph
 {
@@ -110,6 +111,22 @@ namespace z3y.ShaderGraph
             AssetDatabase.ImportAsset(importerPath, ImportAssetOptions.ForceUpdate);
 
             graphView.MarkDirtyRepaint();
+        }
+
+        [OnOpenAsset]
+        public static bool OnOpenAsset(int instanceID, int line)
+        {
+            var unityObject = EditorUtility.InstanceIDToObject(instanceID);
+            var path = AssetDatabase.GetAssetPath(unityObject);
+            var importer = AssetImporter.GetAtPath(path);
+            if (importer is not ShaderGraphImporter shaderGraphImporter)
+            {
+                return false;
+            }
+
+            var guid = AssetDatabase.GUIDFromAssetPath(shaderGraphImporter.assetPath);
+            OpenInGraphView(guid.ToString());
+            return true;
         }
     }
 }

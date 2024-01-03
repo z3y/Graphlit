@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.AssetImporters;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -12,25 +13,26 @@ namespace z3y.ShaderGraph
     {
         [NonSerialized] public const string ROOT = "Packages/com.z3y.myshadergraph/Editor/";
         [NonSerialized] public ShaderGraphView graphView;
-        //[NonSerialized] public bool nodesLoaded = false;
         [NonSerialized] public static Dictionary<string, ShaderGraphWindow> editorInstances = new();
 
         [SerializeField] private string _importerGuid;
 
+       // private ShaderGraphImporter _importer;
 
         public void Initialize(string importerGuid, bool focus = true)
         {
-            titleContent = new GUIContent("sasf");
+            //_importer = (ShaderGraphImporter)AssetImporter.GetAtPath(AssetDatabase.AssetPathToGUID(importerGuid));
+
 
             AddStyleVariables();
+
             AddGraphView();
-            AddToolbar();
-
-
             var data = ShaderGraphImporter.ReadGraphData(false, importerGuid);
-            var graph = graphView;
+            data.Deserialize(graphView);
 
-            data.Deserialize(graph);
+            AddToolbar();
+            titleContent = new GUIContent(data.shaderName);
+
 
             if (focus)
             {
@@ -40,11 +42,12 @@ namespace z3y.ShaderGraph
 
             EditorApplication.delayCall += () =>
             {
-                graph.FrameAll();
+                graphView.FrameAll();
             };
 
             editorInstances[importerGuid] = this;
             _importerGuid = importerGuid;
+
         }
 
 
@@ -61,15 +64,25 @@ namespace z3y.ShaderGraph
         {
             var toolbar = new Toolbar();
 
+            var pingAsset = new Button() { text = "Ping Asset" };
+            pingAsset.clicked += () =>
+            {
+                var assetPath = AssetDatabase.GUIDToAssetPath(_importerGuid);
+                EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityEngine.Object)));
+            };
+            toolbar.Add(pingAsset);
+
             var saveButton = new Button() { text = "Save" };
             saveButton.clicked += () => ShaderGraphImporter.SaveGraphAndReimport(graphView, _importerGuid);
             toolbar.Add(saveButton);
 
-            var shaderName = new TextField("Name") { value = "uhhh" };
-            //TODO: bind
-            //shaderName.Bind 
-            //shaderNameTextField = shaderName;
+            var shaderName = new TextField("Name") { value = graphView.shaderName };
+            shaderName.RegisterValueChangedCallback((evt) =>
+            {
+                graphView.shaderName = evt.newValue;
+            });
             toolbar.Add(shaderName);
+
 
             var styles = AssetDatabase.LoadAssetAtPath<StyleSheet>(ROOT + "Styles/ToolbarStyles.uss");
             toolbar.styleSheets.Add(styles);

@@ -9,14 +9,16 @@ namespace z3y.ShaderGraph
     [Serializable]
     public class SerializableGraph
     {
-        public string shaderName = string.Empty;
+        public string shaderName = "New Shader";
         public List<SerializableNode> nodes =  new List<SerializableNode>();
 
         public static SerializableGraph FromGraphView(ShaderGraphView graphView)
         {
-            var seriazableGraph = new SerializableGraph();
-            seriazableGraph.shaderName = "uhhh";
-            seriazableGraph.nodes = new List<SerializableNode>();
+            var seriazableGraph = new SerializableGraph
+            {
+                shaderName = graphView.shaderName,
+                nodes = new List<SerializableNode>()
+            };
 
             var elements = graphView.graphElements;
             foreach (var node in elements)
@@ -34,6 +36,8 @@ namespace z3y.ShaderGraph
 
         public void Deserialize(ShaderGraphView graphView)
         {
+            graphView.shaderName = shaderName;
+
             foreach (var node in nodes)
             {
                 graphView.AddNode(node);

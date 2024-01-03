@@ -13,6 +13,8 @@ namespace z3y.ShaderGraph
         private ShaderNodeSearchWindow _searchWindow;
         private ShaderGraphWindow _editorWindow;
 
+        public string shaderName;
+
         public ShaderGraphView(ShaderGraphWindow editorWindow)
         {
             _editorWindow = editorWindow;
