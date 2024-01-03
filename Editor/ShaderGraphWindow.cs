@@ -73,6 +73,7 @@ namespace z3y.ShaderGraph
             disabled = true;
         }
 
+
         public void AddToolbar()
         {
             var toolbar = new Toolbar();

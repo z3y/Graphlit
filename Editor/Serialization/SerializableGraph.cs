@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using z3y.ShaderGraph.Nodes;
 
@@ -16,24 +17,21 @@ namespace z3y.ShaderGraph
             var serializableGraph = new SerializableGraph
             {
                 data = graphView.graphData,
-                nodes = new List<SerializableNode>()
+                nodes = ElementsToSerializableNode(graphView.graphElements).ToList()
             };
 
-            var elements = graphView.graphElements;
-            foreach (var node in elements)
-            {
-                if (node is ShaderNodeVisualElement shaderNodeVisualElement)
-                {
-                    var shaderNode = shaderNodeVisualElement.shaderNode;
-                    if (shaderNode is null)
-                    {
-                        continue;
-                    }
-                    serializableGraph.nodes.Add(new SerializableNode(shaderNodeVisualElement));
-                }
-            }
-
             return serializableGraph;
+        }
+
+        public static IEnumerable<SerializableNode> ElementsToSerializableNode(IEnumerable<GraphElement> elements)
+        {
+            var nodes = elements
+                .Where(x => x is ShaderNodeVisualElement)
+                .Cast<ShaderNodeVisualElement>()
+                .Where(x => x.shaderNode is not null)
+                .Select(x => new SerializableNode(x));
+
+            return nodes;
         }
 
         public void PopulateGraph(ShaderGraphView graphView)
@@ -45,6 +43,59 @@ namespace z3y.ShaderGraph
                 graphView.AddNode(node);
             }
 
+            SetupNodeConnections(graphView);
+        }
+
+        public SerializableGraph GenerateNewGUIDs()
+        {
+            var guidMap = new Dictionary<string, string>();
+
+            var newGraph = new SerializableGraph
+            {
+                data = data
+            };
+
+            foreach (var node in nodes)
+            {
+                var newGuid = Guid.NewGuid().ToString();
+                guidMap.Add(node.guid, newGuid);
+                var newNode = node;
+                newNode.guid = newGuid;
+
+                var newConnections = new List<NodeConnection>();
+                foreach (NodeConnection connection in node.connections)
+                {
+                    if (guidMap.TryGetValue(connection.node, out string newInputGuid))
+                    {
+                        var newConnection = connection;
+                        newConnection.node = newInputGuid;
+                        newConnections.Add(newConnection);
+                    }
+                }
+
+                newNode.connections = newConnections;
+                newGraph.nodes.Add(newNode);
+            }
+
+            return newGraph;
+        }
+
+        public List<ShaderNodeVisualElement> PasteNodesAndOverwiteGuids(ShaderGraphView graphView)
+        {
+            var newElements = GenerateNewGUIDs();
+            var graphElements = new List<ShaderNodeVisualElement>();
+
+            foreach (var serializableNode in newElements.nodes)
+            {
+                graphElements.Add(graphView.AddNode(serializableNode));
+            }
+
+            newElements.SetupNodeConnections(graphView);
+            return graphElements;
+        }
+
+        public void SetupNodeConnections(ShaderGraphView graphView)
+        {
             foreach (var node in nodes)
             {
                 foreach (var connection in node.connections)

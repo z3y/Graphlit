@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -45,8 +46,8 @@ namespace z3y.ShaderGraph
 
             graphViewChanged += OnGraphViewChanged;
 
-            //serializeGraphElements = SerializeGraphElementsImpl;
-            //unserializeAndPaste = UnserializeAndPasteImpl;
+            serializeGraphElements = SerializeGraphElementsImpl;
+            unserializeAndPaste = UnserializeAndPasteImpl;
         }
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange change)
@@ -56,41 +57,33 @@ namespace z3y.ShaderGraph
         }
 
 
-/*        public string SerializeGraphElementsImpl(IEnumerable<GraphElement> elements)
+        public string SerializeGraphElementsImpl(IEnumerable<GraphElement> elements)
         {
-            var data = new SerializedGraphData();
-            var shaderNodes = new List<ShaderNode>();
-
-            foreach (var node in elements)
+            var data = new SerializableGraph
             {
-                if (node is ShaderNodeVisualElement shaderNodeVisualElement)
-                {
-                    var shaderNode = shaderNodeVisualElement.shaderNode;
-                    shaderNodes.Add(shaderNode);
-                }
-            }
+                nodes = SerializableGraph.ElementsToSerializableNode(elements).ToList()
+            };
 
-            data.shaderNodes = shaderNodes.ToArray();
             var jsonData = JsonUtility.ToJson(data, false);
             return jsonData;
-        }*/
+        }
 
-   /*     public void UnserializeAndPasteImpl(string operationName, string jsonData)
+        public void UnserializeAndPasteImpl(string operationName, string jsonData)
         {
-            RecordUndo();
+            // RecordUndo();
 
-            var data = JsonUtility.FromJson<SerializedGraphData>(jsonData);
+            var data = JsonUtility.FromJson<SerializableGraph>(jsonData);
 
-            //Vector2 mousePosition = Vector2.left;
-            Vector2 mousePosition = new Vector2(-200, -200);
-            ShaderGraphImporter.DeserializeNodesToGraph(data, this, mousePosition);
+            //Vector2 mousePosition = new Vector2(-200, -200);
+            //ShaderGraphImporter.DeserializeNodesToGraph(data, this, mousePosition);
+            var graphElements = data.PasteNodesAndOverwiteGuids(this);
 
-            foreach (var node in data.shaderNodes)
+            foreach (var graphElement in graphElements)
             {
-                AddToSelection(node.Node);
+                AddToSelection(graphElement);
             }
         }
-*/
+
 /*        private SerializedGraphDataSo _serializedGraphDataSo;
         // fucking manually implement undo because graph view is amazing
         private List<string> _undoStates = new();
@@ -148,18 +141,20 @@ namespace z3y.ShaderGraph
         public void CreateNode(Type type, Vector2 position, bool transform = true)
         {
             //RecordUndo();
-
+            _editorWindow.MarkDirty();
             if (transform) TransformMousePositionToLocalSpace(ref position, true);
             var node = new ShaderNodeVisualElement();
             node.Create(type, position);
             AddElement(node);
         }
 
-        public void AddNode(SerializableNode seriazableNode)
+        public ShaderNodeVisualElement AddNode(SerializableNode seriazableNode)
         {
             var node = new ShaderNodeVisualElement();
             node.Add(seriazableNode);
             AddElement(node);
+
+            return node;
         }
 
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
