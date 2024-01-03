@@ -17,12 +17,12 @@ namespace z3y.ShaderGraph
 
         [SerializeField] private string _importerGuid;
 
-       // private ShaderGraphImporter _importer;
+        // private ShaderGraphImporter _importer;
+        [NonSerialized] public bool disabled = false;
 
         public void Initialize(string importerGuid, bool focus = true)
         {
             //_importer = (ShaderGraphImporter)AssetImporter.GetAtPath(AssetDatabase.AssetPathToGUID(importerGuid));
-
 
             AddStyleVariables();
 
@@ -56,6 +56,11 @@ namespace z3y.ShaderGraph
             {
                 Initialize(_importerGuid, false);
             }
+        }
+
+        private void OnDisable()
+        {
+            disabled = true;
         }
 
         public void AddToolbar()

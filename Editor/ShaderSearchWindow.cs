@@ -21,10 +21,10 @@ namespace z3y.ShaderGraph
             _nodeIndentationIcon.SetPixel(0,0, Color.clear);
             _nodeIndentationIcon.Apply();
         }
+
         private static Type[] _existingNodeTypes = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(domainAssembly => domainAssembly.GetTypes())
-                .Where(type => typeof(ShaderNode).IsAssignableFrom(type)
-                ).ToArray();
+                .Where(type => typeof(ShaderNode).IsAssignableFrom(type)).ToArray();
 
         public List<SearchTreeEntry> CreateSearchTree(SearchWindowContext context)
         {
@@ -32,10 +32,9 @@ namespace z3y.ShaderGraph
             entries.Add(new SearchTreeGroupEntry(new GUIContent("Create Element")));
             //entries.Add(new SearchTreeGroupEntry(new GUIContent("Node"), 1));
 
-            for (int i = 0; i < _existingNodeTypes.Length; i++)
+            foreach (var node in _existingNodeTypes)
             {
-                var t = _existingNodeTypes[i];
-                var nodeInfo = t.GetCustomAttribute<NodeInfo>();
+                var nodeInfo = node.GetCustomAttribute<NodeInfo>();
                 if (nodeInfo is null)
                 {
                     continue;
@@ -44,7 +43,7 @@ namespace z3y.ShaderGraph
                 entries.Add(new SearchTreeEntry(
                     new GUIContent(nodeInfo.name == null ? "Default" : nodeInfo.name,
                     nodeInfo.icon == null ? _nodeIndentationIcon : nodeInfo.icon)
-                    ) { level = 1, userData = t });
+                    ) { level = 1, userData = node });
             }
 
             //entries.Add(new SearchTreeEntry(new GUIContent("Multiply", _nodeIndentationIcon)) { level = 1, userData = typeof(MultiplyNode) });

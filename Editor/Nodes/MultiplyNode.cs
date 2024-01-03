@@ -1,6 +1,8 @@
 namespace z3y.ShaderGraph.Nodes
 {
-    [@NodeInfo("*", "a * b")]
+    using z3y.ShaderGraph.Nodes.PortType;
+
+    [NodeInfo("*", "a * b")]
     public sealed class MultiplyNode : ShaderNode
     {
         const int A = 0;
@@ -9,7 +11,7 @@ namespace z3y.ShaderGraph.Nodes
 
         public override PortDescriptor[] AddPorts()
         {
-            var type = new PortType.Float(1, true);
+            var type = new Float(1, true);
             return new PortDescriptor[]
             {
                 new(PortDirection.Input, type, A, "A"),

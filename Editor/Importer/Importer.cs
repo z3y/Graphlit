@@ -88,11 +88,21 @@ namespace z3y.ShaderGraph
         }
 
 
-        public static void OpenInGraphView(string guid, bool reopenWindow = true)
+        public static void OpenInGraphView(string guid)
         {
-            if (reopenWindow && ShaderGraphWindow.editorInstances.TryGetValue(guid, out var win))
+            if (ShaderGraphWindow.editorInstances.TryGetValue(guid, out var win))
             {
-                win.Close();
+                if (!win.disabled)
+                {
+                    win.Focus();
+                    return;
+                }
+
+                else
+                {
+                    ShaderGraphWindow.editorInstances.Remove(guid);
+                    win.Close();
+                }
             }
             win = EditorWindow.CreateWindow<ShaderGraphWindow>(typeof(ShaderGraphWindow), typeof(ShaderGraphWindow));
             win.Initialize(guid);
