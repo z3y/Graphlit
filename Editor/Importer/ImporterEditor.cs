@@ -33,7 +33,7 @@ namespace z3y.ShaderGraph
 
             if (GUILayout.Button("Edit Shader"))
             {
-                ShaderGraphImporter.OpenInGraphView(importer.assetPath);
+                ShaderGraphImporter.OpenInGraphView(AssetDatabase.GUIDFromAssetPath(importer.assetPath).ToString());
             }
         }
 

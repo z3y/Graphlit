@@ -7,59 +7,62 @@ using UnityEngine.UIElements;
 
 namespace z3y.ShaderGraph
 {
+
     public class ShaderGraphWindow : EditorWindow
     {
         [NonSerialized] public const string ROOT = "Packages/com.z3y.myshadergraph/Editor/";
         [NonSerialized] public ShaderGraphView graphView;
         //[NonSerialized] public bool nodesLoaded = false;
-        //[NonSerialized] private static Dictionary<ShaderGraphImporter, ShaderGraphWindow> _instances = new();
+        [NonSerialized] public static Dictionary<string, ShaderGraphWindow> editorInstances = new();
 
-        [SerializeField] private string _importerPath;
+        [SerializeField] private string _importerGuid;
 
-        public void Initialize(string importerPath)
+
+        public void Initialize(string importerGuid, bool focus = true)
         {
+            titleContent = new GUIContent("sasf");
+
             AddStyleVariables();
             AddGraphView();
             AddToolbar();
 
-            var data = ShaderGraphImporter.ReadGraphData(false, importerPath);
+
+            var data = ShaderGraphImporter.ReadGraphData(false, importerGuid);
             var graph = graphView;
 
             data.Deserialize(graph);
 
+            if (focus)
+            {
+                Show();
+                Focus();
+            }
 
-
-            Show();
-            Focus();
-
-            // wtf
             EditorApplication.delayCall += () =>
             {
                 graph.FrameAll();
             };
 
-            _importerPath = importerPath;
+            editorInstances[importerGuid] = this;
+            _importerGuid = importerGuid;
         }
+
 
         public void OnEnable()
         {
-            if (!string.IsNullOrEmpty(_importerPath))
+            if (!string.IsNullOrEmpty(_importerGuid) && graphView is null)
             {
-                Initialize(_importerPath);
+                Initialize(_importerGuid, false);
             }
         }
 
-        public void OnDisable()
-        {
-
-        }
 
         public void AddToolbar()
         {
             var toolbar = new Toolbar();
 
             var saveButton = new Button() { text = "Save" };
-            saveButton.clicked += () => ShaderGraphImporter.SaveGraphAndReimport(graphView, _importerPath);
+            saveButton.clicked += () => ShaderGraphImporter.SaveGraphAndReimport(graphView, _importerGuid);
             toolbar.Add(saveButton);
 
             var shaderName = new TextField("Name") { value = "uhhh" };

@@ -2,10 +2,7 @@ using System.Collections.Generic;
 using UnityEditor.AssetImporters;
 using UnityEngine;
 using UnityEditor;
-using z3y.ShaderGraph.Nodes;
 using System.IO;
-using UnityEditor.Experimental.GraphView;
-using System.Text;
 using System;
 
 namespace z3y.ShaderGraph
@@ -15,11 +12,12 @@ namespace z3y.ShaderGraph
     {
         public const string EXTENSION = "zsg";
 
-        private string _testShaderPath = "Assets/UnlitTest.shader";
+        // private string _testShaderPath = "Assets/UnlitTest.shader";
 
         [NonSerialized] internal static Dictionary <string, SerializableGraph> _cachedGraphData = new();
-        public static SerializableGraph ReadGraphData(bool useCache, string assetPath)
+        public static SerializableGraph ReadGraphData(bool useCache, string guid)
         {
+            var assetPath = AssetDatabase.GUIDToAssetPath(guid);
             if (_cachedGraphData.TryGetValue(assetPath, out SerializableGraph graphData) && useCache)
             {
                 //Debug.Log("using cached data");
@@ -68,10 +66,12 @@ namespace z3y.ShaderGraph
         */
         public override void OnImportAsset(AssetImportContext ctx)
         {
+            var guid = AssetDatabase.AssetPathToGUID(assetPath);
+
             var builder = new ShaderBuilder();
             builder.passBuilders.Add(new PassBuilder("FORWARD", "Somewhere/Vertex.hlsl", "Somewhere/Fragment.hlsl"));
             var visitor = new NodeVisitor(builder);
-            var data = ReadGraphData(true, assetPath);
+            //var data = ReadGraphData(true, guid);
 
 
             var text = File.ReadAllText(assetPath);
@@ -86,26 +86,21 @@ namespace z3y.ShaderGraph
             ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.{EXTENSION}", string.Empty);
         }
 
-        public static void OpenInGraphView(string importerPath)
+
+        public static void OpenInGraphView(string guid, bool reopenWindow = true)
         {
-            ShaderGraphWindow win = EditorWindow.CreateWindow<ShaderGraphWindow>(typeof(ShaderGraphWindow), typeof(ShaderGraphWindow));
-            win.titleContent = new GUIContent("sasf");
-            win.Initialize(importerPath);
-
-            var data = ReadGraphData(false, importerPath);
-            var graph = win.graphView;
-
-            data.Deserialize(graph);
-
-            // wtf
-            EditorApplication.delayCall += () =>
+            if (reopenWindow && ShaderGraphWindow.editorInstances.TryGetValue(guid, out var win))
             {
-                graph.FrameAll();
-            };
+                win.Close();
+            }
+            win = EditorWindow.CreateWindow<ShaderGraphWindow>(typeof(ShaderGraphWindow), typeof(ShaderGraphWindow));
+            win.Initialize(guid);
+
         }
 
-        public static void SaveGraphAndReimport(ShaderGraphView graphView, string importerPath)
+        public static void SaveGraphAndReimport(ShaderGraphView graphView, string guid)
         {
+            var importerPath = AssetDatabase.GUIDToAssetPath(guid);
             var data = SerializableGraph.FromGraphView(graphView);
             var jsonData = JsonUtility.ToJson(data, true);
 
