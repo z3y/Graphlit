@@ -33,7 +33,6 @@ namespace z3y.ShaderGraph
             AddToolbar();
             titleContent = new GUIContent(data.data.shaderName);
 
-
             if (focus)
             {
                 Show();
@@ -48,6 +47,17 @@ namespace z3y.ShaderGraph
             editorInstances[importerGuid] = this;
             _importerGuid = importerGuid;
 
+        }
+
+        public void MarkDirty()
+        {
+            hasUnsavedChanges = true;
+        }
+
+        public override void SaveChanges()
+        {
+            ShaderGraphImporter.SaveGraphAndReimport(graphView, _importerGuid);
+            base.SaveChanges();
         }
 
         public void OnEnable()
@@ -76,13 +86,14 @@ namespace z3y.ShaderGraph
             toolbar.Add(pingAsset);
 
             var saveButton = new Button() { text = "Save" };
-            saveButton.clicked += () => ShaderGraphImporter.SaveGraphAndReimport(graphView, _importerGuid);
+            saveButton.clicked += SaveChanges;
             toolbar.Add(saveButton);
 
             var shaderName = new TextField("Name") { value = graphView.graphData.shaderName };
             shaderName.RegisterValueChangedCallback((evt) =>
             {
                 graphView.graphData.shaderName = evt.newValue;
+                MarkDirty();
             });
             toolbar.Add(shaderName);
 

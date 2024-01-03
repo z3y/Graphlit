@@ -43,9 +43,18 @@ namespace z3y.ShaderGraph
 
             RegisterCallback<ClickEvent>(NodeHotkey);
 
+            graphViewChanged += OnGraphViewChanged;
+
             //serializeGraphElements = SerializeGraphElementsImpl;
             //unserializeAndPaste = UnserializeAndPasteImpl;
         }
+
+        private GraphViewChange OnGraphViewChanged(GraphViewChange change)
+        {
+            _editorWindow.MarkDirty();
+            return change;
+        }
+
 
 /*        public string SerializeGraphElementsImpl(IEnumerable<GraphElement> elements)
         {
