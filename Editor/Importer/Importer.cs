@@ -18,7 +18,7 @@ namespace z3y.ShaderGraph
         private string _testShaderPath = "Assets/UnlitTest.shader";
 
         [NonSerialized] internal static Dictionary <string, SerializableGraph> _cachedGraphData = new();
-        private SerializableGraph ReadGraphData(bool useCache)
+        public static SerializableGraph ReadGraphData(bool useCache, string assetPath)
         {
             if (_cachedGraphData.TryGetValue(assetPath, out SerializableGraph graphData) && useCache)
             {
@@ -71,7 +71,7 @@ namespace z3y.ShaderGraph
             var builder = new ShaderBuilder();
             builder.passBuilders.Add(new PassBuilder("FORWARD", "Somewhere/Vertex.hlsl", "Somewhere/Fragment.hlsl"));
             var visitor = new NodeVisitor(builder);
-            var data = ReadGraphData(true);
+            var data = ReadGraphData(true, assetPath);
 
 
             var text = File.ReadAllText(assetPath);
@@ -86,17 +86,14 @@ namespace z3y.ShaderGraph
             ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.{EXTENSION}", string.Empty);
         }
 
-        public void OpenInGraphView()
+        public static void OpenInGraphView(string importerPath)
         {
-            var win = ShaderGraphWindow.InitializeEditor(this);
-            var data = ReadGraphData(false);
+            ShaderGraphWindow win = EditorWindow.CreateWindow<ShaderGraphWindow>(typeof(ShaderGraphWindow), typeof(ShaderGraphWindow));
+            win.titleContent = new GUIContent("sasf");
+            win.Initialize(importerPath);
+
+            var data = ReadGraphData(false, importerPath);
             var graph = win.graphView;
-
-            if (win.nodesLoaded)
-            {
-                return;
-            }
-
 
             data.Deserialize(graph);
 
@@ -105,7 +102,6 @@ namespace z3y.ShaderGraph
             {
                 graph.FrameAll();
             };
-            win.nodesLoaded = true;
         }
 
         public static void SaveGraphAndReimport(ShaderGraphView graphView, string importerPath)
