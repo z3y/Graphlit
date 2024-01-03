@@ -102,7 +102,7 @@ namespace z3y.ShaderGraph
         public static void SaveGraphAndReimport(ShaderGraphView graphView, string guid)
         {
             var importerPath = AssetDatabase.GUIDToAssetPath(guid);
-            var data = SerializableGraph.FromGraphView(graphView);
+            var data = SerializableGraph.StoreGraph(graphView);
             var jsonData = JsonUtility.ToJson(data, true);
 
             _cachedGraphData[importerPath] = data;

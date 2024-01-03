@@ -28,10 +28,10 @@ namespace z3y.ShaderGraph
 
             AddGraphView();
             var data = ShaderGraphImporter.ReadGraphData(false, importerGuid);
-            data.Deserialize(graphView);
+            data.PopulateGraph(graphView);
 
             AddToolbar();
-            titleContent = new GUIContent(data.shaderName);
+            titleContent = new GUIContent(data.data.shaderName);
 
 
             if (focus)
@@ -74,10 +74,10 @@ namespace z3y.ShaderGraph
             saveButton.clicked += () => ShaderGraphImporter.SaveGraphAndReimport(graphView, _importerGuid);
             toolbar.Add(saveButton);
 
-            var shaderName = new TextField("Name") { value = graphView.shaderName };
+            var shaderName = new TextField("Name") { value = graphView.graphData.shaderName };
             shaderName.RegisterValueChangedCallback((evt) =>
             {
-                graphView.shaderName = evt.newValue;
+                graphView.graphData.shaderName = evt.newValue;
             });
             toolbar.Add(shaderName);
 

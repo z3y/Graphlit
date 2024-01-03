@@ -1,5 +1,4 @@
 using System.Text;
-using UnityEngine;
 
 namespace z3y.ShaderGraph
 { 
@@ -42,6 +41,18 @@ namespace z3y.ShaderGraph
         public override string ToString()
         {
             return _sb.ToString();
+        }
+    }
+
+    public static class StringBuilderExtensionMethods
+    {
+        public static void AppendLines(this StringBuilder sb, params string[] lines)
+        {
+            sb.AppendLine();
+            foreach (var line in lines)
+            {
+                sb.Append(line);
+            }
         }
     }
 }

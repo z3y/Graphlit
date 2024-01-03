@@ -14,8 +14,8 @@ namespace z3y.ShaderGraph
 
         public NodeConnection(Edge edge)
         {
-            a = edge.input.GetPortID();
-            b = edge.output.GetPortID();
+            a = edge.output.GetPortID();
+            b = edge.input.GetPortID();
             node = ((ShaderNodeVisualElement)edge.output.node).viewDataKey;
         }
 
@@ -24,14 +24,14 @@ namespace z3y.ShaderGraph
             return node;
         }
 
-        public readonly int GetPortIDForInputNode()
-        {
-            return b;
-        }
-
-        public readonly int GetPortIDForThisNode()
+        public readonly int GetOutputIDForInputNode()
         {
             return a;
+        }
+
+        public readonly int GetInputIDForThisNode()
+        {
+            return b;
         }
 
         public static List<NodeConnection> GetConnections(ShaderNode node)

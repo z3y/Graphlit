@@ -8,14 +8,14 @@ namespace z3y.ShaderGraph
     [Serializable]
     public class SerializableGraph
     {
-        public string shaderName = "New Shader";
-        public List<SerializableNode> nodes =  new List<SerializableNode>();
+        public GraphData data = new GraphData();
+        public List<SerializableNode> nodes = new List<SerializableNode>();
 
-        public static SerializableGraph FromGraphView(ShaderGraphView graphView)
+        public static SerializableGraph StoreGraph(ShaderGraphView graphView)
         {
             var seriazableGraph = new SerializableGraph
             {
-                shaderName = graphView.shaderName,
+                data = graphView.graphData,
                 nodes = new List<SerializableNode>()
             };
 
@@ -36,9 +36,9 @@ namespace z3y.ShaderGraph
             return seriazableGraph;
         }
 
-        public void Deserialize(ShaderGraphView graphView)
+        public void PopulateGraph(ShaderGraphView graphView)
         {
-            graphView.shaderName = shaderName;
+            graphView.graphData = data;
 
             foreach (var node in nodes)
             {
@@ -50,9 +50,9 @@ namespace z3y.ShaderGraph
                 foreach (var connection in node.connections)
                 {
                     var graphNode = graphView.GetNodeByGuid(node.guid);
-                    var inID = connection.GetPortIDForInputNode();
-                    var outID = connection.GetPortIDForThisNode();
-                    var inNode = graphView.GetNodeByGuid(connection.GetInputNodeGuid());
+                    var currentNodeInputID = connection.GetInputIDForThisNode();
+                    var inputNodeOutputID = connection.GetOutputIDForInputNode();
+                    var inputNode = graphView.GetNodeByGuid(connection.GetInputNodeGuid());
 
                     if (graphNode is null)
                     {
@@ -66,24 +66,24 @@ namespace z3y.ShaderGraph
                             continue;
                         }
 
-                        if (port.userData == null || port.GetPortID() != outID)
+                        if (port.userData == null || port.GetPortID() != currentNodeInputID)
                         {
                             continue;
                         }
 
-                        if (inNode is null)
+                        if (inputNode is null)
                         {
                             continue;
                         }
 
-                        foreach (var ve2 in inNode.outputContainer.Children())
+                        foreach (var ve2 in inputNode.outputContainer.Children())
                         {
                             if (ve2 is not Port outPort)
                             {
                                 continue;
                             }
 
-                            if (outPort.GetPortID() == inID)
+                            if (outPort.GetPortID() == inputNodeOutputID)
                             {
                                 var newEdge = outPort.ConnectTo(port);
                                 graphView.AddElement(newEdge);
