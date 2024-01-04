@@ -5,6 +5,8 @@ using UnityEditor;
 using System.IO;
 using System;
 using UnityEditor.Callbacks;
+using System.Linq;
+using z3y.ShaderGraph.Nodes;
 
 namespace z3y.ShaderGraph
 {
@@ -68,15 +70,18 @@ namespace z3y.ShaderGraph
         public override void OnImportAsset(AssetImportContext ctx)
         {
             var guid = AssetDatabase.AssetPathToGUID(assetPath);
+            var serializableGraph = ReadGraphData(false, guid);
 
-            var builder = new ShaderBuilder();
-            builder.passBuilders.Add(new PassBuilder("FORWARD", "Somewhere/Vertex.hlsl", "Somewhere/Fragment.hlsl"));
-            var visitor = new NodeVisitor(builder);
-            //var data = ReadGraphData(true, guid);
+            var builder = new ShaderBuilder(GenerationMode.Final, serializableGraph);
+            builder.AddPass(new PassBuilder("FORWARD", "Somewhere/Vertex.hlsl", "Somewhere/Fragment.hlsl"));
+
+            builder.Build();
 
 
-            var text = File.ReadAllText(assetPath);
-            ctx.AddObjectToAsset("Main Asset", new TextAsset(text));
+
+            //var text = File.ReadAllText(assetPath);
+            //ctx.AddObjectToAsset("Main Asset", new TextAsset(text));
+            ctx.AddObjectToAsset("Main Asset", new TextAsset(builder.ToString()));
 
             _cachedGraphData.Clear();
         }

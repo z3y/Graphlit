@@ -12,11 +12,14 @@ namespace z3y.ShaderGraph
         public int b;
         public string node;
 
+        public ShaderNode Node { get; private set; }
         public NodeConnection(Edge edge)
         {
             a = edge.output.GetPortID();
             b = edge.input.GetPortID();
             node = ((ShaderNodeVisualElement)edge.output.node).viewDataKey;
+
+            Node = null;
         }
 
         public string GetInputNodeGuid()
@@ -54,6 +57,11 @@ namespace z3y.ShaderGraph
             }
 
             return connections;
+        }
+
+        public void MapToNode(ShaderNode shaderNode)
+        {
+            Node = shaderNode;
         }
     }
 }

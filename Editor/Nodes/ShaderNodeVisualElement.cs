@@ -116,5 +116,16 @@ namespace z3y.ShaderGraph.Nodes
                     .Where(x => x is Port).Cast<Port>();
             }
         }
+
+        private List<Material> _previewMaterials = new List<Material>();
+
+        public void UpdatePreview(Action<Material> func)
+        {
+            foreach (var material in _previewMaterials)
+            {
+                func(material);
+            }
+        }
+
     }
 }

@@ -7,20 +7,6 @@ namespace z3y.ShaderGraph.Nodes.PortType
         public Color GetPortColor();
     }
 
-    public enum PropertyType
-    {
-        Float,
-        Float2,
-        Float3,
-        Float4,
-        Color,
-        Intiger,
-        Texture2D,
-        TextureAny,
-        TextureCube,
-        // etc
-    }
-
     public struct Float : IPortType
     {
         public int components;

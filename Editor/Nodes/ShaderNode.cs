@@ -366,33 +366,35 @@ namespace z3y.ShaderGraph.Nodes
         public string Name { get; }
     }
 
+    interface IRequirePropertyVisitor
+    {
+        void VisitProperty(PropertyVisitor visitor);
+    }
+
+    interface IRequireDescriptionVisitor
+    {
+        void VisitDescription(DescriptionVisitor visitor);
+    }
+    interface IMayRequirePropertyVisitor : IRequirePropertyVisitor
+    {
+        bool IsProperty { get; set; }
+    }
+    interface IRequireFunctionVisitor
+    {
+        void VisitFunction(FunctionVisitor visitor);
+    }
     public abstract class ShaderNode
     {
         public ShaderNode()
         {
-            Ports = AddPorts();
         }
 
-        public NodeInfo Info { get { return GetType().GetCustomAttribute<NodeInfo>(); } }
-        public PortDescriptor[] Ports { get; }
+        public NodeInfo Info => GetType().GetCustomAttribute<NodeInfo>();
         public virtual void AddElements(ShaderNodeVisualElement node) { }
-        public abstract PortDescriptor[] AddPorts();
-        public abstract void Visit(NodeVisitor visitor);
-    }
+        public abstract PortDescriptor[] Ports { get; }
+        public Dictionary<int, string> VariableNames { get; set; } = new();
+        public Dictionary<int, NodeConnection> Inputs { get; set; } = new();
+        public bool InputConnected(int portID) => Inputs.ContainsKey(portID);
 
-    public sealed class TestNode : ShaderNode
-    {
-        public override PortDescriptor[] AddPorts()
-        {
-            return new PortDescriptor[] {
-                new(PortDirection.Input, new Float(1, true), 0),
-                new(PortDirection.Input, new Float(1, true), 0),
-            };
-        }
-
-        public override void Visit(NodeVisitor visitor)
-        {
-            
-        }
     }
 }

@@ -26,7 +26,7 @@ namespace z3y.ShaderGraph
             var seriazableAttribute = Attribute.GetCustomAttribute(type, typeof(SerializableAttribute));
             if (seriazableAttribute is not null)
             {
-                data = JsonUtility.ToJson(node);
+                data = JsonUtility.ToJson(node.shaderNode);
             }
             else
             {

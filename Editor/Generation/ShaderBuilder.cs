@@ -1,19 +1,79 @@
 using System.Collections.Generic;
-using UnityEditor.Hardware;
+using z3y.ShaderGraph.Nodes;
 
 namespace z3y.ShaderGraph
 {
     public class ShaderBuilder
     {
+        public ShaderBuilder(GenerationMode generationMode, SerializableGraph serializableGraph)
+        {
+            GenerationMode = generationMode;
+            SerializableGraph = serializableGraph;
+            DeserializeAndMapGuids();
+            FillConnections();
+            visitors.Add(new PropertyVisitor(this));
+        }
+
         public string shaderName;
         public string fallback;
         public string customEditor;
         public Dictionary<string, string> subshaderTags = new();
         public HashSet<string> properties = new();
         public List<PassBuilder> passBuilders = new();
-
+        public List<NodeVisitor> visitors = new();
 
         private ShaderStringBuilder _sb;
+
+        public GenerationMode GenerationMode { get; }
+        public SerializableGraph SerializableGraph { get; }
+
+        public void AddPass(PassBuilder passBuilder)
+        {
+            int passIndex = passBuilders.Count;
+            passBuilders.Add(passBuilder);
+
+            visitors.Add(new DescriptionVisitor(this, ShaderStage.Vertex, passIndex));
+            visitors.Add(new DescriptionVisitor(this, ShaderStage.Fragment, passIndex));
+            visitors.Add(new FunctionVisitor(this, passIndex));
+
+        }
+
+        public Dictionary<string, ShaderNode> GuidToNode { get; private set; } = new();
+        public Dictionary<ShaderNode, SerializableNode> SerializableNodeToNode { get; private set; } = new();
+        public List<ShaderNode> ShaderNodes { get; private set; } = new();
+
+        private void DeserializeAndMapGuids()
+        {
+            foreach (var serializableNode in SerializableGraph.nodes)
+            {
+                if (!serializableNode.TryDeserialize(out var shaderNode))
+                {
+                    continue;
+                }
+                GuidToNode.Add(serializableNode.guid, shaderNode);
+                ShaderNodes.Add(shaderNode);
+                SerializableNodeToNode.Add(shaderNode, serializableNode);
+            }
+        }
+
+        private void FillConnections()
+        {
+            foreach (var shaderNode in ShaderNodes)
+            {
+                var serializableNode = SerializableNodeToNode[shaderNode];
+                foreach (var connection in serializableNode.connections)
+                {
+                    connection.MapToNode(GuidToNode[connection.node]);
+                    shaderNode.Inputs.Add(connection.GetInputIDForThisNode(), connection);
+                }
+            }
+        }
+
+        public void Build()
+        {
+            
+        }
+        
         public override string ToString()
         {
             _sb = new ShaderStringBuilder();

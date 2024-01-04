@@ -146,10 +146,10 @@ namespace z3y.ShaderGraph
             }
         }
 
-        public void ConnectPort(ShaderNodeVisualElement node, NodeConnection connection)
+/*        public void ConnectPort(ShaderNodeVisualElement node, NodeConnection connection)
         {
 
-        }
+        }*/
 
     }
 }

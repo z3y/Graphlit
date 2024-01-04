@@ -1,31 +1,69 @@
 namespace z3y.ShaderGraph.Nodes
 {
+    using System;
+    using UnityEngine.UIElements;
+    using UnityEngine;
     using z3y.ShaderGraph.Nodes.PortType;
 
     [NodeInfo("*", "a * b")]
-    public sealed class MultiplyNode : ShaderNode
+    public sealed class MultiplyNode : ShaderNode, IRequireDescriptionVisitor
     {
         const int A = 0;
         const int B = 1;
         const int OUT = 2;
 
-        public override PortDescriptor[] AddPorts()
+        public override PortDescriptor[] Ports { get; } = new PortDescriptor[]
         {
-            var type = new Float(1, true);
-            return new PortDescriptor[]
-            {
-                new(PortDirection.Input, type, A, "A"),
-                new(PortDirection.Input, type, B, "B"),
-                new(PortDirection.Output, type, OUT),
-            };
-        }
+            new(PortDirection.Input, new Float(1, true), A, "A"),
+            new(PortDirection.Input, new Float(1, true), B, "B"),
+            new(PortDirection.Output, new Float(1, true), OUT),
+        };
 
-        public override void Visit(NodeVisitor visitor)
+        public void VisitDescription(DescriptionVisitor visitor)
         {
 
         }
-
     }
+
+    [NodeInfo("float"), Serializable]
+    public class FloatNode : ShaderNode, IRequireDescriptionVisitor, IMayRequirePropertyVisitor
+    {
+        const int OUT = 0;
+        [SerializeField] float _value;
+        [SerializeField] string _propertyName;
+
+        public override PortDescriptor[] Ports { get; } = new PortDescriptor[]
+        {
+            new(PortDirection.Output, new Float(1, true), OUT),
+        };
+
+        public bool IsProperty { get; set; } = false;
+
+        public override void AddElements(ShaderNodeVisualElement node)
+        {
+            var f = new FloatField { value = _value };
+            f.RegisterValueChangedCallback((evt) => {
+                _value = evt.newValue;
+
+                node.UpdatePreview((mat) => {
+                    mat.SetFloat(_propertyName, _value);
+                });
+
+            });
+            node.inputContainer.Add(f);
+        }
+
+        public void VisitDescription(DescriptionVisitor visitor)
+        {
+            VariableNames[OUT] = IsProperty ? _propertyName : _value.ToString("R");
+        }
+
+        public void VisitProperty(PropertyVisitor visitor)
+        {
+            visitor.AddProperty(_propertyName);
+        }
+    }
+
     /*
      * [@NodeInfo("*", "a * b")]
     public sealed class MultiplyNode : ShaderNode
