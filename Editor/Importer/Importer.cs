@@ -75,8 +75,7 @@ namespace z3y.ShaderGraph
             var builder = new ShaderBuilder(GenerationMode.Final, serializableGraph);
             builder.AddPass(new PassBuilder("FORWARD", "Somewhere/Vertex.hlsl", "Somewhere/Fragment.hlsl"));
 
-            builder.Build();
-
+            builder.Build<OutputNode>();
 
 
             //var text = File.ReadAllText(assetPath);

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.MemoryProfiler;
 using UnityEngine;
 using UnityEngine.UIElements;
 using z3y.ShaderGraph.Nodes.PortType;
@@ -361,7 +363,7 @@ namespace z3y.ShaderGraph.Nodes
         }
 
         public PortDirection Direction { get; }
-        public IPortType Type { get; }
+        public IPortType Type { get; set; }
         public int ID { get; }
         public string Name { get; }
     }
@@ -387,14 +389,150 @@ namespace z3y.ShaderGraph.Nodes
     {
         public ShaderNode()
         {
+            foreach (var port in Ports)
+            {
+                _defaultPortsTypes.Add(port.ID, port.Type);
+            }
         }
 
         public NodeInfo Info => GetType().GetCustomAttribute<NodeInfo>();
         public virtual void AddElements(ShaderNodeVisualElement node) { }
         public abstract PortDescriptor[] Ports { get; }
-        public Dictionary<int, string> VariableNames { get; set; } = new();
-        public Dictionary<int, NodeConnection> Inputs { get; set; } = new();
         public bool InputConnected(int portID) => Inputs.ContainsKey(portID);
 
+        #region Visit
+        public Dictionary<int, NodeConnection> Inputs { get; set; } = new();
+        public Dictionary<int, string> VariableNames { get; set; } = new();
+        public bool visited;
+        private static int _uniqueVariableID = 0;
+        public static void ResetUniqueVariableIDs() => _uniqueVariableID = 0;
+        private string TryGetVariableName(int portID, string prefix = null)
+        {
+            if (VariableNames.TryGetValue(portID, out string value))
+            {
+                return value;
+            }
+
+            var name = (prefix ?? "Node") + _uniqueVariableID++;
+            VariableNames.Add(portID, name);
+            return name;
+        }
+
+        public string GetInputString(int portID)
+        {
+            UpdatePortDefaultString(portID);
+            return TryGetVariableName(portID);
+        }
+
+        private Dictionary<int, IPortType> _defaultPortsTypes = new();
+        private void UpdatePortDefaultString(int portID)
+        {
+            if (InputConnected(portID))
+            {
+                return;
+            }
+
+            Ports[portID].Type = _defaultPortsTypes[portID];
+            VariableNames[portID] = SetDefaultInputString(portID);
+        }
+
+        public virtual string SetDefaultInputString(int portID)
+        {
+            return "0";
+        }
+
+        public string SetOutputString(int portID, string prefix = null)
+        {
+            return TryGetVariableName(portID, prefix);
+        }
+
+        public int ImplicitTruncation(int? outputID = null, params int[] IDs)
+        {
+            int trunc = 4;
+            int max = 1;
+            for (int i = 0; i < IDs.Length; i++)
+            {
+                var ID = IDs[i];
+                var type = (Float)Ports[ID].Type;
+                var components = type.components;
+                if (components == 1)
+                {
+                    continue;
+                }
+                max = Mathf.Max(max, components);
+                trunc = Mathf.Min(trunc, components);
+            }
+            trunc = Mathf.Min(trunc, max);
+
+            if (outputID is int outputIDInt)
+            {
+                if (Ports[outputIDInt].Type is Float @float)
+                {
+                    @float.components = trunc;
+                    Ports[outputIDInt].Type = @float;
+                }
+            }
+
+            return trunc;
+        }
+
+        public string GetCastInputString(int portID, int targetComponent)
+        {
+            var name = GetInputString(portID);
+            var type = (Float)Ports[portID].Type;
+            var components = type.components;
+            string typeName = type.fullPrecision ? "float" : "half";
+
+
+            if (components == targetComponent)
+            {
+                return name;
+            }
+
+            // downcast
+            if (components > targetComponent)
+            {
+                name = "(" + name + ").xyz"[..(targetComponent + 2)];
+            }
+            else
+            {
+                // upcast
+                if (components == 1)
+                {
+                    // no need to upcast
+                    // name = "(" + name + ").xxxx"[..(targetComponent + 2)];
+                    return name;
+                }
+                else if (components == 2)
+                {
+                    if (targetComponent == 3)
+                    {
+                        name = typeName + "3(" + name + ", 0)";
+                    }
+                    if (targetComponent == 4)
+                    {
+                        name = typeName + "4(" + name + ", 0, 0)";
+                    }
+                }
+                else if (components == 3)
+                {
+                    if (targetComponent == 4)
+                    {
+                        name = typeName + "4(" + name + ", 0)";
+                    }
+                }
+            }
+
+            type.components = targetComponent;
+            Ports[portID].Type = type;
+            return name;
+        }
+
+        public string FormatOutput(int outID, string prefix, string text)
+        {
+            SetOutputString(outID, prefix);
+            return $"{(Float)Ports[outID].Type} {VariableNames[outID]} = {text};";
+        }
+        #endregion
     }
 }

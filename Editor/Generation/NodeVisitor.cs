@@ -28,7 +28,7 @@ namespace z3y.ShaderGraph
 
     public static class NodeVisitorExtensions
     {
-        public static void Visit(this ShaderNode shaderNode, GenerationMode generationMode, params NodeVisitor[] nodeVisitors)
+        public static void Visit(this ShaderNode shaderNode, GenerationMode generationMode, List<NodeVisitor> nodeVisitors)
         {
             if (shaderNode is IMayRequirePropertyVisitor mayRequiereProperty && generationMode == GenerationMode.Preview)
             {

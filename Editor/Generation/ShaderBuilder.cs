@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using z3y.ShaderGraph.Nodes;
+using static UnityEngine.EventSystems.StandaloneInputModule;
 
 namespace z3y.ShaderGraph
 {
@@ -32,9 +33,9 @@ namespace z3y.ShaderGraph
             int passIndex = passBuilders.Count;
             passBuilders.Add(passBuilder);
 
-            visitors.Add(new DescriptionVisitor(this, ShaderStage.Vertex, passIndex));
+            //visitors.Add(new DescriptionVisitor(this, ShaderStage.Vertex, passIndex));
             visitors.Add(new DescriptionVisitor(this, ShaderStage.Fragment, passIndex));
-            visitors.Add(new FunctionVisitor(this, passIndex));
+            //visitors.Add(new FunctionVisitor(this, passIndex));
 
         }
 
@@ -69,9 +70,47 @@ namespace z3y.ShaderGraph
             }
         }
 
-        public void Build()
+        public void Build<T>() where T : ShaderNode // later shader target
         {
-            
+            ShaderNode.ResetUniqueVariableIDs();
+            var t = ShaderNodes.Find(x => x is T);
+            TraverseGraph(t);
+            t.Visit(GenerationMode, visitors);
+        }
+
+        public void TraverseGraph(ShaderNode shaderNode)
+        {
+            var inputs = shaderNode.Inputs;
+            foreach (var input in inputs.Values)
+            {
+                var inputNode = input.Node;
+                if (inputNode.visited)
+                {
+                    // copy
+                    //node.PortNames[input.outID] = inputNode.SetOutputString(input.inID);
+                    //var portType = input.inNode.PortsTypes[input.inID];
+                    //node.PortsTypes[input.outID] = portType;
+                    shaderNode.VariableNames[input.b] = inputNode.VariableNames[input.a];
+                    shaderNode.Ports[input.b].Type = inputNode.Ports[input.a].Type;
+
+                    continue;
+                }
+
+                TraverseGraph(inputNode);
+
+                inputNode.Visit(GenerationMode, visitors);
+                {
+                    // copy
+                    //node.PortNames[input.outID] = inputNode.SetOutputString(input.inID);
+                    //var portType = input.inNode.PortsTypes[input.inID];
+                    //node.PortsTypes[input.outID] = portType;
+                    shaderNode.VariableNames[input.b] = inputNode.VariableNames[input.a];
+                    shaderNode.Ports[input.b].Type = inputNode.Ports[input.a].Type;
+                }
+
+                //inputNode.UpdateGraphView();
+                inputNode.visited = true;
+            }
         }
         
         public override string ToString()
