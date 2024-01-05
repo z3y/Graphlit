@@ -236,5 +236,10 @@ namespace z3y.ShaderGraph
             }
         }
 
+        internal void UpdateGraphView(string guid, ShaderNode node)
+        {
+            var element = (ShaderNodeVisualElement)graphElements.First(x => x.viewDataKey == guid);
+            element.UpdateGraphView(node);
+        }
     }
 }

@@ -7,6 +7,7 @@ using System;
 using UnityEditor.Callbacks;
 using System.Linq;
 using z3y.ShaderGraph.Nodes;
+using UnityEditor.Experimental.GraphView;
 
 namespace z3y.ShaderGraph
 {
@@ -18,6 +19,8 @@ namespace z3y.ShaderGraph
         // private string _testShaderPath = "Assets/UnlitTest.shader";
 
         [NonSerialized] internal static Dictionary <string, SerializableGraph> _cachedGraphData = new();
+        [NonSerialized] internal static Dictionary<string, ShaderGraphView> _graphViews = new();
+
         public static SerializableGraph ReadGraphData(bool useCache, string guid)
         {
             var assetPath = AssetDatabase.GUIDToAssetPath(guid);
@@ -72,7 +75,8 @@ namespace z3y.ShaderGraph
             var guid = AssetDatabase.AssetPathToGUID(assetPath);
             var serializableGraph = ReadGraphData(false, guid);
 
-            var builder = new ShaderBuilder(GenerationMode.Final, serializableGraph);
+            _graphViews.TryGetValue(guid, out var shaderGraphView);
+            var builder = new ShaderBuilder(GenerationMode.Final, serializableGraph, shaderGraphView);
             builder.AddPass(new PassBuilder("FORWARD", "Somewhere/Vertex.hlsl", "Somewhere/Fragment.hlsl"));
 
             builder.Build<OutputNode>();
@@ -111,6 +115,7 @@ namespace z3y.ShaderGraph
             win = EditorWindow.CreateWindow<ShaderGraphWindow>(typeof(ShaderGraphWindow), typeof(ShaderGraphWindow));
             win.Initialize(guid);
 
+            _graphViews[guid] = win.graphView;
         }
 
         public static void SaveGraphAndReimport(ShaderGraphView graphView, string guid)

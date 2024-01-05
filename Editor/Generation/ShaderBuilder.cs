@@ -6,10 +6,11 @@ namespace z3y.ShaderGraph
 {
     public class ShaderBuilder
     {
-        public ShaderBuilder(GenerationMode generationMode, SerializableGraph serializableGraph)
+        public ShaderBuilder(GenerationMode generationMode, SerializableGraph serializableGraph, ShaderGraphView shaderGraphView)
         {
             GenerationMode = generationMode;
             SerializableGraph = serializableGraph;
+            ShaderGraphView = shaderGraphView;
             DeserializeAndMapGuids();
             FillConnections();
             visitors.Add(new PropertyVisitor(this));
@@ -27,6 +28,7 @@ namespace z3y.ShaderGraph
 
         public GenerationMode GenerationMode { get; }
         public SerializableGraph SerializableGraph { get; }
+        public ShaderGraphView ShaderGraphView { get; }
 
         public void AddPass(PassBuilder passBuilder)
         {
@@ -40,7 +42,7 @@ namespace z3y.ShaderGraph
         }
 
         public Dictionary<string, ShaderNode> GuidToNode { get; private set; } = new();
-        public Dictionary<ShaderNode, SerializableNode> SerializableNodeToNode { get; private set; } = new();
+        public Dictionary<ShaderNode, SerializableNode> NodeToSerializableNode { get; private set; } = new();
         public List<ShaderNode> ShaderNodes { get; private set; } = new();
 
         private void DeserializeAndMapGuids()
@@ -53,7 +55,7 @@ namespace z3y.ShaderGraph
                 }
                 GuidToNode.Add(serializableNode.guid, shaderNode);
                 ShaderNodes.Add(shaderNode);
-                SerializableNodeToNode.Add(shaderNode, serializableNode);
+                NodeToSerializableNode.Add(shaderNode, serializableNode);
             }
         }
 
@@ -61,7 +63,7 @@ namespace z3y.ShaderGraph
         {
             foreach (var shaderNode in ShaderNodes)
             {
-                var serializableNode = SerializableNodeToNode[shaderNode];
+                var serializableNode = NodeToSerializableNode[shaderNode];
                 foreach (var connection in serializableNode.connections)
                 {
                     connection.MapToNode(GuidToNode[connection.node]);
@@ -87,9 +89,6 @@ namespace z3y.ShaderGraph
                 if (inputNode.visited)
                 {
                     // copy
-                    //node.PortNames[input.outID] = inputNode.SetOutputString(input.inID);
-                    //var portType = input.inNode.PortsTypes[input.inID];
-                    //node.PortsTypes[input.outID] = portType;
                     shaderNode.VariableNames[input.b] = inputNode.VariableNames[input.a];
                     shaderNode.Ports[input.b].Type = inputNode.Ports[input.a].Type;
 
@@ -101,14 +100,15 @@ namespace z3y.ShaderGraph
                 inputNode.Visit(GenerationMode, visitors);
                 {
                     // copy
-                    //node.PortNames[input.outID] = inputNode.SetOutputString(input.inID);
-                    //var portType = input.inNode.PortsTypes[input.inID];
-                    //node.PortsTypes[input.outID] = portType;
                     shaderNode.VariableNames[input.b] = inputNode.VariableNames[input.a];
                     shaderNode.Ports[input.b].Type = inputNode.Ports[input.a].Type;
                 }
 
-                //inputNode.UpdateGraphView();
+
+                if (ShaderGraphView is not null)
+                {
+                    ShaderGraphView.UpdateGraphView(NodeToSerializableNode[inputNode].guid, inputNode);
+                }
                 inputNode.visited = true;
             }
         }

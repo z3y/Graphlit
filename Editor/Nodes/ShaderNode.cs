@@ -1,14 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.MemoryProfiler;
 using UnityEngine;
-using UnityEngine.UIElements;
 using z3y.ShaderGraph.Nodes.PortType;
-using static UnityEditor.Experimental.GraphView.Port;
 
 /*
 namespace z3y.ShaderGraph.Nodes
@@ -391,7 +385,7 @@ namespace z3y.ShaderGraph.Nodes
         {
             foreach (var port in Ports)
             {
-                _defaultPortsTypes.Add(port.ID, port.Type);
+                DefaultPortsTypes.Add(port.ID, port.Type);
             }
         }
 
@@ -424,7 +418,7 @@ namespace z3y.ShaderGraph.Nodes
             return TryGetVariableName(portID);
         }
 
-        private Dictionary<int, IPortType> _defaultPortsTypes = new();
+        public Dictionary<int, IPortType> DefaultPortsTypes { get; } = new();
         private void UpdatePortDefaultString(int portID)
         {
             if (InputConnected(portID))
@@ -432,7 +426,7 @@ namespace z3y.ShaderGraph.Nodes
                 return;
             }
 
-            Ports[portID].Type = _defaultPortsTypes[portID];
+            Ports[portID].Type = DefaultPortsTypes[portID];
             VariableNames[portID] = SetDefaultInputString(portID);
         }
 

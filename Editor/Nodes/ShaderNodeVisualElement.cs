@@ -127,5 +127,29 @@ namespace z3y.ShaderGraph.Nodes
             }
         }
 
+        public void UpdateGraphView(ShaderNode shaderNode)
+        {
+            foreach (var port in Ports)
+            {
+                int portID = port.GetPortID();
+                if (shaderNode.DefaultPortsTypes[portID] is Float defaultFloatType && defaultFloatType.dynamic)
+                {
+                    var floatType = (Float)shaderNode.Ports[portID].Type;
+                    var color = floatType.GetPortColor();
+                    port.portColor = color;
+
+                    // caps not getting updated
+                    var caps = port.Q("connector");
+                    if (caps is not null)
+                    {
+                        caps.style.borderBottomColor = color;
+                        caps.style.borderTopColor = color;
+                        caps.style.borderLeftColor = color;
+                        caps.style.borderRightColor = color;
+                    }
+                }
+            }
+        }
+
     }
 }
