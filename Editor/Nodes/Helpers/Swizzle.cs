@@ -21,18 +21,26 @@ namespace z3y.ShaderGraph
                 return false;
             }
 
-            if (_validCharacters.Contains(value[0]) && value.Any(x => !_validCharacters.Contains(x)))
+            bool containsXyzw = _validCharacters.Contains(value[0]);
+            bool containsRgba = _validCharacters2.Contains(value[0]);
+
+
+            if (containsXyzw && value.Any(x => !_validCharacters.Contains(x)))
             {
                 return false;
             }
 
-            if (_validCharacters2.Contains(value[0]) && value.Any(x => !_validCharacters2.Contains(x)))
+            if (containsRgba && value.Any(x => !_validCharacters2.Contains(x)))
             {
                 return false;
             }
 
+            if (containsXyzw || containsRgba)
+            {
+                return true;
+            }
 
-            return true;
+            return false;
         }
 
         public static string ValidateSwizzle(ChangeEvent<string> evt, TextField textField)

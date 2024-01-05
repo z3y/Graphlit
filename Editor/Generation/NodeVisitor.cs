@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using z3y.ShaderGraph.Nodes;
 
@@ -26,36 +27,60 @@ namespace z3y.ShaderGraph
         public GenerationMode GenerationMode => _shaderBuilder.GenerationMode;
     }
 
+    interface IRequirePropertyVisitor
+    {
+        void VisitProperty(PropertyVisitor visitor);
+    }
+
+    interface IRequireDescriptionVisitor
+    {
+        void VisitDescription(DescriptionVisitor visitor);
+    }
+    interface IMayRequirePropertyVisitor : IRequirePropertyVisitor
+    {
+        bool IsProperty { get; set; }
+    }
+    interface IRequireFunctionVisitor
+    {
+        void VisitFunction(FunctionVisitor visitor);
+    }
+
     public static class NodeVisitorExtensions
     {
-        public static void Visit(this ShaderNode shaderNode, GenerationMode generationMode, List<NodeVisitor> nodeVisitors)
+        public static void Visit(this ShaderNode shaderNode, GenerationMode generationMode, NodeVisitor visitor)
         {
             if (shaderNode is IMayRequirePropertyVisitor mayRequiereProperty && generationMode == GenerationMode.Preview)
             {
                 mayRequiereProperty.IsProperty = true;
             }
 
-            foreach (var visitor in nodeVisitors)
+            if (visitor is DescriptionVisitor descriptionVisitor)
             {
-                if (visitor is DescriptionVisitor descriptionVisitor)
+                if (shaderNode is IRequireDescriptionVisitor node)
                 {
-                    if (shaderNode is IRequireDescriptionVisitor node)
-                    {
-                        node.VisitDescription(descriptionVisitor);
-                    }
-                }
-                else if (visitor is PropertyVisitor propertyVisitor)
-                {
-                    if (shaderNode is IMayRequirePropertyVisitor mayRequiereProperty1 && !mayRequiereProperty1.IsProperty)
-                    {
-                        continue;
-                    }
-                    if (shaderNode is IRequirePropertyVisitor node)
-                    {
-                        node.VisitProperty(propertyVisitor);
-                    }
+                    node.VisitDescription(descriptionVisitor);
                 }
             }
+            else if (visitor is PropertyVisitor propertyVisitor)
+            {
+                if (shaderNode is IMayRequirePropertyVisitor mayRequiereProperty1 && !mayRequiereProperty1.IsProperty)
+                {
+                    return;
+                }
+                if (shaderNode is IRequirePropertyVisitor node)
+                {
+                    node.VisitProperty(propertyVisitor);
+                }
+            }
+
+            else if (visitor is FunctionVisitor functionVisitor)
+            {
+                if (shaderNode is IRequireFunctionVisitor node)
+                {
+                    node.VisitFunction(functionVisitor);
+                }
+            }
+
         }
     }
 
@@ -110,11 +135,11 @@ namespace z3y.ShaderGraph
             _target = shaderBuilder.passBuilders[passIndex].functions;
         }
 
-        private List<string> _target;
+        private Dictionary<string, string> _target;
 
-        public void AddFunction(string function)
+        public void AddFunction(string key, string function)
         {
-            _target.Add(function);
+            _target[key] = function;
         }
     }
 }

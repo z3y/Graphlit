@@ -18,7 +18,7 @@ namespace z3y.ShaderGraph
         public List<string> varyings = new();
         public List<string> cbuffer = new();
         public List<string> objectDecleration = new();
-        public List<string> functions = new();
+        public Dictionary<string, string> functions = new();
         public List<string> vertexDescription = new();
         public List<string> surfaceDescription = new();
 

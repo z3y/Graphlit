@@ -70,18 +70,24 @@ namespace z3y.ShaderGraph
 
                 }
         */
+
+        private static ShaderBuilder UpdateGraph(string guid)
+        {
+            var serializableGraph = ReadGraphData(false, guid);
+            _graphViews.TryGetValue(guid, out var shaderGraphView);
+            var builder = new ShaderBuilder(GenerationMode.Final, serializableGraph, shaderGraphView);
+            builder.AddPass(new PassBuilder("FORWARD", "Somewhere/ForwardVertex.hlsl", "Somewhere/ForwardFragment.hlsl"));
+
+            builder.Build<SurfaceDescription, VertexDescription>();
+
+            return builder;
+        }
+
         public override void OnImportAsset(AssetImportContext ctx)
         {
             var guid = AssetDatabase.AssetPathToGUID(assetPath);
-            var serializableGraph = ReadGraphData(false, guid);
 
-            _graphViews.TryGetValue(guid, out var shaderGraphView);
-            var builder = new ShaderBuilder(GenerationMode.Final, serializableGraph, shaderGraphView);
-            builder.AddPass(new PassBuilder("FORWARD", "Somewhere/Vertex.hlsl", "Somewhere/Fragment.hlsl"));
-
-            builder.Build<OutputNode>();
-
-
+            var builder = UpdateGraph(guid);
             //var text = File.ReadAllText(assetPath);
             //ctx.AddObjectToAsset("Main Asset", new TextAsset(text));
             ctx.AddObjectToAsset("Main Asset", new TextAsset(builder.ToString()));
@@ -116,6 +122,7 @@ namespace z3y.ShaderGraph
             win.Initialize(guid);
 
             _graphViews[guid] = win.graphView;
+            UpdateGraph(guid);
         }
 
         public static void SaveGraphAndReimport(ShaderGraphView graphView, string guid)

@@ -30,7 +30,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [NodeInfo("float"), Serializable]
-    public class FloatNode : ShaderNode, IRequireDescriptionVisitor, IMayRequirePropertyVisitor
+    public class FloatNode : ShaderNode, IRequireDescriptionVisitor, IMayRequirePropertyVisitor, IRequireFunctionVisitor
     {
         const int OUT = 0;
         [SerializeField] float _value;
@@ -41,7 +41,11 @@ namespace z3y.ShaderGraph.Nodes
             new(PortDirection.Output, new Float(1, true), OUT),
         };
 
-        public bool IsProperty { get; set; } = false;
+        private bool _isProperty;
+        public bool IsProperty {
+            get => _isProperty || _propertyName != string.Empty;
+            set => _isProperty = value;
+        }
 
         public override void AddElements(ShaderNodeVisualElement node)
         {
@@ -54,7 +58,16 @@ namespace z3y.ShaderGraph.Nodes
                 });
 
             });
+
             node.inputContainer.Add(f);
+
+            var p = new TextField { value = _propertyName };
+            p.RegisterValueChangedCallback((evt) =>
+            {
+                _propertyName = evt.newValue;
+            });
+
+            node.inputContainer.Add(p);
         }
 
         public void VisitDescription(DescriptionVisitor visitor)
@@ -65,6 +78,17 @@ namespace z3y.ShaderGraph.Nodes
         public void VisitProperty(PropertyVisitor visitor)
         {
             visitor.AddProperty(_propertyName);
+        }
+
+        public void VisitFunction(FunctionVisitor visitor)
+        {
+            visitor.AddFunction("cool func",
+                @"
+float TotallyCoolFunction(float a, float b)
+{
+    return a * b;
+}
+");
         }
     }
 
@@ -313,8 +337,8 @@ namespace z3y.ShaderGraph.Nodes
         }
     }*/
 
-    [NodeInfo("Result")]
-    public sealed class OutputNode : ShaderNode, IRequireDescriptionVisitor
+    [NodeInfo("Surface Description")]
+    public sealed class SurfaceDescription : ShaderNode, IRequireDescriptionVisitor
     {
         const int ALBEDO = 0;
         const int ALPHA = 1;
@@ -335,6 +359,28 @@ namespace z3y.ShaderGraph.Nodes
             visitor.AppendLine($"float alpha = {GetInputString(ALPHA)};");
             visitor.AppendLine($"float roughness = {GetInputString(ROUGHNESS)};");
             visitor.AppendLine($"float metallic = {GetInputString(METALLIC)};");
+        }
+    }
+
+    [NodeInfo("Vertex Description")]
+    public sealed class VertexDescription : ShaderNode, IRequireDescriptionVisitor
+    {
+        const int POSITION = 0;
+        const int NORMAL = 1;
+        const int TANGENT = 2;
+
+        public override PortDescriptor[] Ports { get; } = new PortDescriptor[]
+        {
+            new(PortDirection.Input, new Float(3), POSITION, "Position"),
+            new(PortDirection.Input, new Float(3), NORMAL, "Normal"),
+            new(PortDirection.Input, new Float(4), TANGENT, "Tangent"),
+        };
+
+        public void VisitDescription(DescriptionVisitor visitor)
+        {
+            visitor.AppendLine($"float3 position = {GetInputString(POSITION)};");
+            visitor.AppendLine($"float3 normal = {GetInputString(NORMAL)};");
+            visitor.AppendLine($"float4 tangent = {GetInputString(TANGENT)};");
         }
     }
 }
