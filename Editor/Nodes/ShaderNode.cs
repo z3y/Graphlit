@@ -65,6 +65,10 @@ namespace z3y.ShaderGraph.Nodes
         public string GetInputString(int portID)
         {
             UpdatePortDefaultString(portID);
+            if (DefaultPortsTypes[portID] is Float @float && !@float.dynamic)
+            {
+                return GetCastInputString(portID, @float.components);
+            }
             return TryGetVariableName(portID);
         }
 
@@ -122,7 +126,8 @@ namespace z3y.ShaderGraph.Nodes
 
         public string GetCastInputString(int portID, int targetComponent)
         {
-            var name = GetInputString(portID);
+            UpdatePortDefaultString(portID);
+            var name = TryGetVariableName(portID);
             var type = (Float)Ports[portID].Type;
             var components = type.components;
             string typeName = type.fullPrecision ? "float" : "half";
@@ -168,7 +173,7 @@ namespace z3y.ShaderGraph.Nodes
             }
 
             type.components = targetComponent;
-            Ports[portID].Type = type;
+            //Ports[portID].Type = type;
             return name;
         }
 

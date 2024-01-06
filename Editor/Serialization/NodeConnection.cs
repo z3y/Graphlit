@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using z3y.ShaderGraph.Nodes;
 
@@ -17,6 +18,7 @@ namespace z3y.ShaderGraph
         {
             a = edge.output.GetPortID();
             b = edge.input.GetPortID();
+
             node = ((ShaderNodeVisualElement)edge.output.node).viewDataKey;
 
             Node = null;
@@ -40,14 +42,14 @@ namespace z3y.ShaderGraph
         public static List<NodeConnection> GetConnections(IEnumerable<Port> ports)
         {
             var connections = new List<NodeConnection>();
+
+
             foreach (var port in ports)
             {
                 if (port.direction != Direction.Input)
                 {
                     continue;
                 }
-
-                int id = port.GetPortID();
 
                 foreach (var edge in port.connections)
                 {

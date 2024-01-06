@@ -17,6 +17,11 @@ namespace z3y.ShaderGraph
             _sb.Append(value);
         }
 
+        public void AppendLine()
+        {
+            _sb.AppendLine();
+        }
+
         public void Indent()
         {
             AppendLine("{");

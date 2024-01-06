@@ -77,8 +77,10 @@ namespace z3y.ShaderGraph
             _graphViews.TryGetValue(guid, out var shaderGraphView);
             var builder = new ShaderBuilder(GenerationMode.Final, serializableGraph, shaderGraphView);
             builder.AddPass(new PassBuilder("FORWARD", "Somewhere/ForwardVertex.hlsl", "Somewhere/ForwardFragment.hlsl"));
+            builder.AddPass(new PassBuilder("FORWARDADD", "Somewhere/ForwardAddVertex.hlsl", "Somewhere/ForwardAddFragment.hlsl"));
 
-            builder.Build<SurfaceDescription, VertexDescription>();
+
+            builder.Build<VertexDescription, SurfaceDescription>();
 
             return builder;
         }
@@ -91,6 +93,9 @@ namespace z3y.ShaderGraph
             //var text = File.ReadAllText(assetPath);
             //ctx.AddObjectToAsset("Main Asset", new TextAsset(text));
             ctx.AddObjectToAsset("Main Asset", new TextAsset(builder.ToString()));
+
+            var text = File.ReadAllText(assetPath);
+            ctx.AddObjectToAsset("json", new TextAsset(text));
 
             _cachedGraphData.Clear();
         }

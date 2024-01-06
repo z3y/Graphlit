@@ -347,10 +347,10 @@ float TotallyCoolFunction(float a, float b)
 
         public override PortDescriptor[] Ports { get; } = new PortDescriptor[]
         {
-            new(PortDirection.Input, new Float(3), ALBEDO, "Albedo"),
-            new(PortDirection.Input, new Float(1), ALPHA, "Alpha"),
-            new(PortDirection.Input, new Float(1), ROUGHNESS, "Roughness"),
-            new(PortDirection.Input, new Float(1), METALLIC, "Metallic"),
+            new(PortDirection.Input, new Float(3, false), ALBEDO, "Albedo"),
+            new(PortDirection.Input, new Float(1, false), ALPHA, "Alpha"),
+            new(PortDirection.Input, new Float(1, false), ROUGHNESS, "Roughness"),
+            new(PortDirection.Input, new Float(1, false), METALLIC, "Metallic"),
         };
 
         public void VisitDescription(DescriptionVisitor visitor)
@@ -371,9 +371,9 @@ float TotallyCoolFunction(float a, float b)
 
         public override PortDescriptor[] Ports { get; } = new PortDescriptor[]
         {
-            new(PortDirection.Input, new Float(3), POSITION, "Position"),
-            new(PortDirection.Input, new Float(3), NORMAL, "Normal"),
-            new(PortDirection.Input, new Float(4), TANGENT, "Tangent"),
+            new(PortDirection.Input, new Float(3, false), POSITION, "Position"),
+            new(PortDirection.Input, new Float(3, false), NORMAL, "Normal"),
+            new(PortDirection.Input, new Float(4, false), TANGENT, "Tangent"),
         };
 
         public void VisitDescription(DescriptionVisitor visitor)

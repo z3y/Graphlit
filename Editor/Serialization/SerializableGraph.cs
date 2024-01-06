@@ -26,8 +26,7 @@ namespace z3y.ShaderGraph
         public static IEnumerable<SerializableNode> ElementsToSerializableNode(IEnumerable<GraphElement> elements)
         {
             var nodes = elements
-                .Where(x => x is ShaderNodeVisualElement)
-                .Cast<ShaderNodeVisualElement>()
+                .OfType<ShaderNodeVisualElement>()
                 .Where(x => x.shaderNode is not null)
                 .Select(x => new SerializableNode(x));
 

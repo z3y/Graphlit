@@ -56,7 +56,7 @@ namespace z3y.ShaderGraph
             return change;
         }
 
-
+        private SerializableGraph _lastCopyGraph;
         public string SerializeGraphElementsImpl(IEnumerable<GraphElement> elements)
         {
             var data = new SerializableGraph
@@ -64,19 +64,24 @@ namespace z3y.ShaderGraph
                 nodes = SerializableGraph.ElementsToSerializableNode(elements).ToList()
             };
 
-            var jsonData = JsonUtility.ToJson(data, false);
-            return jsonData;
+            _lastCopyGraph = data;
+
+            //var jsonData = JsonUtility.ToJson(data, false);
+            return " ";
         }
 
         public void UnserializeAndPasteImpl(string operationName, string jsonData)
         {
             // RecordUndo();
 
-            var data = JsonUtility.FromJson<SerializableGraph>(jsonData);
+            //var data = JsonUtility.FromJson<SerializableGraph>(jsonData);
+            var data = _lastCopyGraph;
 
             //Vector2 mousePosition = new Vector2(-200, -200);
             //ShaderGraphImporter.DeserializeNodesToGraph(data, this, mousePosition);
             var graphElements = data.PasteNodesAndOverwiteGuids(this);
+
+            ClearSelection();
 
             foreach (var graphElement in graphElements)
             {
