@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization.Json;
 using z3y.ShaderGraph.Nodes;
+using z3y.ShaderGraph.Nodes.PortType;
+using static UnityEngine.EventSystems.StandaloneInputModule;
 
 namespace z3y.ShaderGraph
 {
@@ -117,7 +119,13 @@ namespace z3y.ShaderGraph
                 shaderNode.ResetVisit();
             }
         }
-        
+
+        private void CopyPort(ShaderNode shaderNode, ShaderNode inputNode, NodeConnection input)
+        {
+            shaderNode.VariableNames[input.b] = inputNode.VariableNames[input.a];
+            shaderNode.Ports[input.b].Type = inputNode.Ports[input.a].Type;
+        }
+
         public void TraverseGraph(ShaderNode shaderNode, IEnumerable<NodeVisitor> visitors)
         {
             var inputs = shaderNode.Inputs;
@@ -126,9 +134,7 @@ namespace z3y.ShaderGraph
                 var inputNode = input.Node;
                 if (inputNode.visited)
                 {
-                    // copy
-                    shaderNode.VariableNames[input.b] = inputNode.VariableNames[input.a];
-                    shaderNode.Ports[input.b].Type = inputNode.Ports[input.a].Type;
+                    CopyPort(shaderNode, inputNode, input);
                     continue;
                 }
 
@@ -136,9 +142,7 @@ namespace z3y.ShaderGraph
 
                 inputNode.Visit(visitors);
                 {
-                    // copy
-                    shaderNode.VariableNames[input.b] = inputNode.VariableNames[input.a];
-                    shaderNode.Ports[input.b].Type = inputNode.Ports[input.a].Type;
+                    CopyPort(shaderNode, inputNode, input);
                 }
 
                 inputNode.visited = true;
