@@ -49,7 +49,7 @@ namespace z3y.ShaderGraph
 
         }
 
-        public void SetDirty()
+        public new void SetDirty()
         {
             hasUnsavedChanges = true;
         }

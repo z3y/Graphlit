@@ -14,7 +14,6 @@ namespace z3y.ShaderGraph
         public abstract string Name { get; }
         public abstract Type VertexDescription { get; }
         public abstract Type SurfaceDescription { get; }
-
         public abstract void BuilderPassthourgh(ShaderBuilder builder);
     }
 
