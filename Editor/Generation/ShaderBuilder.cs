@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using z3y.ShaderGraph.Nodes;
 
 namespace z3y.ShaderGraph
@@ -18,7 +21,6 @@ namespace z3y.ShaderGraph
         public string fallback;
         public string customEditor;
         public Dictionary<string, string> subshaderTags = new();
-        public HashSet<string> properties = new();
         public List<PassBuilder> passBuilders = new();
 
         private ShaderStringBuilder _sb;
@@ -70,32 +72,30 @@ namespace z3y.ShaderGraph
             var v = (TemplateOutput)ShaderNodes.Find(x => x.GetType() == target.VertexDescription);
             var f = (TemplateOutput)ShaderNodes.Find(x => x.GetType() == target.SurfaceDescription);
 
-            ResetNodes();
-
-            var vertexVisitors = new List<NodeVisitor>
-            {
-                new PropertyVisitor(this)
-            };
-
-            var fragmentVisitors = new List<NodeVisitor>
-            {
-                new PropertyVisitor(this)
-            };
 
             for (int i = 0; i < passBuilders.Count; i++)
             {
+                ResetNodes();
                 int passIndex = i;
-                vertexVisitors.Add(new DescriptionVisitor(this, ShaderStage.Vertex, passIndex));
-                fragmentVisitors.Add(new DescriptionVisitor(this, ShaderStage.Fragment, passIndex));
-                vertexVisitors.Add(new FunctionVisitor(this, passIndex));
-                fragmentVisitors.Add(new FunctionVisitor(this, passIndex));
+
+                var pass = passBuilders[i];
+                var vertexVisitors = new List<NodeVisitor>
+                {
+                    new PropertyVisitor(this, passIndex),
+                    new DescriptionVisitor(this, ShaderStage.Vertex, passIndex),
+                    new FunctionVisitor(this, passIndex)
+                };
+
+                var fragmentVisitors = new List<NodeVisitor>
+                {
+                    new PropertyVisitor(this, passIndex),
+                    new DescriptionVisitor(this, ShaderStage.Fragment, passIndex),
+                    new FunctionVisitor(this, passIndex)
+                };
+
+                TraverseGraphBegin(v, vertexVisitors, pass.Ports);
+                TraverseGraphBegin(f, fragmentVisitors, pass.Ports);
             }
-
-            TraverseGraph(v, vertexVisitors);
-            v.Visit(vertexVisitors);
-
-            TraverseGraph(f, fragmentVisitors);
-            f.Visit(fragmentVisitors);
 
 
             if (ShaderGraphView is not null)
@@ -119,7 +119,44 @@ namespace z3y.ShaderGraph
         private void CopyPort(ShaderNode shaderNode, ShaderNode inputNode, NodeConnection input)
         {
             shaderNode.VariableNames[input.b] = inputNode.VariableNames[input.a];
-            shaderNode.Ports[input.b].Type = inputNode.Ports[input.a].Type;
+            shaderNode.Ports.GetByID(input.b).Type = inputNode.Ports.GetByID(input.a).Type;
+        }
+
+        public void TraverseGraphBegin(TemplateOutput templateOutput, IEnumerable<NodeVisitor> visitors, int[] ports)
+        {
+            var inputs = templateOutput.Inputs;
+            foreach (var input in inputs.Values)
+            {
+                if (!Array.Exists(ports, x => x == input.GetInputIDForThisNode()))
+                {
+                    continue;
+                }
+
+                var inputNode = input.Node;
+
+                if (inputNode.visited)
+                {
+                    CopyPort(templateOutput, inputNode, input);
+                    continue;
+                }
+
+                TraverseGraph(inputNode, visitors);
+
+                inputNode.Visit(visitors);
+                {
+                    CopyPort(templateOutput, inputNode, input);
+                }
+
+                inputNode.visited = true;
+            }
+
+            foreach (var visitor in visitors)
+            {
+                if (visitor is DescriptionVisitor descriptionVisitor)
+                {
+                    templateOutput.VisitTemplate(descriptionVisitor, ports);
+                }
+            }
         }
 
         public void TraverseGraph(ShaderNode shaderNode, IEnumerable<NodeVisitor> visitors)
@@ -143,7 +180,6 @@ namespace z3y.ShaderGraph
 
                 inputNode.visited = true;
             }
-
         }
 
         public override string ToString()
@@ -175,15 +211,17 @@ namespace z3y.ShaderGraph
 
             _sb.UnIndent();
 
-            UnityEngine.Debug.Assert(string.Join(' ', passBuilders[0].surfaceDescription) == string.Join(' ', passBuilders[1].surfaceDescription));
-            UnityEngine.Debug.Assert(string.Join(' ', passBuilders[0].vertexDescription) == string.Join(' ', passBuilders[1].vertexDescription));
+           // UnityEngine.Debug.Assert(string.Join(' ', passBuilders[0].surfaceDescription) == string.Join(' ', passBuilders[1].surfaceDescription));
+           // UnityEngine.Debug.Assert(string.Join(' ', passBuilders[0].vertexDescription) == string.Join(' ', passBuilders[1].vertexDescription));
 
             return _sb.ToString();
         }
 
         private void AppendProperties()
         {
-            foreach (var property in properties)
+            var allProperties = passBuilders.SelectMany(x => x.properties);
+
+            foreach (var property in allProperties)
             {
                 _sb.AppendLine(property);
             }
@@ -239,7 +277,7 @@ namespace z3y.ShaderGraph
             _sb.UnIndent("};");
 
             _sb.AppendLine("// CBUFFER");
-            foreach (var property in properties)
+            foreach (var property in pass.properties)
             {
                 string propertyName = property;
                _sb.AppendLine(propertyName);

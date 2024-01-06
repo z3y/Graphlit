@@ -96,18 +96,21 @@ namespace z3y.ShaderGraph
 
     public class PropertyVisitor : NodeVisitor
     {
-        public PropertyVisitor(ShaderBuilder shaderBuilder) : base(shaderBuilder)
+        public PropertyVisitor(ShaderBuilder shaderBuilder, int passIndex) : base(shaderBuilder)
         {
+            _target = shaderBuilder.passBuilders[passIndex].properties;
         }
+
+        private HashSet<string> _target;
 
         public void AddProperty(string property)
         {
-            _shaderBuilder.properties.Add(property);
+            _target.Add(property);
         }
 
         public void AddProperty(PropertyDescriptor property)
         {
-            _shaderBuilder.properties.Add(property.ToString());
+            _target.Add(property.ToString());
         }
 
         public override void Visit(ShaderNode shaderNode)

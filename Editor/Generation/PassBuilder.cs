@@ -4,11 +4,13 @@ namespace z3y.ShaderGraph
 {
     public class PassBuilder
     {
-        public PassBuilder(string name, string vertexShaderPath, string fragmentShaderPath)
+        public PassBuilder(string name, string vertexShaderPath, string fragmentShaderPath, params int[] ports)
         {
             this.name = name;
             this.vertexShaderPath = vertexShaderPath;
             this.fragmentShaderPath = fragmentShaderPath;
+
+            Ports = ports;
         }
         public string name;
         public Dictionary<string, string> tags = new();
@@ -21,8 +23,11 @@ namespace z3y.ShaderGraph
         public Dictionary<string, string> functions = new();
         public List<string> vertexDescription = new();
         public List<string> surfaceDescription = new();
+        public HashSet<string> properties = new();
 
         public string vertexShaderPath;
         public string fragmentShaderPath;
+
+        public int[] Ports { get; }
     }
 }

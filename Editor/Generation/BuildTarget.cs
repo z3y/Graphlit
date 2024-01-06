@@ -1,11 +1,7 @@
-using Microsoft.SqlServer.Server;
 using System;
 using System.Collections.Generic;
-using UnityEngine.UIElements;
 using z3y.ShaderGraph.Nodes;
 using z3y.ShaderGraph.Nodes.PortType;
-using static UnityEditor.ObjectChangeEventStream;
-using static UnityEngine.GraphicsBuffer;
 
 namespace z3y.ShaderGraph
 {
@@ -17,12 +13,17 @@ namespace z3y.ShaderGraph
         public abstract void BuilderPassthourgh(ShaderBuilder builder);
     }
 
-    public abstract class TemplateOutput : ShaderNode, IRequireDescriptionVisitor
+    public abstract class TemplateOutput : ShaderNode
     {
-        public void VisitDescription(DescriptionVisitor visitor)
+        public void VisitTemplate(DescriptionVisitor visitor, int[] ports)
         {
             foreach (var output in Ports)
             {
+                if (!Array.Exists(ports, x => x == output.ID))
+                {
+                    continue;
+                }
+
                 string inputString = GetInputString(output.ID);
                 visitor.AppendLine($"{output.Type} {output.Name} = {inputString};");
             }
@@ -38,16 +39,30 @@ namespace z3y.ShaderGraph
 
         public override void BuilderPassthourgh(ShaderBuilder builder)
         {
-            builder.AddPass(new PassBuilder("FORWARD", "Somewhere/ForwardVertex.hlsl", "Somewhere/ForwardFragment.hlsl"));
-            builder.AddPass(new PassBuilder("FORWARDADD", "Somewhere/ForwardAddVertex.hlsl", "Somewhere/ForwardAddFragment.hlsl"));
+            builder.AddPass(new PassBuilder("FORWARD", "Somewhere/ForwardVertex.hlsl", "Somewhere/ForwardFragment.hlsl",
+                UnlitVertexDescription.POSITION,
+                UnlitVertexDescription.NORMAL,
+                UnlitVertexDescription.TANGENT,
+                UnlitSurfaceDescription.ALBEDO,
+                UnlitSurfaceDescription.ALPHA,
+                UnlitSurfaceDescription.ROUGHNESS,
+                UnlitSurfaceDescription.METALLIC
+                ));
+
+            //builder.AddPass(new PassBuilder("FORWARDADD", "Somewhere/ForwardAddVertex.hlsl", "Somewhere/ForwardAddFragment.hlsl"));
+            builder.AddPass(new PassBuilder("SHADOWCASTER", "Somewhere/ShadowcasterVertex.hlsl", "Somewhere/ShadowcasterFragment.hlsl",
+                UnlitVertexDescription.POSITION,
+                UnlitSurfaceDescription.ALPHA
+                ));
+
         }
 
         [NodeInfo("Vertex Description")]
         public sealed class UnlitVertexDescription : TemplateOutput
         {
-            const int POSITION = 0;
-            const int NORMAL = 1;
-            const int TANGENT = 2;
+            public const int POSITION = 0;
+            public const int NORMAL = 1;
+            public const int TANGENT = 2;
 
             public override List<PortDescriptor> Ports { get; } = new List<PortDescriptor>
             {
@@ -60,10 +75,10 @@ namespace z3y.ShaderGraph
         [NodeInfo("Surface Description")]
         public sealed class UnlitSurfaceDescription : TemplateOutput
         {
-            const int ALBEDO = 0;
-            const int ALPHA = 1;
-            const int ROUGHNESS = 2;
-            const int METALLIC = 3;
+            public const int ALBEDO = 3;
+            public const int ALPHA = 4;
+            public const int ROUGHNESS = 5;
+            public const int METALLIC = 6;
 
             public override List<PortDescriptor> Ports { get; } = new List<PortDescriptor>
             {
