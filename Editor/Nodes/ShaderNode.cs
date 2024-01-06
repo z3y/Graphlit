@@ -13,7 +13,7 @@ namespace z3y.ShaderGraph.Nodes
         Output
     }
 
-    public struct PortDescriptor
+    public class PortDescriptor
     {
         public PortDescriptor(PortDirection direction, IPortType type, int id, string name = "")
         {
@@ -29,6 +29,15 @@ namespace z3y.ShaderGraph.Nodes
         public string Name { get; }
     }
 
+    public static class PortDescriptorExtensions
+    {
+        public static PortDescriptor GetByID(this List<PortDescriptor> portDescriptors, int ID)
+        {
+            return portDescriptors.Where(x => x.ID == ID).First();
+        }
+
+    }
+
     public abstract class ShaderNode
     {
         public ShaderNode()
@@ -41,7 +50,7 @@ namespace z3y.ShaderGraph.Nodes
 
         public NodeInfo Info => GetType().GetCustomAttribute<NodeInfo>();
         public virtual void AddElements(ShaderNodeVisualElement node) { }
-        public abstract PortDescriptor[] Ports { get; }
+        public abstract List<PortDescriptor> Ports { get; }
         public bool InputConnected(int portID) => Inputs.ContainsKey(portID);
 
         #region Visit
@@ -58,7 +67,7 @@ namespace z3y.ShaderGraph.Nodes
             }
 
             var name = (prefix ?? "Node") + _uniqueVariableID++;
-            VariableNames.Add(portID, name);
+            VariableNames[portID] = name;
             return name;
         }
 
@@ -80,7 +89,7 @@ namespace z3y.ShaderGraph.Nodes
                 return;
             }
 
-            Ports[portID].Type = DefaultPortsTypes[portID];
+            Ports.GetByID(portID).Type = DefaultPortsTypes[portID];
             VariableNames[portID] = SetDefaultInputString(portID);
         }
 
@@ -101,7 +110,7 @@ namespace z3y.ShaderGraph.Nodes
             for (int i = 0; i < IDs.Length; i++)
             {
                 var ID = IDs[i];
-                var type = (Float)Ports[ID].Type;
+                var type = (Float)Ports.GetByID(ID).Type;
                 var components = type.components;
                 if (components == 1)
                 {
@@ -114,10 +123,11 @@ namespace z3y.ShaderGraph.Nodes
 
             if (outputID is int outputIDInt)
             {
-                if (Ports[outputIDInt].Type is Float @float)
+                var port = Ports.GetByID(outputIDInt);
+                if (port.Type is Float @float)
                 {
                     @float.components = trunc;
-                    Ports[outputIDInt].Type = @float;
+                    port.Type = @float;
                 }
             }
 
@@ -128,7 +138,7 @@ namespace z3y.ShaderGraph.Nodes
         {
             UpdatePortDefaultString(portID);
             var name = TryGetVariableName(portID);
-            var type = (Float)Ports[portID].Type;
+            var type = (Float)Ports.GetByID(portID).Type;
             var components = type.components;
             string typeName = type.fullPrecision ? "float" : "half";
 
@@ -173,7 +183,7 @@ namespace z3y.ShaderGraph.Nodes
             }
 
             type.components = targetComponent;
-            Ports[portID].Type = type;
+            Ports.GetByID(portID).Type = type;
             VariableNames[portID] = name;
             return name;
         }
@@ -181,7 +191,7 @@ namespace z3y.ShaderGraph.Nodes
         public string FormatOutput(int outID, string prefix, string text)
         {
             SetOutputString(outID, prefix);
-            return $"{(Float)Ports[outID].Type} {VariableNames[outID]} = {text};";
+            return $"{(Float)Ports.GetByID(outID).Type} {VariableNames[outID]} = {text};";
         }
 
         public void ResetVisit()

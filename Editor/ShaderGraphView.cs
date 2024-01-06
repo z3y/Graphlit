@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -52,7 +53,7 @@ namespace z3y.ShaderGraph
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange change)
         {
-            _editorWindow.MarkDirty();
+            _editorWindow.SetDirty();
             return change;
         }
 
@@ -72,14 +73,14 @@ namespace z3y.ShaderGraph
 
         public void UnserializeAndPasteImpl(string operationName, string jsonData)
         {
-            // RecordUndo();
+            RecordUndo();
 
             //var data = JsonUtility.FromJson<SerializableGraph>(jsonData);
             var data = _lastCopyGraph;
 
             //Vector2 mousePosition = new Vector2(-200, -200);
             //ShaderGraphImporter.DeserializeNodesToGraph(data, this, mousePosition);
-            var graphElements = data.PasteNodesAndOverwiteGuids(this);
+            var graphElements = data.PasteNodesAndOverwiteGuids(this, new Vector2(100, -100));
 
             ClearSelection();
 
@@ -89,9 +90,8 @@ namespace z3y.ShaderGraph
             }
         }
 
-/*        private SerializedGraphDataSo _serializedGraphDataSo;
-        // fucking manually implement undo because graph view is amazing
-        private List<string> _undoStates = new();
+        private SerializedGraphDataSo _serializedGraphDataSo;
+        private Stack<SerializableGraph> _undoStates = new(10);
         public void RecordUndo()
         {
             if (_serializedGraphDataSo == null)
@@ -100,11 +100,12 @@ namespace z3y.ShaderGraph
             }
             Undo.RegisterCompleteObjectUndo(_serializedGraphDataSo, "Graph Undo");
 
-            var jsonData = SerializeGraphElementsImpl(graphElements);
-            _undoStates.Add(jsonData);
+            var data = SerializableGraph.StoreGraph(this);
+            _undoStates.Push(data);
 
             _serializedGraphDataSo.graphView = this;
             EditorUtility.SetDirty(_serializedGraphDataSo);
+            _editorWindow.SetDirty();
             _serializedGraphDataSo.Init();
         }
 
@@ -115,14 +116,15 @@ namespace z3y.ShaderGraph
                 return;
             }
 
-            var jsonData = _undoStates[^1];
-            _undoStates.RemoveAt(_undoStates.Count-1);
+            //var data = _undoStates[^1];
+            //_undoStates.RemoveAt(_undoStates.Count-1);
+            var data = _undoStates.Pop();
 
             DeleteElements(graphElements);
-            var data = JsonUtility.FromJson<SerializedGraphData>(jsonData);
-            ShaderGraphImporter.DeserializeNodesToGraph(data, this);
+
+            data.PopulateGraph(this);
         }
-*/
+
 
         private IManipulator CreateGroupContextualMenu()
         {
@@ -145,8 +147,8 @@ namespace z3y.ShaderGraph
 
         public void CreateNode(Type type, Vector2 position, bool transform = true)
         {
-            //RecordUndo();
-            _editorWindow.MarkDirty();
+            RecordUndo();
+            _editorWindow.SetDirty();
             if (transform) TransformMousePositionToLocalSpace(ref position, true);
             var node = new ShaderNodeVisualElement();
             node.Create(type, position);

@@ -76,11 +76,9 @@ namespace z3y.ShaderGraph
             var serializableGraph = ReadGraphData(false, guid);
             _graphViews.TryGetValue(guid, out var shaderGraphView);
             var builder = new ShaderBuilder(GenerationMode.Final, serializableGraph, shaderGraphView);
-            builder.AddPass(new PassBuilder("FORWARD", "Somewhere/ForwardVertex.hlsl", "Somewhere/ForwardFragment.hlsl"));
-            builder.AddPass(new PassBuilder("FORWARDADD", "Somewhere/ForwardAddVertex.hlsl", "Somewhere/ForwardAddFragment.hlsl"));
-
-
-            builder.Build<VertexDescription, SurfaceDescription>();
+            var target = new UnlitBuildTarget();
+            target.RegisterBuilder(builder);
+            builder.Build(target);
 
             return builder;
         }

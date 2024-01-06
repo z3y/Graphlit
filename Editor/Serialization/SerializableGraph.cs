@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Experimental.GraphView;
+using UnityEngine;
 using z3y.ShaderGraph.Nodes;
 
 namespace z3y.ShaderGraph
@@ -79,14 +80,20 @@ namespace z3y.ShaderGraph
             return newGraph;
         }
 
-        public List<ShaderNodeVisualElement> PasteNodesAndOverwiteGuids(ShaderGraphView graphView)
+        public List<ShaderNodeVisualElement> PasteNodesAndOverwiteGuids(ShaderGraphView graphView, Vector2? positionOffset = null)
         {
             var newElements = GenerateNewGUIDs();
             var graphElements = new List<ShaderNodeVisualElement>();
 
             foreach (var serializableNode in newElements.nodes)
             {
-                graphElements.Add(graphView.AddNode(serializableNode));
+                var graphElement = graphView.AddNode(serializableNode);
+                if (positionOffset is Vector2 offset)
+                {
+                    var previousPosition = serializableNode.Position;
+                    graphElement.SetPosition(new Rect(previousPosition + offset, Vector2.one));
+                }
+                graphElements.Add(graphElement);
             }
 
             newElements.SetupNodeConnections(graphView);

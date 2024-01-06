@@ -1,10 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization.Json;
 using z3y.ShaderGraph.Nodes;
-using z3y.ShaderGraph.Nodes.PortType;
-using static UnityEngine.EventSystems.StandaloneInputModule;
 
 namespace z3y.ShaderGraph
 {
@@ -68,11 +63,12 @@ namespace z3y.ShaderGraph
             }
         }
 
-        public void Build<T, U>() where T : ShaderNode // later shader target
+        public void Build(BuildTarget target)
         {
             ShaderNode.ResetUniqueVariableIDs();
-            var v = ShaderNodes.Find(x => x is T);
-            var f = ShaderNodes.Find(x => x is U);
+
+            var v = (TemplateOutput)ShaderNodes.Find(x => x.GetType() == target.VertexDescription);
+            var f = (TemplateOutput)ShaderNodes.Find(x => x.GetType() == target.SurfaceDescription);
 
             ResetNodes();
 

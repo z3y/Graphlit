@@ -4,6 +4,7 @@ namespace z3y.ShaderGraph.Nodes
     using UnityEngine.UIElements;
     using UnityEngine;
     using z3y.ShaderGraph.Nodes.PortType;
+    using System.Collections.Generic;
 
     [NodeInfo("*", "a * b")]
     public sealed class MultiplyNode : ShaderNode, IRequireDescriptionVisitor
@@ -12,7 +13,7 @@ namespace z3y.ShaderGraph.Nodes
         const int B = 1;
         const int OUT = 2;
 
-        public override PortDescriptor[] Ports { get; } = new PortDescriptor[]
+        public override List<PortDescriptor> Ports { get; } = new List<PortDescriptor>
         {
             new(PortDirection.Input, new Float(1, true), A, "A"),
             new(PortDirection.Input, new Float(1, true), B, "B"),
@@ -36,7 +37,7 @@ namespace z3y.ShaderGraph.Nodes
         [SerializeField] float _value;
         [SerializeField] string _propertyName;
 
-        public override PortDescriptor[] Ports { get; } = new PortDescriptor[]
+        public override List<PortDescriptor> Ports { get; } = new List<PortDescriptor>
         {
             new(PortDirection.Output, new Float(1, true), OUT),
         };
@@ -99,7 +100,7 @@ float TotallyCoolFunction(float a, float b)
         const int OUT = 1;
         [SerializeField] string swizzle = "x";
 
-        public override PortDescriptor[] Ports { get; } = new PortDescriptor[]
+        public override List<PortDescriptor> Ports { get; } = new List<PortDescriptor>
         {
             new(PortDirection.Input, new Float(1, true), IN),
             new(PortDirection.Output, new Float(1, true), OUT),
@@ -337,50 +338,5 @@ float TotallyCoolFunction(float a, float b)
         }
     }*/
 
-    [NodeInfo("Surface Description")]
-    public sealed class SurfaceDescription : ShaderNode, IRequireDescriptionVisitor
-    {
-        const int ALBEDO = 0;
-        const int ALPHA = 1;
-        const int ROUGHNESS = 2;
-        const int METALLIC = 3;
-
-        public override PortDescriptor[] Ports { get; } = new PortDescriptor[]
-        {
-            new(PortDirection.Input, new Float(3, false), ALBEDO, "Albedo"),
-            new(PortDirection.Input, new Float(1, false), ALPHA, "Alpha"),
-            new(PortDirection.Input, new Float(1, false), ROUGHNESS, "Roughness"),
-            new(PortDirection.Input, new Float(1, false), METALLIC, "Metallic"),
-        };
-
-        public void VisitDescription(DescriptionVisitor visitor)
-        {
-            visitor.AppendLine($"float3 albedo = {GetInputString(ALBEDO)};");
-            visitor.AppendLine($"float alpha = {GetInputString(ALPHA)};");
-            visitor.AppendLine($"float roughness = {GetInputString(ROUGHNESS)};");
-            visitor.AppendLine($"float metallic = {GetInputString(METALLIC)};");
-        }
-    }
-
-    [NodeInfo("Vertex Description")]
-    public sealed class VertexDescription : ShaderNode, IRequireDescriptionVisitor
-    {
-        const int POSITION = 0;
-        const int NORMAL = 1;
-        const int TANGENT = 2;
-
-        public override PortDescriptor[] Ports { get; } = new PortDescriptor[]
-        {
-            new(PortDirection.Input, new Float(3, false), POSITION, "Position"),
-            new(PortDirection.Input, new Float(3, false), NORMAL, "Normal"),
-            new(PortDirection.Input, new Float(4, false), TANGENT, "Tangent"),
-        };
-
-        public void VisitDescription(DescriptionVisitor visitor)
-        {
-            visitor.AppendLine($"float3 position = {GetInputString(POSITION)};");
-            visitor.AppendLine($"float3 normal = {GetInputString(NORMAL)};");
-            visitor.AppendLine($"float4 tangent = {GetInputString(TANGENT)};");
-        }
-    }
+    
 }

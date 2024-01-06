@@ -10,9 +10,12 @@ namespace z3y.ShaderGraph
     {
         public string type;
         public string guid;
-        public Vector2 position;
+        public int x;
+        public int y;
         public List<NodeConnection> connections;
         public string data;
+
+        public readonly Vector2 Position => new (x, y);
 
         public SerializableNode(ShaderNodeVisualElement node)
         {
@@ -20,7 +23,10 @@ namespace z3y.ShaderGraph
 
             this.type = type.FullName;
             this.guid = node.viewDataKey;
-            this.position = node.GetPosition().position;
+            var pos = node.GetPosition().position;
+            this.x = (int)pos.x;
+            this.y = (int)pos.y;
+
             this.connections = NodeConnection.GetConnections(node.Ports);
 
             var seriazableAttribute = Attribute.GetCustomAttribute(type, typeof(SerializableAttribute));

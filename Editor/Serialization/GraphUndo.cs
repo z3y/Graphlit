@@ -7,8 +7,8 @@ namespace z3y.ShaderGraph
     {
         public void Init()
         {
-           // Undo.undoRedoPerformed -= graphView.OnUndoPerformed;
-            //Undo.undoRedoPerformed += graphView.OnUndoPerformed;
+            Undo.undoRedoPerformed -= graphView.OnUndoPerformed;
+            Undo.undoRedoPerformed += graphView.OnUndoPerformed;
         }
         public ShaderGraphView graphView;
     }

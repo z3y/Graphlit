@@ -49,7 +49,7 @@ namespace z3y.ShaderGraph
 
         }
 
-        public void MarkDirty()
+        public void SetDirty()
         {
             hasUnsavedChanges = true;
         }
@@ -94,7 +94,7 @@ namespace z3y.ShaderGraph
             shaderName.RegisterValueChangedCallback((evt) =>
             {
                 graphView.graphData.shaderName = evt.newValue;
-                MarkDirty();
+                SetDirty();
             });
             toolbar.Add(shaderName);
 

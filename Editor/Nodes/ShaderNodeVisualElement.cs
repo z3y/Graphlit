@@ -30,7 +30,7 @@ namespace z3y.ShaderGraph.Nodes
 
             this.viewDataKey = serializedNode.guid;
             this.shaderNode = shaderNode;
-            SetPosition(serializedNode.position);
+            SetPosition(serializedNode.Position);
             AddDefaultElements();
         }
 
