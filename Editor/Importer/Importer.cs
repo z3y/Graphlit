@@ -77,7 +77,7 @@ namespace z3y.ShaderGraph
             _graphViews.TryGetValue(guid, out var shaderGraphView);
             var builder = new ShaderBuilder(GenerationMode.Final, serializableGraph, shaderGraphView);
             var target = new UnlitBuildTarget();
-            target.RegisterBuilder(builder);
+            target.BuilderPassthourgh(builder);
             builder.Build(target);
 
             return builder;

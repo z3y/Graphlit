@@ -1,9 +1,11 @@
+using Microsoft.SqlServer.Server;
 using System;
 using System.Collections.Generic;
 using UnityEngine.UIElements;
 using z3y.ShaderGraph.Nodes;
 using z3y.ShaderGraph.Nodes.PortType;
 using static UnityEditor.ObjectChangeEventStream;
+using static UnityEngine.GraphicsBuffer;
 
 namespace z3y.ShaderGraph
 {
@@ -13,11 +15,19 @@ namespace z3y.ShaderGraph
         public abstract Type VertexDescription { get; }
         public abstract Type SurfaceDescription { get; }
 
-        public abstract void RegisterBuilder(ShaderBuilder builder);
+        public abstract void BuilderPassthourgh(ShaderBuilder builder);
     }
 
-    public abstract class TemplateOutput : ShaderNode
+    public abstract class TemplateOutput : ShaderNode, IRequireDescriptionVisitor
     {
+        public void VisitDescription(DescriptionVisitor visitor)
+        {
+            foreach (var output in Ports)
+            {
+                string inputString = GetInputString(output.ID);
+                visitor.AppendLine($"{output.Type} {output.Name} = {inputString};");
+            }
+        }
     }
 
     public class UnlitBuildTarget : BuildTarget
@@ -27,14 +37,14 @@ namespace z3y.ShaderGraph
         public override Type VertexDescription => typeof(UnlitVertexDescription);
         public override Type SurfaceDescription => typeof(UnlitSurfaceDescription);
 
-        public override void RegisterBuilder(ShaderBuilder builder)
+        public override void BuilderPassthourgh(ShaderBuilder builder)
         {
             builder.AddPass(new PassBuilder("FORWARD", "Somewhere/ForwardVertex.hlsl", "Somewhere/ForwardFragment.hlsl"));
             builder.AddPass(new PassBuilder("FORWARDADD", "Somewhere/ForwardAddVertex.hlsl", "Somewhere/ForwardAddFragment.hlsl"));
         }
 
         [NodeInfo("Vertex Description")]
-        public sealed class UnlitVertexDescription : TemplateOutput, IRequireDescriptionVisitor
+        public sealed class UnlitVertexDescription : TemplateOutput
         {
             const int POSITION = 0;
             const int NORMAL = 1;
@@ -46,17 +56,10 @@ namespace z3y.ShaderGraph
                 new(PortDirection.Input, new Float(3, false), NORMAL, "Normal"),
                 new(PortDirection.Input, new Float(4, false), TANGENT, "Tangent"),
             };
-
-            public void VisitDescription(DescriptionVisitor visitor)
-            {
-                visitor.AppendLine($"float3 position = {GetInputString(POSITION)};");
-                visitor.AppendLine($"float3 normal = {GetInputString(NORMAL)};");
-                visitor.AppendLine($"float4 tangent = {GetInputString(TANGENT)};");
-            }
         }
 
         [NodeInfo("Surface Description")]
-        public sealed class UnlitSurfaceDescription : TemplateOutput, IRequireDescriptionVisitor
+        public sealed class UnlitSurfaceDescription : TemplateOutput
         {
             const int ALBEDO = 0;
             const int ALPHA = 1;
@@ -70,14 +73,6 @@ namespace z3y.ShaderGraph
                 new(PortDirection.Input, new Float(1, false), ROUGHNESS, "Roughness"),
                 new(PortDirection.Input, new Float(1, false), METALLIC, "Metallic"),
             };
-
-            public void VisitDescription(DescriptionVisitor visitor)
-            {
-                visitor.AppendLine($"float3 albedo = {GetInputString(ALBEDO)};");
-                visitor.AppendLine($"float alpha = {GetInputString(ALPHA)};");
-                visitor.AppendLine($"float roughness = {GetInputString(ROUGHNESS)};");
-                visitor.AppendLine($"float metallic = {GetInputString(METALLIC)};");
-            }
         }
     }
 }
