@@ -1,35 +1,28 @@
 #pragma vertex vert
-#pragma fragment frag
 #pragma multi_compile_fog
 
-struct appdata : Attributes
+struct AttributesWrapper : Attributes
 {
-    float4 vertex : POSITION;
-    float2 uv : TEXCOORD0;
+    float3 positionOS : POSITION;
+    //float2 uv : TEXCOORD0;
 };
 
-struct v2f : Varyings
+struct VaryingsWrapper : Varyings
 {
     float2 uv : TEXCOORD0;
     UNITY_FOG_COORDS(1)
     float4 vertex : SV_POSITION;
 };
 
-v2f vert(appdata v)
+VaryingsWrapper vert(AttributesWrapper input)
 {
-    v2f o;
-    o.vertex = UnityObjectToClipPos(v.vertex);
-    o.uv = v.uv;
-    UNITY_TRANSFER_FOG(o, o.vertex);
-    return o;
-}
+    VaryingsWrapper output;
 
-half4 frag(v2f i) : SV_Target
-{
-    SurfaceDescription surface = SurfaceDescriptionFunction((Varyings)i);
+    VertexDescription vertexDescription = VertexDescriptionFunction((Attributes)input);
+    input.positionOS += vertexDescription.Position;
 
-    half4 col = surface.Albedo.rgbb;
-
-    UNITY_APPLY_FOG(i.fogCoord, col);
-    return col;
+    output.vertex = UnityObjectToClipPos(input.positionOS);
+    //o.uv = v.uv;
+    UNITY_TRANSFER_FOG(output, output.vertex);
+    return output;
 }
