@@ -46,7 +46,7 @@ namespace z3y.ShaderGraph
 
             editorInstances[importerGuid] = this;
             _importerGuid = importerGuid;
-
+            hasUnsavedChanges = false;
         }
 
         public new void SetDirty()

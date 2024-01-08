@@ -82,14 +82,14 @@ namespace z3y.ShaderGraph
                 var vertexVisitors = new List<NodeVisitor>
                 {
                     new PropertyVisitor(this, passIndex),
-                    new DescriptionVisitor(this, ShaderStage.Vertex, passIndex),
+                    new DescriptionVisitor(this, ShaderStage.Vertex, passIndex, "VertexDescription"),
                     new FunctionVisitor(this, passIndex)
                 };
 
                 var fragmentVisitors = new List<NodeVisitor>
                 {
                     new PropertyVisitor(this, passIndex),
-                    new DescriptionVisitor(this, ShaderStage.Fragment, passIndex),
+                    new DescriptionVisitor(this, ShaderStage.Fragment, passIndex, "SurfaceDescription"),
                     new FunctionVisitor(this, passIndex)
                 };
 
@@ -199,7 +199,7 @@ namespace z3y.ShaderGraph
                 _sb.AppendLine("SubShader");
                 _sb.Indent();
                 {
-                    AppendTags(subshaderTags);
+                    AppendTags(_sb, subshaderTags);
 
                     AppendPasses();
                 }
@@ -223,20 +223,20 @@ namespace z3y.ShaderGraph
 
             foreach (var property in allProperties)
             {
-                _sb.AppendLine(property);
+                _sb.AppendLine(property.ToString());
             }
         }
 
-        private void AppendTags(Dictionary<string, string> tags)
+        public static void AppendTags(ShaderStringBuilder sb, Dictionary<string, string> tags)
         {
-            _sb.AppendLine("Tags");
+            sb.AppendLine("Tags");
 
-            _sb.Indent();
+            sb.Indent();
             foreach (var tag in tags)
             {
-                _sb.AppendLine('"' + tag.Key + "\" = \"" + tag.Value + '"');
+                sb.AppendLine('"' + tag.Key + "\" = \"" + tag.Value + '"');
             }
-            _sb.UnIndent();
+            sb.UnIndent();
         }
 
         private void AppendPasses()
@@ -246,82 +246,10 @@ namespace z3y.ShaderGraph
                 _sb.AppendLine("Pass");
                 _sb.Indent();
                 {
-                    AppendPass(pass);
+                    pass.AppendPass(_sb);
                 }
                 _sb.UnIndent();
             }
-        }
-
-        private void AppendPass(PassBuilder pass)
-        {
-            _sb.AppendLine("Name \"" + pass.name + "\"");
-            AppendTags(pass.tags);
-
-            _sb.AppendLine("// Render States");
-
-            _sb.AppendLine("HLSLPROGRAM");
-            AppendPassHLSL(pass);
-            _sb.AppendLine("ENDHLSL");
-        }
-
-        private void AppendPassHLSL(PassBuilder pass)
-        {
-            _sb.AppendLine("// Pragmas");
-
-            _sb.AppendLine("struct Attributes");
-            _sb.Indent();
-            _sb.UnIndent("};");
-
-            _sb.AppendLine("struct Varyings");
-            _sb.Indent();
-            _sb.UnIndent("};");
-
-            _sb.AppendLine("// CBUFFER");
-            foreach (var property in pass.properties)
-            {
-                string propertyName = property;
-               _sb.AppendLine(propertyName);
-            }
-            _sb.AppendLine("// CBUFFER END");
-            _sb.AppendLine();
-
-            foreach (var function in pass.functions.Values)
-            {
-                var lines = function.Split('\n');
-                foreach (var line in lines)
-                {
-                    _sb.AppendLine(line);
-                }
-            }
-
-            AppendVertexDescription(pass);
-            AppendSurfaceDescription(pass);
-
-            _sb.AppendLine("#include \"" + pass.vertexShaderPath + '"');
-            _sb.AppendLine("#include \"" + pass.fragmentShaderPath + '"');
-        }
-
-        private void AppendSurfaceDescription(PassBuilder pass)
-        {
-            _sb.AppendLine("SurfaceDescription SurfaceDescriptionFunction(Varyings varyings)");
-            _sb.Indent();
-            foreach (var line in pass.surfaceDescription)
-            {
-                _sb.AppendLine(line);
-            }
-            _sb.UnIndent();
-
-        }
-
-        private void AppendVertexDescription(PassBuilder pass)
-        {
-            _sb.AppendLine("VertexDescription VertexDescriptionFunction(Attributes attributes)");
-            _sb.Indent();
-            foreach (var line in pass.vertexDescription)
-            {
-                _sb.AppendLine(line);
-            }
-            _sb.UnIndent();
         }
     }
 }

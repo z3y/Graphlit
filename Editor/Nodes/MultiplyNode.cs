@@ -123,7 +123,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [NodeInfo("float"), Serializable]
-    public class FloatNode : ShaderNode, IRequireDescriptionVisitor, IMayRequirePropertyVisitor
+    public class FloatNode : ShaderNode, IRequireDescriptionVisitor, IRequirePropertyVisitor
     {
         const int OUT = 0;
         [SerializeField] float _value;
@@ -134,12 +134,7 @@ namespace z3y.ShaderGraph.Nodes
             new(PortDirection.Output, new Float(1, false), OUT),
         };
 
-        private bool _isProperty;
-        public bool IsProperty
-        {
-            get => _isProperty || _propertyName != string.Empty;
-            set => _isProperty = value;
-        }
+        private bool _isProperty => _propertyName != string.Empty;
 
         public override void AddElements(ShaderNodeVisualElement node)
         {
@@ -166,17 +161,19 @@ namespace z3y.ShaderGraph.Nodes
 
         public void VisitDescription(DescriptionVisitor visitor)
         {
-            VariableNames[OUT] = IsProperty ? _propertyName : _value.ToString("R");
+            VariableNames[OUT] = _isProperty ? _propertyName : _value.ToString("R");
         }
 
         public void VisitProperty(PropertyVisitor visitor)
         {
-            visitor.AddProperty(_propertyName);
+            if (!_isProperty) return;
+            var property = new PropertyDescriptor(PropertyType.Float, _propertyName);
+            visitor.AddProperty(property);
         }
     }
 
     [NodeInfo("float2"), Serializable]
-    public class Float2Node : ShaderNode, IRequireDescriptionVisitor, IMayRequirePropertyVisitor
+    public class Float2Node : ShaderNode, IRequireDescriptionVisitor, IRequirePropertyVisitor
     {
         const int OUT = 0;
         [SerializeField] Vector2 _value;
@@ -187,12 +184,7 @@ namespace z3y.ShaderGraph.Nodes
             new(PortDirection.Output, new Float(2, false), OUT),
         };
 
-        private bool _isProperty;
-        public bool IsProperty
-        {
-            get => _isProperty || _propertyName != string.Empty;
-            set => _isProperty = value;
-        }
+        private bool _isProperty => _propertyName != string.Empty;
 
         public override void AddElements(ShaderNodeVisualElement node)
         {
@@ -210,17 +202,19 @@ namespace z3y.ShaderGraph.Nodes
 
         public void VisitDescription(DescriptionVisitor visitor)
         {
-            VariableNames[OUT] = IsProperty ? _propertyName : _value.ToString("R");
+            VariableNames[OUT] = _isProperty ? _propertyName : _value.ToString("R");
         }
 
         public void VisitProperty(PropertyVisitor visitor)
         {
-            visitor.AddProperty(_propertyName);
+            if (!_isProperty) return;
+            var property = new PropertyDescriptor(PropertyType.Float2, _propertyName);
+            visitor.AddProperty(property);
         }
     }
 
     [NodeInfo("float3"), Serializable]
-    public class Float3Node : ShaderNode, IRequireDescriptionVisitor, IMayRequirePropertyVisitor
+    public class Float3Node : ShaderNode, IRequireDescriptionVisitor, IRequirePropertyVisitor
     {
         const int OUT = 0;
         [SerializeField] Vector3 _value;
@@ -231,12 +225,7 @@ namespace z3y.ShaderGraph.Nodes
             new(PortDirection.Output, new Float(3, false), OUT),
         };
 
-        private bool _isProperty;
-        public bool IsProperty
-        {
-            get => _isProperty || _propertyName != string.Empty;
-            set => _isProperty = value;
-        }
+        private bool _isProperty => _propertyName != string.Empty;
 
         public override void AddElements(ShaderNodeVisualElement node)
         {
@@ -254,17 +243,19 @@ namespace z3y.ShaderGraph.Nodes
 
         public void VisitDescription(DescriptionVisitor visitor)
         {
-            VariableNames[OUT] = IsProperty ? _propertyName : _value.ToString("R");
+            VariableNames[OUT] = _isProperty ? _propertyName : _value.ToString("R");
         }
 
         public void VisitProperty(PropertyVisitor visitor)
         {
-            visitor.AddProperty(_propertyName);
+            if (!_isProperty) return;
+            var property = new PropertyDescriptor(PropertyType.Float3, _propertyName);
+            visitor.AddProperty(property);
         }
     }
 
     [NodeInfo("float4"), Serializable]
-    public class Float4Node : ShaderNode, IRequireDescriptionVisitor, IMayRequirePropertyVisitor
+    public class Float4Node : ShaderNode, IRequireDescriptionVisitor, IRequirePropertyVisitor
     {
         const int OUT = 0;
         [SerializeField] Vector4 _value;
@@ -275,12 +266,7 @@ namespace z3y.ShaderGraph.Nodes
             new(PortDirection.Output, new Float(4, false), OUT),
         };
 
-        private bool _isProperty;
-        public bool IsProperty
-        {
-            get => _isProperty || _propertyName != string.Empty;
-            set => _isProperty = value;
-        }
+        private bool _isProperty => _propertyName != string.Empty;
 
         public override void AddElements(ShaderNodeVisualElement node)
         {
@@ -298,12 +284,14 @@ namespace z3y.ShaderGraph.Nodes
 
         public void VisitDescription(DescriptionVisitor visitor)
         {
-            VariableNames[OUT] = IsProperty ? _propertyName : _value.ToString("R");
+            VariableNames[OUT] = _isProperty ? _propertyName : _value.ToString("R");
         }
 
         public void VisitProperty(PropertyVisitor visitor)
         {
-            visitor.AddProperty(_propertyName);
+            if (!_isProperty) return;
+            var property = new PropertyDescriptor(PropertyType.Float4, _propertyName);
+            visitor.AddProperty(property);
         }
     }
 }

@@ -25,8 +25,10 @@ namespace z3y.ShaderGraph
                 }
 
                 string inputString = GetInputString(output.ID);
-                visitor.AppendLine($"{output.Type} {output.Name} = {inputString};");
+                visitor.AppendLine($"output.{output.Name} = {inputString};");
             }
+
+            visitor.AppendLine($"return output;");
         }
     }
 

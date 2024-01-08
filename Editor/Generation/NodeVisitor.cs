@@ -38,10 +38,7 @@ namespace z3y.ShaderGraph
     {
         void VisitDescription(DescriptionVisitor visitor);
     }
-    interface IMayRequirePropertyVisitor : IRequirePropertyVisitor
-    {
-        bool IsProperty { get; set; }
-    }
+
     interface IRequireFunctionVisitor
     {
         void VisitFunction(FunctionVisitor visitor);
@@ -60,7 +57,7 @@ namespace z3y.ShaderGraph
 
     public class DescriptionVisitor : NodeVisitor
     {
-        public DescriptionVisitor(ShaderBuilder shaderBuilder, ShaderStage stage, int passIndex) : base(shaderBuilder)
+        public DescriptionVisitor(ShaderBuilder shaderBuilder, ShaderStage stage, int passIndex, string outputStruct) : base(shaderBuilder)
         {
             Stage = stage;
             // PassIndex = passIndex;
@@ -73,6 +70,8 @@ namespace z3y.ShaderGraph
             {
                 _target = _shaderBuilder.passBuilders[passIndex].surfaceDescription;
             }
+
+            _target.Add($"{outputStruct} output = ({outputStruct})0;");
         }
 
         private List<string> _target;
@@ -101,24 +100,15 @@ namespace z3y.ShaderGraph
             _target = shaderBuilder.passBuilders[passIndex].properties;
         }
 
-        private HashSet<string> _target;
+        private HashSet<PropertyDescriptor> _target;
 
-        public void AddProperty(string property)
+        public void AddProperty(PropertyDescriptor property)
         {
             _target.Add(property);
         }
 
-        public void AddProperty(PropertyDescriptor property)
-        {
-            _target.Add(property.ToString());
-        }
-
         public override void Visit(ShaderNode shaderNode)
         {
-            if (shaderNode is IMayRequirePropertyVisitor mayRequiereProperty1 && !mayRequiereProperty1.IsProperty)
-            {
-                return;
-            }
             if (shaderNode is IRequirePropertyVisitor node)
             {
                 node.VisitProperty(this);
@@ -132,11 +122,11 @@ namespace z3y.ShaderGraph
             _target = shaderBuilder.passBuilders[passIndex].functions;
         }
 
-        private Dictionary<string, string> _target;
+        private HashSet<string> _target;
 
-        public void AddFunction(string key, string function)
+        public void AddFunction(string function)
         {
-            _target[key] = function;
+            _target.Add(function);
         }
 
         public override void Visit(ShaderNode shaderNode)
