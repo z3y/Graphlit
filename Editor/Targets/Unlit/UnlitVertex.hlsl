@@ -4,25 +4,26 @@
 struct AttributesWrapper : Attributes
 {
     float3 positionOS : POSITION;
+    float3 normalOS : NORMAL;
     //float2 uv : TEXCOORD0;
 };
 
 struct VaryingsWrapper : Varyings
 {
-    float2 uv : TEXCOORD0;
+    //float2 uv : TEXCOORD0;
     UNITY_FOG_COORDS(1)
     float4 vertex : SV_POSITION;
 };
 
 VaryingsWrapper vert(AttributesWrapper input)
 {
-    VaryingsWrapper output;
+    VaryingsWrapper varyings;
 
     VertexDescription vertexDescription = VertexDescriptionFunction((Attributes)input);
     input.positionOS += vertexDescription.Position;
 
-    output.vertex = UnityObjectToClipPos(input.positionOS);
+    varyings.vertex = UnityObjectToClipPos(input.positionOS);
     //o.uv = v.uv;
-    UNITY_TRANSFER_FOG(output, output.vertex);
-    return output;
+    UNITY_TRANSFER_FOG(varyings, varyings.vertex);
+    return varyings;
 }

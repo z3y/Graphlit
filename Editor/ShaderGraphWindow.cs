@@ -56,8 +56,12 @@ namespace z3y.ShaderGraph
 
         public override void SaveChanges()
         {
+            var previousSelection = Selection.activeObject;
+            Selection.activeObject = null;
             ShaderGraphImporter.SaveGraphAndReimport(graphView, _importerGuid);
             base.SaveChanges();
+
+            Selection.activeObject = previousSelection;
         }
 
         public void OnEnable()
@@ -78,11 +82,13 @@ namespace z3y.ShaderGraph
         {
             var toolbar = new Toolbar();
 
-            var pingAsset = new Button() { text = "Ping Asset" };
+            var pingAsset = new Button() { text = "Select Asset" };
             pingAsset.clicked += () =>
             {
                 var assetPath = AssetDatabase.GUIDToAssetPath(_importerGuid);
-                EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityEngine.Object)));
+                var obj = AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityEngine.Object));
+                //EditorGUIUtility.PingObject(obj);
+                Selection.activeObject = obj;
             };
             toolbar.Add(pingAsset);
 

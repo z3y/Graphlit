@@ -99,6 +99,17 @@ namespace z3y.ShaderGraph
                 new(PortDirection.Input, new Float(1, false), ROUGHNESS, "Roughness"),
                 new(PortDirection.Input, new Float(1, false), METALLIC, "Metallic"),
             };
+
+            public override string SetDefaultInputString(int portID)
+            {
+                return portID switch
+                {
+                    ALBEDO => "1",
+                    ALPHA => "1",
+                    ROUGHNESS => "0.5",
+                    _ => "0",
+                };
+            }
         }
     }
 }

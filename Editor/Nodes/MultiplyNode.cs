@@ -5,6 +5,8 @@ namespace z3y.ShaderGraph.Nodes
     using UnityEngine;
     using z3y.ShaderGraph.Nodes.PortType;
     using System.Collections.Generic;
+    using UnityEngine.UI;
+    using UnityEditor;
 
     [NodeInfo("*", "a * b")]
     public sealed class MultiplyNode : ShaderNode, IRequireDescriptionVisitor
@@ -116,7 +118,7 @@ namespace z3y.ShaderGraph.Nodes
         {
             int components = swizzle.Length;
             var a = GetInputString(IN);
-            VariableNames[OUT] = "(" + a + ")." + swizzle;
+            VariableNames[OUT] = a + "." + swizzle;
             Ports.GetByID(OUT).Type = new Float(components);
             Ports.GetByID(IN).Type = Ports[OUT].Type;
         }
@@ -162,7 +164,7 @@ namespace z3y.ShaderGraph.Nodes
 
         public void VisitDescription(DescriptionVisitor visitor)
         {
-            VariableNames[OUT] = _isProperty ? PropertyDescriptor.Name : _value.ToString("R");
+            VariableNames[OUT] = _isProperty ? PropertyDescriptor.Name : "float(" + _value.ToString("R") + ")";
         }
 
         public void VisitProperty(PropertyVisitor visitor)
@@ -343,12 +345,15 @@ namespace z3y.ShaderGraph.Nodes
             });
             node.extensionContainer.Add(functionName);
 
+
+
             var code = new TextField { value = _code };
             code.RegisterValueChangedCallback((evt) =>
             {
                 _code = evt.newValue;
             });
             code.multiline = true;
+
             node.extensionContainer.Add(code);
         }
 
@@ -359,7 +364,12 @@ namespace z3y.ShaderGraph.Nodes
 
         public void VisitFunction(FunctionVisitor visitor)
         {
-            visitor.AddFunction(_code);
+            if (string.IsNullOrEmpty(_code))
+            {
+                return;
+            }
+
+            visitor.AddFunction($"float4 {_functionName}()\n" + '{' + _code + '}');
         }
     }
 }

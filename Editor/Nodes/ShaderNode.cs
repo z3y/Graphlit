@@ -151,7 +151,8 @@ namespace z3y.ShaderGraph.Nodes
             // downcast
             if (components > targetComponent)
             {
-                name = $"(" + name + ").xyz"[..(targetComponent + 2)];
+                //name = $"(" + name + ").xyz"[..(targetComponent + 2)];
+                name = name + ".xyz"[..(targetComponent + 1)];
             }
             else
             {
