@@ -56,9 +56,7 @@ namespace z3y.ShaderGraph
                 UnlitVertexDescription.NORMAL,
                 UnlitVertexDescription.TANGENT,
                 UnlitSurfaceDescription.ALBEDO,
-                UnlitSurfaceDescription.ALPHA,
-                UnlitSurfaceDescription.ROUGHNESS,
-                UnlitSurfaceDescription.METALLIC
+                UnlitSurfaceDescription.ALPHA
                 ));
 
             //builder.AddPass(new PassBuilder("FORWARDADD", "Somewhere/ForwardAddVertex.hlsl", "Somewhere/ForwardAddFragment.hlsl"));
@@ -89,15 +87,11 @@ namespace z3y.ShaderGraph
         {
             public const int ALBEDO = 3;
             public const int ALPHA = 4;
-            public const int ROUGHNESS = 5;
-            public const int METALLIC = 6;
 
             public override List<PortDescriptor> Ports { get; } = new List<PortDescriptor>
             {
-                new(PortDirection.Input, new Float(3, false), ALBEDO, "Albedo"),
+                new(PortDirection.Input, new Float(3, false), ALBEDO, "Color"),
                 new(PortDirection.Input, new Float(1, false), ALPHA, "Alpha"),
-                new(PortDirection.Input, new Float(1, false), ROUGHNESS, "Roughness"),
-                new(PortDirection.Input, new Float(1, false), METALLIC, "Metallic"),
             };
 
             public override string SetDefaultInputString(int portID)
@@ -106,7 +100,6 @@ namespace z3y.ShaderGraph
                 {
                     ALBEDO => "1",
                     ALPHA => "1",
-                    ROUGHNESS => "0.5",
                     _ => "0",
                 };
             }
