@@ -90,7 +90,12 @@ namespace z3y.ShaderGraph
             var builder = UpdateGraph(guid);
             //var text = File.ReadAllText(assetPath);
             //ctx.AddObjectToAsset("Main Asset", new TextAsset(text));
-            ctx.AddObjectToAsset("Main Asset", new TextAsset(builder.ToString()));
+
+            var result = builder.ToString();
+            var shader = ShaderUtil.CreateShaderAsset(result, false);
+            ctx.AddObjectToAsset("Main Asset", shader);
+
+            ctx.AddObjectToAsset("generation", new TextAsset(result));
 
             var text = File.ReadAllText(assetPath);
             ctx.AddObjectToAsset("json", new TextAsset(text));
@@ -135,7 +140,7 @@ namespace z3y.ShaderGraph
             var jsonData = JsonUtility.ToJson(data, true);
 
             _cachedGraphData[importerPath] = data;
-
+    
             File.WriteAllText(importerPath, jsonData);
             AssetDatabase.ImportAsset(importerPath, ImportAssetOptions.ForceUpdate);
 

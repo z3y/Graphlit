@@ -13,6 +13,7 @@ namespace z3y.ShaderGraph
 
             Ports = ports;
         }
+
         public string name;
         public Dictionary<string, string> tags = new();
         public Dictionary<string, string> renderStates = new();
@@ -23,7 +24,9 @@ namespace z3y.ShaderGraph
         public List<string> objectDecleration = new();
         public HashSet<string> functions = new();
         public List<string> vertexDescription = new();
+        public List<string> vertexDescriptionStruct = new();
         public List<string> surfaceDescription = new();
+        public List<string> surfaceDescriptionStruct = new();
         public HashSet<PropertyDescriptor> properties = new();
 
         public string vertexShaderPath;
@@ -46,12 +49,30 @@ namespace z3y.ShaderGraph
         {
             sb.AppendLine("// Pragmas");
 
+            sb.AppendLine("#include \"UnityCG.cginc\"");
+
             sb.AppendLine("struct Attributes");
             sb.Indent();
             sb.UnIndent("};");
 
             sb.AppendLine("struct Varyings");
             sb.Indent();
+            sb.UnIndent("};");
+
+            sb.AppendLine("struct VertexDescription");
+            sb.Indent();
+            foreach (var s in vertexDescriptionStruct)
+            {
+                sb.AppendLine(s);
+            }
+            sb.UnIndent("};");
+
+            sb.AppendLine("struct SurfaceDescription");
+            sb.Indent();
+            foreach (var s in surfaceDescriptionStruct)
+            {
+                sb.AppendLine(s);
+            }
             sb.UnIndent("};");
 
             sb.AppendLine("// CBUFFER");
@@ -79,8 +100,8 @@ namespace z3y.ShaderGraph
             AppendVertexDescription(sb);
             AppendSurfaceDescription(sb);
 
-            sb.AppendLine("#include \"" + vertexShaderPath + '"');
-            sb.AppendLine("#include \"" + fragmentShaderPath + '"');
+            sb.AppendLine("#include_with_pragmas \"" + vertexShaderPath + '"');
+            sb.AppendLine("#include_with_pragmas \"" + fragmentShaderPath + '"');
         }
 
         public void AppendSurfaceDescription(ShaderStringBuilder sb)

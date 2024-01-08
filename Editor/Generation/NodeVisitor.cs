@@ -32,6 +32,7 @@ namespace z3y.ShaderGraph
     interface IRequirePropertyVisitor
     {
         void VisitProperty(PropertyVisitor visitor);
+        public PropertyDescriptor PropertyDescriptor { get; }
     }
 
     interface IRequireDescriptionVisitor
@@ -72,9 +73,11 @@ namespace z3y.ShaderGraph
             }
 
             _target.Add($"{outputStruct} output = ({outputStruct})0;");
+            Pass = passIndex;
         }
 
         private List<string> _target;
+        public int Pass { get; private set; }
 
         public void AppendLine(string value)
         {

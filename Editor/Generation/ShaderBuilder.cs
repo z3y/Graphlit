@@ -15,6 +15,9 @@ namespace z3y.ShaderGraph
             ShaderGraphView = shaderGraphView;
             DeserializeAndMapGuids();
             FillConnections();
+
+            var data = serializableGraph.data;
+            shaderName = data.shaderName;
         }
 
         public string shaderName;

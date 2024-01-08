@@ -135,6 +135,7 @@ namespace z3y.ShaderGraph.Nodes
         };
 
         private bool _isProperty => _propertyName != string.Empty;
+        public PropertyDescriptor PropertyDescriptor => new PropertyDescriptor(PropertyType.Float, _propertyName);
 
         public override void AddElements(ShaderNodeVisualElement node)
         {
@@ -161,14 +162,13 @@ namespace z3y.ShaderGraph.Nodes
 
         public void VisitDescription(DescriptionVisitor visitor)
         {
-            VariableNames[OUT] = _isProperty ? _propertyName : _value.ToString("R");
+            VariableNames[OUT] = _isProperty ? PropertyDescriptor.Name : _value.ToString("R");
         }
 
         public void VisitProperty(PropertyVisitor visitor)
         {
             if (!_isProperty) return;
-            var property = new PropertyDescriptor(PropertyType.Float, _propertyName);
-            visitor.AddProperty(property);
+            visitor.AddProperty(PropertyDescriptor);
         }
     }
 
@@ -185,6 +185,7 @@ namespace z3y.ShaderGraph.Nodes
         };
 
         private bool _isProperty => _propertyName != string.Empty;
+        public PropertyDescriptor PropertyDescriptor => new PropertyDescriptor(PropertyType.Float2, _propertyName);
 
         public override void AddElements(ShaderNodeVisualElement node)
         {
@@ -198,18 +199,25 @@ namespace z3y.ShaderGraph.Nodes
             });
 
             node.inputContainer.Add(f);
+
+            var p = new TextField { value = _propertyName };
+            p.RegisterValueChangedCallback((evt) =>
+            {
+                _propertyName = evt.newValue;
+            });
+
+            node.inputContainer.Add(p);
         }
 
         public void VisitDescription(DescriptionVisitor visitor)
         {
-            VariableNames[OUT] = _isProperty ? _propertyName : _value.ToString("R");
+            VariableNames[OUT] = _isProperty ? PropertyDescriptor.Name : "float2" + _value.ToString("R");
         }
 
         public void VisitProperty(PropertyVisitor visitor)
         {
             if (!_isProperty) return;
-            var property = new PropertyDescriptor(PropertyType.Float2, _propertyName);
-            visitor.AddProperty(property);
+            visitor.AddProperty(PropertyDescriptor);
         }
     }
 
@@ -226,6 +234,7 @@ namespace z3y.ShaderGraph.Nodes
         };
 
         private bool _isProperty => _propertyName != string.Empty;
+        public PropertyDescriptor PropertyDescriptor => new PropertyDescriptor(PropertyType.Float3, _propertyName);
 
         public override void AddElements(ShaderNodeVisualElement node)
         {
@@ -239,18 +248,25 @@ namespace z3y.ShaderGraph.Nodes
             });
 
             node.inputContainer.Add(f);
+
+            var p = new TextField { value = _propertyName };
+            p.RegisterValueChangedCallback((evt) =>
+            {
+                _propertyName = evt.newValue;
+            });
+
+            node.inputContainer.Add(p);
         }
 
         public void VisitDescription(DescriptionVisitor visitor)
         {
-            VariableNames[OUT] = _isProperty ? _propertyName : _value.ToString("R");
+            VariableNames[OUT] = _isProperty ? PropertyDescriptor.Name : "float3" + _value.ToString("R");
         }
 
         public void VisitProperty(PropertyVisitor visitor)
         {
             if (!_isProperty) return;
-            var property = new PropertyDescriptor(PropertyType.Float3, _propertyName);
-            visitor.AddProperty(property);
+            visitor.AddProperty(PropertyDescriptor);
         }
     }
 
@@ -267,6 +283,7 @@ namespace z3y.ShaderGraph.Nodes
         };
 
         private bool _isProperty => _propertyName != string.Empty;
+        public PropertyDescriptor PropertyDescriptor => new PropertyDescriptor(PropertyType.Float4, _propertyName);
 
         public override void AddElements(ShaderNodeVisualElement node)
         {
@@ -280,18 +297,25 @@ namespace z3y.ShaderGraph.Nodes
             });
 
             node.inputContainer.Add(f);
+
+            var p = new TextField { value = _propertyName };
+            p.RegisterValueChangedCallback((evt) =>
+            {
+                _propertyName = evt.newValue;
+            });
+
+            node.inputContainer.Add(p);
         }
 
         public void VisitDescription(DescriptionVisitor visitor)
         {
-            VariableNames[OUT] = _isProperty ? _propertyName : _value.ToString("R");
+            VariableNames[OUT] = _isProperty ? PropertyDescriptor.Name : "float4" + _value.ToString("R");
         }
 
         public void VisitProperty(PropertyVisitor visitor)
         {
             if (!_isProperty) return;
-            var property = new PropertyDescriptor(PropertyType.Float4, _propertyName);
-            visitor.AddProperty(property);
+            visitor.AddProperty(PropertyDescriptor);
         }
     }
 }

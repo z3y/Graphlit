@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using z3y.ShaderGraph.Nodes;
 using z3y.ShaderGraph.Nodes.PortType;
 
@@ -17,6 +18,10 @@ namespace z3y.ShaderGraph
     {
         public void VisitTemplate(DescriptionVisitor visitor, int[] ports)
         {
+            var structField = visitor.Stage == ShaderStage.Fragment ?
+                visitor._shaderBuilder.passBuilders[visitor.Pass].surfaceDescriptionStruct
+                : visitor._shaderBuilder.passBuilders[visitor.Pass].vertexDescriptionStruct;
+
             foreach (var output in Ports)
             {
                 if (!Array.Exists(ports, x => x == output.ID))
@@ -26,6 +31,11 @@ namespace z3y.ShaderGraph
 
                 string inputString = GetInputString(output.ID);
                 visitor.AppendLine($"output.{output.Name} = {inputString};");
+
+                if (DefaultPortsTypes[output.ID] is Float @float)
+                {
+                    structField.Add($"{@float} {output.Name};");
+                }
             }
 
             visitor.AppendLine($"return output;");
@@ -41,7 +51,7 @@ namespace z3y.ShaderGraph
 
         public override void BuilderPassthourgh(ShaderBuilder builder)
         {
-            builder.AddPass(new PassBuilder("FORWARD", "Somewhere/ForwardVertex.hlsl", "Somewhere/ForwardFragment.hlsl",
+            builder.AddPass(new PassBuilder("FORWARD", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitVertex.hlsl", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitFragment.hlsl",
                 UnlitVertexDescription.POSITION,
                 UnlitVertexDescription.NORMAL,
                 UnlitVertexDescription.TANGENT,
@@ -52,10 +62,10 @@ namespace z3y.ShaderGraph
                 ));
 
             //builder.AddPass(new PassBuilder("FORWARDADD", "Somewhere/ForwardAddVertex.hlsl", "Somewhere/ForwardAddFragment.hlsl"));
-            builder.AddPass(new PassBuilder("SHADOWCASTER", "Somewhere/ShadowcasterVertex.hlsl", "Somewhere/ShadowcasterFragment.hlsl",
+          /*  builder.AddPass(new PassBuilder("SHADOWCASTER", "Somewhere/ShadowcasterVertex.hlsl", "Somewhere/ShadowcasterFragment.hlsl",
                 UnlitVertexDescription.POSITION,
                 UnlitSurfaceDescription.ALPHA
-                ));
+                ));*/
 
         }
 
