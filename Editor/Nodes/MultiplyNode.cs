@@ -318,4 +318,48 @@ namespace z3y.ShaderGraph.Nodes
             visitor.AddProperty(PropertyDescriptor);
         }
     }
+
+    [NodeInfo("Custom Function"), Serializable]
+    public class CustomFunctionode : ShaderNode, IRequireDescriptionVisitor, IRequireFunctionVisitor
+    {
+        const int OUT = 0;
+
+        [SerializeField] private string _code;
+        [SerializeField] private string _functionName;
+
+
+        public override List<PortDescriptor> Ports { get; } = new List<PortDescriptor>
+        {
+            new(PortDirection.Output, new Float(4, false), OUT),
+        };
+
+
+        public override void AddElements(ShaderNodeVisualElement node)
+        {
+            var functionName = new TextField { value = _functionName };
+            functionName.RegisterValueChangedCallback((evt) =>
+            {
+                _functionName = evt.newValue;
+            });
+            node.extensionContainer.Add(functionName);
+
+            var code = new TextField { value = _code };
+            code.RegisterValueChangedCallback((evt) =>
+            {
+                _code = evt.newValue;
+            });
+            code.multiline = true;
+            node.extensionContainer.Add(code);
+        }
+
+        public void VisitDescription(DescriptionVisitor visitor)
+        {
+            visitor.AppendLine(FormatOutput(OUT, "CustomFunction", $"{_functionName}()"));
+        }
+
+        public void VisitFunction(FunctionVisitor visitor)
+        {
+            visitor.AddFunction(_code);
+        }
+    }
 }
