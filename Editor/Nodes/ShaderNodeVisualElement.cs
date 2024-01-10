@@ -40,6 +40,9 @@ namespace z3y.ShaderGraph.Nodes
             shaderNode.AddElements(this);
             AddStyles();
             AddTitleElement();
+            AddPreview();
+
+
             RefreshExpandedState();
             RefreshPorts();
         }
@@ -149,6 +152,12 @@ namespace z3y.ShaderGraph.Nodes
                     }
                 }
             }
+        }
+
+        public PreviewDrawer previewDrawer = new PreviewDrawer();
+        private void AddPreview()
+        {
+            extensionContainer.Add(previewDrawer.GetVisualElement());
         }
 
     }

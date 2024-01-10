@@ -2,7 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Xml.Linq;
+using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using z3y.ShaderGraph.Nodes;
+using z3y.ShaderGraph.Nodes.PortType;
+using static UnityEngine.GraphicsBuffer;
 
 namespace z3y.ShaderGraph
 {
@@ -100,6 +105,7 @@ namespace z3y.ShaderGraph
                 TraverseGraphBegin(f, fragmentVisitors, pass.Ports);
             }
 
+            UpdateAllPreviews();
 
             if (ShaderGraphView is not null)
             {
@@ -110,13 +116,76 @@ namespace z3y.ShaderGraph
             }
         }
 
+        public void BuildPreview(string guid)
+        {
+            var targetNode = GuidToNode[guid];
+
+            var fragmentVisitors = new List<NodeVisitor>
+            {
+                new PropertyVisitor(this, 0),
+                new DescriptionVisitor(this, ShaderStage.Fragment, 0, "SurfaceDescription"),
+                new FunctionVisitor(this, 0)
+            };
+
+            TraverseGraph(targetNode, fragmentVisitors);
+
+            foreach (var visitor in fragmentVisitors)
+            {
+                visitor.Visit(targetNode);
+            }
+
+            var sb = passBuilders[0].surfaceDescription;
+            var str = passBuilders[0].surfaceDescriptionStruct;
+            str.Add("float4 Color;");
+            foreach (var port in targetNode.Ports)
+            {
+                if (port.Direction == PortDirection.Output)
+                {
+                    var t = (Float)targetNode.Ports.GetByID(port.ID).Type;
+                    var cast = targetNode.Cast(t.components, "float", 4, targetNode.VariableNames[port.ID]);
+                    sb.Add("output.Color = " + cast + ";");
+                    break;
+                }
+            }
+
+            sb.Add("return output;");
+        }
+
         private void ResetNodes()
         {
             ShaderNode.ResetUniqueVariableIDs();
-            foreach(var shaderNode in ShaderNodes)
+            foreach (var shaderNode in ShaderNodes)
             {
                 shaderNode.ResetVisit();
             }
+        }
+
+        public void UpdateAllPreviews()
+        {
+            foreach (var shaderNode in ShaderNodes)
+            {
+                UpdatePreview(SerializableGraph, NodeToSerializableNode[shaderNode]);
+            }
+        }
+
+        public void UpdatePreview(SerializableGraph serializableGraph, SerializableNode targetNode)
+        {
+            if (ShaderGraphView is null) return;
+
+
+
+            var node = (ShaderNodeVisualElement)ShaderGraphView.GetNodeByGuid(targetNode.guid);
+            var builder = new ShaderBuilder(GenerationMode.Preview, serializableGraph, ShaderGraphView);
+            builder.shaderName = "Hidden/SGPreview/" + targetNode.guid;
+            var target = new UnlitBuildTarget();
+            target.BuilderPassthourgh(builder);
+            builder.BuildPreview(targetNode.guid);
+
+            UnityEngine.Debug.Log(builder.ToString());
+
+            var shader = ShaderUtil.CreateShaderAsset(builder.ToString());
+
+            node.previewDrawer.Initialize(shader);
         }
 
         private void CopyPort(ShaderNode shaderNode, ShaderNode inputNode, NodeConnection input)

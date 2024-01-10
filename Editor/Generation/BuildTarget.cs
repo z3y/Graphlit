@@ -53,10 +53,7 @@ namespace z3y.ShaderGraph
         {
             builder.AddPass(new PassBuilder("FORWARD", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitVertex.hlsl", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitFragment.hlsl",
                 UnlitVertexDescription.POSITION,
-                UnlitVertexDescription.NORMAL,
-                UnlitVertexDescription.TANGENT,
-                UnlitSurfaceDescription.ALBEDO,
-                UnlitSurfaceDescription.ALPHA
+                UnlitSurfaceDescription.COLOR
                 ));
 
             //builder.AddPass(new PassBuilder("FORWARDADD", "Somewhere/ForwardAddVertex.hlsl", "Somewhere/ForwardAddFragment.hlsl"));
@@ -85,21 +82,18 @@ namespace z3y.ShaderGraph
         [NodeInfo("Surface Description")]
         public sealed class UnlitSurfaceDescription : TemplateOutput
         {
-            public const int ALBEDO = 3;
-            public const int ALPHA = 4;
+            public const int COLOR = 3;
 
             public override List<PortDescriptor> Ports { get; } = new List<PortDescriptor>
             {
-                new(PortDirection.Input, new Float(3, false), ALBEDO, "Color"),
-                new(PortDirection.Input, new Float(1, false), ALPHA, "Alpha"),
+                new(PortDirection.Input, new Float(4, false), COLOR, "Color"),
             };
 
             public override string SetDefaultInputString(int portID)
             {
                 return portID switch
                 {
-                    ALBEDO => "1",
-                    ALPHA => "1",
+                    COLOR => "1",
                     _ => "0",
                 };
             }

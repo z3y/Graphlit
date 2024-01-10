@@ -43,7 +43,7 @@ namespace z3y.ShaderGraph
             return false;
         }
 
-        public static string ValidateSwizzle(ChangeEvent<string> evt, TextField textField)
+        public static string Validate(ChangeEvent<string> evt, TextField textField)
         {
             var newValue = evt.newValue;
             if (IsValid(newValue))

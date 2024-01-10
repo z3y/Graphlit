@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Xml.Linq;
 using UnityEngine;
 using z3y.ShaderGraph.Nodes.PortType;
 
@@ -134,14 +135,59 @@ namespace z3y.ShaderGraph.Nodes
             return trunc;
         }
 
-        public string GetCastInputString(int portID, int targetComponent)
+        public string Cast(int components, string typeName, int targetComponent, string name)
         {
-            UpdatePortDefaultString(portID);
+            if (components == targetComponent)
+            {
+                return name;
+            }
+
+            // downcast
+            if (components > targetComponent)
+            {
+                //name = $"(" + name + ").xyz"[..(targetComponent + 2)];
+                name = name + ".xyz"[..(targetComponent + 1)];
+            }
+            else
+            {
+                // upcast
+                if (components == 1)
+                {
+                    // no need to upcast
+                    // name = "(" + name + ").xxxx"[..(targetComponent + 2)];
+                    return name;
+                }
+                else if (components == 2)
+                {
+                    if (targetComponent == 3)
+                    {
+                        name = typeName + "3(" + name + ", 0)";
+                    }
+                    if (targetComponent == 4)
+                    {
+                        name = typeName + "4(" + name + ", 0, 0)";
+                    }
+                }
+                else if (components == 3)
+                {
+                    if (targetComponent == 4)
+                    {
+                        name = typeName + "4(" + name + ", 0)";
+                    }
+                }
+            }
+
+            return name;
+        }
+
+        public string GetCastInputString(int portID, int targetComponent, bool updateDefault = true)
+        {
+            if (updateDefault) UpdatePortDefaultString(portID);
+
             var name = TryGetVariableName(portID);
             var type = (Float)Ports.GetByID(portID).Type;
             var components = type.components;
             string typeName = type.fullPrecision ? "float" : "half";
-
 
             if (components == targetComponent)
             {
@@ -182,6 +228,8 @@ namespace z3y.ShaderGraph.Nodes
                     }
                 }
             }
+
+            return name;
 
             type.components = targetComponent;
             Ports.GetByID(portID).Type = type;

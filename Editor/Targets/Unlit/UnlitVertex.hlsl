@@ -20,7 +20,7 @@ VaryingsWrapper vert(AttributesWrapper input)
     VaryingsWrapper varyings;
 
     VertexDescription vertexDescription = VertexDescriptionFunction((Attributes)input);
-    input.positionOS += vertexDescription.Position;
+    // input.positionOS += vertexDescription.Position;
 
     varyings.vertex = UnityObjectToClipPos(input.positionOS);
     //o.uv = v.uv;

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor.Hardware;
 
 namespace z3y.ShaderGraph
 {

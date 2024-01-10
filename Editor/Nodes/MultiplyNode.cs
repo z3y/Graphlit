@@ -5,8 +5,6 @@ namespace z3y.ShaderGraph.Nodes
     using UnityEngine;
     using z3y.ShaderGraph.Nodes.PortType;
     using System.Collections.Generic;
-    using UnityEngine.UI;
-    using UnityEditor;
 
     [NodeInfo("*", "a * b")]
     public sealed class MultiplyNode : ShaderNode, IRequireDescriptionVisitor
@@ -109,7 +107,7 @@ namespace z3y.ShaderGraph.Nodes
             var f = new TextField { value = swizzle };
             f.RegisterValueChangedCallback((evt) =>
             {
-                swizzle = Swizzle.ValidateSwizzle(evt, f);
+                swizzle = Swizzle.Validate(evt, f);
             });
             node.extensionContainer.Add(f);
         }

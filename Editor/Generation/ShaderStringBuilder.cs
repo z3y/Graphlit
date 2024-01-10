@@ -9,12 +9,8 @@ namespace z3y.ShaderGraph
 
         public void AppendLine(string value)
         {
-            _sb.AppendLine();
-            for (int i = 0; i < indentLevel; i++)
-            {
-                _sb.Append("    ");
-            }
-            _sb.Append(value);
+            _sb.Append(new string(' ', indentLevel * 4));
+            _sb.AppendLine(value);
         }
 
         public void AppendLine()

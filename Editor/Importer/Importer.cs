@@ -93,7 +93,13 @@ namespace z3y.ShaderGraph
 
             var result = builder.ToString();
             var shader = ShaderUtil.CreateShaderAsset(result, false);
+
+            var material = new Material(shader)
+            {
+                name = "Default Material"
+            };
             ctx.AddObjectToAsset("Main Asset", shader);
+            ctx.AddObjectToAsset("Material", material);
 
             ctx.AddObjectToAsset("generation", new TextAsset(result));
 

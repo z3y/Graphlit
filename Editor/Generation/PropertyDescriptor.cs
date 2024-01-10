@@ -21,7 +21,7 @@ namespace z3y.ShaderGraph
 
     public class PropertyDescriptor
     {
-        public PropertyDescriptor(PropertyType type, string displayName, string name = null, string defaultValue = "0.0", List<string> attributes = null)
+        public PropertyDescriptor(PropertyType type, string displayName, string name = null, string defaultValue = null, List<string> attributes = null)
         {
             Type = type;
             DisplayName = displayName;
@@ -35,6 +35,28 @@ namespace z3y.ShaderGraph
             {
                 Name = name;
             }
+
+            if (defaultValue is null)
+            {
+                DefaultValue = GetDefaultValue();
+            }
+        }
+
+        public string GetDefaultValue()
+        {
+            return Type switch
+            {
+                PropertyType.Float => "0",
+                PropertyType.Float2 => "(0,0,0,0)",
+                PropertyType.Float3 => "(0,0,0,0)",
+                PropertyType.Float4 => "(0,0,0,0)",
+                PropertyType.Range => "0",
+                PropertyType.Color => "(0,0,0,0)",
+                PropertyType.Intiger => "0",
+                PropertyType.Texture2D => "\"black\" {}",
+                PropertyType.TextureCube => "\"black\" {}",
+                _ => throw new System.NotImplementedException(),
+            };
         }
 
         public string Name { get; set; }
@@ -54,9 +76,9 @@ namespace z3y.ShaderGraph
             return Type switch
             {
                 PropertyType.Float => "Float",
-                PropertyType.Float2 => "Vector4",
-                PropertyType.Float3 => "Vector4",
-                PropertyType.Float4 => "Vector4",
+                PropertyType.Float2 => "Vector",
+                PropertyType.Float3 => "Vector",
+                PropertyType.Float4 => "Vector",
                 PropertyType.Range => $"Range ({Range.x.ToString("R")}, {Range.y.ToString("R")})",
                 PropertyType.Color => "Color",
                 PropertyType.Intiger => "Intiger",
