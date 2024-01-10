@@ -16,7 +16,7 @@ namespace z3y.ShaderGraph
 
     public abstract class TemplateOutput : ShaderNode
     {
-        public void VisitTemplate(DescriptionVisitor visitor, int[] ports)
+        public void VisitTemplate(ExpressionVisitor visitor, int[] ports)
         {
             var structField = visitor.Stage == ShaderStage.Fragment ?
                 visitor._shaderBuilder.passBuilders[visitor.Pass].surfaceDescriptionStruct

@@ -229,8 +229,6 @@ namespace z3y.ShaderGraph.Nodes
                 }
             }
 
-            return name;
-
             type.components = targetComponent;
             Ports.GetByID(portID).Type = type;
             VariableNames[portID] = name;

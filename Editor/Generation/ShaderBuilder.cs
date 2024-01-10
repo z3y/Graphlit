@@ -75,8 +75,6 @@ namespace z3y.ShaderGraph
 
         public void Build(BuildTarget target)
         {
-            ShaderNode.ResetUniqueVariableIDs();
-
             var v = (TemplateOutput)ShaderNodes.Find(x => x.GetType() == target.VertexDescription);
             var f = (TemplateOutput)ShaderNodes.Find(x => x.GetType() == target.SurfaceDescription);
 
@@ -90,14 +88,14 @@ namespace z3y.ShaderGraph
                 var vertexVisitors = new List<NodeVisitor>
                 {
                     new PropertyVisitor(this, passIndex),
-                    new DescriptionVisitor(this, ShaderStage.Vertex, passIndex, "VertexDescription"),
+                    new ExpressionVisitor(this, ShaderStage.Vertex, passIndex, "VertexDescription"),
                     new FunctionVisitor(this, passIndex)
                 };
 
                 var fragmentVisitors = new List<NodeVisitor>
                 {
                     new PropertyVisitor(this, passIndex),
-                    new DescriptionVisitor(this, ShaderStage.Fragment, passIndex, "SurfaceDescription"),
+                    new ExpressionVisitor(this, ShaderStage.Fragment, passIndex, "SurfaceDescription"),
                     new FunctionVisitor(this, passIndex)
                 };
 
@@ -118,12 +116,14 @@ namespace z3y.ShaderGraph
 
         public void BuildPreview(string guid)
         {
+            ResetNodes();
+
             var targetNode = GuidToNode[guid];
 
             var fragmentVisitors = new List<NodeVisitor>
             {
                 new PropertyVisitor(this, 0),
-                new DescriptionVisitor(this, ShaderStage.Fragment, 0, "SurfaceDescription"),
+                new ExpressionVisitor(this, ShaderStage.Fragment, 0, "SurfaceDescription"),
                 new FunctionVisitor(this, 0)
             };
 
@@ -181,7 +181,7 @@ namespace z3y.ShaderGraph
             target.BuilderPassthourgh(builder);
             builder.BuildPreview(targetNode.guid);
 
-            UnityEngine.Debug.Log(builder.ToString());
+            //UnityEngine.Debug.Log(builder.ToString());
 
             var shader = ShaderUtil.CreateShaderAsset(builder.ToString());
 
@@ -224,7 +224,7 @@ namespace z3y.ShaderGraph
 
             foreach (var visitor in visitors)
             {
-                if (visitor is DescriptionVisitor descriptionVisitor)
+                if (visitor is ExpressionVisitor descriptionVisitor)
                 {
                     templateOutput.VisitTemplate(descriptionVisitor, ports);
                 }

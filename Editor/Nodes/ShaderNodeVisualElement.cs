@@ -42,7 +42,6 @@ namespace z3y.ShaderGraph.Nodes
             AddTitleElement();
             AddPreview();
 
-
             RefreshExpandedState();
             RefreshPorts();
         }
@@ -84,7 +83,7 @@ namespace z3y.ShaderGraph.Nodes
         {
             var nodeInfo = shaderNode.Info;
 
-            var titleLabel = new Label { text = nodeInfo.name, tooltip = nodeInfo.tooltip };
+            var titleLabel = new Label { text = nodeInfo.name, tooltip = nodeInfo.tooltip + "\n" + viewDataKey };
             titleLabel.style.fontSize = 14;
             var centerAlign = new StyleEnum<Align> { value = Align.Center };
             titleLabel.style.alignSelf = centerAlign;

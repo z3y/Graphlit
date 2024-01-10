@@ -7,7 +7,7 @@ namespace z3y.ShaderGraph.Nodes
     using System.Collections.Generic;
 
     [NodeInfo("*", "a * b")]
-    public sealed class MultiplyNode : ShaderNode, IRequireDescriptionVisitor
+    public sealed class MultiplyNode : ShaderNode, IRequireExpressionVisitor
     {
         const int A = 0;
         const int B = 1;
@@ -20,7 +20,7 @@ namespace z3y.ShaderGraph.Nodes
             new(PortDirection.Output, new Float(1, true), OUT),
         };
 
-        public void VisitDescription(DescriptionVisitor visitor)
+        public void Visit(ExpressionVisitor visitor)
         {
             var components = ImplicitTruncation(OUT, A, B);
             var a = GetCastInputString(A, components);
@@ -36,7 +36,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [NodeInfo("+", "a + b")]
-    public sealed class AddNode : ShaderNode, IRequireDescriptionVisitor
+    public sealed class AddNode : ShaderNode, IRequireExpressionVisitor
     {
         const int A = 0;
         const int B = 1;
@@ -49,7 +49,7 @@ namespace z3y.ShaderGraph.Nodes
             new(PortDirection.Output, new Float(1, true), OUT),
         };
 
-        public void VisitDescription(DescriptionVisitor visitor)
+        public void Visit(ExpressionVisitor visitor)
         {
             var components = ImplicitTruncation(OUT, A, B);
             var a = GetCastInputString(A, components);
@@ -60,7 +60,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [NodeInfo("dot", "dot(a, b)")]
-    public sealed class DotNode : ShaderNode, IRequireDescriptionVisitor
+    public sealed class DotNode : ShaderNode, IRequireExpressionVisitor
     {
         const int A = 0;
         const int B = 1;
@@ -73,7 +73,7 @@ namespace z3y.ShaderGraph.Nodes
             new(PortDirection.Output, new Float(1, false), OUT),
         };
 
-        public void VisitDescription(DescriptionVisitor visitor)
+        public void Visit(ExpressionVisitor visitor)
         {
             var components = ImplicitTruncation(null, A, B);
             var a = GetCastInputString(A, components);
@@ -89,7 +89,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [@NodeInfo("swizzle"), Serializable]
-    public sealed class SwizzleNode : ShaderNode, IRequireDescriptionVisitor
+    public sealed class SwizzleNode : ShaderNode, IRequireExpressionVisitor
     {
         const int IN = 0;
         const int OUT = 1;
@@ -112,7 +112,7 @@ namespace z3y.ShaderGraph.Nodes
             node.extensionContainer.Add(f);
         }
 
-        public void VisitDescription(DescriptionVisitor visitor)
+        public void Visit(ExpressionVisitor visitor)
         {
             int components = swizzle.Length;
             var a = GetInputString(IN);
@@ -123,7 +123,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [NodeInfo("float"), Serializable]
-    public class FloatNode : ShaderNode, IRequireDescriptionVisitor, IRequirePropertyVisitor
+    public class FloatNode : ShaderNode, IRequireExpressionVisitor, IRequirePropertyVisitor
     {
         const int OUT = 0;
         [SerializeField] float _value;
@@ -160,12 +160,12 @@ namespace z3y.ShaderGraph.Nodes
             node.inputContainer.Add(p);
         }
 
-        public void VisitDescription(DescriptionVisitor visitor)
+        public void Visit(ExpressionVisitor visitor)
         {
             VariableNames[OUT] = _isProperty ? PropertyDescriptor.Name : "float(" + _value.ToString("R") + ")";
         }
 
-        public void VisitProperty(PropertyVisitor visitor)
+        public void Visit(PropertyVisitor visitor)
         {
             if (!_isProperty) return;
             visitor.AddProperty(PropertyDescriptor);
@@ -173,7 +173,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [NodeInfo("float2"), Serializable]
-    public class Float2Node : ShaderNode, IRequireDescriptionVisitor, IRequirePropertyVisitor
+    public class Float2Node : ShaderNode, IRequireExpressionVisitor, IRequirePropertyVisitor
     {
         const int OUT = 0;
         [SerializeField] Vector2 _value;
@@ -209,12 +209,12 @@ namespace z3y.ShaderGraph.Nodes
             node.inputContainer.Add(p);
         }
 
-        public void VisitDescription(DescriptionVisitor visitor)
+        public void Visit(ExpressionVisitor visitor)
         {
             VariableNames[OUT] = _isProperty ? PropertyDescriptor.Name : "float2" + _value.ToString("R");
         }
 
-        public void VisitProperty(PropertyVisitor visitor)
+        public void Visit(PropertyVisitor visitor)
         {
             if (!_isProperty) return;
             visitor.AddProperty(PropertyDescriptor);
@@ -222,7 +222,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [NodeInfo("float3"), Serializable]
-    public class Float3Node : ShaderNode, IRequireDescriptionVisitor, IRequirePropertyVisitor
+    public class Float3Node : ShaderNode, IRequireExpressionVisitor, IRequirePropertyVisitor
     {
         const int OUT = 0;
         [SerializeField] Vector3 _value;
@@ -258,12 +258,12 @@ namespace z3y.ShaderGraph.Nodes
             node.inputContainer.Add(p);
         }
 
-        public void VisitDescription(DescriptionVisitor visitor)
+        public void Visit(ExpressionVisitor visitor)
         {
             VariableNames[OUT] = _isProperty ? PropertyDescriptor.Name : "float3" + _value.ToString("R");
         }
 
-        public void VisitProperty(PropertyVisitor visitor)
+        public void Visit(PropertyVisitor visitor)
         {
             if (!_isProperty) return;
             visitor.AddProperty(PropertyDescriptor);
@@ -271,7 +271,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [NodeInfo("float4"), Serializable]
-    public class Float4Node : ShaderNode, IRequireDescriptionVisitor, IRequirePropertyVisitor
+    public class Float4Node : ShaderNode, IRequireExpressionVisitor, IRequirePropertyVisitor
     {
         const int OUT = 0;
         [SerializeField] Vector4 _value;
@@ -307,12 +307,12 @@ namespace z3y.ShaderGraph.Nodes
             node.inputContainer.Add(p);
         }
 
-        public void VisitDescription(DescriptionVisitor visitor)
+        public void Visit(ExpressionVisitor visitor)
         {
             VariableNames[OUT] = _isProperty ? PropertyDescriptor.Name : "float4" + _value.ToString("R");
         }
 
-        public void VisitProperty(PropertyVisitor visitor)
+        public void Visit(PropertyVisitor visitor)
         {
             if (!_isProperty) return;
             visitor.AddProperty(PropertyDescriptor);
@@ -320,7 +320,7 @@ namespace z3y.ShaderGraph.Nodes
     }
 
     [NodeInfo("Custom Function"), Serializable]
-    public class CustomFunctionode : ShaderNode, IRequireDescriptionVisitor, IRequireFunctionVisitor
+    public class CustomFunctionode : ShaderNode, IRequireExpressionVisitor, IRequireFunctionVisitor
     {
         const int OUT = 0;
 
@@ -355,12 +355,12 @@ namespace z3y.ShaderGraph.Nodes
             node.extensionContainer.Add(code);
         }
 
-        public void VisitDescription(DescriptionVisitor visitor)
+        public void Visit(ExpressionVisitor visitor)
         {
             visitor.AppendLine(FormatOutput(OUT, "CustomFunction", $"{_functionName}()"));
         }
 
-        public void VisitFunction(FunctionVisitor visitor)
+        public void Visit(FunctionVisitor visitor)
         {
             if (string.IsNullOrEmpty(_code))
             {

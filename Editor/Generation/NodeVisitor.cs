@@ -31,18 +31,18 @@ namespace z3y.ShaderGraph
 
     interface IRequirePropertyVisitor
     {
-        void VisitProperty(PropertyVisitor visitor);
+        void Visit(PropertyVisitor visitor);
         public PropertyDescriptor PropertyDescriptor { get; }
     }
 
-    interface IRequireDescriptionVisitor
+    interface IRequireExpressionVisitor
     {
-        void VisitDescription(DescriptionVisitor visitor);
+        void Visit(ExpressionVisitor visitor);
     }
 
     interface IRequireFunctionVisitor
     {
-        void VisitFunction(FunctionVisitor visitor);
+        void Visit(FunctionVisitor visitor);
     }
 
     public static class NodeVisitorExtensions
@@ -56,9 +56,9 @@ namespace z3y.ShaderGraph
         }
     }
 
-    public class DescriptionVisitor : NodeVisitor
+    public class ExpressionVisitor : NodeVisitor
     {
-        public DescriptionVisitor(ShaderBuilder shaderBuilder, ShaderStage stage, int passIndex, string outputStruct) : base(shaderBuilder)
+        public ExpressionVisitor(ShaderBuilder shaderBuilder, ShaderStage stage, int passIndex, string outputStruct) : base(shaderBuilder)
         {
             Stage = stage;
             // PassIndex = passIndex;
@@ -86,9 +86,9 @@ namespace z3y.ShaderGraph
 
         public override void Visit(ShaderNode shaderNode)
         {
-            if (shaderNode is IRequireDescriptionVisitor node)
+            if (shaderNode is IRequireExpressionVisitor node)
             {
-                node.VisitDescription(this);
+                node.Visit(this);
             }
         }
 
@@ -114,7 +114,7 @@ namespace z3y.ShaderGraph
         {
             if (shaderNode is IRequirePropertyVisitor node)
             {
-                node.VisitProperty(this);
+                node.Visit(this);
             }
         }
     }
@@ -136,7 +136,7 @@ namespace z3y.ShaderGraph
         {
             if (shaderNode is IRequireFunctionVisitor node)
             {
-                node.VisitFunction(this);
+                node.Visit(this);
             }
         }
     }
