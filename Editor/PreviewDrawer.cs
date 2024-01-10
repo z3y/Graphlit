@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -12,6 +13,8 @@ namespace z3y.ShaderGraph
         private CustomRenderTexture _rt = new CustomRenderTexture(width, height, RenderTextureFormat.ARGB32);
         public Material material;
 
+        public static List<Material> materials = new List<Material>();
+
         public void Initialize(Shader shader)
         {
             material = new Material(shader);
@@ -23,6 +26,8 @@ namespace z3y.ShaderGraph
             _rt.updatePeriod = 0;
 
             _rt.Initialize();
+
+            materials.Add(material);
         }
 
         public VisualElement GetVisualElement()
@@ -41,6 +46,11 @@ namespace z3y.ShaderGraph
         {
             _rt.Release();
             material = null;
+        }
+
+        ~PreviewDrawer()
+        {
+            Dispose();
         }
     }
 }

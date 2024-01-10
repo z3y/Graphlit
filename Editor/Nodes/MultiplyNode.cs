@@ -143,9 +143,7 @@ namespace z3y.ShaderGraph.Nodes
             f.RegisterValueChangedCallback((evt) => {
                 _value = evt.newValue;
 
-                node.UpdatePreview((mat) => {
-                    mat.SetFloat(_propertyName, _value);
-                });
+
 
             });
 
@@ -193,9 +191,6 @@ namespace z3y.ShaderGraph.Nodes
             f.RegisterValueChangedCallback((evt) => {
                 _value = evt.newValue;
 
-                node.UpdatePreview((mat) => {
-                    mat.SetVector(_propertyName, _value);
-                });
             });
 
             node.inputContainer.Add(f);
@@ -238,13 +233,14 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void AddElements(ShaderNodeVisualElement node)
         {
+            node.UpdateMaterial = (mat) => {
+                mat.SetVector(PropertyDescriptor.Name, _value);
+            };
+
             var f = new Vector3Field { value = _value };
             f.RegisterValueChangedCallback((evt) => {
                 _value = evt.newValue;
-
-                node.UpdatePreview((mat) => {
-                    mat.SetVector(_propertyName, _value);
-                });
+                node.UpdatePreview();
             });
 
             node.inputContainer.Add(f);
@@ -260,12 +256,16 @@ namespace z3y.ShaderGraph.Nodes
 
         public void Visit(ExpressionVisitor visitor)
         {
-            VariableNames[OUT] = _isProperty ? PropertyDescriptor.Name : "float3" + _value.ToString("R");
+            bool isProperty = _isProperty || visitor.GenerationMode == GenerationMode.Preview;
+            VariableNames[OUT] = isProperty ? PropertyDescriptor.Name : "float3" + _value.ToString("R");
         }
 
         public void Visit(PropertyVisitor visitor)
         {
-            if (!_isProperty) return;
+            bool isProperty = _isProperty || visitor.GenerationMode == GenerationMode.Preview;
+
+            if (!isProperty) return;
+
             visitor.AddProperty(PropertyDescriptor);
         }
     }
@@ -287,13 +287,14 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void AddElements(ShaderNodeVisualElement node)
         {
+            node.UpdateMaterial = (mat) => {
+                mat.SetVector(_propertyName, _value);
+            };
+
             var f = new Vector4Field { value = _value };
             f.RegisterValueChangedCallback((evt) => {
                 _value = evt.newValue;
-
-                node.UpdatePreview((mat) => {
-                    mat.SetVector(_propertyName, _value);
-                });
+                node.UpdatePreview();
             });
 
             node.inputContainer.Add(f);

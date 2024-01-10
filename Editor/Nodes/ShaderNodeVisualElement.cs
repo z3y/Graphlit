@@ -119,13 +119,16 @@ namespace z3y.ShaderGraph.Nodes
             }
         }
 
-        private List<Material> _previewMaterials = new List<Material>();
+        //internal List<Material> _previewMaterials = new List<Material>();
 
-        public void UpdatePreview(Action<Material> func)
+        public Action<Material> UpdateMaterial = (mat) => { };
+
+        public void UpdatePreview()
         {
-            foreach (var material in _previewMaterials)
+            foreach (var material in PreviewDrawer.materials)
             {
-                func(material);
+                if (material is null) continue;
+                UpdateMaterial(material);
             }
         }
 

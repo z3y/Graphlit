@@ -186,6 +186,8 @@ namespace z3y.ShaderGraph
             var shader = ShaderUtil.CreateShaderAsset(builder.ToString());
 
             node.previewDrawer.Initialize(shader);
+            node.UpdatePreview();
+            //node._previewMaterials.Add(node.previewDrawer.material);
         }
 
         private void CopyPort(ShaderNode shaderNode, ShaderNode inputNode, NodeConnection input)
