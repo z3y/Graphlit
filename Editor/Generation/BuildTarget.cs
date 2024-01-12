@@ -16,7 +16,7 @@ namespace z3y.ShaderGraph
 
     public abstract class TemplateOutput : ShaderNode
     {
-        public void VisitTemplate(ExpressionVisitor visitor, int[] ports)
+        public void VisitTemplate(NodeVisitor visitor, int[] ports)
         {
             var structField = visitor.Stage == ShaderStage.Fragment ?
                 visitor._shaderBuilder.passBuilders[visitor.Pass].surfaceDescriptionStruct
@@ -40,6 +40,8 @@ namespace z3y.ShaderGraph
 
             visitor.AppendLine($"return output;");
         }
+
+        public sealed override void Visit(NodeVisitor visitor) { }
     }
 
     public class UnlitBuildTarget : BuildTarget

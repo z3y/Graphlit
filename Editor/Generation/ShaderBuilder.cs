@@ -85,22 +85,11 @@ namespace z3y.ShaderGraph
                 int passIndex = i;
 
                 var pass = passBuilders[i];
-                var vertexVisitors = new List<NodeVisitor>
-                {
-                    new PropertyVisitor(this, passIndex),
-                    new ExpressionVisitor(this, ShaderStage.Vertex, passIndex, "VertexDescription"),
-                    new FunctionVisitor(this, passIndex)
-                };
+                var vertexVisitor = new NodeVisitor(this, ShaderStage.Vertex, passIndex, "VertexDescription");
+                var fragmentVisitor = new NodeVisitor(this, ShaderStage.Fragment, passIndex, "VertexDescription");
 
-                var fragmentVisitors = new List<NodeVisitor>
-                {
-                    new PropertyVisitor(this, passIndex),
-                    new ExpressionVisitor(this, ShaderStage.Fragment, passIndex, "SurfaceDescription"),
-                    new FunctionVisitor(this, passIndex)
-                };
-
-                TraverseGraphBegin(v, vertexVisitors, pass.Ports);
-                TraverseGraphBegin(f, fragmentVisitors, pass.Ports);
+                TraverseGraphBegin(v, vertexVisitor, pass.Ports);
+                TraverseGraphBegin(f, fragmentVisitor, pass.Ports);
             }
 
             UpdateAllPreviews();
@@ -120,19 +109,11 @@ namespace z3y.ShaderGraph
 
             var targetNode = GuidToNode[guid];
 
-            var fragmentVisitors = new List<NodeVisitor>
-            {
-                new PropertyVisitor(this, 0),
-                new ExpressionVisitor(this, ShaderStage.Fragment, 0, "SurfaceDescription"),
-                new FunctionVisitor(this, 0)
-            };
+            var fragmentVisitor = new NodeVisitor(this, ShaderStage.Fragment, 0, "SurfaceDescription");
 
-            TraverseGraph(targetNode, fragmentVisitors);
+            TraverseGraph(targetNode, fragmentVisitor);
 
-            foreach (var visitor in fragmentVisitors)
-            {
-                visitor.Visit(targetNode);
-            }
+            targetNode.Visit(fragmentVisitor);
 
             var sb = passBuilders[0].surfaceDescription;
             var str = passBuilders[0].surfaceDescriptionStruct;
@@ -196,7 +177,7 @@ namespace z3y.ShaderGraph
             shaderNode.Ports.GetByID(input.b).Type = inputNode.Ports.GetByID(input.a).Type;
         }
 
-        public void TraverseGraphBegin(TemplateOutput templateOutput, IEnumerable<NodeVisitor> visitors, int[] ports)
+        public void TraverseGraphBegin(TemplateOutput templateOutput, NodeVisitor visitor, int[] ports)
         {
             var inputs = templateOutput.Inputs;
             foreach (var input in inputs.Values)
@@ -214,9 +195,9 @@ namespace z3y.ShaderGraph
                     continue;
                 }
 
-                TraverseGraph(inputNode, visitors);
+                TraverseGraph(inputNode, visitor);
 
-                inputNode.Visit(visitors);
+                inputNode.Visit(visitor);
                 {
                     CopyPort(templateOutput, inputNode, input);
                 }
@@ -224,16 +205,10 @@ namespace z3y.ShaderGraph
                 inputNode.visited = true;
             }
 
-            foreach (var visitor in visitors)
-            {
-                if (visitor is ExpressionVisitor descriptionVisitor)
-                {
-                    templateOutput.VisitTemplate(descriptionVisitor, ports);
-                }
-            }
+            templateOutput.VisitTemplate(visitor, ports);
         }
 
-        public void TraverseGraph(ShaderNode shaderNode, IEnumerable<NodeVisitor> visitors)
+        public void TraverseGraph(ShaderNode shaderNode, NodeVisitor visitor)
         {
             var inputs = shaderNode.Inputs;
             foreach (var input in inputs.Values)
@@ -245,9 +220,9 @@ namespace z3y.ShaderGraph
                     continue;
                 }
 
-                TraverseGraph(inputNode, visitors);
+                TraverseGraph(inputNode, visitor);
 
-                inputNode.Visit(visitors);
+                inputNode.Visit(visitor);
                 {
                     CopyPort(shaderNode, inputNode, input);
                 }

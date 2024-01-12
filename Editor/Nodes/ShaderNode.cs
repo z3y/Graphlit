@@ -247,6 +247,8 @@ namespace z3y.ShaderGraph.Nodes
             VariableNames.Clear();
             Ports.Select(x => x.Type = DefaultPortsTypes[x.ID]);
         }
+
+        public abstract void Visit(NodeVisitor visitor);
         #endregion
     }
 }
