@@ -71,10 +71,10 @@ namespace z3y.ShaderGraph
                 }
         */
 
-        private static ShaderBuilder UpdateGraph(string guid)
+        public static ShaderBuilder UpdateGraph(string guid, ShaderGraphView shaderGraphView = null)
         {
             var serializableGraph = ReadGraphData(false, guid);
-            _graphViews.TryGetValue(guid, out var shaderGraphView);
+            if (shaderGraphView is null) _graphViews.TryGetValue(guid, out shaderGraphView);
             var builder = new ShaderBuilder(GenerationMode.Final, serializableGraph, shaderGraphView);
             var target = new UnlitBuildTarget();
             target.BuilderPassthourgh(builder);

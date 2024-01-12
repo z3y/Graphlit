@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
+using UnityEditor;
 using UnityEngine;
 using z3y.ShaderGraph.Nodes.PortType;
 
@@ -59,6 +60,8 @@ namespace z3y.ShaderGraph.Nodes
         public Dictionary<int, string> VariableNames { get; set; } = new();
         [NonSerialized] public bool visited;
         [NonSerialized] private static int _uniqueVariableID = 0;
+        public string GUID { get; internal set; }
+
         public static void ResetUniqueVariableIDs() => _uniqueVariableID = 0;
         private string TryGetVariableName(int portID, string prefix = null)
         {
@@ -233,6 +236,11 @@ namespace z3y.ShaderGraph.Nodes
             Ports.GetByID(portID).Type = type;
             VariableNames[portID] = name;
             return name;
+        }
+
+        public string GetPreviewPropertyName()
+        {
+            return "Property_" + GUID.Replace('-', '_');
         }
 
         public string FormatOutput(int outID, string prefix, string text)

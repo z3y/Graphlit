@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using z3y.ShaderGraph.Nodes;
 using z3y.ShaderGraph.Nodes.PortType;
+using static UnityEngine.EventSystems.StandaloneInputModule;
 using static UnityEngine.GraphicsBuffer;
 
 namespace z3y.ShaderGraph
@@ -86,21 +87,13 @@ namespace z3y.ShaderGraph
 
                 var pass = passBuilders[i];
                 var vertexVisitor = new NodeVisitor(this, ShaderStage.Vertex, passIndex, "VertexDescription");
-                var fragmentVisitor = new NodeVisitor(this, ShaderStage.Fragment, passIndex, "VertexDescription");
+                var fragmentVisitor = new NodeVisitor(this, ShaderStage.Fragment, passIndex, "SurfaceDescription");
 
                 TraverseGraphBegin(v, vertexVisitor, pass.Ports);
                 TraverseGraphBegin(f, fragmentVisitor, pass.Ports);
             }
 
             UpdateAllPreviews();
-
-            if (ShaderGraphView is not null)
-            {
-                foreach (var shaderNode in ShaderNodes)
-                {
-                    ShaderGraphView.UpdateGraphView(NodeToSerializableNode[shaderNode].guid, shaderNode);
-                }
-            }
         }
 
         public void BuildPreview(string guid)
@@ -114,6 +107,11 @@ namespace z3y.ShaderGraph
             TraverseGraph(targetNode, fragmentVisitor);
 
             targetNode.Visit(fragmentVisitor);
+
+            if (ShaderGraphView is not null)
+            {
+                ShaderGraphView.UpdateGraphView(NodeToSerializableNode[targetNode].guid, targetNode);
+            }
 
             var sb = passBuilders[0].surfaceDescription;
             var str = passBuilders[0].surfaceDescriptionStruct;
@@ -143,6 +141,11 @@ namespace z3y.ShaderGraph
 
         public void UpdateAllPreviews()
         {
+            if (ShaderGraphView is null)
+            {
+                return;
+            }
+
             foreach (var shaderNode in ShaderNodes)
             {
                 UpdatePreview(SerializableGraph, NodeToSerializableNode[shaderNode]);
@@ -151,10 +154,6 @@ namespace z3y.ShaderGraph
 
         public void UpdatePreview(SerializableGraph serializableGraph, SerializableNode targetNode)
         {
-            if (ShaderGraphView is null) return;
-
-
-
             var node = (ShaderNodeVisualElement)ShaderGraphView.GetNodeByGuid(targetNode.guid);
             var builder = new ShaderBuilder(GenerationMode.Preview, serializableGraph, ShaderGraphView);
             builder.shaderName = "Hidden/SGPreview/" + targetNode.guid;
@@ -168,7 +167,6 @@ namespace z3y.ShaderGraph
 
             node.previewDrawer.Initialize(shader);
             node.UpdatePreview();
-            //node._previewMaterials.Add(node.previewDrawer.material);
         }
 
         private void CopyPort(ShaderNode shaderNode, ShaderNode inputNode, NodeConnection input)
@@ -228,6 +226,11 @@ namespace z3y.ShaderGraph
                 }
 
                 inputNode.visited = true;
+
+                if (ShaderGraphView is not null)
+                {
+                    ShaderGraphView.UpdateGraphView(NodeToSerializableNode[inputNode].guid, inputNode);
+                }
             }
         }
 

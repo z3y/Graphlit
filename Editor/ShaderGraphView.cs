@@ -54,6 +54,10 @@ namespace z3y.ShaderGraph
         private GraphViewChange OnGraphViewChanged(GraphViewChange change)
         {
             _editorWindow.SetDirty();
+            if (change.elementsToRemove is not null || change.edgesToCreate is not null)
+            {
+                ShaderGraphImporter.UpdateGraph(_editorWindow.importerGuid, this);
+            }
             return change;
         }
 

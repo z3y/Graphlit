@@ -15,7 +15,7 @@ namespace z3y.ShaderGraph
         [NonSerialized] public ShaderGraphView graphView;
         [NonSerialized] public static Dictionary<string, ShaderGraphWindow> editorInstances = new();
 
-        [SerializeField] private string _importerGuid;
+        [SerializeField] public string importerGuid;
 
         // private ShaderGraphImporter _importer;
         [NonSerialized] public bool disabled = false;
@@ -45,7 +45,7 @@ namespace z3y.ShaderGraph
             };
 
             editorInstances[importerGuid] = this;
-            _importerGuid = importerGuid;
+            this.importerGuid = importerGuid;
             hasUnsavedChanges = false;
         }
 
@@ -58,7 +58,7 @@ namespace z3y.ShaderGraph
         {
             var previousSelection = Selection.activeObject;
             Selection.activeObject = null;
-            ShaderGraphImporter.SaveGraphAndReimport(graphView, _importerGuid);
+            ShaderGraphImporter.SaveGraphAndReimport(graphView, importerGuid);
             base.SaveChanges();
 
             Selection.activeObject = previousSelection;
@@ -66,9 +66,10 @@ namespace z3y.ShaderGraph
 
         public void OnEnable()
         {
-            if (!string.IsNullOrEmpty(_importerGuid) && graphView is null)
+            if (!string.IsNullOrEmpty(importerGuid) && graphView is null)
             {
-                Initialize(_importerGuid, false);
+                Initialize(importerGuid, false);
+                ShaderGraphImporter.UpdateGraph(importerGuid, graphView);
             }
         }
 
@@ -85,7 +86,7 @@ namespace z3y.ShaderGraph
             var pingAsset = new Button() { text = "Select Asset" };
             pingAsset.clicked += () =>
             {
-                var assetPath = AssetDatabase.GUIDToAssetPath(_importerGuid);
+                var assetPath = AssetDatabase.GUIDToAssetPath(importerGuid);
                 var obj = AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityEngine.Object));
                 //EditorGUIUtility.PingObject(obj);
                 Selection.activeObject = obj;

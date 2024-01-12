@@ -59,6 +59,8 @@ namespace z3y.ShaderGraph
 
             shaderNode = (ShaderNode)instance;
 
+            shaderNode.GUID = guid;
+
             return true;
         }
     }

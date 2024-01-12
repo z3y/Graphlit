@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using static UnityEditor.Experimental.GraphView.Port;
 using z3y.ShaderGraph.Nodes.PortType;
 using System.Linq;
+using UnityEditor;
 
 namespace z3y.ShaderGraph.Nodes
 {
@@ -36,6 +37,7 @@ namespace z3y.ShaderGraph.Nodes
 
         private void AddDefaultElements()
         {
+            shaderNode.GUID = viewDataKey;
             AddPortElements();
             shaderNode.AddElements(this);
             AddStyles();

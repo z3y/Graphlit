@@ -134,16 +134,18 @@ namespace z3y.ShaderGraph.Nodes
         };
 
         private bool _isProperty => _propertyName != string.Empty;
-        public PropertyDescriptor PropertyDescriptor => new PropertyDescriptor(PropertyType.Float, _propertyName);
 
         public override void AddElements(ShaderNodeVisualElement node)
         {
+            string propertyName = GetPreviewPropertyName();
+            node.UpdateMaterial = (mat) => {
+                mat.SetFloat(propertyName, _value);
+            };
+
             var f = new FloatField { value = _value };
             f.RegisterValueChangedCallback((evt) => {
                 _value = evt.newValue;
-
-
-
+                node.UpdatePreview();
             });
 
             node.inputContainer.Add(f);
@@ -159,10 +161,16 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void Visit(NodeVisitor visitor)
         {
-            if (_isProperty)
+            if (_isProperty || visitor.GenerationMode == GenerationMode.Preview)
             {
-                VariableNames[OUT] = PropertyDescriptor.Name;
-                visitor.AddProperty(PropertyDescriptor);
+                var propertyDescriptor = new PropertyDescriptor(PropertyType.Float, _propertyName);
+                if (visitor.GenerationMode == GenerationMode.Preview)
+                {
+                    propertyDescriptor.Name = GetPreviewPropertyName();
+                }
+
+                VariableNames[OUT] = propertyDescriptor.Name;
+                visitor.AddProperty(propertyDescriptor);
             }
             else
             {
@@ -188,10 +196,15 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void AddElements(ShaderNodeVisualElement node)
         {
+            string propertyName = GetPreviewPropertyName();
+            node.UpdateMaterial = (mat) => {
+                mat.SetVector(propertyName, _value);
+            };
+
             var f = new Vector2Field { value = _value };
             f.RegisterValueChangedCallback((evt) => {
                 _value = evt.newValue;
-
+                node.UpdatePreview();
             });
 
             node.inputContainer.Add(f);
@@ -207,14 +220,20 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void Visit(NodeVisitor visitor)
         {
-            if (_isProperty)
+            if (_isProperty || visitor.GenerationMode == GenerationMode.Preview)
             {
-                VariableNames[OUT] = PropertyDescriptor.Name;
-                visitor.AddProperty(PropertyDescriptor);
+                var propertyDescriptor = new PropertyDescriptor(PropertyType.Float2, _propertyName);
+                if (visitor.GenerationMode == GenerationMode.Preview)
+                {
+                    propertyDescriptor.Name = GetPreviewPropertyName();
+                }
+
+                VariableNames[OUT] = propertyDescriptor.Name;
+                visitor.AddProperty(propertyDescriptor);
             }
             else
             {
-                VariableNames[OUT] = "float2(" + _value.ToString("R") + ")";
+                VariableNames[OUT] = "float2" + _value.ToString("R");
             }
         }
     }
@@ -232,12 +251,12 @@ namespace z3y.ShaderGraph.Nodes
         };
 
         private bool _isProperty => _propertyName != string.Empty;
-        public PropertyDescriptor PropertyDescriptor => new PropertyDescriptor(PropertyType.Float3, _propertyName);
 
         public override void AddElements(ShaderNodeVisualElement node)
         {
+            string propertyName = GetPreviewPropertyName();
             node.UpdateMaterial = (mat) => {
-                mat.SetVector(PropertyDescriptor.Name, _value);
+                mat.SetVector(propertyName, _value);
             };
 
             var f = new Vector3Field { value = _value };
@@ -259,14 +278,20 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void Visit(NodeVisitor visitor)
         {
-            if (_isProperty)
+            if (_isProperty || visitor.GenerationMode == GenerationMode.Preview)
             {
-                VariableNames[OUT] = PropertyDescriptor.Name;
-                visitor.AddProperty(PropertyDescriptor);
+                var propertyDescriptor = new PropertyDescriptor(PropertyType.Float3, _propertyName);
+                if (visitor.GenerationMode == GenerationMode.Preview)
+                {
+                    propertyDescriptor.Name = GetPreviewPropertyName();
+                }
+
+                VariableNames[OUT] = propertyDescriptor.Name;
+                visitor.AddProperty(propertyDescriptor);
             }
             else
             {
-                VariableNames[OUT] = "float3(" + _value.ToString("R") + ")";
+                VariableNames[OUT] = "float3" + _value.ToString("R");
             }
         }
     }
@@ -284,7 +309,6 @@ namespace z3y.ShaderGraph.Nodes
         };
 
         private bool _isProperty => _propertyName != string.Empty;
-        public PropertyDescriptor PropertyDescriptor => new PropertyDescriptor(PropertyType.Float4, _propertyName);
 
         public override void AddElements(ShaderNodeVisualElement node)
         {
@@ -311,14 +335,20 @@ namespace z3y.ShaderGraph.Nodes
 
         public override void Visit(NodeVisitor visitor)
         {
-            if (_isProperty)
+            if (_isProperty || visitor.GenerationMode == GenerationMode.Preview)
             {
-                VariableNames[OUT] = PropertyDescriptor.Name;
-                visitor.AddProperty(PropertyDescriptor);
+                var propertyDescriptor = new PropertyDescriptor(PropertyType.Float4, _propertyName);
+                if (visitor.GenerationMode == GenerationMode.Preview)
+                {
+                    propertyDescriptor.Name = GetPreviewPropertyName();
+                }
+
+                VariableNames[OUT] = propertyDescriptor.Name;
+                visitor.AddProperty(propertyDescriptor);
             }
             else
             {
-                VariableNames[OUT] = "float(" + _value.ToString("R") + ")";
+                VariableNames[OUT] = "float4" + _value.ToString("R");
             }
         }
     }

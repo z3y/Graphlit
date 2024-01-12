@@ -30,6 +30,14 @@ namespace z3y.ShaderGraph
             materials.Add(material);
         }
 
+        private void UpdateTime()
+        {
+            if (!material) return;
+
+            float editorTime = (float)EditorApplication.timeSinceStartup;
+            material.SetFloat("_Time", editorTime);
+        }
+
         public VisualElement GetVisualElement()
         {
             var gui = new IMGUIContainer(OnGUI);
@@ -45,7 +53,11 @@ namespace z3y.ShaderGraph
         public void Dispose()
         {
             _rt.Release();
-            material = null;
+            if (material)
+            {
+                materials.Remove(material);
+                GameObject.DestroyImmediate(material);
+            }
         }
 
         ~PreviewDrawer()
