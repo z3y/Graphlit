@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEditor.Experimental.GraphView;
-using z3y.ShaderGraph.Nodes;
 
-namespace z3y.ShaderGraph
+namespace ZSG
 {
     [Serializable]
     public struct NodeConnection
@@ -19,7 +17,7 @@ namespace z3y.ShaderGraph
             a = edge.output.GetPortID();
             b = edge.input.GetPortID();
 
-            node = ((ShaderNodeVisualElement)edge.output.node).viewDataKey;
+            node = ((ShaderNode)edge.output.node).viewDataKey;
 
             Node = null;
         }

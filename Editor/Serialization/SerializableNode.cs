@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-using z3y.ShaderGraph.Nodes;
 
-namespace z3y.ShaderGraph
+namespace ZSG
 {
     [Serializable]
     public struct SerializableNode
@@ -17,9 +16,9 @@ namespace z3y.ShaderGraph
 
         public readonly Vector2 Position => new (x, y);
 
-        public SerializableNode(ShaderNodeVisualElement node)
+        public SerializableNode(ShaderNode node)
         {
-            var type = node.shaderNode.GetType();
+            var type = node.GetType();
 
             this.type = type.FullName;
             this.guid = node.viewDataKey;
@@ -27,12 +26,12 @@ namespace z3y.ShaderGraph
             this.x = (int)pos.x;
             this.y = (int)pos.y;
 
-            this.connections = NodeConnection.GetConnections(node.Ports);
+            this.connections = NodeConnection.GetConnections(node.PortElements);
 
             var seriazableAttribute = Attribute.GetCustomAttribute(type, typeof(SerializableAttribute));
             if (seriazableAttribute is not null)
             {
-                data = JsonUtility.ToJson(node.shaderNode);
+                data = JsonUtility.ToJson(node);
             }
             else
             {
@@ -58,8 +57,7 @@ namespace z3y.ShaderGraph
             }
 
             shaderNode = (ShaderNode)instance;
-
-            shaderNode.GUID = guid;
+            shaderNode.Initialize(Position, guid);
 
             return true;
         }

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace z3y.ShaderGraph
+namespace ZSG
 {
     public class PassBuilder
     {

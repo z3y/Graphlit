@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using z3y.ShaderGraph.Nodes;
 
-namespace z3y.ShaderGraph
+namespace ZSG
 {
     [Serializable]
     public class SerializableGraph
@@ -27,8 +26,7 @@ namespace z3y.ShaderGraph
         public static IEnumerable<SerializableNode> ElementsToSerializableNode(IEnumerable<GraphElement> elements)
         {
             var nodes = elements
-                .OfType<ShaderNodeVisualElement>()
-                .Where(x => x.shaderNode is not null)
+                .OfType<ShaderNode>()
                 .Select(x => new SerializableNode(x));
 
             return nodes;
@@ -80,10 +78,10 @@ namespace z3y.ShaderGraph
             return newGraph;
         }
 
-        public List<ShaderNodeVisualElement> PasteNodesAndOverwiteGuids(ShaderGraphView graphView, Vector2? positionOffset = null)
+        public List<ShaderNode> PasteNodesAndOverwiteGuids(ShaderGraphView graphView, Vector2? positionOffset = null)
         {
             var newElements = GenerateNewGUIDs();
-            var graphElements = new List<ShaderNodeVisualElement>();
+            var graphElements = new List<ShaderNode>();
 
             foreach (var serializableNode in newElements.nodes)
             {

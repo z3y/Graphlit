@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace z3y.ShaderGraph.Nodes
+namespace ZSG.Nodes
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class NodeInfo : Attribute

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace z3y.ShaderGraph.Nodes.PortType
+namespace ZSG.Nodes.PortType
 {
     public interface IPortType
     {

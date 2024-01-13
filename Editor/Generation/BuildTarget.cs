@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using z3y.ShaderGraph.Nodes;
-using z3y.ShaderGraph.Nodes.PortType;
+using UnityEngine.UIElements;
+using ZSG.Nodes;
+using ZSG.Nodes.PortType;
 
-namespace z3y.ShaderGraph
+namespace ZSG
 {
     public abstract class BuildTarget
     {
@@ -18,7 +19,7 @@ namespace z3y.ShaderGraph
     {
         public void VisitTemplate(NodeVisitor visitor, int[] ports)
         {
-            var structField = visitor.Stage == ShaderStage.Fragment ?
+           /* var structField = visitor.Stage == ShaderStage.Fragment ?
                 visitor._shaderBuilder.passBuilders[visitor.Pass].surfaceDescriptionStruct
                 : visitor._shaderBuilder.passBuilders[visitor.Pass].vertexDescriptionStruct;
 
@@ -38,10 +39,10 @@ namespace z3y.ShaderGraph
                 }
             }
 
-            visitor.AppendLine($"return output;");
+            visitor.AppendLine($"return output;");*/
         }
 
-        public sealed override void Visit(NodeVisitor visitor) { }
+        public sealed override void Generate(NodeVisitor visitor) { }
     }
 
     public class UnlitBuildTarget : BuildTarget
@@ -57,13 +58,6 @@ namespace z3y.ShaderGraph
                 UnlitVertexDescription.POSITION,
                 UnlitSurfaceDescription.COLOR
                 ));
-
-            //builder.AddPass(new PassBuilder("FORWARDADD", "Somewhere/ForwardAddVertex.hlsl", "Somewhere/ForwardAddFragment.hlsl"));
-          /*  builder.AddPass(new PassBuilder("SHADOWCASTER", "Somewhere/ShadowcasterVertex.hlsl", "Somewhere/ShadowcasterFragment.hlsl",
-                UnlitVertexDescription.POSITION,
-                UnlitSurfaceDescription.ALPHA
-                ));*/
-
         }
 
         [NodeInfo("Vertex Description")]
@@ -73,12 +67,12 @@ namespace z3y.ShaderGraph
             public const int NORMAL = 1;
             public const int TANGENT = 2;
 
-            public override List<PortDescriptor> Ports { get; } = new List<PortDescriptor>
+            public override void AddElements()
             {
-                new(PortDirection.Input, new Float(3, false), POSITION, "Position"),
-                new(PortDirection.Input, new Float(3, false), NORMAL, "Normal"),
-                new(PortDirection.Input, new Float(4, false), TANGENT, "Tangent"),
-            };
+                AddPort(new(PortDirection.Input, new Float(3, false), POSITION, "Position"));
+                AddPort(new(PortDirection.Input, new Float(3, false), NORMAL, "Normal"));
+                AddPort(new(PortDirection.Input, new Float(4, false), TANGENT, "Tangent"));
+            }
         }
 
         [NodeInfo("Surface Description")]
@@ -86,19 +80,19 @@ namespace z3y.ShaderGraph
         {
             public const int COLOR = 3;
 
-            public override List<PortDescriptor> Ports { get; } = new List<PortDescriptor>
+            public override void AddElements()
             {
-                new(PortDirection.Input, new Float(4, false), COLOR, "Color"),
-            };
+                AddPort(new(PortDirection.Input, new Float(4, false), COLOR, "Color"));
+            }
 
-            public override string SetDefaultInputString(int portID)
+          /*  public override string SetDefaultInputString(int portID)
             {
                 return portID switch
                 {
                     COLOR => "1",
                     _ => "0",
                 };
-            }
+            }*/
         }
     }
 }

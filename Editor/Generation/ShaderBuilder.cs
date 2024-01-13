@@ -1,26 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Xml.Linq;
-using UnityEditor;
-using UnityEditor.Experimental.GraphView;
-using z3y.ShaderGraph.Nodes;
-using z3y.ShaderGraph.Nodes.PortType;
-using static UnityEngine.EventSystems.StandaloneInputModule;
-using static UnityEngine.GraphicsBuffer;
 
-namespace z3y.ShaderGraph
+using System.Collections.Generic;
+using System.Linq;
+
+namespace ZSG
 {
     public class ShaderBuilder
     {
+
         public ShaderBuilder(GenerationMode generationMode, SerializableGraph serializableGraph, ShaderGraphView shaderGraphView)
         {
             GenerationMode = generationMode;
             SerializableGraph = serializableGraph;
             ShaderGraphView = shaderGraphView;
             DeserializeAndMapGuids();
-            FillConnections();
+            //FillConnections();
 
             var data = serializableGraph.data;
             shaderName = data.shaderName;
@@ -61,7 +54,7 @@ namespace z3y.ShaderGraph
             }
         }
 
-        private void FillConnections()
+/*        private void FillConnections()
         {
             foreach (var shaderNode in ShaderNodes)
             {
@@ -72,14 +65,14 @@ namespace z3y.ShaderGraph
                     shaderNode.Inputs.Add(connection.GetInputIDForThisNode(), connection);
                 }
             }
-        }
+        }*/
 
         public void Build(BuildTarget target)
         {
-            var v = (TemplateOutput)ShaderNodes.Find(x => x.GetType() == target.VertexDescription);
-            var f = (TemplateOutput)ShaderNodes.Find(x => x.GetType() == target.SurfaceDescription);
+            //var v = (TemplateOutput)ShaderNodes.Find(x => x.GetType() == target.VertexDescription);
+            //var f = (TemplateOutput)ShaderNodes.Find(x => x.GetType() == target.SurfaceDescription);
 
-
+/*
             for (int i = 0; i < passBuilders.Count; i++)
             {
                 ResetNodes();
@@ -93,12 +86,12 @@ namespace z3y.ShaderGraph
                 TraverseGraphBegin(f, fragmentVisitor, pass.Ports);
             }
 
-            UpdateAllPreviews();
+            UpdateAllPreviews();*/
         }
 
         public void BuildPreview(string guid)
         {
-            ResetNodes();
+           /* ResetNodes();
 
             var targetNode = GuidToNode[guid];
 
@@ -110,7 +103,7 @@ namespace z3y.ShaderGraph
 
             if (ShaderGraphView is not null)
             {
-                ShaderGraphView.UpdateGraphView(NodeToSerializableNode[targetNode].guid, targetNode);
+                ShaderGraphView.UpdateGraphView(targetNode);
             }
 
             var sb = passBuilders[0].surfaceDescription;
@@ -128,18 +121,23 @@ namespace z3y.ShaderGraph
             }
 
             sb.Add("return output;");
+
+            if (ShaderGraphView is not null)
+            {
+                ShaderGraphView.UpdateGraphView(targetNode);
+            }*/
         }
 
-        private void ResetNodes()
+/*        private void ResetNodes()
         {
             ShaderNode.ResetUniqueVariableIDs();
             foreach (var shaderNode in ShaderNodes)
             {
                 shaderNode.ResetVisit();
             }
-        }
+        }*/
 
-        public void UpdateAllPreviews()
+/*        public void UpdateAllPreviews()
         {
             if (ShaderGraphView is null)
             {
@@ -150,8 +148,8 @@ namespace z3y.ShaderGraph
             {
                 UpdatePreview(SerializableGraph, NodeToSerializableNode[shaderNode]);
             }
-        }
-
+        }*/
+/*
         public void UpdatePreview(SerializableGraph serializableGraph, SerializableNode targetNode)
         {
             var node = (ShaderNodeVisualElement)ShaderGraphView.GetNodeByGuid(targetNode.guid);
@@ -167,14 +165,14 @@ namespace z3y.ShaderGraph
 
             node.previewDrawer.Initialize(shader);
             node.UpdatePreview();
-        }
+        }*/
 
-        private void CopyPort(ShaderNode shaderNode, ShaderNode inputNode, NodeConnection input)
+/*        private void CopyPort(ShaderNode shaderNode, ShaderNode inputNode, NodeConnection input)
         {
             shaderNode.VariableNames[input.b] = inputNode.VariableNames[input.a];
             shaderNode.Ports.GetByID(input.b).Type = inputNode.Ports.GetByID(input.a).Type;
-        }
-
+        }*/
+/*
         public void TraverseGraphBegin(TemplateOutput templateOutput, NodeVisitor visitor, int[] ports)
         {
             var inputs = templateOutput.Inputs;
@@ -204,9 +202,9 @@ namespace z3y.ShaderGraph
             }
 
             templateOutput.VisitTemplate(visitor, ports);
-        }
+        }*/
 
-        public void TraverseGraph(ShaderNode shaderNode, NodeVisitor visitor)
+/*        public void TraverseGraph(ShaderNode shaderNode, NodeVisitor visitor)
         {
             var inputs = shaderNode.Inputs;
             foreach (var input in inputs.Values)
@@ -227,12 +225,9 @@ namespace z3y.ShaderGraph
 
                 inputNode.visited = true;
 
-                if (ShaderGraphView is not null)
-                {
-                    ShaderGraphView.UpdateGraphView(NodeToSerializableNode[inputNode].guid, inputNode);
-                }
+                ShaderGraphView?.UpdateGraphView(inputNode);
             }
-        }
+        }*/
 
         public override string ToString()
         {
@@ -263,8 +258,8 @@ namespace z3y.ShaderGraph
 
             _sb.UnIndent();
 
-           // UnityEngine.Debug.Assert(string.Join(' ', passBuilders[0].surfaceDescription) == string.Join(' ', passBuilders[1].surfaceDescription));
-           // UnityEngine.Debug.Assert(string.Join(' ', passBuilders[0].vertexDescription) == string.Join(' ', passBuilders[1].vertexDescription));
+            // UnityEngine.Debug.Assert(string.Join(' ', passBuilders[0].surfaceDescription) == string.Join(' ', passBuilders[1].surfaceDescription));
+            // UnityEngine.Debug.Assert(string.Join(' ', passBuilders[0].vertexDescription) == string.Join(' ', passBuilders[1].vertexDescription));
 
             return _sb.ToString();
         }
@@ -303,5 +298,6 @@ namespace z3y.ShaderGraph
                 _sb.UnIndent();
             }
         }
+
     }
 }

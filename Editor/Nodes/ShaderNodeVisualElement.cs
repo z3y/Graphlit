@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using UnityEngine.UIElements;
 using UnityEngine;
 using UnityEditor.Experimental.GraphView;
@@ -8,7 +8,7 @@ using z3y.ShaderGraph.Nodes.PortType;
 using System.Linq;
 using UnityEditor;
 
-namespace z3y.ShaderGraph.Nodes
+namespace ZSG.Nodes
 {
     public class ShaderNodeVisualElement : Node
     {
@@ -92,7 +92,7 @@ namespace z3y.ShaderGraph.Nodes
             titleLabel.style.alignItems = centerAlign;
             titleContainer.Insert(0, titleLabel);
 
-            /*var noRadius = new StyleLength { value = 0 };
+            *//*var noRadius = new StyleLength { value = 0 };
             var borderStyle = this.ElementAt(0).style;
             var borderSelectionStyle = this.ElementAt(1).style;
 
@@ -104,7 +104,7 @@ namespace z3y.ShaderGraph.Nodes
             borderSelectionStyle.borderBottomLeftRadius = noRadius;
             borderSelectionStyle.borderBottomRightRadius = noRadius;
             borderSelectionStyle.borderTopLeftRadius = noRadius;
-            borderSelectionStyle.borderTopRightRadius = noRadius;*/
+            borderSelectionStyle.borderTopRightRadius = noRadius;*//*
         }
 
         private void SetPosition(Vector2 position)
@@ -165,4 +165,4 @@ namespace z3y.ShaderGraph.Nodes
         }
 
     }
-}
+}*/

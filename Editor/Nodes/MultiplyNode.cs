@@ -1,4 +1,4 @@
-namespace z3y.ShaderGraph.Nodes
+/*namespace z3y.ShaderGraph.Nodes
 {
     using System;
     using UnityEngine.UIElements;
@@ -399,4 +399,4 @@ namespace z3y.ShaderGraph.Nodes
             }
         }
     }
-}
+}*/

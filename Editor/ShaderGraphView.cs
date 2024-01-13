@@ -5,9 +5,8 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
-using z3y.ShaderGraph.Nodes;
 
-namespace z3y.ShaderGraph
+namespace ZSG
 {
 
     public class ShaderGraphView : GraphView
@@ -56,7 +55,7 @@ namespace z3y.ShaderGraph
             _editorWindow.SetDirty();
             if (change.elementsToRemove is not null || change.edgesToCreate is not null)
             {
-                ShaderGraphImporter.UpdateGraph(_editorWindow.importerGuid, this);
+                ShaderGraphImporter.UpdatePreview(this);
             }
             return change;
         }
@@ -154,18 +153,20 @@ namespace z3y.ShaderGraph
             RecordUndo();
             _editorWindow.SetDirty();
             if (transform) TransformMousePositionToLocalSpace(ref position, true);
-            var node = new ShaderNodeVisualElement();
-            node.Create(type, position);
+            var node = (ShaderNode)Activator.CreateInstance(type);
+            node.Initialize(position);
             AddElement(node);
         }
 
-        public ShaderNodeVisualElement AddNode(SerializableNode seriazableNode)
+        public ShaderNode AddNode(SerializableNode serializableNode)
         {
-            var node = new ShaderNodeVisualElement();
-            node.Add(seriazableNode);
-            AddElement(node);
+            if (serializableNode.TryDeserialize(out var shaderNode))
+            {
+                AddElement(shaderNode);
+                return shaderNode;
+            }
 
-            return node;
+            return null;
         }
 
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
@@ -226,7 +227,7 @@ namespace z3y.ShaderGraph
 
         private void NodeHotkey(ClickEvent e)
         {
-            if (e.target is not ShaderGraphView || e.button != (int)MouseButton.LeftMouse)
+            /*if (e.target is not ShaderGraphView || e.button != (int)MouseButton.LeftMouse)
             {
                 return;
             }
@@ -244,13 +245,13 @@ namespace z3y.ShaderGraph
                 case KeyCode.A: CreateNode(typeof(AddNode), position, false); break;
                 case KeyCode.Period: CreateNode(typeof(DotNode), position, false); break;
                 case KeyCode.Z: CreateNode(typeof(SwizzleNode), position, false); break;
-            }
+            }*/
         }
 
-        internal void UpdateGraphView(string guid, ShaderNode node)
+     /*   internal void UpdateGraphView(ShaderNode node)
         {
-            var element = (ShaderNodeVisualElement)graphElements.First(x => x.viewDataKey == guid);
+            var element = (ShaderNodeVisualElement)graphElements.First(x => x.viewDataKey == node.GUID);
             element.UpdateGraphView(node);
-        }
+        }*/
     }
 }

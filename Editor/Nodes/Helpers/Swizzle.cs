@@ -1,7 +1,7 @@
 using System.Linq;
 using UnityEngine.UIElements;
 
-namespace z3y.ShaderGraph
+namespace ZSG
 {
     public static class Swizzle
     {

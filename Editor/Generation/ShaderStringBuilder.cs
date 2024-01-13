@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace z3y.ShaderGraph
+namespace ZSG
 { 
     public class ShaderStringBuilder
     {

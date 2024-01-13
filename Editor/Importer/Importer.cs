@@ -5,11 +5,8 @@ using UnityEditor;
 using System.IO;
 using System;
 using UnityEditor.Callbacks;
-using System.Linq;
-using z3y.ShaderGraph.Nodes;
-using UnityEditor.Experimental.GraphView;
 
-namespace z3y.ShaderGraph
+namespace ZSG
 {
     [ScriptedImporter(1, EXTENSION, 0)]
     public class ShaderGraphImporter : ScriptedImporter
@@ -38,38 +35,6 @@ namespace z3y.ShaderGraph
             _cachedGraphData[assetPath] = data;
             return data;
        }
-        /* 
-                public static void VisitConenctedNode(NodeVisitor visitor, ShaderNode node)
-                {
-                    var connections = node.GetSerializedConnections();
-                    foreach (var connection in connections)
-                    {
-                        var inNode = connection.inNode;
-                        if (inNode.visited)
-                        {
-                            // copy
-                            node.PortNames[connection.outID] = inNode.SetOutputString(connection.inID);
-                            var portType = connection.inNode.PortsTypes[connection.inID];
-                            node.PortsTypes[connection.outID] = portType;
-
-                            continue;
-                        }
-                        VisitConenctedNode(visitor, inNode);
-
-                        inNode.Visit(visitor);
-                        {
-                            // copy
-                            node.PortNames[connection.outID] = connection.inNode.SetOutputString(connection.inID);
-                            var portType = inNode.PortsTypes[connection.inID];
-                            node.PortsTypes[connection.outID] = portType;
-                        }
-
-                        inNode.UpdateGraphView();
-                        inNode.visited = true;
-                    }
-
-                }
-        */
 
         public static ShaderBuilder UpdateGraph(string guid, ShaderGraphView shaderGraphView = null)
         {
@@ -81,6 +46,15 @@ namespace z3y.ShaderGraph
             builder.Build(target);
 
             return builder;
+        }
+
+        public static void UpdatePreview(ShaderGraphView graphView)
+        {
+            var data = SerializableGraph.StoreGraph(graphView);
+            var builder = new ShaderBuilder(GenerationMode.Preview, data, graphView);
+            var target = new UnlitBuildTarget();
+            target.BuilderPassthourgh(builder);
+            builder.Build(target);
         }
 
         public override void OnImportAsset(AssetImportContext ctx)

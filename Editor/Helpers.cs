@@ -1,12 +1,12 @@
 
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Experimental.GraphView;
 
-namespace z3y.ShaderGraph
+namespace ZSG
 {
     public static class Helpers
     {
-
         // https://stackoverflow.com/questions/6219454/efficient-way-to-remove-all-whitespace-from-string
         public static string RemoveWhitespace(this string input)
         {
@@ -25,6 +25,11 @@ namespace z3y.ShaderGraph
         public static void SetPortID(this Port port, int id)
         {
             port.userData = id;
+        }
+
+        public static PortDescriptor GetByID(this List<PortDescriptor> portDescriptors, int ID)
+        {
+            return portDescriptors.Where(x => x.ID == ID).First();
         }
     }
 }

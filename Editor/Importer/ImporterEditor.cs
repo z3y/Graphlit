@@ -1,7 +1,7 @@
 using UnityEditor.AssetImporters;
 using UnityEditor;
 using UnityEngine;
-namespace z3y.ShaderGraph
+namespace ZSG
 {
 
     [CustomEditor(typeof(ShaderGraphImporter))]

@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-namespace z3y.ShaderGraph
+namespace ZSG
 {
     using System.Linq;
     using System.Reflection;
-    using z3y.ShaderGraph.Nodes;
+    using ZSG.Nodes;
     public class ShaderNodeSearchWindow : ScriptableObject, ISearchWindowProvider
     {
         private ShaderGraphView _graphView;

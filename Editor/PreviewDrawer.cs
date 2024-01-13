@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace z3y.ShaderGraph
+namespace ZSG
 {
     public class PreviewDrawer : IDisposable
     {

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using static UnityEditor.ShaderData;
 
-namespace z3y.ShaderGraph
+namespace ZSG
 {
     public enum GenerationMode
     {

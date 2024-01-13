@@ -1,11 +1,8 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using UnityEditor;
 using UnityEngine;
-using z3y.ShaderGraph.Nodes;
 
-namespace z3y.ShaderGraph
+namespace ZSG
 {
     public enum PropertyType
     {

@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace z3y.ShaderGraph
+namespace ZSG
 {
     public class SerializedGraphDataSo : ScriptableObject
     {

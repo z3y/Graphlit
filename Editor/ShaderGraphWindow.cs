@@ -6,7 +6,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace z3y.ShaderGraph
+namespace ZSG
 {
 
     public class ShaderGraphWindow : EditorWindow

@@ -1,4 +1,4 @@
-namespace z3y.ShaderGraph
+namespace ZSG
 {
     [System.Serializable]
     public class GraphData
