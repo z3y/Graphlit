@@ -8,31 +8,63 @@ using UnityEngine.UIElements;
 using ZSG.Nodes;
 using ZSG.Nodes.PortType;
 using static UnityEditor.Experimental.GraphView.Port;
+using static UnityEditor.ObjectChangeEventStream;
 
 namespace ZSG
 {
+    public struct GeneratedPortData
+    {
+        public GeneratedPortData(IPortType type, string name)
+        {
+            Type = type;
+            Name = name;
+        }
+
+        public IPortType Type;
+        public string Name;
+    }
+
     public abstract class ShaderNode : Node
     {
-        public void Initialize(Vector2 position, string guid = null)
+        public void Initialize(ShaderGraphView graphView, Vector2 position, string guid = null)
         {
             base.SetPosition(new Rect(position, Vector3.one));
             if (guid is not null) viewDataKey = guid;
-
+            GraphView = graphView;
             AddDefaultElements();
         }
 
+        public ShaderGraphView GraphView { get; private set; }
+
         public NodeInfo Info => GetType().GetCustomAttribute<NodeInfo>();
 
-        public IEnumerable<Port> PortElements => inputContainer.Children().Concat(outputContainer.Children())
-            .Where(x => x is Port)
-            .Cast<Port>();
+        public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
+        {
+            base.BuildContextualMenu(evt);
+
+            evt.menu.AppendAction("Generate Preview", GeneratePreview);
+        }
+
+        private void GeneratePreview(DropdownMenuAction action)
+        {
+            var shaderBuilder = new ShaderBuilder(GenerationMode.Preview, GraphView);
+            var target = new UnlitBuildTarget();
+            target.BuilderPassthourgh(shaderBuilder);
+            shaderBuilder.Build(this);
+
+            UnityEngine.Debug.Log(shaderBuilder.ToString());
+        }
+
+        public IEnumerable<Port> PortElements => inputContainer.Children().Concat(outputContainer.Children()).Where(x => x is Port).Cast<Port>();
+        public IEnumerable<Port> Inputs => inputContainer.Children().Where(x => x is Port).Cast<Port>().Where(x => x.direction == Direction.Input);
+        public IEnumerable<Port> Outputs => outputContainer.Children().Where(x => x is Port).Cast<Port>().Where(x => x.direction == Direction.Input);
 
         public abstract void Generate(NodeVisitor visitor);
 
-        internal List<PortDescriptor> _portDescriptors = new();
+        public List<PortDescriptor> portDescriptors = new();
         public void AddPort(PortDescriptor portDescriptor)
         {
-            _portDescriptors.Add(portDescriptor);
+            portDescriptors.Add(portDescriptor);
 
             var container = portDescriptor.Direction == PortDirection.Input ? inputContainer : outputContainer;
 
@@ -58,20 +90,22 @@ namespace ZSG
 
         public void RemovePort(int id)
         {
-            int i = _portDescriptors.FindIndex(x => x.ID == id);
+            int i = portDescriptors.FindIndex(x => x.ID == id);
             if (i < 0)
             { 
                 return;
             }
-            _portDescriptors.RemoveAt(i);
+            portDescriptors.RemoveAt(i);
+            //TODO:
         }
 
         public abstract void AddElements();
 
-        [NonSerialized] public bool enablePreview = true;
+        public virtual bool EnablePreview => true;
 
         private void AddDefaultElements()
         {
+
             AddStyles();
             AddTitleElement();
             AddElements();
@@ -114,6 +148,30 @@ namespace ZSG
             borderSelectionStyle.borderTopLeftRadius = noRadius;
             borderSelectionStyle.borderTopRightRadius = noRadius;*/
         }
+
+        public static int UniqueVariableID = 0;
+        public Dictionary<int, GeneratedPortData> portData = new();
+        public GeneratedPortData GetInputPortData(int portID)
+        {
+            var port = Inputs.Where(x => x.GetPortID() == portID).First();
+            if (port.connected)
+            {
+                var incomingPort = port.connections.First().output;
+                var incomingNode = (ShaderNode)incomingPort.node;
+
+                return incomingNode.portData[incomingPort.GetPortID()];
+            }
+            else
+            {
+                return GetDefaultInput(portID);
+            }
+        }
+
+        public virtual GeneratedPortData GetDefaultInput(int portID)
+        {
+            var descriptor = portDescriptors.Find(x => x.ID == portID);
+            return new GeneratedPortData(descriptor.Type, "0");
+        }
     }
 
     [NodeInfo("*", "a * b"), Serializable]
@@ -132,12 +190,14 @@ namespace ZSG
 
         public override void Generate(NodeVisitor visitor)
         {
-            //var components = ImplicitTruncation(OUT, A, B);
-            //var a = GetCastInputString(A, components);
-            //var b = GetCastInputString(B, components);
+            //visitor.SetOutputType(OUT, visitor.ImplicitTruncation(A, B));
+            //visitor.OutputExpression(OUT, A, "*", B, "Multiply");
+            // inherit or if not connected use default
+            portData[A] = GetInputPortData(A);
+            portData[B] = GetInputPortData(B);
+            portData[OUT] = new GeneratedPortData(new Float(1), "Multiply" + UniqueVariableID++); // new name
 
-            //visitor.AppendLine(FormatOutput(OUT, "Multiply", $"{a} * {b}"));
-            visitor.AppendLine("a");
+            visitor.AppendLine($"{portData[OUT].Type} {portData[OUT].Name} = {portData[A].Name} * {portData[B].Name};");
         }
     }
 }

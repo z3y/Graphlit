@@ -39,7 +39,7 @@ namespace ZSG
             }
         }
 
-        public readonly bool TryDeserialize(out ShaderNode shaderNode)
+        public readonly bool TryDeserialize(ShaderGraphView graphView, out ShaderNode shaderNode)
         {
             Type type = Type.GetType(this.type);
             if (type is null)
@@ -57,7 +57,7 @@ namespace ZSG
             }
 
             shaderNode = (ShaderNode)instance;
-            shaderNode.Initialize(Position, guid);
+            shaderNode.Initialize(graphView, Position, guid);
 
             return true;
         }

@@ -38,9 +38,9 @@ namespace ZSG
 
         public static ShaderBuilder UpdateGraph(string guid, ShaderGraphView shaderGraphView = null)
         {
-            var serializableGraph = ReadGraphData(false, guid);
+            //var serializableGraph = ReadGraphData(false, guid);
             if (shaderGraphView is null) _graphViews.TryGetValue(guid, out shaderGraphView);
-            var builder = new ShaderBuilder(GenerationMode.Final, serializableGraph, shaderGraphView);
+            var builder = new ShaderBuilder(GenerationMode.Final, shaderGraphView);
             var target = new UnlitBuildTarget();
             target.BuilderPassthourgh(builder);
             builder.Build(target);
@@ -48,10 +48,10 @@ namespace ZSG
             return builder;
         }
 
-        public static void UpdatePreview(ShaderGraphView graphView)
+        public static void UpdatePreview(ShaderGraphView shaderGraphView)
         {
-            var data = SerializableGraph.StoreGraph(graphView);
-            var builder = new ShaderBuilder(GenerationMode.Preview, data, graphView);
+            //var data = SerializableGraph.StoreGraph(graphView);
+            var builder = new ShaderBuilder(GenerationMode.Preview, shaderGraphView);
             var target = new UnlitBuildTarget();
             target.BuilderPassthourgh(builder);
             builder.Build(target);

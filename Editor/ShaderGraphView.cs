@@ -154,13 +154,13 @@ namespace ZSG
             _editorWindow.SetDirty();
             if (transform) TransformMousePositionToLocalSpace(ref position, true);
             var node = (ShaderNode)Activator.CreateInstance(type);
-            node.Initialize(position);
+            node.Initialize(this, position);
             AddElement(node);
         }
 
         public ShaderNode AddNode(SerializableNode serializableNode)
         {
-            if (serializableNode.TryDeserialize(out var shaderNode))
+            if (serializableNode.TryDeserialize(this, out var shaderNode))
             {
                 AddElement(shaderNode);
                 return shaderNode;
