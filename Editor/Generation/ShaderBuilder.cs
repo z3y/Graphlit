@@ -196,8 +196,7 @@ namespace ZSG
                 //UnityEngine.Debug.Log("Visiting " + inputNode.viewDataKey);
                 inputNode.Generate(visitor);
                 visitedNodes.Add(inputNode.viewDataKey);
-
-               // ShaderGraphView.UpdateGraphView(inputNode);
+                inputNode.UpdateGraphView();
             }
         }
 

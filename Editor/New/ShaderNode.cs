@@ -172,9 +172,113 @@ namespace ZSG
             var descriptor = portDescriptors.Find(x => x.ID == portID);
             return new GeneratedPortData(descriptor.Type, "0");
         }
+
+
+        public Float ImplicitTruncation(params int[] IDs)
+        {
+            int trunc = 4;
+            int max = 1;
+            for (int i = 0; i < IDs.Length; i++)
+            {
+                var ID = IDs[i];
+                var type = (Float)portData[ID].Type;
+                var components = type.components;
+                if (components == 1)
+                {
+                    continue;
+                }
+                max = Mathf.Max(max, components);
+                trunc = Mathf.Min(trunc, components);
+            }
+            trunc = Mathf.Min(trunc, max);
+
+            for (int i = 0; i < IDs.Length; i++)
+            {
+                var ID = IDs[i];
+                Cast(ID, trunc);
+            }
+
+            return new Float(trunc);
+        }
+
+        public void Cast(int portID, int targetComponent)
+        {
+            var data = portData[portID];
+            var name = data.Name;
+            var type = (Float)portData[portID].Type;
+            var components = type.components;
+            string typeName = type.fullPrecision ? "float" : "half";
+
+            if (components == targetComponent)
+            {
+                return;
+            }
+
+            // downcast
+            if (components > targetComponent)
+            {
+                name = name + ".xyz"[..(targetComponent + 1)];
+            }
+            else
+            {
+                // upcast
+                if (components == 1)
+                {
+                    // no need to upcast
+                    // name = "(" + name + ").xxxx"[..(targetComponent + 2)];
+                    return;
+                }
+                else if (components == 2)
+                {
+                    if (targetComponent == 3)
+                    {
+                        name = typeName + "3(" + name + ", 0)";
+                    }
+                    if (targetComponent == 4)
+                    {
+                        name = typeName + "4(" + name + ", 0, 0)";
+                    }
+                }
+                else if (components == 3)
+                {
+                    if (targetComponent == 4)
+                    {
+                        name = typeName + "4(" + name + ", 0)";
+                    }
+                }
+            }
+
+            type.components = targetComponent;
+            portData[portID] = new GeneratedPortData(type, name);
+        }
+
+        public void UpdateGraphView()
+        {
+            foreach (var data in portData)
+            {
+                var port = PortElements.Where(x => x.GetPortID() == data.Key).First();
+                int portID = port.GetPortID();
+                var generatedData = data.Value;
+                if (generatedData.Type is Float @float)
+                {
+                    var color = @float.GetPortColor();
+                    port.portColor = color;
+
+                    // caps not getting updated
+                    var caps = port.Q("connector");
+                    if (caps is not null)
+                    {
+                        caps.style.borderBottomColor = color;
+                        caps.style.borderTopColor = color;
+                        caps.style.borderLeftColor = color;
+                        caps.style.borderRightColor = color;
+                    }
+                }
+            }
+        }
     }
 
-    [NodeInfo("*", "a * b"), Serializable]
+    [NodeInfo("*", "a * b")]
     public class MultiplyNode : ShaderNode
     {
         const int A = 0;
@@ -195,9 +299,31 @@ namespace ZSG
             // inherit or if not connected use default
             portData[A] = GetInputPortData(A);
             portData[B] = GetInputPortData(B);
-            portData[OUT] = new GeneratedPortData(new Float(1), "Multiply" + UniqueVariableID++); // new name
+            var t = ImplicitTruncation(A, B);
+            portData[OUT] = new GeneratedPortData(t, "Multiply" + UniqueVariableID++); // new name
 
             visitor.AppendLine($"{portData[OUT].Type} {portData[OUT].Name} = {portData[A].Name} * {portData[B].Name};");
+        }
+    }
+
+    [NodeInfo("float3test")]
+    public class Float3TestNode : ShaderNode
+    {
+        const int OUT = 0;
+
+        public override void AddElements()
+        {
+            AddPort(new(PortDirection.Output, new Float(3, true), OUT));
+        }
+
+        public override void Generate(NodeVisitor visitor)
+        {
+            //visitor.SetOutputType(OUT, visitor.ImplicitTruncation(A, B));
+            //visitor.OutputExpression(OUT, A, "*", B, "Multiply");
+            // inherit or if not connected use default
+            portData[OUT] = new GeneratedPortData(new Float(3), "float3(0,1,2)"); // new name
+
+            //visitor.AppendLine($"{portData[OUT].Type} {portData[OUT].Name} = float3(0,1,2);");
         }
     }
 }
