@@ -17,7 +17,19 @@ namespace ZSG
 
         public void Initialize(Shader shader)
         {
-            material = new Material(shader);
+            if (material)
+            {
+                if (material.shader)
+                {
+                    GameObject.DestroyImmediate(material.shader);
+                }
+                material.shader = shader;
+            }
+            else
+            {
+                material = new Material(shader);
+            }
+
             _rt.material = material;
             _rt.updateMode = CustomRenderTextureUpdateMode.Realtime;
             _rt.initializationMode = CustomRenderTextureUpdateMode.Realtime;
@@ -41,6 +53,7 @@ namespace ZSG
         public VisualElement GetVisualElement()
         {
             var gui = new IMGUIContainer(OnGUI);
+            gui.name = "PreviewDrawer";
             return gui;
         }
 
@@ -55,6 +68,10 @@ namespace ZSG
             _rt.Release();
             if (material)
             {
+                if (material.shader)
+                {
+                    GameObject.DestroyImmediate(material.shader);
+                }
                 materials.Remove(material);
                 GameObject.DestroyImmediate(material);
             }

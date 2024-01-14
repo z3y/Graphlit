@@ -1,7 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -43,11 +45,19 @@ namespace ZSG
             base.BuildContextualMenu(evt);
 
             evt.menu.AppendAction("Generate Preview", GeneratePreview);
+            evt.menu.AppendAction("Remove Preview", RemovePreview);
+
         }
 
         public void GeneratePreview(DropdownMenuAction action)
         {
             ShaderBuilder.GeneratePreview(GraphView, this);
+        }
+        public void RemovePreview(DropdownMenuAction action)
+        {
+            var d = extensionContainer.Q("PreviewDrawer");
+            previewDrawer.Dispose();
+            extensionContainer.Remove(d);
         }
 
         public IEnumerable<Port> PortElements => inputContainer.Children().Concat(outputContainer.Children()).Where(x => x is Port).Cast<Port>();
@@ -110,7 +120,6 @@ namespace ZSG
             AddElements();
             if (EnablePreview)
             {
-                previewDrawer = new PreviewDrawer();
                 AddPreview();
             }
 
@@ -130,12 +139,18 @@ namespace ZSG
         {
             var nodeInfo = Info;
 
-            var titleLabel = new Label { text = nodeInfo.name, tooltip = nodeInfo.tooltip + "\n" + viewDataKey };
-            titleLabel.style.fontSize = 14;
+            var titleLabel = new Label { text = "<b>" + nodeInfo.name + "</b>", tooltip = nodeInfo.tooltip + "\n" + viewDataKey };
+            titleLabel.style.fontSize = 12;
             var centerAlign = new StyleEnum<Align> { value = Align.Center };
             titleLabel.style.alignSelf = centerAlign;
             titleLabel.style.alignItems = centerAlign;
+            titleLabel.enableRichText = true;
             titleContainer.Insert(0, titleLabel);
+
+            titleContainer.style.height = 32;
+
+            //titleContainer.
+
 
             /*var noRadius = new StyleLength { value = 0 };
             var borderStyle = this.ElementAt(0).style;
@@ -286,7 +301,41 @@ namespace ZSG
         public PreviewDrawer previewDrawer;
         private void AddPreview()
         {
-            extensionContainer.Add(previewDrawer.GetVisualElement());
+            previewDrawer = new PreviewDrawer();
+            var previewElement = previewDrawer.GetVisualElement();
+            extensionContainer.Add(previewElement);
+            // ShaderBuilder.GeneratePreview(GraphView, this);
+
+            return;
+            var foldout = new Toggle("V");
+            foldout.style.opacity = 0.5f;
+            var checkmark = foldout.Q("unity-checkmark");
+            checkmark.style.flexGrow = 0;
+            checkmark.style.width = 0;
+            var centerAlign = new StyleEnum<Align> { value = Align.Center };
+            foldout.style.alignSelf = centerAlign;
+            foldout.style.alignItems = centerAlign;
+            foldout.RegisterValueChangedCallback((evt) => {
+                if (evt.newValue == true)
+                {
+                    previewDrawer = new PreviewDrawer();
+                    ShaderBuilder.GeneratePreview(GraphView, this);
+                    var previewElement = previewDrawer.GetVisualElement();
+                    extensionContainer.Add(previewElement);
+                    foldout.label = "Ʌ";
+                }
+                else
+                {
+                    var p = extensionContainer.Q("PreviewDrawer");
+                    extensionContainer.Remove(p);
+                    foldout.label = "V";
+                }
+            });
+            extensionContainer.Add(foldout);
+
+            //foldout.SendEvent(new ChangeEvent<bool>());
+
+            //previewElement.parent.style.marginLeft = 0;
         }
     }
 
@@ -311,7 +360,7 @@ namespace ZSG
     }
 
 
-    [NodeInfo("*", "a * b")]
+    [NodeInfo("*", "a * b"), SerializeField]
     public class MultiplyNode : ShaderNode
     {
         const int A = 0;
@@ -355,6 +404,27 @@ namespace ZSG
             //visitor.OutputExpression(OUT, A, "*", B, "Multiply");
             // inherit or if not connected use default
             portData[OUT] = new GeneratedPortData(new Float(3), "float3(0.1,0.5,0.8)"); // new name
+
+            //visitor.AppendLine($"{portData[OUT].Type} {portData[OUT].Name} = float3(0,1,2);");
+        }
+    }
+
+    [NodeInfo("float2test")]
+    public class Float2TestNode : ShaderNode
+    {
+        const int OUT = 0;
+
+        public override void AddElements()
+        {
+            AddPort(new(PortDirection.Output, new Float(2, true), OUT));
+        }
+
+        public override void Generate(NodeVisitor visitor)
+        {
+            //visitor.SetOutputType(OUT, visitor.ImplicitTruncation(A, B));
+            //visitor.OutputExpression(OUT, A, "*", B, "Multiply");
+            // inherit or if not connected use default
+            portData[OUT] = new GeneratedPortData(new Float(2), "float2(0.7,0.2)"); // new name
 
             //visitor.AppendLine($"{portData[OUT].Type} {portData[OUT].Name} = float3(0,1,2);");
         }

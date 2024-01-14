@@ -99,9 +99,12 @@ namespace ZSG
             target.BuilderPassthourgh(shaderBuilder);
             shaderBuilder.Build(shaderNode);
 
-            string result = shaderBuilder.ToString();
-            var shader = ShaderUtil.CreateShaderAsset(result);
-            shaderNode.previewDrawer.Initialize(shader);
+            if (shaderNode.previewDrawer is not null)
+            {
+                string result = shaderBuilder.ToString();
+                var shader = ShaderUtil.CreateShaderAsset(result);
+                shaderNode.previewDrawer.Initialize(shader);
+            }
             //UnityEngine.Debug.Log(shaderBuilder);
         }
 

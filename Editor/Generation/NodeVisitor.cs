@@ -1,8 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
-using UnityEngine;
-using ZSG.Nodes.PortType;
-using static ZSG.ShaderBuilder;
 
 namespace ZSG
 {
@@ -51,7 +47,6 @@ namespace ZSG
         private HashSet<string> _function;
         private HashSet<PropertyDescriptor> _props;
 
-        private int _uniqueID = 0;
         /*public string GetInputVariable(int ID)
         {
             if (visitInfo.Name.TryGetValue(ID, out var name))
