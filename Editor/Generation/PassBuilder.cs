@@ -17,7 +17,6 @@ namespace ZSG
         public Dictionary<string, string> tags = new();
         public Dictionary<string, string> renderStates = new();
         public List<string> pragmas = new();
-        public List<string> attributes = new();
         public List<string> varyings = new();
         public List<string> cbuffer = new();
         public List<string> objectDecleration = new();
@@ -27,6 +26,8 @@ namespace ZSG
         public List<string> surfaceDescription = new();
         public List<string> surfaceDescriptionStruct = new();
         public HashSet<PropertyDescriptor> properties = new();
+
+        public ShaderAttribute attributes = new();
 
         public string vertexShaderPath;
         public string fragmentShaderPath;
@@ -52,6 +53,7 @@ namespace ZSG
 
             sb.AppendLine("struct Attributes");
             sb.Indent();
+            attributes.AppendAttributes(sb);
             sb.UnIndent("};");
 
             sb.AppendLine("struct Varyings");

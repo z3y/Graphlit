@@ -105,7 +105,8 @@ namespace ZSG
                 var shader = ShaderUtil.CreateShaderAsset(result);
                 shaderNode.previewDrawer.Initialize(shader);
             }
-            //UnityEngine.Debug.Log(shaderBuilder);
+
+            UnityEngine.Debug.Log(shaderBuilder);
         }
 
         public static void GenerateAllPreviews(ShaderGraphView graphView)

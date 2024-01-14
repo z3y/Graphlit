@@ -56,10 +56,21 @@ namespace ZSG
 
         public override void BuilderPassthourgh(ShaderBuilder builder)
         {
-            builder.AddPass(new PassBuilder("FORWARD", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitVertex.hlsl", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitFragment.hlsl",
+            var basePass = new PassBuilder("FORWARD", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitVertex.hlsl", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitFragment.hlsl",
                 UnlitVertexDescription.POSITION,
                 UnlitSurfaceDescription.COLOR
-                ));
+                );
+
+            basePass.attributes.RequirePosition();
+            basePass.attributes.RequireUV(2, 3);
+            basePass.attributes.RequireUV(2, 4);
+
+            basePass.attributes.RequireColor(1);
+            basePass.attributes.RequireColor(3);
+
+            basePass.attributes.RequireNormal();
+
+            builder.AddPass(basePass);
         }
 
         [NodeInfo("Vertex Description")]

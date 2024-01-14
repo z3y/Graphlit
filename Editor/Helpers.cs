@@ -14,6 +14,18 @@ namespace ZSG
                 .Where(c => !char.IsWhiteSpace(c))
                 .ToArray());
         }
+
+        public static int CountBits(int v)
+        {
+            int c = 0;
+            while (v != 0)
+            {
+                v &= (v - 1);
+                c++;
+            }
+
+            return c;
+        }
     }
 
     public static class PortExtenstions
