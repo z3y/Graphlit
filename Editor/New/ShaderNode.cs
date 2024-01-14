@@ -298,6 +298,11 @@ namespace ZSG
             }
         }
 
+ /*       public override void OnUnselected()
+        {
+            GeneratePreview(null);
+        }*/
+
         public PreviewDrawer previewDrawer;
         private void AddPreview()
         {
@@ -360,7 +365,7 @@ namespace ZSG
     }
 
 
-    [NodeInfo("*", "a * b"), SerializeField]
+    [NodeInfo("*", "a * b"), Serializable]
     public class MultiplyNode : ShaderNode
     {
         const int A = 0;
@@ -388,14 +393,46 @@ namespace ZSG
         }
     }
 
-    [NodeInfo("float3test")]
+    [NodeInfo("float3test"), Serializable]
     public class Float3TestNode : ShaderNode
     {
         const int OUT = 0;
-
+        [SerializeField] private Vector3 _value;
         public override void AddElements()
         {
             AddPort(new(PortDirection.Output, new Float(3, true), OUT));
+
+            var f = new Vector3Field { value = _value };
+            f.RegisterValueChangedCallback((evt) => {
+                _value = evt.newValue;
+                //node.UpdatePreview();
+            });
+            inputContainer.Add(f);
+
+        }
+
+        public override void Generate(NodeVisitor visitor)
+        {
+            portData[OUT] = new GeneratedPortData(new Float(3), "float3" + _value.ToString());
+        }
+    }
+
+    [NodeInfo("float2test"), Serializable]
+    public class Float2TestNode : ShaderNode
+    {
+        const int OUT = 0;
+        [SerializeField] private Vector2 _value;
+
+        public override void AddElements()
+        {
+            AddPort(new(PortDirection.Output, new Float(2, true), OUT));
+
+            var f = new Vector2Field { value = _value };
+            f.RegisterValueChangedCallback((evt) => {
+                _value = evt.newValue;
+                //node.UpdatePreview();
+            });
+            inputContainer.Add(f);
         }
 
         public override void Generate(NodeVisitor visitor)
@@ -403,14 +440,14 @@ namespace ZSG
             //visitor.SetOutputType(OUT, visitor.ImplicitTruncation(A, B));
             //visitor.OutputExpression(OUT, A, "*", B, "Multiply");
             // inherit or if not connected use default
-            portData[OUT] = new GeneratedPortData(new Float(3), "float3(0.1,0.5,0.8)"); // new name
+            portData[OUT] = new GeneratedPortData(new Float(2), "float2" + _value.ToString()); // new name
 
             //visitor.AppendLine($"{portData[OUT].Type} {portData[OUT].Name} = float3(0,1,2);");
         }
     }
 
-    [NodeInfo("float2test")]
-    public class Float2TestNode : ShaderNode
+    [NodeInfo("uv0test")]
+    public class Uv0TestNode : ShaderNode
     {
         const int OUT = 0;
 
@@ -421,12 +458,7 @@ namespace ZSG
 
         public override void Generate(NodeVisitor visitor)
         {
-            //visitor.SetOutputType(OUT, visitor.ImplicitTruncation(A, B));
-            //visitor.OutputExpression(OUT, A, "*", B, "Multiply");
-            // inherit or if not connected use default
-            portData[OUT] = new GeneratedPortData(new Float(2), "float2(0.7,0.2)"); // new name
-
-            //visitor.AppendLine($"{portData[OUT].Type} {portData[OUT].Name} = float3(0,1,2);");
+            portData[OUT] = new GeneratedPortData(new Float(2), "varyings.uv0");
         }
     }
 }

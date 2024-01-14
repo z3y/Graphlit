@@ -58,6 +58,10 @@ namespace ZSG
 
             sb.AppendLine("struct Varyings");
             sb.Indent();
+            foreach (var varying in varyings)
+            {
+                sb.AppendLine(varying);
+            }
             sb.UnIndent("};");
 
             sb.AppendLine("struct VertexDescription");

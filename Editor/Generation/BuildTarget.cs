@@ -62,13 +62,14 @@ namespace ZSG
                 );
 
             basePass.attributes.RequirePosition();
-            basePass.attributes.RequireUV(2, 3);
-            basePass.attributes.RequireUV(2, 4);
-
-            basePass.attributes.RequireColor(1);
+            basePass.attributes.RequireUV(0);
             basePass.attributes.RequireColor(3);
-
             basePass.attributes.RequireNormal();
+
+
+            basePass.varyings.Add("float2 uv0 : TEXCOORD0;");
+
+            //basePass.vertexDescription.Add("")
 
             builder.AddPass(basePass);
         }

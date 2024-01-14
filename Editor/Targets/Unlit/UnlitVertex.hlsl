@@ -23,7 +23,7 @@ VaryingsWrapper vert(AttributesWrapper input)
     // input.positionOS += vertexDescription.Position;
 
     varyings.vertex = UnityObjectToClipPos(input.positionOS);
-    //o.uv = v.uv;
+    varyings.uv0 = input.uv0;
     UNITY_TRANSFER_FOG(varyings, varyings.vertex);
     return varyings;
 }
