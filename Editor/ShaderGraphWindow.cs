@@ -69,7 +69,7 @@ namespace ZSG
             if (!string.IsNullOrEmpty(importerGuid) && graphView is null)
             {
                 Initialize(importerGuid, false);
-                ShaderGraphImporter.UpdateGraph(importerGuid, graphView);
+                ShaderBuilder.GenerateAllPreviews(graphView);
             }
         }
 

@@ -1,7 +1,10 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using ZSG.Nodes.PortType;
+using static UnityEditor.ObjectChangeEventStream;
 using static UnityEngine.EventSystems.StandaloneInputModule;
 
 namespace ZSG
@@ -66,6 +69,53 @@ namespace ZSG
             var fragmentVisitor = new NodeVisitor(this, ShaderStage.Fragment, 0, "SurfaceDescription");
             TraverseGraph(shaderNode, fragmentVisitor);
             shaderNode.Generate(fragmentVisitor);
+            shaderNode.UpdateGraphView();
+
+            if (GenerationMode == GenerationMode.Preview)
+            {
+                var sb = passBuilders[0].surfaceDescription;
+                var str = passBuilders[0].surfaceDescriptionStruct;
+                str.Add("float4 Color;");
+                foreach (var port in shaderNode.Outputs)
+                {
+                    int id = port.GetPortID();
+                    var cast = shaderNode.Cast(id, 4, false);
+                    sb.Add("output.Color = " + cast.Name + ";");
+                    break;
+                }
+
+                sb.Add("return output;");
+            }
+
+        }
+
+        public static void GeneratePreview(ShaderGraphView graphView, ShaderNode shaderNode)
+        {
+            if (!shaderNode.EnablePreview)
+            {
+                return;
+            }
+
+            var shaderBuilder = new ShaderBuilder(GenerationMode.Preview, graphView);
+            var target = new UnlitBuildTarget();
+            target.BuilderPassthourgh(shaderBuilder);
+            shaderBuilder.Build(shaderNode);
+
+            string result = shaderBuilder.ToString();
+            var shader = ShaderUtil.CreateShaderAsset(result);
+            shaderNode.previewDrawer.Initialize(shader);
+            //UnityEngine.Debug.Log(shaderBuilder);
+        }
+
+        public static void GenerateAllPreviews(ShaderGraphView graphView)
+        {
+            foreach (var graphElement in graphView.graphElements)
+            {
+                if (graphElement is ShaderNode shaderNode)
+                {
+                    GeneratePreview(graphView, shaderNode);
+                }
+            }
         }
 
         public void BuildPreview(string guid)
@@ -197,6 +247,7 @@ namespace ZSG
                 inputNode.Generate(visitor);
                 visitedNodes.Add(inputNode.viewDataKey);
                 inputNode.UpdateGraphView();
+
             }
         }
 

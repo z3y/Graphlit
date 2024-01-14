@@ -45,19 +45,14 @@ namespace ZSG
             evt.menu.AppendAction("Generate Preview", GeneratePreview);
         }
 
-        private void GeneratePreview(DropdownMenuAction action)
+        public void GeneratePreview(DropdownMenuAction action)
         {
-            var shaderBuilder = new ShaderBuilder(GenerationMode.Preview, GraphView);
-            var target = new UnlitBuildTarget();
-            target.BuilderPassthourgh(shaderBuilder);
-            shaderBuilder.Build(this);
-
-            UnityEngine.Debug.Log(shaderBuilder.ToString());
+            ShaderBuilder.GeneratePreview(GraphView, this);
         }
 
         public IEnumerable<Port> PortElements => inputContainer.Children().Concat(outputContainer.Children()).Where(x => x is Port).Cast<Port>();
         public IEnumerable<Port> Inputs => inputContainer.Children().Where(x => x is Port).Cast<Port>().Where(x => x.direction == Direction.Input);
-        public IEnumerable<Port> Outputs => outputContainer.Children().Where(x => x is Port).Cast<Port>().Where(x => x.direction == Direction.Input);
+        public IEnumerable<Port> Outputs => outputContainer.Children().Where(x => x is Port).Cast<Port>().Where(x => x.direction == Direction.Output);
 
         public abstract void Generate(NodeVisitor visitor);
 
@@ -72,7 +67,7 @@ namespace ZSG
             var capacity = portDescriptor.Direction == PortDirection.Input ? Capacity.Single : Capacity.Multi;
 
             var port = InstantiatePort(Orientation.Horizontal, (Direction)portDescriptor.Direction, capacity, type);
-            //portElement.AddManipulator(new EdgeConnector<Edge>(new EdgeConnectorListener()));
+            port.AddManipulator(new EdgeConnector<Edge>(new EdgeConnectorListener()));
             port.portName = portDescriptor.Name;
             port.userData = portDescriptor.ID;
             if (portDescriptor.Type is Float @float)
@@ -109,7 +104,11 @@ namespace ZSG
             AddStyles();
             AddTitleElement();
             AddElements();
-            // AddPreview();
+            if (EnablePreview)
+            {
+                previewDrawer = new PreviewDrawer();
+                AddPreview();
+            }
 
 
             RefreshExpandedState();
@@ -201,7 +200,7 @@ namespace ZSG
             return new Float(trunc);
         }
 
-        public void Cast(int portID, int targetComponent)
+        public GeneratedPortData Cast(int portID, int targetComponent, bool updatePort = true)
         {
             var data = portData[portID];
             var name = data.Name;
@@ -211,7 +210,7 @@ namespace ZSG
 
             if (components == targetComponent)
             {
-                return;
+                return data;
             }
 
             // downcast
@@ -226,7 +225,7 @@ namespace ZSG
                 {
                     // no need to upcast
                     // name = "(" + name + ").xxxx"[..(targetComponent + 2)];
-                    return;
+                    return data;
                 }
                 else if (components == 2)
                 {
@@ -249,7 +248,10 @@ namespace ZSG
             }
 
             type.components = targetComponent;
-            portData[portID] = new GeneratedPortData(type, name);
+            var newData = new GeneratedPortData(type, name);
+            if (updatePort) portData[portID] = newData;
+
+            return newData;
         }
 
         public void UpdateGraphView()
@@ -276,7 +278,39 @@ namespace ZSG
                 }
             }
         }
+
+        public PreviewDrawer previewDrawer;
+        private void AddPreview()
+        {
+            extensionContainer.Add(previewDrawer.GetVisualElement());
+        }
     }
+
+    public class EdgeConnectorListener : IEdgeConnectorListener
+    {
+        public void OnDrop(GraphView graphView, Edge edge)
+        {
+/*            var shaderNodeIn = (ShaderNode)edge.input.node;
+            var shaderNodeOut = (ShaderNode)edge.output.node;
+
+            shaderNodeIn.GeneratePreview(null);
+            shaderNodeOut.GeneratePreview(null);
+*/
+            ShaderBuilder.GenerateAllPreviews((ShaderGraphView)graphView);
+        }
+
+        public void OnDropOutsidePort(Edge edge, Vector2 position)
+        {
+            //var shaderNodeIn = (ShaderNode)edge.input.node;
+           //var shaderNodeOut = (ShaderNode)edge.output.node;
+
+            //shaderNodeIn.GeneratePreview(null);
+            //shaderNodeOut.GeneratePreview(null);
+        }
+
+
+    }
+
 
     [NodeInfo("*", "a * b")]
     public class MultiplyNode : ShaderNode
@@ -321,7 +355,7 @@ namespace ZSG
             //visitor.SetOutputType(OUT, visitor.ImplicitTruncation(A, B));
             //visitor.OutputExpression(OUT, A, "*", B, "Multiply");
             // inherit or if not connected use default
-            portData[OUT] = new GeneratedPortData(new Float(3), "float3(0,1,2)"); // new name
+            portData[OUT] = new GeneratedPortData(new Float(3), "float3(0.1,0.5,0.8)"); // new name
 
             //visitor.AppendLine($"{portData[OUT].Type} {portData[OUT].Name} = float3(0,1,2);");
         }

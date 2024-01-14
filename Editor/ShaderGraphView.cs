@@ -53,10 +53,6 @@ namespace ZSG
         private GraphViewChange OnGraphViewChanged(GraphViewChange change)
         {
             _editorWindow.SetDirty();
-            if (change.elementsToRemove is not null || change.edgesToCreate is not null)
-            {
-                ShaderGraphImporter.UpdatePreview(this);
-            }
             return change;
         }
 

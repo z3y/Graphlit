@@ -5,6 +5,7 @@ using UnityEditor;
 using System.IO;
 using System;
 using UnityEditor.Callbacks;
+using System.Linq;
 
 namespace ZSG
 {
@@ -34,9 +35,9 @@ namespace ZSG
             }
             _cachedGraphData[assetPath] = data;
             return data;
-       }
+        }
 
-        public static ShaderBuilder UpdateGraph(string guid, ShaderGraphView shaderGraphView = null)
+        public static ShaderBuilder UpdateGraph(string guid, ShaderGraphView shaderGraphView)
         {
             //var serializableGraph = ReadGraphData(false, guid);
             if (shaderGraphView is null) _graphViews.TryGetValue(guid, out shaderGraphView);
@@ -48,20 +49,21 @@ namespace ZSG
             return builder;
         }
 
-        public static void UpdatePreview(ShaderGraphView shaderGraphView)
-        {
-            //var data = SerializableGraph.StoreGraph(graphView);
-            var builder = new ShaderBuilder(GenerationMode.Preview, shaderGraphView);
-            var target = new UnlitBuildTarget();
-            target.BuilderPassthourgh(builder);
-            builder.Build(target);
-        }
-
         public override void OnImportAsset(AssetImportContext ctx)
         {
             var guid = AssetDatabase.AssetPathToGUID(assetPath);
 
-            var builder = UpdateGraph(guid);
+            if (_graphViews.TryGetValue(guid, out var graphView))
+            {
+
+            }
+            else
+            {
+                var data = ReadGraphData(false, guid);
+                graphView = new ShaderGraphView(null);
+                data.PopulateGraph(graphView);
+            }
+            var builder = UpdateGraph(guid, graphView);
             //var text = File.ReadAllText(assetPath);
             //ctx.AddObjectToAsset("Main Asset", new TextAsset(text));
 
@@ -110,7 +112,7 @@ namespace ZSG
             win.Initialize(guid);
 
             _graphViews[guid] = win.graphView;
-            UpdateGraph(guid);
+            ShaderBuilder.GenerateAllPreviews(win.graphView);
         }
 
         public static void SaveGraphAndReimport(ShaderGraphView graphView, string guid)

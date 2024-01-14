@@ -42,6 +42,8 @@ namespace ZSG
             visitor.AppendLine($"return output;");*/
         }
 
+        public override bool EnablePreview => false;
+
         public sealed override void Generate(NodeVisitor visitor) { }
     }
 
