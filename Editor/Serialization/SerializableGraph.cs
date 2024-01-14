@@ -44,6 +44,17 @@ namespace ZSG
             SetupNodeConnections(graphView);
         }
 
+        private void UpdatePreviews(ShaderGraphView graphView)
+        {
+            foreach(var node in graphView.graphElements)
+            {
+                if (node is ShaderNode shaderNode)
+                {
+                    shaderNode.GeneratePreview(null);
+                }
+            }
+        }
+
         public SerializableGraph GenerateNewGUIDs()
         {
             var guidMap = new Dictionary<string, string>();
@@ -95,6 +106,9 @@ namespace ZSG
             }
 
             newElements.SetupNodeConnections(graphView);
+
+            UpdatePreviews(graphView);
+
             return graphElements;
         }
 

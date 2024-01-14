@@ -66,7 +66,9 @@ namespace ZSG
             var type = portDescriptor.Type.GetType();
             var capacity = portDescriptor.Direction == PortDirection.Input ? Capacity.Single : Capacity.Multi;
 
-            var port = InstantiatePort(Orientation.Horizontal, (Direction)portDescriptor.Direction, capacity, type);
+            var port = Port.Create<Edge>(Orientation.Horizontal, (Direction)portDescriptor.Direction, capacity, type);
+
+
             port.AddManipulator(new EdgeConnector<Edge>(new EdgeConnectorListener()));
             port.portName = portDescriptor.Name;
             port.userData = portDescriptor.ID;
@@ -83,16 +85,18 @@ namespace ZSG
             container.Add(port);
         }
 
-        public void RemovePort(int id)
-        {
-            int i = portDescriptors.FindIndex(x => x.ID == id);
-            if (i < 0)
-            { 
-                return;
-            }
-            portDescriptors.RemoveAt(i);
-            //TODO:
-        }
+        private void GenerateAllPreviews(Port port) => ShaderBuilder.GenerateAllPreviews((ShaderGraphView)GraphView);
+        /*
+                public void RemovePort(int id)
+                {
+                    int i = portDescriptors.FindIndex(x => x.ID == id);
+                    if (i < 0)
+                    { 
+                        return;
+                    }
+                    portDescriptors.RemoveAt(i);
+                    //TODO:
+                }*/
 
         public abstract void AddElements();
 
@@ -290,13 +294,8 @@ namespace ZSG
     {
         public void OnDrop(GraphView graphView, Edge edge)
         {
-/*            var shaderNodeIn = (ShaderNode)edge.input.node;
-            var shaderNodeOut = (ShaderNode)edge.output.node;
-
-            shaderNodeIn.GeneratePreview(null);
-            shaderNodeOut.GeneratePreview(null);
-*/
-            ShaderBuilder.GenerateAllPreviews((ShaderGraphView)graphView);
+//            ShaderBuilder.GenerateAllPreviews((ShaderGraphView)graphView);
+            ShaderBuilder.GeneratePreviewFromEdge((ShaderGraphView)graphView, edge, false);
         }
 
         public void OnDropOutsidePort(Edge edge, Vector2 position)

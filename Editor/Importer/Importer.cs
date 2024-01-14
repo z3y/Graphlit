@@ -68,14 +68,14 @@ namespace ZSG
             //ctx.AddObjectToAsset("Main Asset", new TextAsset(text));
 
             var result = builder.ToString();
-            var shader = ShaderUtil.CreateShaderAsset(result, false);
+            //var shader = ShaderUtil.CreateShaderAsset(result, false);
 
-            var material = new Material(shader)
+          /*  var material = new Material(shader)
             {
                 name = "Default Material"
-            };
-            ctx.AddObjectToAsset("Main Asset", shader);
-            ctx.AddObjectToAsset("Material", material);
+            };*/
+            //ctx.AddObjectToAsset("Main Asset", shader);
+            //ctx.AddObjectToAsset("Material", material);
 
             ctx.AddObjectToAsset("generation", new TextAsset(result));
 

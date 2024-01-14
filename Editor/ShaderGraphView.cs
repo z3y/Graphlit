@@ -53,6 +53,18 @@ namespace ZSG
         private GraphViewChange OnGraphViewChanged(GraphViewChange change)
         {
             _editorWindow.SetDirty();
+
+            if (change.elementsToRemove is not null)
+            {
+                foreach (var graphElement in change.elementsToRemove)
+                {
+                    if (graphElement is Edge edge)
+                    {
+                        ShaderBuilder.GeneratePreviewFromEdge(this, edge, true);
+                    }
+
+                }
+            }
             return change;
         }
 
@@ -152,6 +164,7 @@ namespace ZSG
             var node = (ShaderNode)Activator.CreateInstance(type);
             node.Initialize(this, position);
             AddElement(node);
+            node.GeneratePreview(null);
         }
 
         public ShaderNode AddNode(SerializableNode serializableNode)

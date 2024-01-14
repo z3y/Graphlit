@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
-using ZSG.Nodes.PortType;
-using static UnityEditor.ObjectChangeEventStream;
-using static UnityEngine.EventSystems.StandaloneInputModule;
+
 
 namespace ZSG
 {
@@ -114,6 +112,46 @@ namespace ZSG
                 if (graphElement is ShaderNode shaderNode)
                 {
                     GeneratePreview(graphView, shaderNode);
+                }
+            }
+        }
+        
+        public static void GeneratePreviewFromEdge(ShaderGraphView graphView, Edge edge, bool toRemove)
+        {
+            var nodesToGenerate = new HashSet<ShaderNode>();
+            GetConnectedNodesFromEdge(nodesToGenerate, edge);
+
+            if (toRemove)
+            {
+                var input = edge.input;
+                var output = edge.output;
+                input.Disconnect(edge);
+                output.Disconnect(edge);
+            }
+
+
+            foreach (var node in nodesToGenerate)
+            {
+                GeneratePreview(graphView, node);
+            }
+        }
+
+        private static void GetConnectedNodesFromEdge(HashSet<ShaderNode> nodes, Edge edge)
+        {
+            var connectedNode = (ShaderNode)edge.input.node;
+
+            if (!nodes.Contains(connectedNode))
+            {
+                nodes.Add(connectedNode);
+                foreach (var port in connectedNode.Outputs)
+                {
+                    if (port.connected)
+                    {
+                        foreach (var connection in port.connections)
+                        {
+                            GetConnectedNodesFromEdge(nodes, connection);
+                        }
+                    }
                 }
             }
         }
