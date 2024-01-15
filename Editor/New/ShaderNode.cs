@@ -1,8 +1,8 @@
-﻿using System;
+﻿using NUnit.Framework.Internal;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -10,7 +10,6 @@ using UnityEngine.UIElements;
 using ZSG.Nodes;
 using ZSG.Nodes.PortType;
 using static UnityEditor.Experimental.GraphView.Port;
-using static UnityEditor.ObjectChangeEventStream;
 
 namespace ZSG
 {
@@ -95,7 +94,21 @@ namespace ZSG
             container.Add(port);
         }
 
-        private void GenerateAllPreviews(Port port) => ShaderBuilder.GenerateAllPreviews((ShaderGraphView)GraphView);
+        public void GeneratePreviewForAffectedNodes()
+        {
+            ShaderBuilder.GeneratePreview(GraphView, this);
+
+            foreach (var output in Outputs)
+            {
+                if (output.connected)
+                {
+                    foreach (var edge in output.connections)
+                    {
+                        ShaderBuilder.GeneratePreviewFromEdge(GraphView, edge, false);
+                    }
+                }
+            }
+        }
         /*
                 public void RemovePort(int id)
                 {
@@ -188,7 +201,7 @@ namespace ZSG
         public virtual GeneratedPortData GetDefaultInput(int portID)
         {
             var descriptor = portDescriptors.Find(x => x.ID == portID);
-            return new GeneratedPortData(descriptor.Type, "0");
+            return new GeneratedPortData(descriptor.Type, "float(0)");
         }
 
 
@@ -342,6 +355,21 @@ namespace ZSG
 
             //previewElement.parent.style.marginLeft = 0;
         }
+
+        public Action<Material> onUpdatePreviewMaterial = (mat) => { };
+
+        public void UpdatePreviewMaterial()
+        {
+            foreach (var material in PreviewDrawer.materials)
+            {
+                if (material is null) continue;
+                onUpdatePreviewMaterial(material);
+            }
+        }
+        public string GetVariableNameForPreview(int ID)
+        {
+            return "_" + viewDataKey.Replace("-", "_") + "_" + ID;
+        }
     }
 
     public class EdgeConnectorListener : IEdgeConnectorListener
@@ -393,6 +421,31 @@ namespace ZSG
         }
     }
 
+    [NodeInfo("+", "a + b"), Serializable]
+    public class AddNode : ShaderNode
+    {
+        const int A = 0;
+        const int B = 1;
+        const int OUT = 2;
+
+        public override void AddElements()
+        {
+            AddPort(new(PortDirection.Input, new Float(1, true), A, "A"));
+            AddPort(new(PortDirection.Input, new Float(1, true), B, "B"));
+            AddPort(new(PortDirection.Output, new Float(1, true), OUT));
+        }
+
+        public override void Generate(NodeVisitor visitor)
+        {
+            portData[A] = GetInputPortData(A);
+            portData[B] = GetInputPortData(B);
+            var t = ImplicitTruncation(A, B);
+            portData[OUT] = new GeneratedPortData(t, "Add" + UniqueVariableID++);
+
+            visitor.AppendLine($"{portData[OUT].Type} {portData[OUT].Name} = {portData[A].Name} + {portData[B].Name};");
+        }
+    }
+
     [NodeInfo("float3test"), Serializable]
     public class Float3TestNode : ShaderNode
     {
@@ -401,19 +454,33 @@ namespace ZSG
         public override void AddElements()
         {
             AddPort(new(PortDirection.Output, new Float(3, true), OUT));
+            string propertyName = GetVariableNameForPreview(OUT);
+
+            onUpdatePreviewMaterial += (mat) => {
+                mat.SetVector(propertyName, _value);
+            };
 
             var f = new Vector3Field { value = _value };
             f.RegisterValueChangedCallback((evt) => {
                 _value = evt.newValue;
-                //node.UpdatePreview();
+                UpdatePreviewMaterial();
             });
             inputContainer.Add(f);
-
         }
 
         public override void Generate(NodeVisitor visitor)
         {
-            portData[OUT] = new GeneratedPortData(new Float(3), "float3" + _value.ToString());
+            if (visitor.GenerationMode == GenerationMode.Preview)
+            {
+                string propertyName = GetVariableNameForPreview(OUT);
+                var prop = new PropertyDescriptor(PropertyType.Float3, "", propertyName, _value.ToString());
+                visitor.AddProperty(prop);
+                portData[OUT] = new GeneratedPortData(new Float(3), propertyName);
+            }
+            else
+            {
+                portData[OUT] = new GeneratedPortData(new Float(3), "float3" + _value.ToString());
+            }
         }
     }
 
@@ -459,6 +526,41 @@ namespace ZSG
         public override void Generate(NodeVisitor visitor)
         {
             portData[OUT] = new GeneratedPortData(new Float(2), "varyings.uv0");
+        }
+    }
+
+    [@NodeInfo("swizzle"), Serializable]
+    public sealed class SwizzleNode : ShaderNode
+    {
+        const int IN = 0;
+        const int OUT = 1;
+        [SerializeField] string swizzle = "x";
+
+        public override void AddElements()
+        {
+            AddPort(new(PortDirection.Input, new Float(1, true), IN));
+            AddPort(new(PortDirection.Output, new Float(1, true), OUT));
+
+            var f = new TextField { value = swizzle };
+            f.RegisterValueChangedCallback((evt) =>
+            {
+                string newValue = Swizzle.Validate(evt, f);
+                if (!swizzle.Equals(newValue))
+                {
+                    swizzle = newValue;
+                    GeneratePreviewForAffectedNodes();
+                }
+            });
+            extensionContainer.Add(f);
+        }
+
+        public override void Generate(NodeVisitor visitor)
+        {
+            portData[IN] = GetInputPortData(IN);
+
+            int components = swizzle.Length;
+            var data = new GeneratedPortData(new Float(components, false), portData[IN].Name + "." + swizzle);
+            portData[OUT] = data;
         }
     }
 }

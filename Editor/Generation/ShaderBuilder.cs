@@ -95,6 +95,7 @@ namespace ZSG
             }
 
             var shaderBuilder = new ShaderBuilder(GenerationMode.Preview, graphView);
+            shaderBuilder.shaderName = "Hidden/ZSGPreviews/" + shaderNode.viewDataKey;
             var target = new UnlitBuildTarget();
             target.BuilderPassthourgh(shaderBuilder);
             shaderBuilder.Build(shaderNode);
@@ -106,7 +107,7 @@ namespace ZSG
                 shaderNode.previewDrawer.Initialize(shader);
             }
 
-            UnityEngine.Debug.Log(shaderBuilder);
+            //UnityEngine.Debug.Log(shaderBuilder);
         }
 
         public static void GenerateAllPreviews(ShaderGraphView graphView)
