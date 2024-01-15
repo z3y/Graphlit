@@ -37,7 +37,7 @@ namespace ZSG
             return data;
         }
 
-        public static ShaderBuilder UpdateGraph(string guid, ShaderGraphView shaderGraphView)
+/*        public static ShaderBuilder UpdateGraph(string guid, ShaderGraphView shaderGraphView)
         {
             //var serializableGraph = ReadGraphData(false, guid);
             if (shaderGraphView is null) _graphViews.TryGetValue(guid, out shaderGraphView);
@@ -47,35 +47,40 @@ namespace ZSG
             builder.Build(target);
 
             return builder;
-        }
+        }*/
 
         public override void OnImportAsset(AssetImportContext ctx)
         {
             var guid = AssetDatabase.AssetPathToGUID(assetPath);
-
+/*
             if (_graphViews.TryGetValue(guid, out var graphView))
             {
 
             }
             else
-            {
+            {*/
                 var data = ReadGraphData(false, guid);
-                graphView = new ShaderGraphView(null);
+                var graphView = new ShaderGraphView(null);
                 data.PopulateGraph(graphView);
-            }
-            var builder = UpdateGraph(guid, graphView);
+            //}
+
+            var builder = new ShaderBuilder(GenerationMode.Final, graphView);
+            var target = new UnlitBuildTarget();
+            target.BuilderPassthourgh(builder);
+            builder.Build(target);
+
             //var text = File.ReadAllText(assetPath);
             //ctx.AddObjectToAsset("Main Asset", new TextAsset(text));
 
             var result = builder.ToString();
-            //var shader = ShaderUtil.CreateShaderAsset(result, false);
+            var shader = ShaderUtil.CreateShaderAsset(ctx, result, false);
 
-          /*  var material = new Material(shader)
+            var material = new Material(shader)
             {
                 name = "Default Material"
-            };*/
-            //ctx.AddObjectToAsset("Main Asset", shader);
-            //ctx.AddObjectToAsset("Material", material);
+            };
+            ctx.AddObjectToAsset("Main Asset", shader);
+            ctx.AddObjectToAsset("Material", material);
 
             ctx.AddObjectToAsset("generation", new TextAsset(result));
 

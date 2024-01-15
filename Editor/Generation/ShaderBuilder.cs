@@ -41,10 +41,9 @@ namespace ZSG
 
         public void Build(BuildTarget target)
         {
-            /*
-            var v = (TemplateOutput)ShaderGraphView.nodes.Find(x => x.GetType() == target.VertexDescription);
-            //var f = (TemplateOutput)ShaderNodes.Find(x => x.GetType() == target.SurfaceDescription);
-
+            var shaderNodes = ShaderGraphView.graphElements.Where(x => x is ShaderNode).Cast<ShaderNode>().ToList();
+            var v = (TemplateOutput)shaderNodes.Find(x => x.GetType() == target.VertexDescription);
+            var f = (TemplateOutput)shaderNodes.Find(x => x.GetType() == target.SurfaceDescription);
 
             for (int i = 0; i < passBuilders.Count; i++)
             {
@@ -54,10 +53,14 @@ namespace ZSG
                 var vertexVisitor = new NodeVisitor(this, ShaderStage.Vertex, passIndex, "VertexDescription");
                 var fragmentVisitor = new NodeVisitor(this, ShaderStage.Fragment, passIndex, "SurfaceDescription");
 
-                TraverseGraph(v, vertexVisitor);
-                //TraverseGraphBegin(f, fragmentVisitor, pass.Ports);
+                int[] portsMask = pass.Ports;
+                TraverseGraph(v, vertexVisitor, portsMask);
+                TraverseGraph(f, fragmentVisitor, portsMask);
+
+                v.VisitTemplate(vertexVisitor, portsMask);
+                f.VisitTemplate(fragmentVisitor, portsMask);
             }
-            */
+
         }
 
         public void Build(ShaderNode shaderNode)
@@ -87,7 +90,7 @@ namespace ZSG
 
         }
 
-        public static void GeneratePreview(ShaderGraphView graphView, ShaderNode shaderNode)
+        public static void GeneratePreview(ShaderGraphView graphView, ShaderNode shaderNode, bool log = false)
         {
             if (!shaderNode.EnablePreview)
             {
@@ -107,7 +110,7 @@ namespace ZSG
                 shaderNode.previewDrawer.Initialize(shader);
             }
 
-            //UnityEngine.Debug.Log(shaderBuilder);
+            if (log) UnityEngine.Debug.Log(shaderBuilder);
         }
 
         public static void GenerateAllPreviews(ShaderGraphView graphView)
@@ -161,117 +164,15 @@ namespace ZSG
             }
         }
 
-        public void BuildPreview(string guid)
+        public void TraverseGraph(ShaderNode shaderNode, NodeVisitor visitor, int[] ports = null)
         {
-           /* ResetNodes();
-
-            var targetNode = GuidToNode[guid];
-
-            var fragmentVisitor = new NodeVisitor(this, ShaderStage.Fragment, 0, "SurfaceDescription");
-
-            TraverseGraph(targetNode, fragmentVisitor);
-
-            targetNode.Visit(fragmentVisitor);
-
-            if (ShaderGraphView is not null)
+            foreach (var port in shaderNode.Inputs)
             {
-                ShaderGraphView.UpdateGraphView(targetNode);
-            }
-
-            var sb = passBuilders[0].surfaceDescription;
-            var str = passBuilders[0].surfaceDescriptionStruct;
-            str.Add("float4 Color;");
-            foreach (var port in targetNode.Ports)
-            {
-                if (port.Direction == PortDirection.Output)
-                {
-                    var t = (Float)targetNode.Ports.GetByID(port.ID).Type;
-                    var cast = targetNode.Cast(t.components, "float", 4, targetNode.VariableNames[port.ID]);
-                    sb.Add("output.Color = " + cast + ";");
-                    break;
-                }
-            }
-
-            sb.Add("return output;");
-
-            if (ShaderGraphView is not null)
-            {
-                ShaderGraphView.UpdateGraphView(targetNode);
-            }*/
-        }
-
-/*        public void UpdateAllPreviews()
-        {
-            if (ShaderGraphView is null)
-            {
-                return;
-            }
-
-            foreach (var shaderNode in ShaderNodes)
-            {
-                UpdatePreview(SerializableGraph, NodeToSerializableNode[shaderNode]);
-            }
-        }*/
-/*
-        public void UpdatePreview(SerializableGraph serializableGraph, SerializableNode targetNode)
-        {
-            var node = (ShaderNodeVisualElement)ShaderGraphView.GetNodeByGuid(targetNode.guid);
-            var builder = new ShaderBuilder(GenerationMode.Preview, serializableGraph, ShaderGraphView);
-            builder.shaderName = "Hidden/SGPreview/" + targetNode.guid;
-            var target = new UnlitBuildTarget();
-            target.BuilderPassthourgh(builder);
-            builder.BuildPreview(targetNode.guid);
-
-            //UnityEngine.Debug.Log(builder.ToString());
-
-            var shader = ShaderUtil.CreateShaderAsset(builder.ToString());
-
-            node.previewDrawer.Initialize(shader);
-            node.UpdatePreview();
-        }*/
-
-/*        private void CopyPort(ShaderNode shaderNode, ShaderNode inputNode, NodeConnection input)
-        {
-            shaderNode.VariableNames[input.b] = inputNode.VariableNames[input.a];
-            shaderNode.Ports.GetByID(input.b).Type = inputNode.Ports.GetByID(input.a).Type;
-        }*/
-/*
-        public void TraverseGraphBegin(TemplateOutput templateOutput, NodeVisitor visitor, int[] ports)
-        {
-            var inputs = templateOutput.Inputs;
-            foreach (var input in inputs.Values)
-            {
-                if (!Array.Exists(ports, x => x == input.GetInputIDForThisNode()))
+                if (ports is not null && !ports.Contains(port.GetPortID()))
                 {
                     continue;
                 }
 
-                var inputNode = input.Node;
-
-                if (inputNode.visited)
-                {
-                    CopyPort(templateOutput, inputNode, input);
-                    continue;
-                }
-
-                TraverseGraph(inputNode, visitor);
-
-                inputNode.Visit(visitor);
-                {
-                    CopyPort(templateOutput, inputNode, input);
-                }
-
-                inputNode.visited = true;
-            }
-
-            templateOutput.VisitTemplate(visitor, ports);
-        }*/
-
-        public void TraverseGraph(ShaderNode shaderNode, NodeVisitor visitor)
-        {
-            var inputPorts = shaderNode.Inputs.ToArray();
-            foreach (var port in inputPorts)
-            {
                 if (!port.connections.Any())
                 {
                     continue;
@@ -289,8 +190,11 @@ namespace ZSG
                 //UnityEngine.Debug.Log("Visiting " + inputNode.viewDataKey);
                 inputNode.Generate(visitor);
                 visitedNodes.Add(inputNode.viewDataKey);
-                inputNode.UpdateGraphView();
 
+                if (GenerationMode == GenerationMode.Preview)
+                {
+                    inputNode.UpdateGraphView();
+                }
             }
         }
 

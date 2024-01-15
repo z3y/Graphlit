@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using ZSG.Nodes;
@@ -19,27 +20,34 @@ namespace ZSG
     {
         public void VisitTemplate(NodeVisitor visitor, int[] ports)
         {
-           /* var structField = visitor.Stage == ShaderStage.Fragment ?
+           var structField = visitor.Stage == ShaderStage.Fragment ?
                 visitor._shaderBuilder.passBuilders[visitor.Pass].surfaceDescriptionStruct
                 : visitor._shaderBuilder.passBuilders[visitor.Pass].vertexDescriptionStruct;
 
-            foreach (var output in Ports)
+            foreach (var input in Inputs)
             {
-                if (!Array.Exists(ports, x => x == output.ID))
+                int currentID = input.GetPortID();
+
+                if (!ports.Contains(currentID))
                 {
                     continue;
                 }
 
-                string inputString = GetInputString(output.ID);
-                visitor.AppendLine($"output.{output.Name} = {inputString};");
+                var portDesc = portDescriptors.Find(x => x.ID == currentID);
 
-                if (DefaultPortsTypes[output.ID] is Float @float)
+                if (portDesc.Type is Float @float)
                 {
-                    structField.Add($"{@float} {output.Name};");
+                    var inputData = GetInputPortData(currentID);
+                    portData[currentID] = new GeneratedPortData(inputData.Type, inputData.Name);
+
+                    var cast = Cast(currentID, @float.components);
+                    visitor.AppendLine($"output.{portDesc.Name} = {cast.Name};");
+
+                    structField.Add($"{@float} {portDesc.Name};");
                 }
             }
 
-            visitor.AppendLine($"return output;");*/
+            visitor.AppendLine($"return output;");
         }
 
         public override bool EnablePreview => false;

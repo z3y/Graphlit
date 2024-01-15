@@ -50,7 +50,7 @@ namespace ZSG
 
         public void GeneratePreview(DropdownMenuAction action)
         {
-            ShaderBuilder.GeneratePreview(GraphView, this);
+            ShaderBuilder.GeneratePreview(GraphView, this, action != null);
         }
         public void RemovePreview(DropdownMenuAction action)
         {
@@ -446,8 +446,8 @@ namespace ZSG
         }
     }
 
-    [NodeInfo("float3test"), Serializable]
-    public class Float3TestNode : ShaderNode
+    [NodeInfo("float3"), Serializable]
+    public class Float3Node : ShaderNode
     {
         const int OUT = 0;
         [SerializeField] private Vector3 _value;
@@ -484,37 +484,84 @@ namespace ZSG
         }
     }
 
-    [NodeInfo("float2test"), Serializable]
-    public class Float2TestNode : ShaderNode
+    [NodeInfo("float2"), Serializable]
+    public class Float2Node : ShaderNode
     {
         const int OUT = 0;
         [SerializeField] private Vector2 _value;
-
         public override void AddElements()
         {
             AddPort(new(PortDirection.Output, new Float(2, true), OUT));
+            string propertyName = GetVariableNameForPreview(OUT);
+
+            onUpdatePreviewMaterial += (mat) => {
+                mat.SetVector(propertyName, _value);
+            };
 
             var f = new Vector2Field { value = _value };
             f.RegisterValueChangedCallback((evt) => {
                 _value = evt.newValue;
-                //node.UpdatePreview();
+                UpdatePreviewMaterial();
             });
             inputContainer.Add(f);
         }
 
         public override void Generate(NodeVisitor visitor)
         {
-            //visitor.SetOutputType(OUT, visitor.ImplicitTruncation(A, B));
-            //visitor.OutputExpression(OUT, A, "*", B, "Multiply");
-            // inherit or if not connected use default
-            portData[OUT] = new GeneratedPortData(new Float(2), "float2" + _value.ToString()); // new name
-
-            //visitor.AppendLine($"{portData[OUT].Type} {portData[OUT].Name} = float3(0,1,2);");
+            if (visitor.GenerationMode == GenerationMode.Preview)
+            {
+                string propertyName = GetVariableNameForPreview(OUT);
+                var prop = new PropertyDescriptor(PropertyType.Float2, "", propertyName, _value.ToString());
+                visitor.AddProperty(prop);
+                portData[OUT] = new GeneratedPortData(new Float(2), propertyName);
+            }
+            else
+            {
+                portData[OUT] = new GeneratedPortData(new Float(2), "float2" + _value.ToString());
+            }
         }
     }
 
-    [NodeInfo("uv0test")]
-    public class Uv0TestNode : ShaderNode
+    [NodeInfo("float"), Serializable]
+    public class FloatNode : ShaderNode
+    {
+        const int OUT = 0;
+        [SerializeField] private float _value;
+        public override void AddElements()
+        {
+            AddPort(new(PortDirection.Output, new Float(3, true), OUT));
+            string propertyName = GetVariableNameForPreview(OUT);
+
+            onUpdatePreviewMaterial += (mat) => {
+                mat.SetFloat(propertyName, _value);
+            };
+
+            var f = new FloatField { value = _value };
+            f.RegisterValueChangedCallback((evt) => {
+                _value = evt.newValue;
+                UpdatePreviewMaterial();
+            });
+            inputContainer.Add(f);
+        }
+
+        public override void Generate(NodeVisitor visitor)
+        {
+            if (visitor.GenerationMode == GenerationMode.Preview)
+            {
+                string propertyName = GetVariableNameForPreview(OUT);
+                var prop = new PropertyDescriptor(PropertyType.Float, "", propertyName, _value.ToString());
+                visitor.AddProperty(prop);
+                portData[OUT] = new GeneratedPortData(new Float(1), propertyName);
+            }
+            else
+            {
+                portData[OUT] = new GeneratedPortData(new Float(1), "float(" + _value.ToString() + ")");
+            }
+        }
+    }
+
+    [NodeInfo("uv0")]
+    public class UV0Node : ShaderNode
     {
         const int OUT = 0;
 

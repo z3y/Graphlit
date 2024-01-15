@@ -3,15 +3,12 @@
 
 struct AttributesWrapper : Attributes
 {
-    float3 positionOS : POSITION;
     float3 normalOS : NORMAL;
-    //float2 uv : TEXCOORD0;
 };
 
 struct VaryingsWrapper : Varyings
 {
-    //float2 uv : TEXCOORD0;
-    UNITY_FOG_COORDS(1)
+    //UNITY_FOG_COORDS(1)
     float4 vertex : SV_POSITION;
 };
 
