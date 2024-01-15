@@ -133,7 +133,7 @@ namespace ZSG
             AddElements();
             if (EnablePreview)
             {
-                AddPreview();
+                //AddPreview();
             }
 
 
@@ -319,12 +319,12 @@ namespace ZSG
         public PreviewDrawer previewDrawer;
         private void AddPreview()
         {
-            previewDrawer = new PreviewDrawer();
-            var previewElement = previewDrawer.GetVisualElement();
-            extensionContainer.Add(previewElement);
+            //previewDrawer = new PreviewDrawer();
+            //var previewElement = previewDrawer.GetVisualElement();
+            //extensionContainer.Add(previewDrawer);
             // ShaderBuilder.GeneratePreview(GraphView, this);
 
-            return;
+/*            return;
             var foldout = new Toggle("V");
             foldout.style.opacity = 0.5f;
             var checkmark = foldout.Q("unity-checkmark");
@@ -350,7 +350,7 @@ namespace ZSG
                 }
             });
             extensionContainer.Add(foldout);
-
+*/
             //foldout.SendEvent(new ChangeEvent<bool>());
 
             //previewElement.parent.style.marginLeft = 0;

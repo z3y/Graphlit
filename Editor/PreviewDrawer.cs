@@ -6,66 +6,39 @@ using UnityEngine.UIElements;
 
 namespace ZSG
 {
-    public class PreviewDrawer : IDisposable
+    public class PreviewDrawer : ImmediateModeElement, IDisposable
     {
-        const int width = 128, height = 128;
-
-        private CustomRenderTexture _rt = new CustomRenderTexture(width, height, RenderTextureFormat.ARGB32);
+        const int Resolution = 128;
+        private static readonly Matrix4x4 _matrix = Matrix4x4.TRS(new Vector3(Resolution / 2.0f, Resolution / 2.0f, 0), Quaternion.Euler(0,180,180), new Vector3(Resolution, Resolution, Resolution));
         public Material material;
-
         public static List<Material> materials = new List<Material>();
 
-        public void Initialize(Shader shader)
+        public static MaterialPropertyBlock propertyBlock = new();
+
+        private static Mesh _quad = Resources.GetBuiltinResource<Mesh>("Quad.fbx");
+        private static Mesh _sphere = Resources.GetBuiltinResource<Mesh>("Sphere.fbx");
+
+        public PreviewDrawer(Shader shader)
         {
-            if (material)
+            material = new Material(shader)
             {
-                if (material.shader)
-                {
-                    GameObject.DestroyImmediate(material.shader);
-                }
-                material.shader = shader;
-            }
-            else
-            {
-                material = new Material(shader);
-            }
-
-            _rt.material = material;
-            _rt.updateMode = CustomRenderTextureUpdateMode.Realtime;
-            _rt.initializationMode = CustomRenderTextureUpdateMode.Realtime;
-            _rt.initializationSource = CustomRenderTextureInitializationSource.Material;
-            _rt.initializationMaterial = material;
-            _rt.updatePeriod = 0;
-
-            _rt.Initialize();
+                hideFlags = HideFlags.HideAndDontSave
+            };
 
             materials.Add(material);
+
+            style.width = Resolution;
+            style.height = Resolution;
         }
 
-        private void UpdateTime()
+        public void SetShader(Shader shader)
         {
-            if (!material) return;
-
-            float editorTime = (float)EditorApplication.timeSinceStartup;
-            material.SetFloat("_Time", editorTime);
+            material.shader = shader;
+            MarkDirtyRepaint();
         }
 
-        public VisualElement GetVisualElement()
-        {
-            var gui = new IMGUIContainer(OnGUI);
-            gui.name = "PreviewDrawer";
-            return gui;
-        }
-
-        public void OnGUI()
-        {
-            var rect = EditorGUILayout.GetControlRect(GUILayout.Width(width), GUILayout.Height(height));
-            EditorGUI.DrawPreviewTexture(rect, _rt);
-        }
-            
         public void Dispose()
         {
-            _rt.Release();
             if (material)
             {
                 if (material.shader)
@@ -75,6 +48,12 @@ namespace ZSG
                 materials.Remove(material);
                 GameObject.DestroyImmediate(material);
             }
+        }
+
+        protected override void ImmediateRepaint()
+        {
+            material.SetPass(0);
+            Graphics.DrawMeshNow(_quad, _matrix);
         }
 
         ~PreviewDrawer()

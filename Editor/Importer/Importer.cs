@@ -77,7 +77,7 @@ namespace ZSG
 
             var material = new Material(shader)
             {
-                name = "Default Material"
+                name = "Material"
             };
             ctx.AddObjectToAsset("Main Asset", shader);
             ctx.AddObjectToAsset("Material", material);

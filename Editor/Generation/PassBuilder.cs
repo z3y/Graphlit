@@ -40,6 +40,10 @@ namespace ZSG
             ShaderBuilder.AppendTags(sb, tags);
 
             sb.AppendLine("// Render States");
+            foreach (var state in renderStates)
+            {
+                sb.AppendLine(state.Key + " " + state.Value);
+            }
 
             sb.AppendLine("HLSLPROGRAM");
             AppendPassHLSL(sb);
