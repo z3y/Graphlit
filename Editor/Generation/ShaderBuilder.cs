@@ -58,8 +58,8 @@ namespace ZSG
                 TraverseGraph(v, vertexVisitor, portsMask);
                 TraverseGraph(f, fragmentVisitor, portsMask);
 
-                v.DefaultVisit(vertexVisitor);
-                f.DefaultVisit(fragmentVisitor);
+                v.BuilderVisit(vertexVisitor);
+                f.BuilderVisit(fragmentVisitor);
 
                 v.VisitTemplate(vertexVisitor, portsMask);
                 f.VisitTemplate(fragmentVisitor, portsMask);
@@ -73,7 +73,7 @@ namespace ZSG
             //var vertexVisitor = new NodeVisitor(this, ShaderStage.Vertex, passIndex, "VertexDescription");
             var fragmentVisitor = new NodeVisitor(this, ShaderStage.Fragment, 0, "SurfaceDescription");
             TraverseGraph(shaderNode, fragmentVisitor);
-            shaderNode.DefaultVisit(fragmentVisitor);
+            shaderNode.BuilderVisit(fragmentVisitor);
 
             shaderNode.UpdateGraphView();
 
@@ -203,7 +203,7 @@ namespace ZSG
                 TraverseGraph(inputNode, visitor);
 
                 //UnityEngine.Debug.Log("Visiting " + inputNode.viewDataKey);
-                inputNode.DefaultVisit(visitor);
+                inputNode.BuilderVisit(visitor);
                 visitedNodes.Add(inputNode.viewDataKey);
 
                 if (GenerationMode == GenerationMode.Preview)

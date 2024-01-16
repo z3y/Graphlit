@@ -203,13 +203,14 @@ namespace ZSG
             }
         }
 
-        internal void DefaultVisit(NodeVisitor visitor)
+        internal void BuilderVisit(NodeVisitor visitor)
         {
             foreach (var descriptor in portDescriptors.Values)
             {
+                int id = descriptor.ID;
+
                 if (descriptor.Direction == PortDirection.Input)
                 {
-                    int id = descriptor.ID;
                     var newData = GetInputPortData(id, visitor);
 
                     if (newData.Type is Float incomingFloat && descriptor.Type is Float resultFloat)
@@ -235,7 +236,8 @@ namespace ZSG
                 }
                 else
                 {
-                    
+                    var name = GetDefaultBindingInput(descriptor, visitor);
+                    PortData[id] = new GeneratedPortData(descriptor.Type, name);
                 }
             }
 
