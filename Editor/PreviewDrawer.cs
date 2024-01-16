@@ -29,6 +29,8 @@ namespace ZSG
 
             style.width = Resolution;
             style.height = Resolution;
+
+            name = "PreviewDrawer";
         }
 
         public void SetShader(Shader shader)

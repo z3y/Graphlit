@@ -55,8 +55,8 @@ namespace ZSG
         public void RemovePreview(DropdownMenuAction action)
         {
             var d = extensionContainer.Q("PreviewDrawer");
-            previewDrawer.Dispose();
             extensionContainer.Remove(d);
+            previewDrawer.Dispose();
         }
 
         public IEnumerable<Port> PortElements => inputContainer.Children().Concat(outputContainer.Children()).Where(x => x is Port).Cast<Port>();
@@ -66,7 +66,7 @@ namespace ZSG
         protected abstract void Generate(NodeVisitor visitor);
 
         public Dictionary<int, PortDescriptor> portDescriptors = new();
-        public void AddPort(PortDescriptor portDescriptor)
+        public Port AddPort(PortDescriptor portDescriptor)
         {
             portDescriptors.Add(portDescriptor.ID, portDescriptor);
 
@@ -92,6 +92,8 @@ namespace ZSG
             }
 
             container.Add(port);
+
+            return port;
         }
 
         public void GeneratePreviewForAffectedNodes()
@@ -124,7 +126,7 @@ namespace ZSG
         public abstract void AddElements();
 
         public virtual bool EnablePreview => true;
-
+        public virtual bool LowProfile => false;
         private void AddDefaultElements()
         {
 
@@ -150,6 +152,11 @@ namespace ZSG
         }
         private void AddTitleElement()
         {
+            if (LowProfile)
+            {
+                titleContainer.parent.Remove(titleContainer);
+                return;
+            }
             var nodeInfo = Info;
 
             var titleLabel = new Label { text = "<b>" + nodeInfo.name + "</b>", tooltip = nodeInfo.tooltip + "\n" + viewDataKey };
@@ -384,10 +391,10 @@ namespace ZSG
             }
         }
 
- /*       public override void OnUnselected()
-        {
-            GeneratePreview(null);
-        }*/
+        /*       public override void OnUnselected()
+               {
+                   GeneratePreview(null);
+               }*/
 
         public PreviewDrawer previewDrawer;
         private void AddPreview()
@@ -397,33 +404,33 @@ namespace ZSG
             //extensionContainer.Add(previewDrawer);
             // ShaderBuilder.GeneratePreview(GraphView, this);
 
-/*            return;
-            var foldout = new Toggle("V");
-            foldout.style.opacity = 0.5f;
-            var checkmark = foldout.Q("unity-checkmark");
-            checkmark.style.flexGrow = 0;
-            checkmark.style.width = 0;
-            var centerAlign = new StyleEnum<Align> { value = Align.Center };
-            foldout.style.alignSelf = centerAlign;
-            foldout.style.alignItems = centerAlign;
-            foldout.RegisterValueChangedCallback((evt) => {
-                if (evt.newValue == true)
-                {
-                    previewDrawer = new PreviewDrawer();
-                    ShaderBuilder.GeneratePreview(GraphView, this);
-                    var previewElement = previewDrawer.GetVisualElement();
-                    extensionContainer.Add(previewElement);
-                    foldout.label = "Ʌ";
-                }
-                else
-                {
-                    var p = extensionContainer.Q("PreviewDrawer");
-                    extensionContainer.Remove(p);
-                    foldout.label = "V";
-                }
-            });
-            extensionContainer.Add(foldout);
-*/
+            /*            return;
+                        var foldout = new Toggle("V");
+                        foldout.style.opacity = 0.5f;
+                        var checkmark = foldout.Q("unity-checkmark");
+                        checkmark.style.flexGrow = 0;
+                        checkmark.style.width = 0;
+                        var centerAlign = new StyleEnum<Align> { value = Align.Center };
+                        foldout.style.alignSelf = centerAlign;
+                        foldout.style.alignItems = centerAlign;
+                        foldout.RegisterValueChangedCallback((evt) => {
+                            if (evt.newValue == true)
+                            {
+                                previewDrawer = new PreviewDrawer();
+                                ShaderBuilder.GeneratePreview(GraphView, this);
+                                var previewElement = previewDrawer.GetVisualElement();
+                                extensionContainer.Add(previewElement);
+                                foldout.label = "Ʌ";
+                            }
+                            else
+                            {
+                                var p = extensionContainer.Q("PreviewDrawer");
+                                extensionContainer.Remove(p);
+                                foldout.label = "V";
+                            }
+                        });
+                        extensionContainer.Add(foldout);
+            */
             //foldout.SendEvent(new ChangeEvent<bool>());
 
             //previewElement.parent.style.marginLeft = 0;
@@ -449,14 +456,14 @@ namespace ZSG
     {
         public void OnDrop(GraphView graphView, Edge edge)
         {
-//            ShaderBuilder.GenerateAllPreviews((ShaderGraphView)graphView);
+            //            ShaderBuilder.GenerateAllPreviews((ShaderGraphView)graphView);
             ShaderBuilder.GeneratePreviewFromEdge((ShaderGraphView)graphView, edge, false);
         }
 
         public void OnDropOutsidePort(Edge edge, Vector2 position)
         {
             //var shaderNodeIn = (ShaderNode)edge.input.node;
-           //var shaderNodeOut = (ShaderNode)edge.output.node;
+            //var shaderNodeOut = (ShaderNode)edge.output.node;
 
             //shaderNodeIn.GeneratePreview(null);
             //shaderNodeOut.GeneratePreview(null);
@@ -593,7 +600,7 @@ namespace ZSG
         [SerializeField] private float _value;
         public override void AddElements()
         {
-            AddPort(new(PortDirection.Output, new Float(3, true), OUT));
+            var port = AddPort(new(PortDirection.Output, new Float(3, true), OUT));
             string propertyName = GetVariableNameForPreview(OUT);
 
             onUpdatePreviewMaterial += (mat) => {
@@ -608,6 +615,9 @@ namespace ZSG
             });
             inputContainer.Add(f);
         }
+
+        public override bool LowProfile => true;
+        public override bool EnablePreview => false;
 
         protected override void Generate(NodeVisitor visitor)
         {
@@ -705,23 +715,33 @@ namespace ZSG
     }
 
     [NodeInfo("Time")]
-    public sealed class TimeNode : ShaderNode
+    public sealed class TimeNode : ParameterNode
+    {
+        public override (string, Float) Parameter => ("_Time", new(4));
+    }
+
+    public abstract class ParameterNode : ShaderNode
     {
         const int OUT = 0;
+        public abstract (string, Float) Parameter { get; }
 
-        public override void AddElements()
+        public override bool LowProfile => true;
+        public override bool EnablePreview => false;
+
+        public sealed override void AddElements()
         {
-            AddPort(new(PortDirection.Output, new Float(4, true), OUT));
+            AddPort(new(PortDirection.Output, Parameter.Item2, OUT, Parameter.Item1));
         }
 
-        protected override void Generate(NodeVisitor visitor)
+        protected sealed override void Generate(NodeVisitor visitor)
         {
-            var data = new GeneratedPortData(new Float(4, false), "_Time");
+            var data = PortData[OUT];
+            data.Name = Parameter.Item1;
             PortData[OUT] = data;
         }
     }
 
-    [NodeInfo("sin", "sin(IN)"), Serializable]
+    [NodeInfo("sin", "sin(A)")]
     public class SinNode : ShaderNode
     {
         const int IN = 0;

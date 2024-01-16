@@ -66,7 +66,12 @@ namespace ZSG
                 );
 
             basePass.attributes.RequirePositionOS();
+            basePass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
+
             basePass.varyings.RequirePositionCS();
+            basePass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
+            basePass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
+
             //basePass.attributes.RequireUV(0, 3);
             //basePass.attributes.RequireColor(3);
             //basePass.attributes.RequireNormal();

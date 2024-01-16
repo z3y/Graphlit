@@ -3,7 +3,6 @@
 
 struct AttributesWrapper : Attributes
 {
-    float3 normalOS : NORMAL;
 };
 
 struct VaryingsWrapper : Varyings

@@ -117,6 +117,7 @@ namespace ZSG
         {
             sb.AppendLine("SurfaceDescription SurfaceDescriptionFunction(Varyings varyings)");
             sb.Indent();
+            varyings.UnpackVaryings(sb);
             foreach (var line in surfaceDescription)
             {
                 sb.AppendLine(line);
@@ -128,7 +129,7 @@ namespace ZSG
         {
             sb.AppendLine("VertexDescription VertexDescriptionFunction(Attributes attributes, inout Varyings varyings)");
             sb.Indent();
-            varyings.VaryingsPassthrough(sb);
+            varyings.PackVaryings(sb);
             foreach (var line in vertexDescription)
             {
                 sb.AppendLine(line);

@@ -21,7 +21,6 @@ namespace ZSG
     {
         public enum AttributeType
         {
-            None,
             PositionOS,
             NormalOS,
             UV0,
@@ -30,8 +29,7 @@ namespace ZSG
             UV3,
             TangentOS,
             Color,
-            VertexID,
-            Custom
+            VertexID
         }
 
         public struct AttributeDescriptor
@@ -45,10 +43,17 @@ namespace ZSG
 
         public List<AttributeDescriptor> attributes = new();
 
+        public HashSet<string> customAttributes = new();
+
         public string RequirePositionOS(int channels = 3) => RequireInternal(AttributeType.PositionOS, "positionOS", "POSITION", channels);
         public string RequireNormalOS(int channels = 3) => RequireInternal(AttributeType.NormalOS, "normalOS", "NORMAL", channels);
         public string RequireTangentOS(int channels = 4) => RequireInternal(AttributeType.TangentOS, "tangentOS", "TANGENT", channels);
         public string RequireColor(int channels = 4) => RequireInternal(AttributeType.Color, "color", "COLOR", channels);
+
+        public void Require(string attribute)
+        {
+            customAttributes.Add(attribute);
+        }
 
         public string RequireUV(int texcoord, int channels = 4)
         {
@@ -93,6 +98,10 @@ namespace ZSG
             foreach (var attr in attributes)
             {
                 sb.AppendLine($"float{attr.channels} {attr.name} : {attr.semantic};");
+            }
+            foreach (var attr in customAttributes)
+            {
+                sb.AppendLine(attr);
             }
         }
     }

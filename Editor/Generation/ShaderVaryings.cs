@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 using UnityEngine;
 
 namespace ZSG
@@ -16,7 +17,6 @@ namespace ZSG
 
         public enum VaryingType
         {
-            None,
             PositionCS,
             PositionWS,
             NormalWS,
@@ -40,6 +40,7 @@ namespace ZSG
         }
 
         public List<VaryingDescriptor> varyings = new();
+        public HashSet<string> customVaryings = new();
 
         public string RequirePositionCS(int channels = 4)
         {
@@ -47,11 +48,31 @@ namespace ZSG
             return RequireInternal(VaryingType.PositionCS, "positionCS", "SV_POSITION", channels);
         }
 
-        public string RequirePositionWS(int channels = 4)
+        public void RequireCustomString(string varying)
         {
-            _attributes.RequirePositionOS(3);
-            return RequireInternal(VaryingType.PositionWS, "positionWS", "TEXCOORD", channels);
+            customVaryings.Add(varying);
         }
+        private int _interpCounter = 0;
+        public string RequireCustom(int channels)
+        {
+            var desc = new VaryingDescriptor
+            {
+                name = "interp" + _interpCounter++,
+                semantic = "TEXCOORD",
+                type = VaryingType.Custom,
+                channels = channels,
+                passthrough = null
+            };
+            varyings.Add(desc);
+
+            return desc.name;
+        }
+
+        /*        public string RequirePositionWS(int channels = 4)
+                {
+                    _attributes.RequirePositionOS(3);
+                    return RequireInternal(VaryingType.PositionWS, "positionWS", "TEXCOORD", channels);
+                }*/
 
         public string RequireUV(int texcoord, int channels = 4)
         {
@@ -89,7 +110,7 @@ namespace ZSG
                 varyings[index] = attr;
             }
 
-            return "varyings." + name;
+            return name;
         }
 
         public void AppendVaryings(ShaderStringBuilder sb)
@@ -104,15 +125,37 @@ namespace ZSG
                 }
                 sb.AppendLine($"float{vary.channels} {vary.name} : {semantic};");
             }
+            foreach (var var in customVaryings)
+            {
+                sb.AppendLine(var);
+            }
         }
 
-        public void VaryingsPassthrough(ShaderStringBuilder sb)
+        public void PackVaryings(ShaderStringBuilder sb)
         {
             foreach (var var in varyings)
             {
                 if (!string.IsNullOrEmpty(var.passthrough))
                 {
                     sb.AppendLine("varyings." + var.name + " = " + var.passthrough + ";");
+                }
+            }
+        }
+
+        private string Mask(string input, int count)
+        {
+            return input + ".xyzw".Substring(0, count + 1);
+        }
+
+        public void UnpackVaryings(ShaderStringBuilder sb)
+        {
+            foreach (var var in varyings)
+            {
+                if (!string.IsNullOrEmpty(var.passthrough))
+                {
+                    string input = Mask("varyings." + var.name, var.channels);
+                    sb.AppendLine($"float{var.channels} {var.name} = {input};");
+                    //sb.AppendLine("float" + var.name + " = " + var.passthrough + ";");
                 }
             }
         }
