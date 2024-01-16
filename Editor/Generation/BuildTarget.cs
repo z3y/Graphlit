@@ -65,13 +65,14 @@ namespace ZSG
                 UnlitSurfaceDescription.COLOR
                 );
 
-            basePass.attributes.RequirePosition();
-            basePass.attributes.RequireUV(0);
-            basePass.attributes.RequireColor(3);
-            basePass.attributes.RequireNormal();
+            basePass.attributes.RequirePositionOS();
+            basePass.varyings.RequirePositionCS();
+            //basePass.attributes.RequireUV(0);
+            //basePass.attributes.RequireColor(3);
+            //basePass.attributes.RequireNormal();
 
 
-            basePass.varyings.Add("float2 uv0 : TEXCOORD0;");
+            //basePass.varyings.Add("float2 uv0 : TEXCOORD0;");
 
             //basePass.vertexDescription.Add("")
 

@@ -184,23 +184,43 @@ namespace ZSG
         GeneratedPortData GetDefaultInput(int portID, NodeVisitor visitor)
         {
             var descriptor = portDescriptors[portID];
-            string value = GetDefaultBindingInput(descriptor, visitor);
+            string value = SetDefaultBinding(descriptor, visitor);
             return new GeneratedPortData(descriptor.Type, value);
         }
 
         Dictionary<int, PortBinding> _portBindings = new();
 
-        string GetDefaultBindingInput(PortDescriptor portDescriptor, NodeVisitor visitor)
+        protected void Bind(int id, PortBinding binding)
+        {
+            _portBindings[id] = binding;
+        }
+
+        string SetDefaultBinding(PortDescriptor portDescriptor, NodeVisitor visitor)
         {
             int id = portDescriptor.ID;
             if (_portBindings.ContainsKey(id))
             {
-                return _portBindings[id].ToString(); // some binding string here and bind
+                var binding = _portBindings[id];
+                var pass = visitor._shaderBuilder.passBuilders[visitor.Pass];
+                var attributes = pass.attributes;
+                var varyings = pass.varyings;
+
+                if (portDescriptor.Type is Float @float)
+                {
+                    int components = @float.components;
+                    // if vertex shader
+                    return binding switch
+                    {
+                        PortBinding.UV0 => varyings.RequireUV(0, components),
+                        PortBinding.UV1 => varyings.RequireUV(1, components),
+                        PortBinding.UV2 => varyings.RequireUV(2, components),
+                        PortBinding.UV3 => varyings.RequireUV(3, components),
+                        _ => throw new NotImplementedException(),
+                    };
+                }
             }
-            else
-            {
-                return "float(0)";
-            }
+
+            return "float4(0,0,0,0)";
         }
 
         internal void BuilderVisit(NodeVisitor visitor)
@@ -236,7 +256,7 @@ namespace ZSG
                 }
                 else
                 {
-                    var name = GetDefaultBindingInput(descriptor, visitor);
+                    var name = SetDefaultBinding(descriptor, visitor);
                     PortData[id] = new GeneratedPortData(descriptor.Type, name);
                 }
             }
@@ -599,11 +619,12 @@ namespace ZSG
         public override void AddElements()
         {
             AddPort(new(PortDirection.Output, new Float(2, true), OUT));
+            Bind(OUT, PortBinding.UV0);
         }
 
         protected override void Generate(NodeVisitor visitor)
         {
-            PortData[OUT] = new GeneratedPortData(new Float(2), "varyings.uv0");
+            // PortData[OUT] = new GeneratedPortData(new Float(2), "varyings.uv0");
         }
     }
 

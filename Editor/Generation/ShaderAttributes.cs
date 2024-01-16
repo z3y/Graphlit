@@ -17,7 +17,7 @@ namespace ZSG
         XYZW = X | Y | Z | W
     }
 */
-    public class ShaderAttribute
+    public class ShaderAttributes
     {
         public enum AttributeType
         {
@@ -45,21 +45,12 @@ namespace ZSG
 
         public List<AttributeDescriptor> attributes = new();
 
-        /*public void Require(AttributeType type, ChannelMask mask)
-        {
-            var desc = new AttributeDescriptor();
-            desc.type = type;
-            desc.mask = mask;
-            desc
-            attributes.Add(attribute)
-        }*/
+        public string RequirePositionOS(int channels = 3) => RequireInternal(AttributeType.PositionOS, "positionOS", "POSITION", channels);
+        public string RequireNormalOS(int channels = 3) => RequireInternal(AttributeType.NormalOS, "normalOS", "NORMAL", channels);
+        public string RequireTangentOS(int channels = 4) => RequireInternal(AttributeType.TangentOS, "tangentOS", "TANGENT", channels);
+        public string RequireColor(int channels = 4) => RequireInternal(AttributeType.Color, "color", "COLOR", channels);
 
-        public void RequirePosition(int channels = 3) => RequireInternal(AttributeType.PositionOS, "positionOS", "POSITION", channels);
-        public void RequireNormal(int channels = 3) => RequireInternal(AttributeType.NormalOS, "normalOS", "NORMAL", channels);
-        public void RequireTangent(int channels = 4) => RequireInternal(AttributeType.TangentOS, "tangentOS", "TANGENT", channels);
-        public void RequireColor(int channels = 4) => RequireInternal(AttributeType.Color, "color", "COLOR", channels);
-
-        public void RequireUV(int texcoord, int channels = 4)
+        public string RequireUV(int texcoord, int channels = 4)
         {
             AttributeType type = AttributeType.UV0;
             switch (texcoord)
@@ -69,10 +60,10 @@ namespace ZSG
                 case 2: type = AttributeType.UV2; break;
                 case 3: type = AttributeType.UV3; break;
             }
-            RequireInternal(type, "uv" + texcoord, "TEXCOORD" + texcoord, channels);
+            return RequireInternal(type, "uv" + texcoord, "TEXCOORD" + texcoord, channels);
         }
 
-        private void RequireInternal(AttributeType type, string name, string semantic, int channels = 4)
+        private string RequireInternal(AttributeType type, string name, string semantic, int channels = 4)
         {
             int index = attributes.FindIndex(x => x.type == type);
 
@@ -93,6 +84,8 @@ namespace ZSG
                 attr.channels = Mathf.Max(attr.channels, channels);
                 attributes[index] = attr;
             }
+
+            return "attributes." + name;
         }
 
         public void AppendAttributes(ShaderStringBuilder sb)

@@ -11,13 +11,14 @@ namespace ZSG
             this.fragmentShaderPath = fragmentShaderPath;
 
             Ports = ports;
+            attributes = new ShaderAttributes();
+            varyings = new ShaderVaryings(attributes);
         }
 
         public string name;
         public Dictionary<string, string> tags = new();
         public Dictionary<string, string> renderStates = new();
         public List<string> pragmas = new();
-        public List<string> varyings = new();
         public List<string> cbuffer = new();
         public List<string> objectDecleration = new();
         public HashSet<string> functions = new();
@@ -27,7 +28,9 @@ namespace ZSG
         public List<string> surfaceDescriptionStruct = new();
         public HashSet<PropertyDescriptor> properties = new();
 
-        public ShaderAttribute attributes = new();
+        public ShaderAttributes attributes;
+        public ShaderVaryings varyings;
+
 
         public string vertexShaderPath;
         public string fragmentShaderPath;
@@ -62,10 +65,7 @@ namespace ZSG
 
             sb.AppendLine("struct Varyings");
             sb.Indent();
-            foreach (var varying in varyings)
-            {
-                sb.AppendLine(varying);
-            }
+            varyings.AppendVaryings(sb);
             sb.UnIndent("};");
 
             sb.AppendLine("struct VertexDescription");
@@ -126,7 +126,7 @@ namespace ZSG
 
         public void AppendVertexDescription(ShaderStringBuilder sb)
         {
-            sb.AppendLine("VertexDescription VertexDescriptionFunction(Attributes attributes)");
+            sb.AppendLine("VertexDescription VertexDescriptionFunction(Attributes attributes, inout Varyings varyings)");
             sb.Indent();
             foreach (var line in vertexDescription)
             {
