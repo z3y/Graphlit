@@ -15,6 +15,7 @@ namespace ZSG
         private ShaderGraphWindow _editorWindow;
 
         public GraphData graphData;
+        public VisualElement additionalNodeElements;
 
         public ShaderGraphView(ShaderGraphWindow editorWindow)
         {

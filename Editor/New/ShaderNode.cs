@@ -391,10 +391,55 @@ namespace ZSG
             }
         }
 
-        /*       public override void OnUnselected()
-               {
-                   GeneratePreview(null);
-               }*/
+        public override void OnSelected()
+        {
+            DefaultAdditionalElements(GraphView.additionalNodeElements);
+        }
+
+        public override void OnUnselected()
+        {
+            GraphView.additionalNodeElements.Clear();
+        }
+
+        private void DefaultAdditionalElements(VisualElement root)
+        {
+            var ve = new VisualElement();
+            var nodeInfo = Info;
+            ve.Add(new Label(" " + nodeInfo.name));
+            var style = ve.style;
+            style.backgroundColor = new Color(0.2f, 0.2f, 0.2f, 1.0f);
+
+            var borderColor = new Color(0.15f, 0.15f, 0.15f, 1.0f);
+            style.borderLeftColor = borderColor;
+            style.borderRightColor = borderColor;
+            style.borderTopColor = borderColor;
+            style.borderBottomColor = borderColor;
+
+            const int w = 2;
+            style.borderLeftWidth = w;
+            style.borderRightWidth = w;
+            style.borderTopWidth = w;
+            style.borderBottomWidth = w;
+
+            const int r = 5;
+            style.borderBottomLeftRadius = r;
+            style.borderTopLeftRadius = r;
+            style.borderTopRightRadius = r;
+            style.borderBottomRightRadius = r;
+
+            style.paddingTop = 5;
+            style.paddingRight = 5;
+            style.bottom = 5;
+
+            AdditionalElements(ve);
+            root.Add(ve);
+        }
+
+        public virtual void AdditionalElements(VisualElement root)
+        {
+            root.Add(new FloatField("Property"));
+            root.Add(new Slider("asd"));
+        }
 
         public PreviewDrawer previewDrawer;
         private void AddPreview()

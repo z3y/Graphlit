@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.AssetImporters;
+using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace ZSG
 {
-
     public class ShaderGraphWindow : EditorWindow
     {
         [NonSerialized] public const string ROOT = "Packages/com.z3y.myshadergraph/Editor/";
@@ -26,11 +26,15 @@ namespace ZSG
 
             AddStyleVariables();
 
-            AddGraphView();
+            var conainer = new VisualElement();
+            conainer.StretchToParentSize();
+            conainer.style.flexDirection = FlexDirection.Row;
+            rootVisualElement.Add(conainer);
+            AddGraphView(conainer);
             var data = ShaderGraphImporter.ReadGraphData(false, importerGuid);
             data.PopulateGraph(graphView);
 
-            AddToolbar();
+            AddBar(conainer);
             titleContent = new GUIContent(data.data.shaderName);
 
             if (focus)
@@ -47,6 +51,8 @@ namespace ZSG
             editorInstances[importerGuid] = this;
             this.importerGuid = importerGuid;
             hasUnsavedChanges = false;
+
+            //rootVisualElement.Add(conainer);
         }
 
         public new void SetDirty()
@@ -79,9 +85,12 @@ namespace ZSG
         }
 
 
-        public void AddToolbar()
+        public void AddBar(VisualElement visualElement)
         {
             var toolbar = new Toolbar();
+
+            //var bar = new VisualElement();
+
 
             var pingAsset = new Button() { text = "Select Asset" };
             pingAsset.clicked += () =>
@@ -109,6 +118,19 @@ namespace ZSG
             var styles = AssetDatabase.LoadAssetAtPath<StyleSheet>(ROOT + "Styles/ToolbarStyles.uss");
             toolbar.styleSheets.Add(styles);
             rootVisualElement.Add(toolbar);
+
+            var additionalElements = new VisualElement();
+            var style = additionalElements.style;
+            style.width = 300;
+            style.paddingTop = 45;
+            style.paddingLeft = 5;
+
+            style.flexGrow = StyleKeyword.Auto;
+
+            additionalElements.pickingMode = PickingMode.Ignore;
+
+            visualElement.Add(additionalElements);
+            graphView.additionalNodeElements = additionalElements;
         }
 
         public void AddStyleVariables()
@@ -117,7 +139,7 @@ namespace ZSG
             rootVisualElement.styleSheets.Add(styleVariables);
         }
 
-        public void AddGraphView()
+        public void AddGraphView(VisualElement visualElement)
         {
             var graphView = new ShaderGraphView(this);
             graphView.StretchToParentSize();
@@ -128,7 +150,7 @@ namespace ZSG
             graphView.styleSheets.Add(styleSheet);
             graphView.styleSheets.Add(nodeStyle);
 
-            rootVisualElement.Add(graphView);
+            visualElement.Add(graphView);
             this.graphView = graphView;
         }
 
