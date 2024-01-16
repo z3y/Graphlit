@@ -437,8 +437,6 @@ namespace ZSG
 
         public virtual void AdditionalElements(VisualElement root)
         {
-            root.Add(new FloatField("Property"));
-            root.Add(new Slider("asd"));
         }
 
         public PreviewDrawer previewDrawer;
@@ -643,22 +641,82 @@ namespace ZSG
     {
         const int OUT = 0;
         [SerializeField] private float _value;
+        [SerializeField] PropertyDeclaration _decl;
+        [SerializeField] string _name;
+        [SerializeField] string _displayName;
+
+        FloatField _valueField;
+        Port _port;
+
         public override void AddElements()
         {
-            var port = AddPort(new(PortDirection.Output, new Float(3, true), OUT));
+            _port = AddPort(new(PortDirection.Output, new Float(3, true), OUT));
             string propertyName = GetVariableNameForPreview(OUT);
 
             onUpdatePreviewMaterial += (mat) => {
                 mat.SetFloat(propertyName, _value);
             };
 
-            var f = new FloatField { value = _value, label = "X" };
-            f.Children().First().style.minWidth = 0;
-            f.RegisterValueChangedCallback((evt) => {
+
+            _valueField = new FloatField { value = _value, label = "X" };
+            _valueField.Children().First().style.minWidth = 0;
+            _valueField.RegisterValueChangedCallback((evt) => {
                 _value = evt.newValue;
                 UpdatePreviewMaterial();
             });
-            inputContainer.Add(f);
+            inputContainer.Add(_valueField);
+            UpdateVisuals();
+        }
+
+        private void UpdateVisuals()
+        {
+            if (_decl == PropertyDeclaration.Constant)
+            {
+                _valueField.style.display = DisplayStyle.Flex;
+                _port.portName = "";
+            }
+            else
+            {
+                _valueField.style.display = DisplayStyle.None;
+                _port.portName = _displayName;
+            }
+        }
+
+        public override void AdditionalElements(VisualElement root)
+        {
+            var isProperty = new EnumField("Type", PropertyDeclaration.Constant)
+            {
+                value = _decl
+            };
+            isProperty.RegisterValueChangedCallback(evt =>
+            {
+                _decl = (PropertyDeclaration)evt.newValue;
+                GeneratePreviewForAffectedNodes();
+                UpdateVisuals();
+            });
+            root.Add(isProperty);
+
+            var displayName = new TextField("Display Name") { value = _displayName };
+            displayName.RegisterValueChangedCallback((evt) =>
+            {
+                _displayName = evt.newValue;
+                UpdateVisuals();
+            });
+            root.Add(displayName);
+
+            var name = new TextField("Name") { value = _name };
+            name.RegisterValueChangedCallback((evt) =>
+            {
+                _name = evt.newValue;
+            });
+            root.Add(name);
+
+            var defaultValue = new FloatField { value = _value, label = "Default Value" };
+            defaultValue.RegisterValueChangedCallback((evt) => {
+                _value = evt.newValue;
+                UpdatePreviewMaterial();
+            });
+            root.Add(defaultValue);
         }
 
         public override bool LowProfile => true;
@@ -666,12 +724,13 @@ namespace ZSG
 
         protected override void Generate(NodeVisitor visitor)
         {
-            if (visitor.GenerationMode == GenerationMode.Preview)
+            bool preview = visitor.GenerationMode == GenerationMode.Preview;
+            if (preview || _decl == PropertyDeclaration.Property)
             {
-                string propertyName = GetVariableNameForPreview(OUT);
-                var prop = new PropertyDescriptor(PropertyType.Float, "", propertyName, _value.ToString());
+                string propertyName = preview ? GetVariableNameForPreview(OUT) : _name;
+                var prop = new PropertyDescriptor(PropertyType.Float, _displayName, propertyName, _value.ToString());
                 visitor.AddProperty(prop);
-                PortData[OUT] = new GeneratedPortData(new Float(1), propertyName);
+                PortData[OUT] = new GeneratedPortData(new Float(1), prop.Name);
             }
             else
             {

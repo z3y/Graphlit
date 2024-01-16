@@ -17,6 +17,12 @@ namespace ZSG
         TextureCube,
     }
 
+    public enum PropertyDeclaration
+    {
+        Constant,
+        Property
+    }
+
     public class PropertyDescriptor
     {
         public PropertyDescriptor(PropertyType type, string displayName, string name = null, string defaultValue = null, List<string> attributes = null)
@@ -25,7 +31,7 @@ namespace ZSG
             DisplayName = displayName;
             DefaultValue = defaultValue;
             Attributes = attributes;
-            if (name is null)
+            if (string.IsNullOrEmpty(name))
             {
                 Name = "_" + displayName?.RemoveWhitespace();
             }
