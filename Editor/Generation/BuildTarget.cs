@@ -33,16 +33,12 @@ namespace ZSG
                     continue;
                 }
 
-                var portDesc = portDescriptors.Find(x => x.ID == currentID);
+                var portDesc = portDescriptors[currentID];
 
                 if (portDesc.Type is Float @float)
                 {
-                    var inputData = GetInputPortData(currentID);
-                    portData[currentID] = new GeneratedPortData(inputData.Type, inputData.Name);
-
-                    var cast = Cast(currentID, @float.components);
-                    visitor.AppendLine($"output.{portDesc.Name} = {cast.Name};");
-
+                    var inputData = PortData[currentID];
+                    visitor.AppendLine($"output.{portDesc.Name} = {inputData.Name};");
                     structField.Add($"{@float} {portDesc.Name};");
                 }
             }
@@ -52,7 +48,7 @@ namespace ZSG
 
         public override bool EnablePreview => false;
 
-        public sealed override void Generate(NodeVisitor visitor) { }
+        protected sealed override void Generate(NodeVisitor visitor) { }
     }
 
     public class UnlitBuildTarget : BuildTarget

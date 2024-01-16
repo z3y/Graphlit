@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using static UnityEngine.EventSystems.StandaloneInputModule;
 
 
 namespace ZSG
@@ -57,6 +58,9 @@ namespace ZSG
                 TraverseGraph(v, vertexVisitor, portsMask);
                 TraverseGraph(f, fragmentVisitor, portsMask);
 
+                v.DefaultVisit(vertexVisitor);
+                f.DefaultVisit(fragmentVisitor);
+
                 v.VisitTemplate(vertexVisitor, portsMask);
                 f.VisitTemplate(fragmentVisitor, portsMask);
             }
@@ -69,7 +73,8 @@ namespace ZSG
             //var vertexVisitor = new NodeVisitor(this, ShaderStage.Vertex, passIndex, "VertexDescription");
             var fragmentVisitor = new NodeVisitor(this, ShaderStage.Fragment, 0, "SurfaceDescription");
             TraverseGraph(shaderNode, fragmentVisitor);
-            shaderNode.Generate(fragmentVisitor);
+            shaderNode.DefaultVisit(fragmentVisitor);
+
             shaderNode.UpdateGraphView();
 
             if (GenerationMode == GenerationMode.Preview)
@@ -102,7 +107,7 @@ namespace ZSG
             var target = new UnlitBuildTarget();
             target.BuilderPassthourgh(shaderBuilder);
 
-            shaderBuilder.passBuilders[0].renderStates.Add("Cull", "Off");
+            //shaderBuilder.passBuilders[0].renderStates.Add("Cull", "Off");
             shaderBuilder.Build(shaderNode);
 
             string result = shaderBuilder.ToString();
@@ -198,7 +203,7 @@ namespace ZSG
                 TraverseGraph(inputNode, visitor);
 
                 //UnityEngine.Debug.Log("Visiting " + inputNode.viewDataKey);
-                inputNode.Generate(visitor);
+                inputNode.DefaultVisit(visitor);
                 visitedNodes.Add(inputNode.viewDataKey);
 
                 if (GenerationMode == GenerationMode.Preview)

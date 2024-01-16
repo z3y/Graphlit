@@ -63,12 +63,12 @@ namespace ZSG
         public IEnumerable<Port> Inputs => inputContainer.Children().Where(x => x is Port).Cast<Port>().Where(x => x.direction == Direction.Input);
         public IEnumerable<Port> Outputs => outputContainer.Children().Where(x => x is Port).Cast<Port>().Where(x => x.direction == Direction.Output);
 
-        public abstract void Generate(NodeVisitor visitor);
+        protected abstract void Generate(NodeVisitor visitor);
 
-        public List<PortDescriptor> portDescriptors = new();
+        public Dictionary<int, PortDescriptor> portDescriptors = new();
         public void AddPort(PortDescriptor portDescriptor)
         {
-            portDescriptors.Add(portDescriptor);
+            portDescriptors.Add(portDescriptor.ID, portDescriptor);
 
             var container = portDescriptor.Direction == PortDirection.Input ? inputContainer : outputContainer;
 
@@ -161,28 +161,11 @@ namespace ZSG
             titleContainer.Insert(0, titleLabel);
 
             titleContainer.style.height = 32;
-
-            //titleContainer.
-
-
-            /*var noRadius = new StyleLength { value = 0 };
-            var borderStyle = this.ElementAt(0).style;
-            var borderSelectionStyle = this.ElementAt(1).style;
-
-            borderStyle.borderBottomLeftRadius = noRadius;
-            borderStyle.borderBottomRightRadius = noRadius;
-            borderStyle.borderTopLeftRadius = noRadius;
-            borderStyle.borderTopRightRadius = noRadius;
-
-            borderSelectionStyle.borderBottomLeftRadius = noRadius;
-            borderSelectionStyle.borderBottomRightRadius = noRadius;
-            borderSelectionStyle.borderTopLeftRadius = noRadius;
-            borderSelectionStyle.borderTopRightRadius = noRadius;*/
         }
 
         public static int UniqueVariableID = 0;
-        public Dictionary<int, GeneratedPortData> portData = new();
-        public GeneratedPortData GetInputPortData(int portID)
+        public Dictionary<int, GeneratedPortData> PortData { get; set; } = new();
+        GeneratedPortData GetInputPortData(int portID, NodeVisitor visitor)
         {
             var port = Inputs.Where(x => x.GetPortID() == portID).First();
             if (port.connected)
@@ -190,20 +173,74 @@ namespace ZSG
                 var incomingPort = port.connections.First().output;
                 var incomingNode = (ShaderNode)incomingPort.node;
 
-                return incomingNode.portData[incomingPort.GetPortID()];
+                return incomingNode.PortData[incomingPort.GetPortID()];
             }
             else
             {
-                return GetDefaultInput(portID);
+                return GetDefaultInput(portID, visitor);
             }
         }
 
-        public virtual GeneratedPortData GetDefaultInput(int portID)
+        GeneratedPortData GetDefaultInput(int portID, NodeVisitor visitor)
         {
-            var descriptor = portDescriptors.Find(x => x.ID == portID);
-            return new GeneratedPortData(descriptor.Type, "float(0)");
+            var descriptor = portDescriptors[portID];
+            string value = GetDefaultBindingInput(descriptor, visitor);
+            return new GeneratedPortData(descriptor.Type, value);
         }
 
+        Dictionary<int, PortBinding> _portBindings = new();
+
+        string GetDefaultBindingInput(PortDescriptor portDescriptor, NodeVisitor visitor)
+        {
+            int id = portDescriptor.ID;
+            if (_portBindings.ContainsKey(id))
+            {
+                return _portBindings[id].ToString(); // some binding string here and bind
+            }
+            else
+            {
+                return "float(0)";
+            }
+        }
+
+        internal void DefaultVisit(NodeVisitor visitor)
+        {
+            foreach (var descriptor in portDescriptors.Values)
+            {
+                if (descriptor.Direction == PortDirection.Input)
+                {
+                    int id = descriptor.ID;
+                    var newData = GetInputPortData(id, visitor);
+
+                    if (newData.Type is Float incomingFloat && descriptor.Type is Float resultFloat)
+                    {
+                        // automatic cast
+                        if (!resultFloat.dynamic && resultFloat.components != incomingFloat.components)
+                        {
+                            PortData[id] = newData;
+                            newData = Cast(id, resultFloat.components, false);
+                        }
+
+                        if (resultFloat.dynamic)
+                        {
+                            resultFloat.components = incomingFloat.components;
+                        }
+
+                        // inherit precision
+                        resultFloat.fullPrecision = incomingFloat.fullPrecision;
+                        newData.Type = resultFloat;
+                    }
+
+                    PortData[id] = newData;
+                }
+                else
+                {
+                    
+                }
+            }
+
+            Generate(visitor);
+        }
 
         public Float ImplicitTruncation(params int[] IDs)
         {
@@ -212,7 +249,7 @@ namespace ZSG
             for (int i = 0; i < IDs.Length; i++)
             {
                 var ID = IDs[i];
-                var type = (Float)portData[ID].Type;
+                var type = (Float)PortData[ID].Type;
                 var components = type.components;
                 if (components == 1)
                 {
@@ -234,9 +271,9 @@ namespace ZSG
 
         public GeneratedPortData Cast(int portID, int targetComponent, bool updatePort = true)
         {
-            var data = portData[portID];
+            var data = PortData[portID];
             var name = data.Name;
-            var type = (Float)portData[portID].Type;
+            var type = (Float)PortData[portID].Type;
             var components = type.components;
             string typeName = type.fullPrecision ? "float" : "half";
 
@@ -281,14 +318,14 @@ namespace ZSG
 
             type.components = targetComponent;
             var newData = new GeneratedPortData(type, name);
-            if (updatePort) portData[portID] = newData;
+            if (updatePort) PortData[portID] = newData;
 
             return newData;
         }
 
         public void UpdateGraphView()
         {
-            foreach (var data in portData)
+            foreach (var data in PortData)
             {
                 var port = PortElements.Where(x => x.GetPortID() == data.Key).First();
                 int portID = port.GetPortID();
@@ -407,17 +444,11 @@ namespace ZSG
             AddPort(new(PortDirection.Output, new Float(1, true), OUT));
         }
 
-        public override void Generate(NodeVisitor visitor)
+        protected override void Generate(NodeVisitor visitor)
         {
-            //visitor.SetOutputType(OUT, visitor.ImplicitTruncation(A, B));
-            //visitor.OutputExpression(OUT, A, "*", B, "Multiply");
-            // inherit or if not connected use default
-            portData[A] = GetInputPortData(A);
-            portData[B] = GetInputPortData(B);
-            var t = ImplicitTruncation(A, B);
-            portData[OUT] = new GeneratedPortData(t, "Multiply" + UniqueVariableID++); // new name
+            PortData[OUT] = new GeneratedPortData(ImplicitTruncation(A, B), "Multiply" + UniqueVariableID++);
 
-            visitor.AppendLine($"{portData[OUT].Type} {portData[OUT].Name} = {portData[A].Name} * {portData[B].Name};");
+            visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = {PortData[A].Name} * {PortData[B].Name};");
         }
     }
 
@@ -435,14 +466,11 @@ namespace ZSG
             AddPort(new(PortDirection.Output, new Float(1, true), OUT));
         }
 
-        public override void Generate(NodeVisitor visitor)
+        protected override void Generate(NodeVisitor visitor)
         {
-            portData[A] = GetInputPortData(A);
-            portData[B] = GetInputPortData(B);
-            var t = ImplicitTruncation(A, B);
-            portData[OUT] = new GeneratedPortData(t, "Add" + UniqueVariableID++);
+            PortData[OUT] = new GeneratedPortData(ImplicitTruncation(A, B), "Add" + UniqueVariableID++);
 
-            visitor.AppendLine($"{portData[OUT].Type} {portData[OUT].Name} = {portData[A].Name} + {portData[B].Name};");
+            visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = {PortData[A].Name} + {PortData[B].Name};");
         }
     }
 
@@ -468,18 +496,18 @@ namespace ZSG
             inputContainer.Add(f);
         }
 
-        public override void Generate(NodeVisitor visitor)
+        protected override void Generate(NodeVisitor visitor)
         {
             if (visitor.GenerationMode == GenerationMode.Preview)
             {
                 string propertyName = GetVariableNameForPreview(OUT);
                 var prop = new PropertyDescriptor(PropertyType.Float3, "", propertyName, _value.ToString());
                 visitor.AddProperty(prop);
-                portData[OUT] = new GeneratedPortData(new Float(3), propertyName);
+                PortData[OUT] = new GeneratedPortData(new Float(3), propertyName);
             }
             else
             {
-                portData[OUT] = new GeneratedPortData(new Float(3), "float3" + _value.ToString());
+                PortData[OUT] = new GeneratedPortData(new Float(3), "float3" + _value.ToString());
             }
         }
     }
@@ -506,18 +534,18 @@ namespace ZSG
             inputContainer.Add(f);
         }
 
-        public override void Generate(NodeVisitor visitor)
+        protected override void Generate(NodeVisitor visitor)
         {
             if (visitor.GenerationMode == GenerationMode.Preview)
             {
                 string propertyName = GetVariableNameForPreview(OUT);
                 var prop = new PropertyDescriptor(PropertyType.Float2, "", propertyName, _value.ToString());
                 visitor.AddProperty(prop);
-                portData[OUT] = new GeneratedPortData(new Float(2), propertyName);
+                PortData[OUT] = new GeneratedPortData(new Float(2), propertyName);
             }
             else
             {
-                portData[OUT] = new GeneratedPortData(new Float(2), "float2" + _value.ToString());
+                PortData[OUT] = new GeneratedPortData(new Float(2), "float2" + _value.ToString());
             }
         }
     }
@@ -536,7 +564,8 @@ namespace ZSG
                 mat.SetFloat(propertyName, _value);
             };
 
-            var f = new FloatField { value = _value };
+            var f = new FloatField { value = _value, label = "X" };
+            f.Children().First().style.minWidth = 0;
             f.RegisterValueChangedCallback((evt) => {
                 _value = evt.newValue;
                 UpdatePreviewMaterial();
@@ -544,18 +573,18 @@ namespace ZSG
             inputContainer.Add(f);
         }
 
-        public override void Generate(NodeVisitor visitor)
+        protected override void Generate(NodeVisitor visitor)
         {
             if (visitor.GenerationMode == GenerationMode.Preview)
             {
                 string propertyName = GetVariableNameForPreview(OUT);
                 var prop = new PropertyDescriptor(PropertyType.Float, "", propertyName, _value.ToString());
                 visitor.AddProperty(prop);
-                portData[OUT] = new GeneratedPortData(new Float(1), propertyName);
+                PortData[OUT] = new GeneratedPortData(new Float(1), propertyName);
             }
             else
             {
-                portData[OUT] = new GeneratedPortData(new Float(1), "float(" + _value.ToString() + ")");
+                PortData[OUT] = new GeneratedPortData(new Float(1), "float(" + _value.ToString() + ")");
             }
         }
     }
@@ -570,9 +599,9 @@ namespace ZSG
             AddPort(new(PortDirection.Output, new Float(2, true), OUT));
         }
 
-        public override void Generate(NodeVisitor visitor)
+        protected override void Generate(NodeVisitor visitor)
         {
-            portData[OUT] = new GeneratedPortData(new Float(2), "varyings.uv0");
+            PortData[OUT] = new GeneratedPortData(new Float(2), "varyings.uv0");
         }
     }
 
@@ -601,13 +630,48 @@ namespace ZSG
             extensionContainer.Add(f);
         }
 
-        public override void Generate(NodeVisitor visitor)
+        protected override void Generate(NodeVisitor visitor)
         {
-            portData[IN] = GetInputPortData(IN);
-
             int components = swizzle.Length;
-            var data = new GeneratedPortData(new Float(components, false), portData[IN].Name + "." + swizzle);
-            portData[OUT] = data;
+            var data = new GeneratedPortData(new Float(components, false), PortData[IN].Name + "." + swizzle);
+            PortData[OUT] = data;
+        }
+    }
+
+    [NodeInfo("Time")]
+    public sealed class TimeNode : ShaderNode
+    {
+        const int OUT = 0;
+
+        public override void AddElements()
+        {
+            AddPort(new(PortDirection.Output, new Float(4, true), OUT));
+        }
+
+        protected override void Generate(NodeVisitor visitor)
+        {
+            var data = new GeneratedPortData(new Float(4, false), "_Time");
+            PortData[OUT] = data;
+        }
+    }
+
+    [NodeInfo("sin", "sin(IN)"), Serializable]
+    public class SinNode : ShaderNode
+    {
+        const int IN = 0;
+        const int OUT = 1;
+
+        public override void AddElements()
+        {
+            AddPort(new(PortDirection.Input, new Float(1, true), IN, "A"));
+            AddPort(new(PortDirection.Output, new Float(1, true), OUT));
+        }
+
+        protected override void Generate(NodeVisitor visitor)
+        {
+            PortData[OUT] = new GeneratedPortData(new Float(1, true), "Sin" + UniqueVariableID++);
+
+            visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = sin({PortData[IN].Name});");
         }
     }
 }

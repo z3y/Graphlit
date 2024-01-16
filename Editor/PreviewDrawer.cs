@@ -9,7 +9,7 @@ namespace ZSG
     public class PreviewDrawer : ImmediateModeElement, IDisposable
     {
         const int Resolution = 128;
-        private static readonly Matrix4x4 _matrix = Matrix4x4.TRS(new Vector3(Resolution / 2.0f, Resolution / 2.0f, 0), Quaternion.Euler(0,180,180), new Vector3(Resolution, Resolution, Resolution));
+        private static readonly Matrix4x4 _matrix = Matrix4x4.TRS(new Vector3(Resolution / 2.0f, Resolution / 2.0f, -10f), Quaternion.Euler(0,180,180), new Vector3(Resolution, Resolution, 1));
         public Material material;
         public static List<Material> materials = new List<Material>();
 

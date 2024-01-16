@@ -16,11 +16,17 @@ namespace ZSG
         public IPortType Type { get; set; }
         public int ID { get; }
         public string Name { get; }
+
     }
 
     public enum PortDirection
     {
         Input,
         Output
+    }
+
+    public enum PortBinding
+    {
+        UV0, UV1, UV2, UV3
     }
 }
