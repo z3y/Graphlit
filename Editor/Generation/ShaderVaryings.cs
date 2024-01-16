@@ -35,6 +35,7 @@ namespace ZSG
             public string semantic;
             public string prefix;
             public VaryingType type;
+            public string passthrough;
             public int channels;
         }
 
@@ -45,6 +46,7 @@ namespace ZSG
             _attributes.RequirePositionOS(3);
             return RequireInternal(VaryingType.PositionCS, "positionCS", "SV_POSITION", channels);
         }
+
         public string RequirePositionWS(int channels = 4)
         {
             _attributes.RequirePositionOS(3);
@@ -53,7 +55,6 @@ namespace ZSG
 
         public string RequireUV(int texcoord, int channels = 4)
         {
-            _attributes.RequireUV(texcoord, channels);
             VaryingType type = VaryingType.UV0;
             switch (texcoord)
             {
@@ -62,10 +63,10 @@ namespace ZSG
                 case 2: type = VaryingType.UV2; break;
                 case 3: type = VaryingType.UV3; break;
             }
-            return RequireInternal(type, "uv" + texcoord, "TEXCOORD", channels);
+            return RequireInternal(type, "uv" + texcoord, "TEXCOORD", channels, _attributes.RequireUV(texcoord, channels));
         }
 
-        private string RequireInternal(VaryingType type, string name, string semantic, int channels = 4)
+        private string RequireInternal(VaryingType type, string name, string semantic, int channels = 4, string passthrough = null)
         {
             int index = varyings.FindIndex(x => x.type == type);
 
@@ -76,7 +77,8 @@ namespace ZSG
                     name = name,
                     semantic = semantic,
                     type = type,
-                    channels = channels
+                    channels = channels,
+                    passthrough = passthrough
                 };
                 varyings.Add(desc);
             }
@@ -93,23 +95,26 @@ namespace ZSG
         public void AppendVaryings(ShaderStringBuilder sb)
         {
             int semanticCounter = 0;
-            foreach (var attr in varyings)
+            foreach (var vary in varyings)
             {
-                var semantic = attr.semantic;
+                var semantic = vary.semantic;
                 if (semantic == "TEXCOORD")
                 {
                     semantic += semanticCounter++;
                 }
-                sb.AppendLine($"float{attr.channels} {attr.name} : {semantic};");
+                sb.AppendLine($"float{vary.channels} {vary.name} : {semantic};");
             }
         }
 
-        public void PackVaryings(ShaderStringBuilder sb)
+        public void VaryingsPassthrough(ShaderStringBuilder sb)
         {
-            /*foreach (var attr in varyings)
+            foreach (var var in varyings)
             {
-                sb.AppendLine($"float{attr.channels} {attr.name} : {attr.semantic};");
-            }*/
+                if (!string.IsNullOrEmpty(var.passthrough))
+                {
+                    sb.AppendLine("varyings." + var.name + " = " + var.passthrough + ";");
+                }
+            }
         }
     }
 }

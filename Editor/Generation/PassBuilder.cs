@@ -128,6 +128,7 @@ namespace ZSG
         {
             sb.AppendLine("VertexDescription VertexDescriptionFunction(Attributes attributes, inout Varyings varyings)");
             sb.Indent();
+            varyings.VaryingsPassthrough(sb);
             foreach (var line in vertexDescription)
             {
                 sb.AppendLine(line);

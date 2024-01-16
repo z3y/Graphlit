@@ -67,7 +67,7 @@ namespace ZSG
 
             basePass.attributes.RequirePositionOS();
             basePass.varyings.RequirePositionCS();
-            //basePass.attributes.RequireUV(0);
+            //basePass.attributes.RequireUV(0, 3);
             //basePass.attributes.RequireColor(3);
             //basePass.attributes.RequireNormal();
 

@@ -202,21 +202,35 @@ namespace ZSG
             {
                 var binding = _portBindings[id];
                 var pass = visitor._shaderBuilder.passBuilders[visitor.Pass];
-                var attributes = pass.attributes;
-                var varyings = pass.varyings;
 
                 if (portDescriptor.Type is Float @float)
                 {
                     int components = @float.components;
                     // if vertex shader
-                    return binding switch
+                    if (visitor.Stage == ShaderStage.Vertex)
                     {
-                        PortBinding.UV0 => varyings.RequireUV(0, components),
-                        PortBinding.UV1 => varyings.RequireUV(1, components),
-                        PortBinding.UV2 => varyings.RequireUV(2, components),
-                        PortBinding.UV3 => varyings.RequireUV(3, components),
-                        _ => throw new NotImplementedException(),
-                    };
+                        var attributes = pass.attributes;
+                        return binding switch
+                        {
+                            PortBinding.UV0 => attributes.RequireUV(0, components),
+                            PortBinding.UV1 => attributes.RequireUV(1, components),
+                            PortBinding.UV2 => attributes.RequireUV(2, components),
+                            PortBinding.UV3 => attributes.RequireUV(3, components),
+                            _ => throw new NotImplementedException(),
+                        };
+                    }
+                    else
+                    {
+                        var varyings = pass.varyings;
+                        return binding switch
+                        {
+                            PortBinding.UV0 => varyings.RequireUV(0, components),
+                            PortBinding.UV1 => varyings.RequireUV(1, components),
+                            PortBinding.UV2 => varyings.RequireUV(2, components),
+                            PortBinding.UV3 => varyings.RequireUV(3, components),
+                            _ => throw new NotImplementedException(),
+                        };
+                    }
                 }
             }
 
@@ -611,20 +625,49 @@ namespace ZSG
         }
     }
 
-    [NodeInfo("uv0")]
-    public class UV0Node : ShaderNode
+    [NodeInfo("UV"), Serializable]
+    public class UVNode : ShaderNode
     {
         const int OUT = 0;
+
+        [SerializeField] Channel _uv = Channel.UV0;
+
+        enum Channel
+        {
+            UV0, UV1, UV2, UV3
+        }
 
         public override void AddElements()
         {
             AddPort(new(PortDirection.Output, new Float(2, true), OUT));
-            Bind(OUT, PortBinding.UV0);
+            Bind(OUT, ChannelToBinding());
+
+            var dropdown = new EnumField(_uv);
+
+            dropdown.RegisterValueChangedCallback((evt) =>
+            {
+                _uv = (Channel)evt.newValue;
+                Bind(OUT, ChannelToBinding());
+                GeneratePreviewForAffectedNodes();
+            });
+            inputContainer.Add(dropdown);
+
+        }
+
+        private PortBinding ChannelToBinding()
+        {
+            return _uv switch
+            {
+                Channel.UV0 => PortBinding.UV0,
+                Channel.UV1 => PortBinding.UV1,
+                Channel.UV2 => PortBinding.UV2,
+                Channel.UV3 => PortBinding.UV3,
+                _ => throw new NotImplementedException(),
+            };
         }
 
         protected override void Generate(NodeVisitor visitor)
         {
-            // PortData[OUT] = new GeneratedPortData(new Float(2), "varyings.uv0");
         }
     }
 
