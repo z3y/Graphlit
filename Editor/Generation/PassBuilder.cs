@@ -26,7 +26,7 @@ namespace ZSG
         public List<string> vertexDescriptionStruct = new();
         public List<string> surfaceDescription = new();
         public List<string> surfaceDescriptionStruct = new();
-        public HashSet<PropertyDescriptor> properties = new();
+        public List<PropertyDescriptor> properties = new();
 
         public ShaderAttributes attributes;
         public ShaderVaryings varyings;
@@ -65,7 +65,8 @@ namespace ZSG
 
             sb.AppendLine("struct Varyings");
             sb.Indent();
-            varyings.AppendVaryings(sb);
+            varyings.PackVaryings();
+            varyings.AppendVaryingsStruct(sb);
             sb.UnIndent("};");
 
             sb.AppendLine("struct VertexDescription");
@@ -113,24 +114,24 @@ namespace ZSG
             sb.AppendLine("#include_with_pragmas \"" + fragmentShaderPath + '"');
         }
 
-        public void AppendSurfaceDescription(ShaderStringBuilder sb)
+        public void AppendVertexDescription(ShaderStringBuilder sb)
         {
-            sb.AppendLine("SurfaceDescription SurfaceDescriptionFunction(Varyings varyings)");
+            sb.AppendLine("VertexDescription VertexDescriptionFunction(Attributes attributes, inout Varyings varyings)");
             sb.Indent();
-            varyings.UnpackVaryings(sb);
-            foreach (var line in surfaceDescription)
+            varyings.AppendVaryingPacking(sb);
+            foreach (var line in vertexDescription)
             {
                 sb.AppendLine(line);
             }
             sb.UnIndent();
         }
 
-        public void AppendVertexDescription(ShaderStringBuilder sb)
+        public void AppendSurfaceDescription(ShaderStringBuilder sb)
         {
-            sb.AppendLine("VertexDescription VertexDescriptionFunction(Attributes attributes, inout Varyings varyings)");
+            sb.AppendLine("SurfaceDescription SurfaceDescriptionFunction(Varyings varyings)");
             sb.Indent();
-            varyings.PackVaryings(sb);
-            foreach (var line in vertexDescription)
+            varyings.AppendVaryingUnpacking(sb);
+            foreach (var line in surfaceDescription)
             {
                 sb.AppendLine(line);
             }

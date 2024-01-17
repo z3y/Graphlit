@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ZSG
 {
@@ -45,7 +46,7 @@ namespace ZSG
 
         private List<string> _expression;
         private HashSet<string> _function;
-        private HashSet<PropertyDescriptor> _props;
+        private List<PropertyDescriptor> _props;
 
         /*public string GetInputVariable(int ID)
         {
@@ -84,16 +85,19 @@ namespace ZSG
 */
 
         public void AppendLine(string value)
-         {
+        {
              _expression.Add(value);
-         }
+        }
         public void AddFunction(string function)
         {
             _function.Add(function);
         }
         public void AddProperty(PropertyDescriptor property)
         {
-            _props.Add(property);
+            if (!_props.Any(x => x.Name == property.Name))
+            {
+                _props.Add(property);
+            }
         }
     }
 }

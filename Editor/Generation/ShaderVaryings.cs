@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using UnityEngine;
@@ -40,7 +41,7 @@ namespace ZSG
         }
 
         public List<VaryingDescriptor> varyings = new();
-        public HashSet<string> customVaryings = new();
+        public HashSet<string> customVaryingsStrings = new();
 
         public string RequirePositionCS(int channels = 4)
         {
@@ -50,7 +51,7 @@ namespace ZSG
 
         public void RequireCustomString(string varying)
         {
-            customVaryings.Add(varying);
+            customVaryingsStrings.Add(varying);
         }
         private int _interpCounter = 0;
         public string RequireCustom(int channels)
@@ -113,7 +114,7 @@ namespace ZSG
             return name;
         }
 
-        public void AppendVaryings(ShaderStringBuilder sb)
+        public void AppendVaryingsStruct(ShaderStringBuilder sb)
         {
             int semanticCounter = 0;
             foreach (var vary in varyings)
@@ -121,41 +122,153 @@ namespace ZSG
                 var semantic = vary.semantic;
                 if (semantic == "TEXCOORD")
                 {
-                    semantic += semanticCounter++;
+                    continue;
                 }
                 sb.AppendLine($"float{vary.channels} {vary.name} : {semantic};");
             }
-            foreach (var var in customVaryings)
+            foreach (var b in _packingBins)
+            {
+                b.name = "interp" + semanticCounter;
+                sb.AppendLine($"float{b.capacity} {b.name} : TEXCOORD{semanticCounter++};");
+            }
+            foreach (var var in customVaryingsStrings)
             {
                 sb.AppendLine(var);
             }
         }
 
-        public void PackVaryings(ShaderStringBuilder sb)
+        List<string> _varyingsWithoutPacking = new();
+        List<string> _varyingPackingVertex = new();
+        List<PackingBin> _packingBins = new();
+
+        public void AppendVaryingPacking(ShaderStringBuilder sb)
         {
-            foreach (var var in varyings)
+            foreach (var vary in _varyingPackingVertex)
             {
-                if (!string.IsNullOrEmpty(var.passthrough))
+                sb.AppendLine(vary);
+            }
+            foreach (var b in _packingBins)
+            {
+                int offset = 0;
+                foreach (var v in b.varyings)
                 {
-                    sb.AppendLine("varyings." + var.name + " = " + var.passthrough + ";");
+                    string vMasked = Mask(b.name, v.channels, offset);
+                    offset += v.channels;
+                    sb.AppendLine("varyings." + vMasked + " = " + Mask(v.passthrough, v.channels) + ";");
                 }
             }
         }
 
-        private string Mask(string input, int count)
+        public void PackVaryings()
         {
-            return input + ".xyzw".Substring(0, count + 1);
-        }
+            _varyingsWithoutPacking.Clear();
+            _varyingPackingVertex.Clear();
+            _packingBins.Clear();
+            var packed = new List<VaryingDescriptor>();
+            //var regular = new List<VaryingDescriptor>();
 
-        public void UnpackVaryings(ShaderStringBuilder sb)
-        {
-            foreach (var var in varyings)
+            foreach (var v in varyings)
+            {
+                if (v.semantic == "TEXCOORD")
+                {
+                    packed.Add(v);
+                }
+                else
+                {
+                    //regular.Add(v);
+                }
+            }
+/*            foreach (var var in regular)
             {
                 if (!string.IsNullOrEmpty(var.passthrough))
                 {
+                    _varyingPackingVertex.Add("varyings." + var.name + " = " + var.passthrough + ";");
+
                     string input = Mask("varyings." + var.name, var.channels);
-                    sb.AppendLine($"float{var.channels} {var.name} = {input};");
-                    //sb.AppendLine("float" + var.name + " = " + var.passthrough + ";");
+                    _varyingsWithoutPacking.Add($"float{var.channels} {var.name} = {input};");
+                }
+            }*/
+
+            var toPack = packed.OrderByDescending(x => x.channels).ToList();
+            _packingBins = Pack(toPack);
+        }
+
+        List<PackingBin> Pack(List<VaryingDescriptor> varyings)
+        {
+            var bins = new List<PackingBin>();
+            for (int i = 0; i < varyings.Count; i++)
+            {
+                VaryingDescriptor v = varyings[i];
+                PackingBin bestFit = null;
+                int bestFitCapacity = 0;
+                foreach (var b in bins)
+                {
+                    int capacity = b.CanPack(v);
+                    if (capacity > 0 && capacity > bestFitCapacity)
+                    {
+                        bestFit = b;
+                        bestFitCapacity = capacity;
+                    }
+                }
+                if (bestFitCapacity == 0)
+                {
+                    var bin = new PackingBin();
+                    bin.Pack(v);
+                    bins.Add(bin);
+                }
+                else
+                {
+                    bestFit.Pack(v);
+                }
+                i--;
+                varyings.Remove(v);
+            }
+
+            return bins;
+        }
+
+        class PackingBin
+        {
+            public int capacity = 0;
+            public List<VaryingDescriptor> varyings = new();
+            public string name = "";
+
+            public int CanPack(VaryingDescriptor desc)
+            {
+                int result = desc.channels + capacity;
+                if (result <= 4)
+                {
+                    return result;
+                }
+                return 0;
+            }
+
+            public void Pack(VaryingDescriptor desc)
+            {
+                capacity += desc.channels;
+                varyings.Add(desc);
+            }
+        }
+
+        string Mask(string input, int count, int offset = 0)
+        {
+            return input + "." + "xyzw".Substring(offset, count);
+        }
+
+        public void AppendVaryingUnpacking(ShaderStringBuilder sb)
+        {
+            foreach (var v in _varyingsWithoutPacking)
+            {
+                sb.AppendLine(v);
+            }
+            foreach (var b in _packingBins)
+            {
+                int offset = 0;
+                foreach (var v in b.varyings)
+                {
+                    string input = Mask("varyings." + b.name, v.channels, offset);
+                    offset += v.channels;
+                    sb.AppendLine($"float{v.channels} {v.name} = {input};");
                 }
             }
         }
