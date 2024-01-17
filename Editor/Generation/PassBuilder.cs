@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace ZSG
 {
@@ -118,11 +119,13 @@ namespace ZSG
         {
             sb.AppendLine("VertexDescription VertexDescriptionFunction(Attributes attributes, inout Varyings varyings)");
             sb.Indent();
-            varyings.AppendVaryingPacking(sb);
+            sb.AppendLine("VertexDescription output = (VertexDescription)0;");
             foreach (var line in vertexDescription)
             {
                 sb.AppendLine(line);
             }
+            varyings.AppendVaryingPacking(sb);
+            sb.AppendLine("return output;");
             sb.UnIndent();
         }
 
@@ -131,10 +134,12 @@ namespace ZSG
             sb.AppendLine("SurfaceDescription SurfaceDescriptionFunction(Varyings varyings)");
             sb.Indent();
             varyings.AppendVaryingUnpacking(sb);
+            sb.AppendLine($"SurfaceDescription output = (SurfaceDescription)0;");
             foreach (var line in surfaceDescription)
             {
                 sb.AppendLine(line);
             }
+            sb.AppendLine("return output;");
             sb.UnIndent();
         }
     }

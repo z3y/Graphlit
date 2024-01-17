@@ -42,8 +42,6 @@ namespace ZSG
                     structField.Add($"{@float} {portDesc.Name};");
                 }
             }
-
-            visitor.AppendLine($"return output;");
         }
 
         public override bool EnablePreview => false;
@@ -83,7 +81,6 @@ namespace ZSG
             basePass.varyings.RequireCustom(1, "float4(0,0,0,0)");
             basePass.varyings.RequireCustom(1, "float4(0,0,0,0)");
             basePass.varyings.RequireCustom(1, "float4(0,0,0,0)");
-            basePass.varyings.RequireCustom(3, "float4(0,0,0,0)");
 
 
 

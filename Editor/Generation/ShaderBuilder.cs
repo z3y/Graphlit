@@ -51,8 +51,8 @@ namespace ZSG
                 int passIndex = i;
 
                 var pass = passBuilders[i];
-                var vertexVisitor = new NodeVisitor(this, ShaderStage.Vertex, passIndex, "VertexDescription");
-                var fragmentVisitor = new NodeVisitor(this, ShaderStage.Fragment, passIndex, "SurfaceDescription");
+                var vertexVisitor = new NodeVisitor(this, ShaderStage.Vertex, passIndex);
+                var fragmentVisitor = new NodeVisitor(this, ShaderStage.Fragment, passIndex);
 
                 int[] portsMask = pass.Ports;
                 TraverseGraph(v, vertexVisitor, portsMask);
@@ -70,8 +70,8 @@ namespace ZSG
         public void Build(ShaderNode shaderNode)
         {
             ShaderNode.UniqueVariableID = 0;
-            //var vertexVisitor = new NodeVisitor(this, ShaderStage.Vertex, passIndex, "VertexDescription");
-            var fragmentVisitor = new NodeVisitor(this, ShaderStage.Fragment, 0, "SurfaceDescription");
+            //var vertexVisitor = new NodeVisitor(this, ShaderStage.Vertex, passIndex);
+            var fragmentVisitor = new NodeVisitor(this, ShaderStage.Fragment, 0);
             TraverseGraph(shaderNode, fragmentVisitor);
             shaderNode.BuilderVisit(fragmentVisitor);
 

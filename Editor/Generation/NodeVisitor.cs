@@ -17,7 +17,7 @@ namespace ZSG
 
     public class NodeVisitor
     {
-        public NodeVisitor(ShaderBuilder shaderBuilder, ShaderStage stage, int passIndex, string outputStruct)
+        public NodeVisitor(ShaderBuilder shaderBuilder, ShaderStage stage, int passIndex)
         {
             _shaderBuilder = shaderBuilder;
             _function = shaderBuilder.passBuilders[passIndex].functions;
@@ -31,8 +31,6 @@ namespace ZSG
             {
                 _expression = _shaderBuilder.passBuilders[passIndex].surfaceDescription;
             }
-
-            _expression.Add($"{outputStruct} output = ({outputStruct})0;");
 
             Pass = passIndex;
             Stage = stage;
