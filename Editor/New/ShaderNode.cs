@@ -128,6 +128,8 @@ namespace ZSG
 
         public virtual bool EnablePreview => true;
         public virtual bool LowProfile => false;
+        public bool preview3D = false;
+
         private void AddDefaultElements()
         {
 
@@ -136,7 +138,7 @@ namespace ZSG
             AddElements();
             if (EnablePreview)
             {
-                //AddPreview();
+                AddPreview();
             }
 
 
@@ -418,41 +420,11 @@ namespace ZSG
         public PreviewDrawer previewDrawer;
         private void AddPreview()
         {
-            //previewDrawer = new PreviewDrawer();
-            //var previewElement = previewDrawer.GetVisualElement();
-            //extensionContainer.Add(previewDrawer);
-            // ShaderBuilder.GeneratePreview(GraphView, this);
-
-            /*            return;
-                        var foldout = new Toggle("V");
-                        foldout.style.opacity = 0.5f;
-                        var checkmark = foldout.Q("unity-checkmark");
-                        checkmark.style.flexGrow = 0;
-                        checkmark.style.width = 0;
-                        var centerAlign = new StyleEnum<Align> { value = Align.Center };
-                        foldout.style.alignSelf = centerAlign;
-                        foldout.style.alignItems = centerAlign;
-                        foldout.RegisterValueChangedCallback((evt) => {
-                            if (evt.newValue == true)
-                            {
-                                previewDrawer = new PreviewDrawer();
-                                ShaderBuilder.GeneratePreview(GraphView, this);
-                                var previewElement = previewDrawer.GetVisualElement();
-                                extensionContainer.Add(previewElement);
-                                foldout.label = "Ʌ";
-                            }
-                            else
-                            {
-                                var p = extensionContainer.Q("PreviewDrawer");
-                                extensionContainer.Remove(p);
-                                foldout.label = "V";
-                            }
-                        });
-                        extensionContainer.Add(foldout);
-            */
-            //foldout.SendEvent(new ChangeEvent<bool>());
-
-            //previewElement.parent.style.marginLeft = 0;
+            previewDrawer = new PreviewDrawer
+            {
+                preview3D = preview3D
+            };
+            extensionContainer.Add(previewDrawer);
         }
 
         public Action<Material> onUpdatePreviewMaterial = (mat) => { };
@@ -875,6 +847,7 @@ namespace ZSG
             inputContainer.Add(intField);
 
             Bind(0, _binding);
+            preview3D = true;
         }
 
         protected override void Generate(NodeVisitor visitor)

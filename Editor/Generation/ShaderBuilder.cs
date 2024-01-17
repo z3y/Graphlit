@@ -104,6 +104,7 @@ namespace ZSG
             shaderBuilder.shaderName = "Hidden/ZSGPreviews/" + shaderNode.viewDataKey;
             var target = new UnlitBuildTarget();
             target.BuilderPassthourgh(shaderBuilder);
+            shaderBuilder.passBuilders[0].pragmas.Add("#define PREVIEW");
 
             //shaderBuilder.passBuilders[0].renderStates.Add("Cull", "Off");
             shaderBuilder.Build(shaderNode);
@@ -111,17 +112,7 @@ namespace ZSG
             string result = shaderBuilder.ToString();
 
             var shader = ShaderUtil.CreateShaderAsset(result);
-            if (shaderNode.previewDrawer is null)
-            {
-                var previewDrawer = new PreviewDrawer(shader);
-                shaderNode.previewDrawer = previewDrawer;
-                shaderNode.extensionContainer.Add(previewDrawer);
-                shaderNode.RefreshExpandedState();
-            }
-            else
-            {
-                shaderNode.previewDrawer.SetShader(shader);
-            }
+            shaderNode.previewDrawer?.SetShader(shader);
 
             if (log) UnityEngine.Debug.Log(shaderBuilder);
         }

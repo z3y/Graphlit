@@ -117,7 +117,7 @@ namespace ZSG
         #endregion
 
         #region Tangent
-        private static string ObjectToWorldDirection(string a) => $" UnityObjectToWorldDir({a}.xyz)";
+        private static string ObjectToWorldDirection(string a) => $"UnityObjectToWorldDir({a}.xyz)";
         private static string AppendTangentWSVertex(PassBuilder pass)
         {
             string value = "tangentWS";

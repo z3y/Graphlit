@@ -61,6 +61,11 @@ namespace ZSG
 
             sb.AppendLine("#include \"UnityCG.cginc\"");
 
+            foreach(var p in pragmas)
+            {
+                sb.AppendLine(p);
+            }
+
             sb.AppendLine("struct Attributes");
             sb.Indent();
             attributes.AppendAttributes(sb);

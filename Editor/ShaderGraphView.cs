@@ -63,9 +63,9 @@ namespace ZSG
                     {
                         ShaderBuilder.GeneratePreviewFromEdge(this, edge, true);
                     }
-
                 }
             }
+
             return change;
         }
 

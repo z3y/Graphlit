@@ -18,9 +18,11 @@ namespace ZSG
         private static Mesh _quad = Resources.GetBuiltinResource<Mesh>("Quad.fbx");
         private static Mesh _sphere = Resources.GetBuiltinResource<Mesh>("Sphere.fbx");
 
-        public PreviewDrawer(Shader shader)
+        public bool preview3D = false;
+
+        public PreviewDrawer()
         {
-            material = new Material(shader)
+            material = new Material(Shader.Find("Unlit/Color"))
             {
                 hideFlags = HideFlags.HideAndDontSave
             };
@@ -55,7 +57,16 @@ namespace ZSG
         protected override void ImmediateRepaint()
         {
             material.SetPass(0);
-            Graphics.DrawMeshNow(_quad, _matrix);
+            if (preview3D)
+            {
+                //r t = Time.realtimeSinceStartup;
+                var rotation = Quaternion.Euler(0, 180 , 180);
+                Graphics.DrawMeshNow(_sphere, Matrix4x4.TRS(new Vector3(Resolution / 2.0f, Resolution / 2.0f, -10f), rotation, new Vector3(Resolution/2f, Resolution/2f, 1)));
+            }
+            else
+            {
+                Graphics.DrawMeshNow(_quad, _matrix);
+            }
         }
 
         ~PreviewDrawer()
