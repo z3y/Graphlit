@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
-using UnityEngine.UIElements;
 using ZSG.Nodes;
 using ZSG.Nodes.PortType;
 
@@ -70,17 +67,10 @@ namespace ZSG
             basePass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
             basePass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-            basePass.attributes.RequireUV(0, 4);
+            //basePass.attributes.RequireUV(0, 4);
             //basePass.attributes.RequireColor(3);
             //basePass.attributes.RequireNormal();
-
-
-            basePass.varyings.RequireUV(0, 3);
-            basePass.varyings.RequireCustom(1, "float4(0,0,0,0)");
-            basePass.varyings.RequireCustom(2, "float4(0,0,0,0)");
-            basePass.varyings.RequireCustom(1, "float4(0,0,0,0)");
-            basePass.varyings.RequireCustom(1, "float4(0,0,0,0)");
-            basePass.varyings.RequireCustom(1, "float4(0,0,0,0)");
+            basePass.varyings.RequireCustom(1, "float(1)");
 
 
 

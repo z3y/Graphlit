@@ -14,6 +14,9 @@ struct VaryingsWrapper : Varyings
 VaryingsWrapper vert(AttributesWrapper input)
 {
     VaryingsWrapper varyings = (VaryingsWrapper)0;
+    UNITY_SETUP_INSTANCE_ID(input);
+    UNITY_INITIALIZE_OUTPUT(VaryingsWrapper, varyings);
+    UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(varyings);
 
     VertexDescription vertexDescription = VertexDescriptionFunction((Attributes) input, (Varyings)varyings);
     // input.positionOS += vertexDescription.Position;

@@ -212,32 +212,7 @@ namespace ZSG
 
                 if (portDescriptor.Type is Float @float)
                 {
-                    int components = @float.components;
-                    // if vertex shader
-                    if (visitor.Stage == ShaderStage.Vertex)
-                    {
-                        var attributes = pass.attributes;
-                        return binding switch
-                        {
-                            PortBinding.UV0 => attributes.RequireUV(0, components),
-                            PortBinding.UV1 => attributes.RequireUV(1, components),
-                            PortBinding.UV2 => attributes.RequireUV(2, components),
-                            PortBinding.UV3 => attributes.RequireUV(3, components),
-                            _ => throw new NotImplementedException(),
-                        };
-                    }
-                    else
-                    {
-                        var varyings = pass.varyings;
-                        return binding switch
-                        {
-                            PortBinding.UV0 => varyings.RequireUV(0, components),
-                            PortBinding.UV1 => varyings.RequireUV(1, components),
-                            PortBinding.UV2 => varyings.RequireUV(2, components),
-                            PortBinding.UV3 => varyings.RequireUV(3, components),
-                            _ => throw new NotImplementedException(),
-                        };
-                    }
+                    return PortBindings.GetBindingString(pass, visitor, @float, binding);
                 }
             }
 
@@ -862,6 +837,22 @@ namespace ZSG
             PortData[OUT] = new GeneratedPortData(new Float(1, true), "Sin" + UniqueVariableID++);
 
             visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = sin({PortData[IN].Name});");
+        }
+    }
+
+    [NodeInfo("Test")]
+    public class TestNode : ShaderNode
+    {
+        const int OUT = 0;
+
+        public override void AddElements()
+        {
+            AddPort(new(PortDirection.Output, new Float(3, true), OUT));
+            Bind(OUT, PortBinding.PositionWS);
+        }
+
+        protected override void Generate(NodeVisitor visitor)
+        {
         }
     }
 }

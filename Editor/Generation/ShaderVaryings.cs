@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Xml.Linq;
 using UnityEngine;
+using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
@@ -16,26 +14,10 @@ namespace ZSG
 
         readonly ShaderAttributes _attributes;
 
-        public enum VaryingType
-        {
-            PositionCS,
-            PositionWS,
-            NormalWS,
-            UV0,
-            UV1,
-            UV2,
-            UV3,
-            TangentWS,
-            Color,
-            Custom
-        }
-
         public struct VaryingDescriptor
         {
             public string name;
-            public string semantic;
             public string prefix;
-            public VaryingType type;
             public string passthrough;
             public int channels;
         }
@@ -43,10 +25,10 @@ namespace ZSG
         public List<VaryingDescriptor> varyings = new();
         public HashSet<string> customVaryingsStrings = new();
 
-        public string RequirePositionCS(int channels = 4)
+        public void RequirePositionCS(int channels = 4)
         {
             _attributes.RequirePositionOS(3);
-            return RequireInternal(VaryingType.PositionCS, "positionCS", "SV_POSITION", channels);
+            RequireCustomString("float4 positionCS : SV_POSITION;");
         }
 
         public void RequireCustomString(string varying)
@@ -59,8 +41,6 @@ namespace ZSG
             var desc = new VaryingDescriptor
             {
                 name = "interp" + _interpCounter++,
-                semantic = "TEXCOORD",
-                type = VaryingType.Custom,
                 channels = channels,
                 passthrough = value
             };
@@ -69,36 +49,20 @@ namespace ZSG
             return Mask(desc.name, channels);
         }
 
-        /*        public string RequirePositionWS(int channels = 4)
-                {
-                    _attributes.RequirePositionOS(3);
-                    return RequireInternal(VaryingType.PositionWS, "positionWS", "TEXCOORD", channels);
-                }*/
-
         public string RequireUV(int texcoord, int channels = 4)
         {
-            VaryingType type = VaryingType.UV0;
-            switch (texcoord)
-            {
-                case 0: type = VaryingType.UV0; break;
-                case 1: type = VaryingType.UV1; break;
-                case 2: type = VaryingType.UV2; break;
-                case 3: type = VaryingType.UV3; break;
-            }
-            return RequireInternal(type, "uv" + texcoord, "TEXCOORD", channels, _attributes.RequireUV(texcoord, channels));
+            return RequireInternal("uv" + texcoord, channels, _attributes.RequireUV(texcoord, channels));
         }
 
-        private string RequireInternal(VaryingType type, string name, string semantic, int channels = 4, string passthrough = null)
+        internal string RequireInternal(string name, int channels = 4, string passthrough = null)
         {
-            int index = varyings.FindIndex(x => x.type == type);
+            int index = varyings.FindIndex(x => x.name == name);
 
             if (index < 0)
             {
                 var desc = new VaryingDescriptor
                 {
                     name = name,
-                    semantic = semantic,
-                    type = type,
                     channels = channels,
                     passthrough = passthrough
                 };
@@ -117,15 +81,6 @@ namespace ZSG
         public void AppendVaryingsStruct(ShaderStringBuilder sb)
         {
             int semanticCounter = 0;
-            foreach (var vary in varyings)
-            {
-                var semantic = vary.semantic;
-                if (semantic == "TEXCOORD")
-                {
-                    continue;
-                }
-                sb.AppendLine($"float{vary.channels} {vary.name} : {semantic};");
-            }
             foreach (var b in _packingBins)
             {
                 b.name = "interp" + semanticCounter;
@@ -164,30 +119,7 @@ namespace ZSG
             _varyingsWithoutPacking.Clear();
             _varyingPackingVertex.Clear();
             _packingBins.Clear();
-            var packed = new List<VaryingDescriptor>();
-            //var regular = new List<VaryingDescriptor>();
-
-            foreach (var v in varyings)
-            {
-                if (v.semantic == "TEXCOORD")
-                {
-                    packed.Add(v);
-                }
-                else
-                {
-                    //regular.Add(v);
-                }
-            }
-/*            foreach (var var in regular)
-            {
-                if (!string.IsNullOrEmpty(var.passthrough))
-                {
-                    _varyingPackingVertex.Add("varyings." + var.name + " = " + var.passthrough + ";");
-
-                    string input = Mask("varyings." + var.name, var.channels);
-                    _varyingsWithoutPacking.Add($"float{var.channels} {var.name} = {input};");
-                }
-            }*/
+            var packed = varyings.ToList();
 
             var toPack = packed.OrderByDescending(x => x.channels).ToList();
             _packingBins = Pack(toPack);

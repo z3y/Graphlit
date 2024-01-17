@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq.Expressions;
 
 namespace ZSG
 {
@@ -31,6 +30,9 @@ namespace ZSG
 
         public ShaderAttributes attributes;
         public ShaderVaryings varyings;
+
+        public HashSet<string> generatedBindingsVertex = new();
+        public HashSet<string> generatedBindingsFragment = new();
 
 
         public string vertexShaderPath;
@@ -120,6 +122,10 @@ namespace ZSG
             sb.AppendLine("VertexDescription VertexDescriptionFunction(Attributes attributes, inout Varyings varyings)");
             sb.Indent();
             sb.AppendLine("VertexDescription output = (VertexDescription)0;");
+            foreach (var line in generatedBindingsVertex)
+            {
+                sb.AppendLine(line);
+            }
             foreach (var line in vertexDescription)
             {
                 sb.AppendLine(line);
@@ -134,6 +140,10 @@ namespace ZSG
             sb.AppendLine("SurfaceDescription SurfaceDescriptionFunction(Varyings varyings)");
             sb.Indent();
             varyings.AppendVaryingUnpacking(sb);
+            foreach (var line in generatedBindingsFragment)
+            {
+                sb.AppendLine(line);
+            }
             sb.AppendLine($"SurfaceDescription output = (SurfaceDescription)0;");
             foreach (var line in surfaceDescription)
             {
