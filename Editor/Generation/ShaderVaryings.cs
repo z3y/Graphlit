@@ -184,6 +184,7 @@ namespace ZSG
 
         string Mask(string input, int count, int offset = 0)
         {
+            if (count == 4) return input;
             return input + "." + "xyzw".Substring(offset, count);
         }
 

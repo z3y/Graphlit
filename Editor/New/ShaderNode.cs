@@ -845,10 +845,12 @@ namespace ZSG
     public class BindingTestNode : ShaderNode
     {
         [SerializeField] PortBinding _binding = PortBinding.UV0;
+        [SerializeField] int _components = 3;
+
 
         public override void AddElements()
         {
-            AddPort(new(PortDirection.Output, new Float(3), 0));
+            AddPort(new(PortDirection.Output, new Float(_components), 0));
 
             var dropdown = new EnumField(_binding);
 
@@ -860,11 +862,28 @@ namespace ZSG
             });
             inputContainer.Add(dropdown);
 
+            var intField = new IntegerField("Components")
+            {
+                value = _components
+            };
+            intField.RegisterValueChangedCallback((evt) =>
+            {
+                _components = evt.newValue;
+                portDescriptors[0].Type = new Float(_components);
+                GeneratePreviewForAffectedNodes();
+            });
+            inputContainer.Add(intField);
+
             Bind(0, _binding);
         }
 
         protected override void Generate(NodeVisitor visitor)
         {
+            var data = PortData[0];
+            var @float = (Float)data.Type;
+            @float.components = _components;
+            data.Type = @float;
+            PortData[0] = data;
         }
     }
 }

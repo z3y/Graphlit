@@ -10,6 +10,8 @@ namespace ZSG
         PositionOS,
         NormalWS,
         NormalOS,
+        TangentWS,
+        TangentOS,
     }
 
     public static class PortBindings
@@ -26,10 +28,12 @@ namespace ZSG
                     PortBinding.UV1 => attributes.RequireUV(1, components),
                     PortBinding.UV2 => attributes.RequireUV(2, components),
                     PortBinding.UV3 => attributes.RequireUV(3, components),
-                    PortBinding.PositionWS => RequirePositionWSVertex(pass),
                     PortBinding.PositionOS => RequirePositionOSVertex(pass),
+                    PortBinding.PositionWS => RequirePositionWSVertex(pass),
                     PortBinding.NormalOS => RequireNormalOSVertex(pass),
                     PortBinding.NormalWS => RequireNormalWSVertex(pass),
+                    PortBinding.TangentOS => RequireTangentOSVertex(pass),
+                    PortBinding.TangentWS => RequireTangentWSVertex(pass),
                     _ => throw new NotImplementedException(),
                 };
             }
@@ -42,10 +46,12 @@ namespace ZSG
                     PortBinding.UV1 => varyings.RequireUV(1, components),
                     PortBinding.UV2 => varyings.RequireUV(2, components),
                     PortBinding.UV3 => varyings.RequireUV(3, components),
-                    PortBinding.PositionWS => RequirePositionWSFragment(pass),
                     PortBinding.PositionOS => RequirePositionOSFragment(pass),
-                    PortBinding.NormalWS => RequireNormalWSFragment(pass),
+                    PortBinding.PositionWS => RequirePositionWSFragment(pass),
                     PortBinding.NormalOS => RequireNormalOSFragment(pass),
+                    PortBinding.NormalWS => RequireNormalWSFragment(pass),
+                    PortBinding.TangentOS => RequireTangentOSFragment(pass),
+                    PortBinding.TangentWS => RequireTangentWSFragment(pass),
                     _ => throw new NotImplementedException(),
                 };
             }
@@ -110,5 +116,33 @@ namespace ZSG
 
         #endregion
 
+        #region Tangent
+        private static string ObjectToWorldDirection(string a) => $" UnityObjectToWorldDir({a}.xyz)";
+        private static string AppendTangentWSVertex(PassBuilder pass)
+        {
+            string value = "tangentWS";
+            var a = pass.attributes.RequireTangentOS();
+            pass.generatedBindingsVertex.Add($"float4 {value} = float4({ObjectToWorldDirection(a)}, {a}.w);");
+            return value;
+        }
+        private static string RequireTangentWSFragment(PassBuilder pass)
+        {
+            string value = AppendTangentWSVertex(pass);
+            return pass.varyings.RequireInternal("tangentWS", 4, value);
+        }
+        private static string RequireTangentOSFragment(PassBuilder pass)
+        {
+            string value = pass.attributes.RequireTangentOS();
+            return pass.varyings.RequireInternal("tangentOS", 4, value);
+        }
+        private static string RequireTangentWSVertex(PassBuilder pass)
+        {
+            return AppendTangentWSVertex(pass);
+        }
+        private static string RequireTangentOSVertex(PassBuilder pass)
+        {
+            return pass.attributes.RequireTangentOS();
+        }
+        #endregion
     }
 }
