@@ -54,7 +54,7 @@ namespace ZSG
             customVaryingsStrings.Add(varying);
         }
         private int _interpCounter = 0;
-        public string RequireCustom(int channels)
+        public string RequireCustom(int channels, string value)
         {
             var desc = new VaryingDescriptor
             {
@@ -62,11 +62,11 @@ namespace ZSG
                 semantic = "TEXCOORD",
                 type = VaryingType.Custom,
                 channels = channels,
-                passthrough = null
+                passthrough = value
             };
             varyings.Add(desc);
 
-            return desc.name;
+            return Mask(desc.name, channels);
         }
 
         /*        public string RequirePositionWS(int channels = 4)
@@ -111,7 +111,7 @@ namespace ZSG
                 varyings[index] = attr;
             }
 
-            return name;
+            return Mask(name, channels);
         }
 
         public void AppendVaryingsStruct(ShaderStringBuilder sb)
@@ -154,7 +154,7 @@ namespace ZSG
                 {
                     string vMasked = Mask(b.name, v.channels, offset);
                     offset += v.channels;
-                    sb.AppendLine("varyings." + vMasked + " = " + Mask(v.passthrough, v.channels) + ";");
+                    sb.AppendLine("varyings." + vMasked + " = " + v.passthrough + ";");
                 }
             }
         }

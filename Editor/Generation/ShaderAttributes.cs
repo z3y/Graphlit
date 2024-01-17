@@ -90,7 +90,11 @@ namespace ZSG
                 attributes[index] = attr;
             }
 
-            return "attributes." + name;
+            return "attributes." + Mask(name, channels);
+        }
+        string Mask(string input, int count, int offset = 0)
+        {
+            return input + "." + "xyzw".Substring(offset, count);
         }
 
         public void AppendAttributes(ShaderStringBuilder sb)

@@ -72,12 +72,21 @@ namespace ZSG
             basePass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
             basePass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-            //basePass.attributes.RequireUV(0, 3);
+            basePass.attributes.RequireUV(0, 4);
             //basePass.attributes.RequireColor(3);
             //basePass.attributes.RequireNormal();
 
 
-            //basePass.varyings.Add("float2 uv0 : TEXCOORD0;");
+            basePass.varyings.RequireUV(0, 3);
+            basePass.varyings.RequireCustom(1, "float4(0,0,0,0)");
+            basePass.varyings.RequireCustom(2, "float4(0,0,0,0)");
+            basePass.varyings.RequireCustom(1, "float4(0,0,0,0)");
+            basePass.varyings.RequireCustom(1, "float4(0,0,0,0)");
+            basePass.varyings.RequireCustom(1, "float4(0,0,0,0)");
+            basePass.varyings.RequireCustom(3, "float4(0,0,0,0)");
+
+
+
 
             //basePass.vertexDescription.Add("")
 
