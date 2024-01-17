@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
-using UnityEngine;
 using ZSG.Nodes.PortType;
-using static UnityEditor.ShaderData;
-using static ZSG.ShaderVaryings;
 
 namespace ZSG
 {
@@ -11,7 +7,9 @@ namespace ZSG
     {
         UV0, UV1, UV2, UV3,
         PositionWS,
-        PositionOS
+        PositionOS,
+        NormalWS,
+        NormalOS,
     }
 
     public static class PortBindings
@@ -30,6 +28,8 @@ namespace ZSG
                     PortBinding.UV3 => attributes.RequireUV(3, components),
                     PortBinding.PositionWS => RequirePositionWSVertex(pass),
                     PortBinding.PositionOS => RequirePositionOSVertex(pass),
+                    PortBinding.NormalOS => RequireNormalOSVertex(pass),
+                    PortBinding.NormalWS => RequireNormalWSVertex(pass),
                     _ => throw new NotImplementedException(),
                 };
             }
@@ -44,12 +44,14 @@ namespace ZSG
                     PortBinding.UV3 => varyings.RequireUV(3, components),
                     PortBinding.PositionWS => RequirePositionWSFragment(pass),
                     PortBinding.PositionOS => RequirePositionOSFragment(pass),
+                    PortBinding.NormalWS => RequireNormalWSFragment(pass),
+                    PortBinding.NormalOS => RequireNormalOSFragment(pass),
                     _ => throw new NotImplementedException(),
                 };
             }
         }
 
-        private static string ObjectToWorldNormal(string a) => $"UnityObjectToWorldNormal({a})";
+        #region Position
         private static string ObjectToWorldPosition(string a) => $"mul(unity_ObjectToWorld, float4({a}, 1))";
 
         private static string RequirePositionWSFragment(PassBuilder pass)
@@ -76,16 +78,37 @@ namespace ZSG
         {
             return AppendPositionWSVertex(pass);
         }
-        /*        private static string RequirePositionWSVertex(PassBuilder pass, int components = 3)
-                {
-                    string value = "positionWS";
-                    var a = pass.attributes.RequirePositionOS(3);
-                    return pass.varyings.RequireInternal("positionWS", components, ObjectToWorldNormal(a));
-                    return ""
-                }
-                private static string RequirePositionOSVertex(PassBuilder pass, int components = 3)
-                {
-                    return pass.varyings.RequireInternal("positionOS", 3, pass.attributes.RequirePositionOS());
-                }*/
+        #endregion
+
+        #region Normal
+        private static string ObjectToWorldNormal(string a) => $"UnityObjectToWorldNormal({a})";
+        private static string AppendNormalWSVertex(PassBuilder pass)
+        {
+            string value = "normalWS";
+            var a = pass.attributes.RequireNormalOS(3);
+            pass.generatedBindingsVertex.Add($"float3 {value} = {ObjectToWorldNormal(a)};");
+            return value;
+        }
+        private static string RequireNormalWSFragment(PassBuilder pass)
+        {
+            string value = AppendNormalWSVertex(pass);
+            return pass.varyings.RequireInternal("normalWS", 3, value);
+        }
+        private static string RequireNormalOSFragment(PassBuilder pass)
+        {
+            string value = pass.attributes.RequireNormalOS(3);
+            return pass.varyings.RequireInternal("normalOS", 3, value);
+        }
+        private static string RequireNormalWSVertex(PassBuilder pass)
+        {
+            return AppendNormalWSVertex(pass);
+        }
+        private static string RequireNormalOSVertex(PassBuilder pass)
+        {
+            return pass.attributes.RequireNormalOS(3);
+        }
+
+        #endregion
+
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Channels;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -840,20 +841,26 @@ namespace ZSG
         }
     }
 
-    [NodeInfo("Test")]
-    public class TestNode : ShaderNode
+    [NodeInfo("BindingTest"), Serializable]
+    public class BindingTestNode : ShaderNode
     {
+        [SerializeField] PortBinding _binding = PortBinding.UV0;
 
         public override void AddElements()
         {
-            AddPort(new(PortDirection.Output, new Float(3), 0, "Position OS"));
-            AddPort(new(PortDirection.Output, new Float(3), 1, "Position WS"));
-            //AddPort(new(PortDirection.Output, new Float(3), 2));
-            //AddPort(new(PortDirection.Output, new Float(3), 3));
-            //AddPort(new(PortDirection.Output, new Float(3), 4));
+            AddPort(new(PortDirection.Output, new Float(3), 0));
 
-            Bind(0, PortBinding.PositionOS);
-            Bind(1, PortBinding.PositionWS);
+            var dropdown = new EnumField(_binding);
+
+            dropdown.RegisterValueChangedCallback((evt) =>
+            {
+                _binding = (PortBinding)evt.newValue;
+                Bind(0, _binding);
+                GeneratePreviewForAffectedNodes();
+            });
+            inputContainer.Add(dropdown);
+
+            Bind(0, _binding);
         }
 
         protected override void Generate(NodeVisitor visitor)
