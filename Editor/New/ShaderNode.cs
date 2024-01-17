@@ -843,12 +843,17 @@ namespace ZSG
     [NodeInfo("Test")]
     public class TestNode : ShaderNode
     {
-        const int OUT = 0;
 
         public override void AddElements()
         {
-            AddPort(new(PortDirection.Output, new Float(3, true), OUT));
-            Bind(OUT, PortBinding.PositionWS);
+            AddPort(new(PortDirection.Output, new Float(3), 0, "Position OS"));
+            AddPort(new(PortDirection.Output, new Float(3), 1, "Position WS"));
+            //AddPort(new(PortDirection.Output, new Float(3), 2));
+            //AddPort(new(PortDirection.Output, new Float(3), 3));
+            //AddPort(new(PortDirection.Output, new Float(3), 4));
+
+            Bind(0, PortBinding.PositionOS);
+            Bind(1, PortBinding.PositionWS);
         }
 
         protected override void Generate(NodeVisitor visitor)
