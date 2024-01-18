@@ -118,6 +118,8 @@ namespace ZSG
             AppendVertexDescription(sb);
             AppendSurfaceDescription(sb);
 
+            varyings.AppendUnpackDefinesForTarget(sb);
+
             sb.AppendLine("#include_with_pragmas \"" + vertexShaderPath + '"');
             sb.AppendLine("#include_with_pragmas \"" + fragmentShaderPath + '"');
         }

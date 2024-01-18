@@ -25,7 +25,7 @@ namespace ZSG
         public List<VaryingDescriptor> varyings = new();
         public HashSet<string> customVaryingsStrings = new();
 
-        public void RequirePositionCS(int channels = 4)
+        public void RequirePositionCS()
         {
             _attributes.RequirePositionOS(3);
             RequireCustomString("float4 positionCS : SV_POSITION;");
@@ -49,7 +49,7 @@ namespace ZSG
             return Mask(desc.name, channels);
         }
 
-        public string RequireUV(int texcoord, int channels = 4)
+        public string RequireUV(int texcoord, int channels = 2)
         {
             return RequireInternal("uv" + texcoord, channels, _attributes.RequireUV(texcoord, channels));
         }
@@ -108,8 +108,8 @@ namespace ZSG
                 foreach (var v in b.varyings)
                 {
                     string vMasked = Mask(b.name, v.channels, offset);
+                    sb.AppendLine("varyings." + vMasked + " = " + Mask(v.passthrough, v.channels) + ";");
                     offset += v.channels;
-                    sb.AppendLine("varyings." + vMasked + " = " + v.passthrough + ";");
                 }
             }
         }
@@ -187,9 +187,10 @@ namespace ZSG
             if (count == 4) return input;
             return input + "." + "xyzw".Substring(offset, count);
         }
-
+        private List<string> _unpackDefines = new List<string>();
         public void AppendVaryingUnpacking(ShaderStringBuilder sb)
         {
+            _unpackDefines.Clear();
             foreach (var v in _varyingsWithoutPacking)
             {
                 sb.AppendLine(v);
@@ -202,7 +203,16 @@ namespace ZSG
                     string input = Mask("varyings." + b.name, v.channels, offset);
                     offset += v.channels;
                     sb.AppendLine($"float{v.channels} {v.name} = {input};");
+                    _unpackDefines.Add($"#define UNPACK_{v.name.ToUpper()} {input}");
                 }
+            }
+        }
+
+        public void AppendUnpackDefinesForTarget(ShaderStringBuilder sb)
+        {
+            foreach (var d in _unpackDefines)
+            {
+                sb.AppendLine(d);
             }
         }
     }

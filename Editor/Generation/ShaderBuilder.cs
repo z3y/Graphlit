@@ -107,6 +107,11 @@ namespace ZSG
             var pass = shaderBuilder.passBuilders[0];
             pass.pragmas.Add("#define PREVIEW");
 
+            if (shaderNode.preview3D)
+            {
+                pass.pragmas.Add("#define PREVIEW3D");
+            }
+
             var tags = shaderBuilder.subshaderTags;
             tags.Add("Queue", "Transparent");
             tags.Add("RenderType", "Transparent");

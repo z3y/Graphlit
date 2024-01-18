@@ -90,7 +90,7 @@ namespace ZSG
                 attributes[index] = attr;
             }
 
-            return "attributes." + Mask(name, channels);
+            return "attributes." + name;
         }
         string Mask(string input, int count, int offset = 0)
         {
