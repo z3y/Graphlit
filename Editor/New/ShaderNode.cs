@@ -490,7 +490,47 @@ namespace ZSG
             visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = {PortData[A].Name} * {PortData[B].Name};");
         }
     }
+    [NodeInfo("dot", "dot(a, b)"), Serializable]
+    public class DotNode : ShaderNode
+    {
+        const int A = 0;
+        const int B = 1;
+        const int OUT = 2;
 
+        public override void AddElements()
+        {
+            AddPort(new(PortDirection.Input, new Float(1, true), A, "A"));
+            AddPort(new(PortDirection.Input, new Float(1, true), B, "B"));
+            AddPort(new(PortDirection.Output, new Float(1, false), OUT));
+        }
+
+        protected override void Generate(NodeVisitor visitor)
+        {
+            ImplicitTruncation(A, B);
+            PortData[OUT] = new GeneratedPortData(new Float(1), "Multiply" + UniqueVariableID++);
+
+            visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = dot({PortData[A].Name}, {PortData[B].Name});");
+        }
+    }
+    [NodeInfo("normalize", "normalize(a)"), Serializable]
+    public class NormalizeNode : ShaderNode
+    {
+        const int IN = 0;
+        const int OUT = 1;
+
+        public override void AddElements()
+        {
+            AddPort(new(PortDirection.Input, new Float(3, true), IN, "IN"));
+            AddPort(new(PortDirection.Output, new Float(3, true), OUT));
+        }
+
+        protected override void Generate(NodeVisitor visitor)
+        {
+            PortData[OUT] = new GeneratedPortData(PortData[IN].Type, "Normalize" + UniqueVariableID++);
+
+            visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = normalize({PortData[IN].Name});");
+        }
+    }
     [NodeInfo("+", "a + b"), Serializable]
     public class AddNode : ShaderNode
     {

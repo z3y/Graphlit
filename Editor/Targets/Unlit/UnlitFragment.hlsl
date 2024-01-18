@@ -7,14 +7,15 @@ float sphIntersect(float3 ro, float3 rd, float4 sph)
     float b = dot( oc, rd );
     float c = dot( oc, oc ) - sph.w*sph.w;
     float h = b*b - c;
-    if( h<0.0 ) return -1.0;
+    // if( h<0.0 ) return -1.0;
+    if( h<0.0 ) return -b;
     h = sqrt( h );
     return -b - h;
 }
 
 half4 frag(VaryingsWrapper varyings) : SV_Target
 {
-    #ifdef PREVIEW3D
+    #ifdef PREVIEW
         // https://bgolus.medium.com/rendering-a-sphere-on-a-quad-13c92025570c
         float2 uv = UNPACK_UV0.xy;
         uv -= 0.5;
@@ -75,6 +76,7 @@ half4 frag(VaryingsWrapper varyings) : SV_Target
     #ifdef PREVIEW
         #ifdef PREVIEW3D
             col.a = alpha3D;
+            // col.rgb = dot(UNPACK_NORMALWS, normalize(float3(0.46, 0.18, -0.28)));
         #else
             col.a = 1;
         #endif

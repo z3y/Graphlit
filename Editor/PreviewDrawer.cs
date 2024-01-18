@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -50,6 +51,8 @@ namespace ZSG
         protected override void ImmediateRepaint()
         {
             Graphics.DrawTexture(contentRect, Texture2D.whiteTexture, material, 0);
+
+            MarkDirtyRepaint();
         }
 
         ~PreviewDrawer()
