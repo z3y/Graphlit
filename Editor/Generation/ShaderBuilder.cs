@@ -104,7 +104,18 @@ namespace ZSG
             shaderBuilder.shaderName = "Hidden/ZSGPreviews/" + shaderNode.viewDataKey;
             var target = new UnlitBuildTarget();
             target.BuilderPassthourgh(shaderBuilder);
-            shaderBuilder.passBuilders[0].pragmas.Add("#define PREVIEW");
+            var pass = shaderBuilder.passBuilders[0];
+            pass.pragmas.Add("#define PREVIEW");
+
+            var tags = shaderBuilder.subshaderTags;
+            tags.Add("Queue", "Transparent");
+            tags.Add("RenderType", "Transparent");
+            var states = pass.renderStates;
+            states.Add("ZWrite", "Off");
+            states.Add("Blend", "SrcAlpha OneMinusSrcAlpha");
+
+            PortBindings.GetBindingString(pass, ShaderStage.Fragment, 2, PortBinding.UV0);
+
 
             //shaderBuilder.passBuilders[0].renderStates.Add("Cull", "Off");
             shaderBuilder.Build(shaderNode);

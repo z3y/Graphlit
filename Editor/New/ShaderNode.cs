@@ -215,7 +215,7 @@ namespace ZSG
 
                 if (portDescriptor.Type is Float @float)
                 {
-                    return PortBindings.GetBindingString(pass, visitor, @float, binding);
+                    return PortBindings.GetBindingString(pass, visitor.Stage, @float.components, binding);
                 }
             }
 

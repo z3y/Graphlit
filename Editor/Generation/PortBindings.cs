@@ -16,10 +16,9 @@ namespace ZSG
 
     public static class PortBindings
     {
-        public static string GetBindingString(PassBuilder pass, NodeVisitor vistor, Float @float, PortBinding binding)
+        public static string GetBindingString(PassBuilder pass, ShaderStage stage, int components, PortBinding binding)
         {
-            int components = @float.components;
-            if (vistor.Stage == ShaderStage.Vertex)
+            if (stage == ShaderStage.Vertex)
             {
                 var attributes = pass.attributes;
                 return binding switch
