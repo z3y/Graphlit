@@ -46,9 +46,14 @@ namespace ZSG
 
             evt.menu.AppendAction("Generate Preview", GeneratePreview);
             evt.menu.AppendAction("Remove Preview", RemovePreview);
-
+            evt.menu.AppendAction("Preview 3D Toggle", Preview3DToggle);
         }
 
+        public void Preview3DToggle(DropdownMenuAction action)
+        {
+            preview3D = !preview3D;
+            GeneratePreviewForAffectedNodes();
+        }
         public void GeneratePreview(DropdownMenuAction action)
         {
             ShaderBuilder.GeneratePreview(GraphView, this, action != null);
