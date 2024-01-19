@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.Remoting.Channels;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 using ZSG.Nodes;
@@ -902,6 +903,50 @@ namespace ZSG
             @float.components = _components;
             data.Type = @float;
             PortData[0] = data;
+        }
+    }
+
+    [NodeInfo("SampleTexture2D"), Serializable]
+    public class SampleTexture2DNode : ShaderNode
+    {
+        const int UV = 0;
+        const int OUT = 3;
+
+        [SerializeField] UnityEngine.Texture2D _texture;
+
+        public override void AddElements()
+        {
+            AddPort(new(PortDirection.Input, new Float(2), UV, "uv"));
+            AddPort(new(PortDirection.Output, new Float(4), OUT));
+            Bind(UV, PortBinding.UV0);
+
+            onUpdatePreviewMaterial = (mat) => {
+                mat.SetTexture("_MainTex2", _texture);
+            };
+
+            var texField = new ObjectField
+            {
+                value = _texture,
+                objectType = typeof(UnityEngine.Texture2D)
+            };
+            texField.RegisterValueChangedCallback((evt) =>
+            {
+                _texture = (UnityEngine.Texture2D)evt.newValue;
+                onUpdatePreviewMaterial = (mat) => {
+                    mat.SetTexture("_MainTex2", _texture);
+                };
+                UpdatePreviewMaterial();
+            });
+            extensionContainer.Add(texField);
+        }
+
+        protected override void Generate(NodeVisitor visitor)
+        {
+            PortData[OUT] = new GeneratedPortData(new Float(4), "TextureSample" + UniqueVariableID++);
+
+            visitor.AddProperty(new PropertyDescriptor(PropertyType.Texture2D, "Texture", "_MainTex2", "\"white\" {}"));
+
+            visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = _MainTex2.Sample(sampler_MainTex2, {PortData[UV].Name});");
         }
     }
 }

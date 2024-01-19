@@ -100,11 +100,11 @@ namespace ZSG
             sb.AppendLine("// CBUFFER");
             foreach (var property in properties)
             {
-                if (property.Type == PropertyType.Texture2D || property.Type == PropertyType.TextureCube)
+             /*   if (property.Type == PropertyType.Texture2D || property.Type == PropertyType.TextureCube)
                 {
                     continue;
                 }
-
+*/
                 sb.AppendLine(property.Declaration());
             }
             sb.AppendLine("// CBUFFER END");

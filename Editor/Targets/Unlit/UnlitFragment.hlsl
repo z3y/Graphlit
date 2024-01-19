@@ -46,6 +46,29 @@ half4 frag(VaryingsWrapper varyings) : SV_Target
         #ifdef UNPACK_TANGENTWS
             UNPACK_TANGENTWS = tangentWS;
         #endif
+
+        #ifdef PREVIEW3D
+        normalWS = normalize(normalWS);
+        float2 generatedUV = float2(
+            atan2(normalWS.z, normalWS.x) / (UNITY_PI * 2.0),
+            acos(-normalWS.y) / UNITY_PI
+        );
+        generatedUV.x += 0.75;
+
+        #ifdef UNPACK_UV0
+            UNPACK_UV0.xy = generatedUV;
+        #endif
+        #ifdef UNPACK_UV1
+            UNPACK_UV1.xy = generatedUV;
+        #endif
+        #ifdef UNPACK_UV2
+            UNPACK_UV2.xy = generatedUV;
+        #endif
+        #ifdef UNPACK_UV3
+            UNPACK_UV3.xy = generatedUV;
+        #endif
+        #endif
+
     #endif
 
     SurfaceDescription surfaceDescription = SurfaceDescriptionFunction((Varyings)varyings);
