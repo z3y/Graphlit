@@ -921,8 +921,10 @@ namespace ZSG
             AddPort(new(PortDirection.Output, new Float(4), OUT));
             Bind(UV, PortBinding.UV0);
 
+            string propertyName = GetVariableNameForPreview(OUT);
+
             onUpdatePreviewMaterial = (mat) => {
-                mat.SetTexture("_MainTex2", GetTexture());
+                mat.SetTexture(propertyName, GetTexture());
             };
 
             var texField = new ObjectField
@@ -942,9 +944,11 @@ namespace ZSG
         {
             PortData[OUT] = new GeneratedPortData(new Float(4), "TextureSample" + UniqueVariableID++);
 
-            visitor.AddProperty(new PropertyDescriptor(PropertyType.Texture2D, "Texture", "_MainTex2", "\"white\" {}"));
+            string propertyName = visitor.GenerationMode == GenerationMode.Preview ? GetVariableNameForPreview(OUT) : "_MainTex";
 
-            visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = _MainTex2.Sample(sampler_MainTex2, {PortData[UV].Name});");
+            visitor.AddProperty(new PropertyDescriptor(PropertyType.Texture2D, "Texture", propertyName, "\"white\" {}"));
+
+            visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = {propertyName}.Sample(sampler{propertyName}, {PortData[UV].Name});");
         }
     }
 }

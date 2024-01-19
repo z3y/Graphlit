@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using static UnityEditor.ObjectChangeEventStream;
+using static ZSG.UnlitBuildTarget;
 
 namespace ZSG
 {
@@ -40,6 +42,8 @@ namespace ZSG
 
         public void Build(BuildTarget target)
         {
+            ShaderNode.UniqueVariableID = 0;
+
             var shaderNodes = ShaderGraphView.graphElements.Where(x => x is ShaderNode).Cast<ShaderNode>().ToList();
             var v = (TemplateOutput)shaderNodes.Find(x => x.GetType() == target.VertexDescription);
             var f = (TemplateOutput)shaderNodes.Find(x => x.GetType() == target.SurfaceDescription);
@@ -102,16 +106,29 @@ namespace ZSG
 
             var shaderBuilder = new ShaderBuilder(GenerationMode.Preview, graphView);
             shaderBuilder.shaderName = "Hidden/ZSGPreviews/" + shaderNode.viewDataKey;
-            var target = new UnlitBuildTarget();
-            target.BuilderPassthourgh(shaderBuilder);
-            var pass = shaderBuilder.passBuilders[0];
+            var pass = new PassBuilder("FORWARD", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitVertex.hlsl", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitFragment.hlsl",
+                UnlitVertexDescription.POSITION,
+                UnlitSurfaceDescription.COLOR
+                );
+            shaderBuilder.AddPass(pass);
+            pass.varyings.RequirePositionCS();
+            //pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
+            //pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
+            //pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
+
+            pass.pragmas.Add("#define PREVIEW");
+            pass.varyings.RequireCustom(1, "float(1)");
+
+            pass.pragmas.Add("#include \"UnityShaderVariables.cginc\"");
+                //basePass.pragmas.Add("#define _WorldSpaceCameraPos float3(0, 0, -2.23)");
             pass.pragmas.Add("#define PREVIEW");
 
             if (shaderNode.preview3D)
             {
                 pass.pragmas.Add("#define PREVIEW3D");
-
             }
+            pass.pragmas.Add("#include \"Packages/com.z3y.myshadergraph/Editor/Targets/Graph.hlsl\"");
+            pass.pragmas.Add("#include \"UnityCG.cginc\"");
 
             var tags = shaderBuilder.subshaderTags;
             tags.Add("Queue", "Transparent");

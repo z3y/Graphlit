@@ -12,7 +12,8 @@ namespace ZSG
         NormalOS,
         TangentWS,
         TangentOS,
-        ViewDirectionWS
+        ViewDirectionWS,
+        BitangentWS
     }
 
     public static class PortBindings
@@ -53,6 +54,8 @@ namespace ZSG
                     PortBinding.TangentOS => RequireTangentOSFragment(pass),
                     PortBinding.TangentWS => RequireTangentWSFragment(pass),
                     PortBinding.ViewDirectionWS => RequireViewDirectionWSFragment(pass),
+                    PortBinding.BitangentWS => RequireBitangentWSFragment(pass),
+
                     _ => throw new NotImplementedException(),
                 };
             }
@@ -125,6 +128,7 @@ namespace ZSG
         private static string AppendTangentWSVertex(PassBuilder pass)
         {
             string value = "tangentWS";
+            RequireNormalWSFragment(pass);
             var a = pass.attributes.RequireTangentOS();
             pass.generatedBindingsVertex.Add($"float4 {value} = float4({ObjectToWorldDirection(a)}, {a}.w);");
             return value;
@@ -154,6 +158,11 @@ namespace ZSG
         {
             RequirePositionWSFragment(pass);
             return "data.viewDirectionWS";
+        }
+        private static string RequireBitangentWSFragment(PassBuilder pass)
+        {
+            RequireTangentWSFragment(pass);
+            return "data.bitangentWS";
         }
     }
 }

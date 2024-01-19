@@ -68,17 +68,8 @@ namespace ZSG
             basePass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
             basePass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-            //basePass.attributes.RequireUV(0, 4);
-            //basePass.attributes.RequireColor(3);
-            //basePass.attributes.RequireNormal();
-            basePass.varyings.RequireCustom(1, "float(1)");
-
             basePass.pragmas.Add("#include \"UnityCG.cginc\"");
 
-            if (builder.GenerationMode == GenerationMode.Preview)
-            {
-                basePass.pragmas.Add("#define _WorldSpaceCameraPos float3(0, 0, -2.23)");
-            }
 
             //basePass.vertexDescription.Add("")
 
