@@ -63,9 +63,6 @@ namespace ZSG
         {
             sb.AppendLine("// Pragmas");
 
-            sb.AppendLine("#include \"UnityCG.cginc\"");
-
-
             foreach (var p in pragmas)
             {
                 sb.AppendLine(p);

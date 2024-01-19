@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using ZSG.Nodes;
 using ZSG.Nodes.PortType;
+using static UnityEditor.ShaderData;
 
 namespace ZSG
 {
@@ -72,8 +73,12 @@ namespace ZSG
             //basePass.attributes.RequireNormal();
             basePass.varyings.RequireCustom(1, "float(1)");
 
+            basePass.pragmas.Add("#include \"UnityCG.cginc\"");
 
-
+            if (builder.GenerationMode == GenerationMode.Preview)
+            {
+                basePass.pragmas.Add("#define _WorldSpaceCameraPos float3(0, 0, -2.23)");
+            }
 
             //basePass.vertexDescription.Add("")
 

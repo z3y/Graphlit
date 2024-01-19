@@ -12,6 +12,7 @@ namespace ZSG
         NormalOS,
         TangentWS,
         TangentOS,
+        ViewDirectionWS
     }
 
     public static class PortBindings
@@ -51,6 +52,7 @@ namespace ZSG
                     PortBinding.NormalWS => RequireNormalWSFragment(pass),
                     PortBinding.TangentOS => RequireTangentOSFragment(pass),
                     PortBinding.TangentWS => RequireTangentWSFragment(pass),
+                    PortBinding.ViewDirectionWS => RequireViewDirectionWSFragment(pass),
                     _ => throw new NotImplementedException(),
                 };
             }
@@ -148,5 +150,10 @@ namespace ZSG
             return pass.attributes.RequireTangentOS();
         }
         #endregion
+        private static string RequireViewDirectionWSFragment(PassBuilder pass)
+        {
+            RequirePositionWSFragment(pass);
+            return "data.viewDirectionWS";
+        }
     }
 }

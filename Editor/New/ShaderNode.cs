@@ -913,6 +913,7 @@ namespace ZSG
         const int OUT = 3;
 
         [SerializeField] UnityEngine.Texture2D _texture;
+        UnityEngine.Texture2D GetTexture() => _texture;
 
         public override void AddElements()
         {
@@ -921,7 +922,7 @@ namespace ZSG
             Bind(UV, PortBinding.UV0);
 
             onUpdatePreviewMaterial = (mat) => {
-                mat.SetTexture("_MainTex2", _texture);
+                mat.SetTexture("_MainTex2", GetTexture());
             };
 
             var texField = new ObjectField
@@ -932,9 +933,6 @@ namespace ZSG
             texField.RegisterValueChangedCallback((evt) =>
             {
                 _texture = (UnityEngine.Texture2D)evt.newValue;
-                onUpdatePreviewMaterial = (mat) => {
-                    mat.SetTexture("_MainTex2", _texture);
-                };
                 UpdatePreviewMaterial();
             });
             extensionContainer.Add(texField);

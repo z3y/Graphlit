@@ -14,10 +14,6 @@ struct FragmentData
     {
         FragmentData data = (FragmentData)0;
 
-        #ifdef PREVIEW
-            _WorldSpaceCameraPos.xyz = float3(0,0,0);
-        #endif
-
         #ifdef UNPACK_POSITIONWS
             data.positionWS = UNPACK_POSITIONWS;
         #endif

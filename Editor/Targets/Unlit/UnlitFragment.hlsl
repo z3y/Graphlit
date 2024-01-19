@@ -21,9 +21,9 @@ half4 frag(VaryingsWrapper varyings) : SV_Target
         uv -= 0.5;
         uv *= 1.02;
         float3 rayDir = normalize(float3(uv, 1));
-        float3 rayOrigin = float3(0,0,0);
         const float offset = 2.23;
-        float3 spherePos = float3(0,0, offset);
+        float3 rayOrigin = _WorldSpaceCameraPos.xyz;
+        float3 spherePos = float3(0,0,0);
         float rayHit = sphIntersect(rayOrigin, rayDir, float4(spherePos, 1));
 
         float3 positionWS = rayDir * rayHit + rayOrigin;
@@ -31,7 +31,6 @@ half4 frag(VaryingsWrapper varyings) : SV_Target
         float4 tangentWS = float4(cross(normalWS, float3(0.0, 1.0, 0.0)), 1.0);
 
         tangentWS.xyz = tangentWS;
-        positionWS.z -= offset;
 
         float dist = length(uv);
         float pwidth = length(float2(ddx(dist), ddy(dist)));

@@ -110,6 +110,7 @@ namespace ZSG
             if (shaderNode.preview3D)
             {
                 pass.pragmas.Add("#define PREVIEW3D");
+
             }
 
             var tags = shaderBuilder.subshaderTags;
