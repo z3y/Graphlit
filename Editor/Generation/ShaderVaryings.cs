@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Windows;
 using ZSG.Nodes.PortType;
 
 namespace ZSG
@@ -98,6 +99,8 @@ namespace ZSG
 
         public void AppendVaryingPacking(ShaderStringBuilder sb)
         {
+            _unpackDefines.Clear();
+
             foreach (var vary in _varyingPackingVertex)
             {
                 sb.AppendLine(vary);
@@ -109,6 +112,10 @@ namespace ZSG
                 {
                     string vMasked = Mask(b.name, v.channels, offset);
                     sb.AppendLine("varyings." + vMasked + " = " + Mask(v.passthrough, v.channels) + ";");
+
+                    string input = Mask("varyings." + b.name, v.channels, offset);
+                    _unpackDefines.Add($"#define UNPACK_{v.name.ToUpper()} {input}");
+
                     offset += v.channels;
                 }
             }
@@ -190,7 +197,6 @@ namespace ZSG
         private List<string> _unpackDefines = new List<string>();
         public void AppendVaryingUnpacking(ShaderStringBuilder sb)
         {
-            _unpackDefines.Clear();
             foreach (var v in _varyingsWithoutPacking)
             {
                 sb.AppendLine(v);
@@ -203,7 +209,6 @@ namespace ZSG
                     string input = Mask("varyings." + b.name, v.channels, offset);
                     offset += v.channels;
                     sb.AppendLine($"float{v.channels} {v.name} = {input};");
-                    _unpackDefines.Add($"#define UNPACK_{v.name.ToUpper()} {input}");
                 }
             }
         }

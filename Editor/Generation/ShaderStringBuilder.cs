@@ -43,6 +43,15 @@ namespace ZSG
         {
             return _sb.ToString();
         }
+
+        public void AppendInclude(string path)
+        {
+            AppendLine("#include \"" + path + "\"");
+        }
+        public void Space()
+        {
+            AppendLine();
+        }
     }
 
     public static class StringBuilderExtensionMethods

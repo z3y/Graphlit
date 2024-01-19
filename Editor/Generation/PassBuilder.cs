@@ -34,6 +34,8 @@ namespace ZSG
         public HashSet<string> generatedBindingsVertex = new();
         public HashSet<string> generatedBindingsFragment = new();
 
+        const string FragmentDataPath = "Packages/com.z3y.myshadergraph/Editor/Targets/FragmentData.hlsl";
+
 
         public string vertexShaderPath;
         public string fragmentShaderPath;
@@ -42,6 +44,8 @@ namespace ZSG
 
         public void AppendPass(ShaderStringBuilder sb)
         {
+            varyings.PackVaryings();
+
             sb.AppendLine("Name \"" + name + "\"");
             ShaderBuilder.AppendTags(sb, tags);
 
@@ -61,7 +65,8 @@ namespace ZSG
 
             sb.AppendLine("#include \"UnityCG.cginc\"");
 
-            foreach(var p in pragmas)
+
+            foreach (var p in pragmas)
             {
                 sb.AppendLine(p);
             }
@@ -73,7 +78,6 @@ namespace ZSG
 
             sb.AppendLine("struct Varyings");
             sb.Indent();
-            varyings.PackVaryings();
             varyings.AppendVaryingsStruct(sb);
             sb.UnIndent("};");
 
@@ -116,9 +120,14 @@ namespace ZSG
             }
 
             AppendVertexDescription(sb);
-            AppendSurfaceDescription(sb);
 
             varyings.AppendUnpackDefinesForTarget(sb);
+
+            sb.AppendInclude(FragmentDataPath);
+            sb.Space();
+
+            AppendSurfaceDescription(sb);
+
 
             sb.AppendLine("#include_with_pragmas \"" + vertexShaderPath + '"');
             sb.AppendLine("#include_with_pragmas \"" + fragmentShaderPath + '"');
@@ -151,6 +160,7 @@ namespace ZSG
             {
                 sb.AppendLine(line);
             }
+            sb.AppendLine("FragmentData data = FragmentData::Create(varyings);");
             sb.AppendLine($"SurfaceDescription output = (SurfaceDescription)0;");
             foreach (var line in surfaceDescription)
             {

@@ -27,44 +27,24 @@ half4 frag(VaryingsWrapper varyings) : SV_Target
         float rayHit = sphIntersect(rayOrigin, rayDir, float4(spherePos, 1));
 
         float3 positionWS = rayDir * rayHit + rayOrigin;
-        float3 normalWS = normalize(positionWS - spherePos);
-        float3 normalOS = UnityWorldToObjectDir(normalWS);
-        float4 tangentOS = float4(cross(normalOS, float3(0.0, 1.0, 0.0)), 1.0);
+        float3 normalWS = positionWS - spherePos;
         float4 tangentWS = float4(cross(normalWS, float3(0.0, 1.0, 0.0)), 1.0);
 
-        float crossSign = -1;
-        float3 bitangentWS = normalize(crossSign * cross(normalWS.xyz, tangentWS.xyz));
-        float3 bitangentOS = normalize(crossSign * cross(normalOS.xyz, tangentOS.xyz));
-        tangentOS.xyz = normalize(tangentOS);
-        tangentWS.xyz = normalize(tangentWS);
+        tangentWS.xyz = tangentWS;
         positionWS.z -= offset;
 
         float dist = length(uv);
         float pwidth = length(float2(ddx(dist), ddy(dist)));
         float alpha3D = smoothstep(0.5, 0.5 - pwidth * 1.5, dist);
-        #ifdef UNPACK_POSITIONOS
-            UNPACK_POSITIONOS = positionWS;
-        #endif
+
         #ifdef UNPACK_POSITIONWS
             UNPACK_POSITIONWS = positionWS;
-        #endif
-        #ifdef UNPACK_NORMALOS
-            UNPACK_NORMALOS = normalOS;
         #endif
         #ifdef UNPACK_NORMALWS
             UNPACK_NORMALWS = normalWS;
         #endif
         #ifdef UNPACK_TANGENTWS
             UNPACK_TANGENTWS = tangentWS;
-        #endif
-        #ifdef UNPACK_TANGENTOS
-            UNPACK_TANGENTOS = tangentOS;
-        #endif
-        #ifdef UNPACK_BITANGENTWS
-            UNPACK_BITANGENTWS = bitangentWS;
-        #endif
-        #ifdef UNPACK_BITANGENTOS
-            UNPACK_BITANGENTOS = bitangentOS;
         #endif
     #endif
 

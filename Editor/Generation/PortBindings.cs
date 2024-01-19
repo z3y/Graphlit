@@ -62,11 +62,13 @@ namespace ZSG
         private static string RequirePositionWSFragment(PassBuilder pass)
         {
             var value = AppendPositionWSVertex(pass);
-            return pass.varyings.RequireInternal("positionWS", 3, value);
+            pass.varyings.RequireInternal("positionWS", 3, value);
+            return "data.positionWS";
         }
         private static string RequirePositionOSFragment(PassBuilder pass)
         {
-            return pass.varyings.RequireInternal("positionOS", 3, pass.attributes.RequirePositionOS());
+            RequirePositionWSFragment(pass);
+            return "data.positionOS";
         }
         private static string RequirePositionOSVertex(PassBuilder pass)
         {
@@ -97,12 +99,13 @@ namespace ZSG
         private static string RequireNormalWSFragment(PassBuilder pass)
         {
             string value = AppendNormalWSVertex(pass);
-            return pass.varyings.RequireInternal("normalWS", 3, value);
+            pass.varyings.RequireInternal("normalWS", 3, value);
+            return "data.normalWS";
         }
         private static string RequireNormalOSFragment(PassBuilder pass)
         {
-            string value = pass.attributes.RequireNormalOS(3);
-            return pass.varyings.RequireInternal("normalOS", 3, value);
+            RequireNormalWSFragment(pass);
+            return "data.normalOS";
         }
         private static string RequireNormalWSVertex(PassBuilder pass)
         {
@@ -127,12 +130,14 @@ namespace ZSG
         private static string RequireTangentWSFragment(PassBuilder pass)
         {
             string value = AppendTangentWSVertex(pass);
-            return pass.varyings.RequireInternal("tangentWS", 4, value);
+            pass.varyings.RequireInternal("normalWS", 3, value);
+            pass.varyings.RequireInternal("tangentWS", 4, value);
+            return "data.tangentWS";
         }
         private static string RequireTangentOSFragment(PassBuilder pass)
         {
-            string value = pass.attributes.RequireTangentOS();
-            return pass.varyings.RequireInternal("tangentOS", 4, value);
+            RequireTangentWSFragment(pass);
+            return "data.tangentOS";
         }
         private static string RequireTangentWSVertex(PassBuilder pass)
         {
