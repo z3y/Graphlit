@@ -208,6 +208,10 @@ namespace ZSG
                 {
                     string input = Mask("varyings." + b.name, v.channels, offset);
                     offset += v.channels;
+                    if (!v.name.StartsWith("uv") && !v.name.StartsWith("interp"))
+                    {
+                        continue;
+                    }
                     sb.AppendLine($"float{v.channels} {v.name} = {input};");
                 }
             }
