@@ -33,7 +33,7 @@ namespace ZSG
             var data = ShaderGraphImporter.ReadGraphData(false, importerGuid);
             data.PopulateGraph(graphView);
 
-            //AddBar(conainer);
+            AddBar(conainer);
             conainer.Add(GetNodePropertiesElement());
             titleContent = new GUIContent(data.data.shaderName);
 
@@ -111,6 +111,8 @@ namespace ZSG
                 SetDirty();
             });
             toolbar.Add(shaderName);
+
+            visualElement.Add(toolbar);
 
 
             //var styles = AssetDatabase.LoadAssetAtPath<StyleSheet>(ROOT + "Styles/ToolbarStyles.uss");

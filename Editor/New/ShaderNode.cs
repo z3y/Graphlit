@@ -250,11 +250,16 @@ namespace ZSG
             return "float4(0,0,0,0)";
         }
 
-        internal void BuilderVisit(NodeVisitor visitor)
+        internal void BuilderVisit(NodeVisitor visitor, int[] portsMask = null)
         {
             foreach (var descriptor in portDescriptors.Values)
             {
                 int id = descriptor.ID;
+
+                if (portsMask is not null && !portsMask.Contains(id))
+                {
+                    continue;
+                }
 
                 if (descriptor.Direction == PortDirection.Input)
                 {
@@ -409,13 +414,22 @@ namespace ZSG
 
         private void DefaultAdditionalElements(VisualElement root)
         {
+            var borderColor = new Color(0.1f, 0.1f, 0.1f, 1.0f);
+
             var ve = new VisualElement();
             var nodeInfo = Info;
-            ve.Add(new Label(" " + nodeInfo.name));
+            var title = new Label(" " + nodeInfo.name);
+            title.style.backgroundColor = borderColor;
+            title.style.fontSize = 18;
+            title.style.height = 24;
+            title.style.borderTopLeftRadius = 2;
+            title.style.borderTopRightRadius = 2;
+            //title.style.marginLeft = StyleKeyword.Auto;
+            //title.style.marginRight = StyleKeyword.Auto;
+            ve.Add(title);
             var style = ve.style;
             style.backgroundColor = new Color(0.2f, 0.2f, 0.2f, 1.0f);
 
-            var borderColor = new Color(0.15f, 0.15f, 0.15f, 1.0f);
             style.borderLeftColor = borderColor;
             style.borderRightColor = borderColor;
             style.borderTopColor = borderColor;
@@ -433,8 +447,8 @@ namespace ZSG
             style.borderTopRightRadius = r;
             style.borderBottomRightRadius = r;
 
-            style.paddingTop = 5;
-            style.paddingRight = 5;
+            style.marginTop = 5;
+            style.marginRight = 5;
             style.bottom = 5;
 
             AdditionalElements(ve);

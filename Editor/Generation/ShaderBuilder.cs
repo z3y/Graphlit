@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
-using static UnityEditor.ObjectChangeEventStream;
-using static ZSG.UnlitBuildTarget;
+using UnityEngine;
 
 namespace ZSG
 {
@@ -40,13 +39,14 @@ namespace ZSG
             passBuilders.Add(passBuilder);
         }
 
-        public void Build(BuildTarget target)
+        public void Build<T>() where T : BuildTarget
         {
             ShaderNode.UniqueVariableID = 0;
 
             var shaderNodes = ShaderGraphView.graphElements.Where(x => x is ShaderNode).Cast<ShaderNode>().ToList();
-            var v = (TemplateOutput)shaderNodes.Find(x => x.GetType() == target.VertexDescription);
-            var f = (TemplateOutput)shaderNodes.Find(x => x.GetType() == target.SurfaceDescription);
+            var target = (BuildTarget)ShaderGraphView.graphElements.First(x => x is T);
+
+            target.BuilderPassthourgh(this);
 
             for (int i = 0; i < passBuilders.Count; i++)
             {
@@ -57,14 +57,19 @@ namespace ZSG
                 var fragmentVisitor = new NodeVisitor(this, ShaderStage.Fragment, passIndex);
 
                 int[] portsMask = pass.Ports;
-                TraverseGraph(v, vertexVisitor, portsMask);
-                TraverseGraph(f, fragmentVisitor, portsMask);
+                var vertexPorts = portsMask.Intersect(target.VertexPorts).ToArray();
+                var fragmentPorts = portsMask.Intersect(target.FragmentPorts).ToArray();
 
-                v.BuilderVisit(vertexVisitor);
-                f.BuilderVisit(fragmentVisitor);
+                visitedNodes.Clear();
+                TraverseGraph(target, vertexVisitor, vertexPorts);
+                visitedNodes.Clear();
+                TraverseGraph(target, fragmentVisitor, fragmentPorts);
 
-                v.VisitTemplate(vertexVisitor, portsMask);
-                f.VisitTemplate(fragmentVisitor, portsMask);
+                target.BuilderVisit(vertexVisitor, vertexPorts);
+                target.BuilderVisit(fragmentVisitor, fragmentPorts);
+
+                //target.VisitTemplate(vertexVisitor, vertexPorts);
+                target.VisitTemplate(fragmentVisitor, fragmentPorts);
             }
 
         }
@@ -92,7 +97,7 @@ namespace ZSG
                     break;
                 }
 
-                sb.Add("return output;");
+                //sb.Add("return output;");
             }
 
         }
@@ -107,8 +112,8 @@ namespace ZSG
             var shaderBuilder = new ShaderBuilder(GenerationMode.Preview, graphView);
             shaderBuilder.shaderName = "Hidden/ZSGPreviews/" + shaderNode.viewDataKey;
             var pass = new PassBuilder("FORWARD", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitVertex.hlsl", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitFragment.hlsl",
-                UnlitVertexDescription.POSITION,
-                UnlitSurfaceDescription.COLOR
+                UnlitBuildTarget.POSITION,
+                UnlitBuildTarget.COLOR
                 );
             shaderBuilder.AddPass(pass);
             pass.varyings.RequirePositionCS();
