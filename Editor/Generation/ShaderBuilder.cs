@@ -112,9 +112,9 @@ namespace ZSG
                 );
             shaderBuilder.AddPass(pass);
             pass.varyings.RequirePositionCS();
-            //pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
-            //pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
-            //pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
+            pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
+            pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
+            pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
             pass.pragmas.Add("#define PREVIEW");
             pass.varyings.RequireCustom(1, "float(1)");

@@ -13,5 +13,8 @@
   "author": {
     "name": "z3y",
     "url": "https://github.com/z3y"
+  },
+  "dependencies": {
+    "com.unity.render-pipelines.core": "14.0.8"
   }
 }

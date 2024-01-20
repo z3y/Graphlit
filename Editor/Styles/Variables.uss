@@ -1,5 +1,6 @@
 :root
 {
+	--sg-colors-window-dark-gray-0: rgba(26,26,26,255);
 	--sg-colors-window-dark-gray-1: rgba(32,32,32,255);
 	--sg-colors-window-dark-gray-2: rgba(40,40,40,255);
 	--sg-colors-window-dark-gray-5: rgba(43,43,43,255);

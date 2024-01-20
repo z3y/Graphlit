@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEditor.AssetImporters;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -34,7 +33,8 @@ namespace ZSG
             var data = ShaderGraphImporter.ReadGraphData(false, importerGuid);
             data.PopulateGraph(graphView);
 
-            AddBar(conainer);
+            //AddBar(conainer);
+            conainer.Add(GetNodePropertiesElement());
             titleContent = new GUIContent(data.data.shaderName);
 
             if (focus)
@@ -88,9 +88,7 @@ namespace ZSG
         public void AddBar(VisualElement visualElement)
         {
             var toolbar = new Toolbar();
-
             //var bar = new VisualElement();
-
 
             var pingAsset = new Button() { text = "Select Asset" };
             pingAsset.clicked += () =>
@@ -115,22 +113,24 @@ namespace ZSG
             toolbar.Add(shaderName);
 
 
-            var styles = AssetDatabase.LoadAssetAtPath<StyleSheet>(ROOT + "Styles/ToolbarStyles.uss");
-            toolbar.styleSheets.Add(styles);
-            rootVisualElement.Add(toolbar);
+            //var styles = AssetDatabase.LoadAssetAtPath<StyleSheet>(ROOT + "Styles/ToolbarStyles.uss");
+            //toolbar.styleSheets.Add(styles);
+            // rootVisualElement.Add(toolbar);
+        }
 
-            var additionalElements = new VisualElement();
-            var style = additionalElements.style;
-            style.width = 300;
-            style.paddingTop = 45;
+        private VisualElement GetNodePropertiesElement()
+        {
+            var properties = new VisualElement();
+            var style = properties.style;
+            style.width = 350;
+            style.paddingTop = 6;
             style.paddingLeft = 5;
 
             style.flexGrow = StyleKeyword.Auto;
 
-            additionalElements.pickingMode = PickingMode.Ignore;
-
-            visualElement.Add(additionalElements);
-            graphView.additionalNodeElements = additionalElements;
+            properties.pickingMode = PickingMode.Ignore;
+            graphView.additionalNodeElements = properties;
+            return properties;
         }
 
         public void AddStyleVariables()

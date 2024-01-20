@@ -151,13 +151,28 @@ namespace ZSG
             RefreshExpandedState();
             RefreshPorts();
         }
-
+        public virtual Color Accent => Color.gray;
         private void AddStyles()
         {
-            extensionContainer.AddToClassList("sg-node__extension-container");
-            titleContainer.AddToClassList("sg-node__title-container");
-            inputContainer.AddToClassList("sg-node__input-container");
-            outputContainer.AddToClassList("sg-node__output-container");
+            //extensionContainer.AddToClassList("sg-node__extension-container");
+            //titleContainer.AddToClassList("sg-node__title-container");
+            //inputContainer.AddToClassList("sg-node__input-container");
+            //outputContainer.AddToClassList("sg-node__output-container");
+
+            var color = new Color(0.07f, 0.07f, 0.07f, 1);
+            extensionContainer.style.backgroundColor = color;
+            inputContainer.style.backgroundColor = color;
+            outputContainer.style.backgroundColor = color;
+
+            var accentLine = new VisualElement();
+            {
+                var s = accentLine.style;
+                accentLine.StretchToParentSize();
+                s.height = 2;
+                s.backgroundColor = Accent;
+                s.top = 22;
+            }
+            titleContainer.Add(accentLine);
         }
         private void AddTitleElement()
         {
@@ -168,15 +183,22 @@ namespace ZSG
             }
             var nodeInfo = Info;
 
-            var titleLabel = new Label { text = "<b>" + nodeInfo.name + "</b>", tooltip = nodeInfo.tooltip + "\n" + viewDataKey };
+            var titleLabel = (Label)titleContainer.Q("title-label");
+            titleLabel.text = nodeInfo.name;
+            titleLabel.tooltip = nodeInfo.tooltip + "\n" + viewDataKey;
             titleLabel.style.fontSize = 12;
-            var centerAlign = new StyleEnum<Align> { value = Align.Center };
-            titleLabel.style.alignSelf = centerAlign;
-            titleLabel.style.alignItems = centerAlign;
-            titleLabel.enableRichText = true;
+            titleLabel.style.marginRight = StyleKeyword.Auto;
+            titleLabel.style.marginLeft = StyleKeyword.Auto;
+            titleLabel.style.paddingLeft = 6;
+            titleLabel.style.paddingRight = 6;
             titleContainer.Insert(0, titleLabel);
 
-            titleContainer.style.height = 32;
+            var titleButton = titleContainer.Q("title-button-container");
+            titleButton.parent.Remove(titleButton);
+
+            var titleStyle = titleContainer.style;
+            titleStyle.height = 24;
+            titleStyle.backgroundColor = Color.black;
         }
 
         public static int UniqueVariableID = 0;
@@ -470,7 +492,7 @@ namespace ZSG
     }
 
 
-    [NodeInfo("*", "a * b"), Serializable]
+    [NodeInfo("Multiply", "a * b"), Serializable]
     public class MultiplyNode : ShaderNode
     {
         const int A = 0;
@@ -491,7 +513,7 @@ namespace ZSG
             visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = {PortData[A].Name} * {PortData[B].Name};");
         }
     }
-    [NodeInfo("dot", "dot(a, b)"), Serializable]
+    [NodeInfo("Dot", "dot(a, b)"), Serializable]
     public class DotNode : ShaderNode
     {
         const int A = 0;
@@ -513,7 +535,7 @@ namespace ZSG
             visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = dot({PortData[A].Name}, {PortData[B].Name});");
         }
     }
-    [NodeInfo("normalize", "normalize(a)"), Serializable]
+    [NodeInfo("Normalize", "normalize(a)"), Serializable]
     public class NormalizeNode : ShaderNode
     {
         const int IN = 0;
@@ -521,7 +543,7 @@ namespace ZSG
 
         public override void AddElements()
         {
-            AddPort(new(PortDirection.Input, new Float(3, true), IN, "IN"));
+            AddPort(new(PortDirection.Input, new Float(3, true), IN));
             AddPort(new(PortDirection.Output, new Float(3, true), OUT));
         }
 
@@ -532,7 +554,7 @@ namespace ZSG
             visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = normalize({PortData[IN].Name});");
         }
     }
-    [NodeInfo("+", "a + b"), Serializable]
+    [NodeInfo("Add", "a + b"), Serializable]
     public class AddNode : ShaderNode
     {
         const int A = 0;
@@ -554,7 +576,7 @@ namespace ZSG
         }
     }
 
-    [NodeInfo("float3"), Serializable]
+    [NodeInfo("Float3"), Serializable]
     public class Float3Node : ShaderNode
     {
         const int OUT = 0;
@@ -591,8 +613,45 @@ namespace ZSG
             }
         }
     }
+    [NodeInfo("Float4"), Serializable]
+    public class Float4Node : ShaderNode
+    {
+        const int OUT = 0;
+        [SerializeField] private Vector4 _value;
+        public override void AddElements()
+        {
+            AddPort(new(PortDirection.Output, new Float(4, true), OUT));
+            string propertyName = GetVariableNameForPreview(OUT);
 
-    [NodeInfo("float2"), Serializable]
+            onUpdatePreviewMaterial += (mat) => {
+                mat.SetVector(propertyName, _value);
+            };
+
+            var f = new Vector4Field { value = _value };
+            f.RegisterValueChangedCallback((evt) => {
+                _value = evt.newValue;
+                UpdatePreviewMaterial();
+            });
+            inputContainer.Add(f);
+        }
+
+        protected override void Generate(NodeVisitor visitor)
+        {
+            if (visitor.GenerationMode == GenerationMode.Preview)
+            {
+                string propertyName = GetVariableNameForPreview(OUT);
+                var prop = new PropertyDescriptor(PropertyType.Float4, "", propertyName, _value.ToString());
+                visitor.AddProperty(prop);
+                PortData[OUT] = new GeneratedPortData(new Float(4), propertyName);
+            }
+            else
+            {
+                PortData[OUT] = new GeneratedPortData(new Float(4), "float4" + _value.ToString());
+            }
+        }
+    }
+
+    [NodeInfo("Float2"), Serializable]
     public class Float2Node : ShaderNode
     {
         const int OUT = 0;
@@ -630,7 +689,7 @@ namespace ZSG
         }
     }
 
-    [NodeInfo("float"), Serializable]
+    [NodeInfo("Float"), Serializable]
     public class FloatNode : ShaderNode
     {
         const int OUT = 0;
@@ -779,7 +838,7 @@ namespace ZSG
         }
     }
 
-    [@NodeInfo("swizzle"), Serializable]
+    [@NodeInfo("Swizzle"), Serializable]
     public sealed class SwizzleNode : ShaderNode
     {
         const int IN = 0;
@@ -839,7 +898,7 @@ namespace ZSG
         }
     }
 
-    [NodeInfo("sin", "sin(A)")]
+    [NodeInfo("Sin", "sin(A)")]
     public class SinNode : ShaderNode
     {
         const int IN = 0;
@@ -847,7 +906,7 @@ namespace ZSG
 
         public override void AddElements()
         {
-            AddPort(new(PortDirection.Input, new Float(1, true), IN, "A"));
+            AddPort(new(PortDirection.Input, new Float(1, true), IN));
             AddPort(new(PortDirection.Output, new Float(1, true), OUT));
         }
 
@@ -856,6 +915,45 @@ namespace ZSG
             PortData[OUT] = new GeneratedPortData(new Float(1, true), "Sin" + UniqueVariableID++);
 
             visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = sin({PortData[IN].Name});");
+        }
+    }
+
+    [NodeInfo("DDX")]
+    public class DDXNode : ShaderNode
+    {
+        const int IN = 0;
+        const int OUT = 1;
+
+        public override void AddElements()
+        {
+            AddPort(new(PortDirection.Input, new Float(1, true), IN));
+            AddPort(new(PortDirection.Output, new Float(1, true), OUT));
+        }
+
+        protected override void Generate(NodeVisitor visitor)
+        {
+            PortData[OUT] = new GeneratedPortData(new Float(1, true), "DDX" + UniqueVariableID++);
+
+            visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = ddx({PortData[IN].Name});");
+        }
+    }
+    [NodeInfo("DDY")]
+    public class DDYNode : ShaderNode
+    {
+        const int IN = 0;
+        const int OUT = 1;
+
+        public override void AddElements()
+        {
+            AddPort(new(PortDirection.Input, new Float(1, true), IN));
+            AddPort(new(PortDirection.Output, new Float(1, true), OUT));
+        }
+
+        protected override void Generate(NodeVisitor visitor)
+        {
+            PortData[OUT] = new GeneratedPortData(new Float(1, true), "DDY" + UniqueVariableID++);
+
+            visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = ddy({PortData[IN].Name});");
         }
     }
 
@@ -949,6 +1047,93 @@ namespace ZSG
             visitor.AddProperty(new PropertyDescriptor(PropertyType.Texture2D, "Texture", propertyName, "\"white\" {}"));
 
             visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = {propertyName}.Sample(sampler{propertyName}, {PortData[UV].Name});");
+        }
+    }
+
+    [NodeInfo("Function"), Serializable]
+    public class CustomFunctionNode : ShaderNode
+    {
+        [SerializeField] string _code;
+        [SerializeField] string _name;
+        [SerializeField] List<PortDescriptor> _descriptors = new List<PortDescriptor>();
+        const int OUT = 0;
+        public override void AddElements()
+        {
+            AddPort(new(PortDirection.Output, new Float(4), OUT));
+            //string propertyName = GetVariableNameForPreview(OUT);
+        }
+
+        public override void AdditionalElements(VisualElement root)
+        {
+            var name = new TextField("Name")
+            {
+                value = _name
+            };
+            name.RegisterValueChangedCallback((evt) =>
+            {
+                _name = evt.newValue;
+            });
+            root.Add(name);
+
+            var columns = new Columns();
+
+            var portDir = new Column()
+            {
+                name = "dd",
+                makeCell = () => new EnumField(PortDirection.Input),
+                bindCell = (e, i) =>
+                {
+                    var field = e as EnumField;
+                    field.value = _descriptors[i].Direction;
+
+                    field.RegisterValueChangedCallback(evt =>
+                    {
+                        _descriptors[i].Direction = (PortDirection)evt.newValue;
+                    });
+                },
+                width = 50
+            };
+            columns.Add(portDir);
+
+
+            var ports = new MultiColumnListView(columns)
+            {
+                headerTitle = "Ports",
+                showAddRemoveFooter = true,
+                reorderMode = ListViewReorderMode.Animated,
+                showFoldoutHeader = true,
+                reorderable = true,
+                itemsSource = _descriptors
+            };
+            root.Add(ports);
+
+            var code = new TextField()
+            {
+                value = _code,
+                multiline = true
+            };
+            code.RegisterValueChangedCallback((evt) =>
+            {
+                _code = evt.newValue;
+            });
+            root.Add(code);
+
+
+        }
+
+        public override void OnUnselected()
+        {
+            base.OnUnselected();
+            GeneratePreviewForAffectedNodes();
+        }
+
+        protected override void Generate(NodeVisitor visitor)
+        {
+            visitor.AddFunction(_code);
+
+            PortData[OUT] = new GeneratedPortData(new Float(4, true), "Function" + UniqueVariableID++);
+
+            visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = {_name}();");
         }
     }
 }

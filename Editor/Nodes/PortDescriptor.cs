@@ -12,10 +12,10 @@ namespace ZSG
             Name = name;
         }
 
-        public PortDirection Direction { get; }
+        public PortDirection Direction { get; set; }
         public IPortType Type { get; set; }
-        public int ID { get; }
-        public string Name { get; }
+        public int ID { get; set; }
+        public string Name { get; set; }
 
     }
 

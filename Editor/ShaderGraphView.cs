@@ -237,7 +237,7 @@ namespace ZSG
 
         private void NodeHotkey(ClickEvent e)
         {
-            /*if (e.target is not ShaderGraphView || e.button != (int)MouseButton.LeftMouse)
+            if (e.target is not ShaderGraphView || e.button != (int)MouseButton.LeftMouse)
             {
                 return;
             }
@@ -255,7 +255,7 @@ namespace ZSG
                 case KeyCode.A: CreateNode(typeof(AddNode), position, false); break;
                 case KeyCode.Period: CreateNode(typeof(DotNode), position, false); break;
                 case KeyCode.Z: CreateNode(typeof(SwizzleNode), position, false); break;
-            }*/
+            }
         }
 
      /*   internal void UpdateGraphView(ShaderNode node)

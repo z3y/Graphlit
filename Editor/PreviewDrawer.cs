@@ -9,7 +9,7 @@ namespace ZSG
 {
     public class PreviewDrawer : ImmediateModeElement, IDisposable
     {
-        const int Resolution = 128;
+        const int Resolution = 96;
         public Material material;
         public static List<Material> materials = new List<Material>();
         public bool preview3D = false;
@@ -31,6 +31,10 @@ namespace ZSG
 
         public void SetShader(Shader shader)
         {
+            if (!material)
+            {
+                return;
+            }
             material.shader = shader;
             MarkDirtyRepaint();
         }
