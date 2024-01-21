@@ -278,9 +278,9 @@ namespace ZSG
 
         private void AppendProperties()
         {
-            var allProperties = passBuilders.SelectMany(x => x.properties);
+            //var allProperties = passBuilders.SelectMany(x => x.properties);
 
-            foreach (var property in allProperties)
+            foreach (var property in ShaderGraphView.graphData.properties)
             {
                 _sb.AppendLine(property.ToString());
             }

@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -27,13 +26,13 @@ namespace ZSG
 
             var conainer = new VisualElement();
             conainer.StretchToParentSize();
-            conainer.style.flexDirection = FlexDirection.Row;
+            conainer.style.flexDirection = FlexDirection.RowReverse;
             rootVisualElement.Add(conainer);
             AddGraphView(conainer);
             var data = ShaderGraphImporter.ReadGraphData(false, importerGuid);
             data.PopulateGraph(graphView);
 
-            AddBar(conainer);
+            AddBar(rootVisualElement);
             conainer.Add(GetNodePropertiesElement());
             titleContent = new GUIContent(data.data.shaderName);
 
@@ -87,8 +86,17 @@ namespace ZSG
 
         public void AddBar(VisualElement visualElement)
         {
-            var toolbar = new Toolbar();
-            //var bar = new VisualElement();
+            var toolbar = new VisualElement();
+            {
+                var s = toolbar.style;
+                s.height = 24;
+                s.flexDirection = FlexDirection.Row;
+                s.backgroundColor = Color.clear;
+            }
+
+            var saveButton = new Button() { text = "Save" };
+            saveButton.clicked += SaveChanges;
+            toolbar.Add(saveButton);
 
             var pingAsset = new Button() { text = "Select Asset" };
             pingAsset.clicked += () =>
@@ -100,24 +108,15 @@ namespace ZSG
             };
             toolbar.Add(pingAsset);
 
-            var saveButton = new Button() { text = "Save" };
-            saveButton.clicked += SaveChanges;
-            toolbar.Add(saveButton);
-
-            var shaderName = new TextField("Name") { value = graphView.graphData.shaderName };
-            shaderName.RegisterValueChangedCallback((evt) =>
+            var selectMasterNode = new Button() { text = "Master Node" };
+            selectMasterNode.clicked += () =>
             {
-                graphView.graphData.shaderName = evt.newValue;
-                SetDirty();
-            });
-            toolbar.Add(shaderName);
+                graphView.ClearSelection();
+                graphView.AddToSelection(graphView.graphElements.Where(x => x is BuildTarget).First());
+            };
+            toolbar.Add(selectMasterNode);
 
             visualElement.Add(toolbar);
-
-
-            //var styles = AssetDatabase.LoadAssetAtPath<StyleSheet>(ROOT + "Styles/ToolbarStyles.uss");
-            //toolbar.styleSheets.Add(styles);
-            // rootVisualElement.Add(toolbar);
         }
 
         private VisualElement GetNodePropertiesElement()
@@ -126,7 +125,8 @@ namespace ZSG
             var style = properties.style;
             style.width = 350;
             style.paddingTop = 6;
-            style.paddingLeft = 5;
+            //style.paddingLeft = 5;
+            //style.paddingRight = 6;
 
             style.flexGrow = StyleKeyword.Auto;
 

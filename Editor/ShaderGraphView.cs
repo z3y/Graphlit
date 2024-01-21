@@ -69,6 +69,8 @@ namespace ZSG
             return change;
         }
 
+        public void SetDirty() => _editorWindow.SetDirty();
+
         private SerializableGraph _lastCopyGraph;
         public string SerializeGraphElementsImpl(IEnumerable<GraphElement> elements)
         {
@@ -85,7 +87,7 @@ namespace ZSG
 
         public void UnserializeAndPasteImpl(string operationName, string jsonData)
         {
-            RecordUndo();
+            //RecordUndo();
 
             //var data = JsonUtility.FromJson<SerializableGraph>(jsonData);
             var data = _lastCopyGraph;
@@ -104,7 +106,7 @@ namespace ZSG
 
         private SerializedGraphDataSo _serializedGraphDataSo;
         private Stack<SerializableGraph> _undoStates = new(10);
-        public void RecordUndo()
+      /*  public void RecordUndo()
         {
             if (_serializedGraphDataSo == null)
             {
@@ -119,7 +121,7 @@ namespace ZSG
             EditorUtility.SetDirty(_serializedGraphDataSo);
             _editorWindow.SetDirty();
             _serializedGraphDataSo.Init();
-        }
+        }*/
 
         public void OnUndoPerformed()
         {
@@ -159,7 +161,7 @@ namespace ZSG
 
         public void CreateNode(Type type, Vector2 position, bool transform = true)
         {
-            RecordUndo();
+            //RecordUndo();
             _editorWindow.SetDirty();
             if (transform) TransformMousePositionToLocalSpace(ref position, true);
             var node = (ShaderNode)Activator.CreateInstance(type);
@@ -257,11 +259,5 @@ namespace ZSG
                 case KeyCode.Z: CreateNode(typeof(SwizzleNode), position, false); break;
             }
         }
-
-     /*   internal void UpdateGraphView(ShaderNode node)
-        {
-            var element = (ShaderNodeVisualElement)graphElements.First(x => x.viewDataKey == node.GUID);
-            element.UpdateGraphView(node);
-        }*/
     }
 }

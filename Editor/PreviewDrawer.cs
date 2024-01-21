@@ -1,12 +1,18 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace ZSG
 {
+    enum PreviewType
+    {
+        Disabled = 0,
+        _2D = 1,
+        _3D = 2,
+    }
+
     public class PreviewDrawer : ImmediateModeElement, IDisposable
     {
         const int Resolution = 96;

@@ -1,5 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
+using System.Xml.Linq;
+using UnityEditor;
+using UnityEditor.Experimental.GraphView;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 using ZSG.Nodes;
@@ -13,6 +19,77 @@ namespace ZSG
         public abstract void BuilderPassthourgh(ShaderBuilder builder);
         public abstract int[] VertexPorts { get; }
         public abstract int[] FragmentPorts { get; }
+
+        public override Color Accent => Color.magenta;
+
+        public override void AdditionalElements(VisualElement root)
+        {
+            var graphData = GraphView.graphData;
+            var shaderName = new TextField("Shader Name") { value = GraphView.graphData.shaderName };
+            shaderName.RegisterValueChangedCallback((evt) =>
+            {
+                graphData.shaderName = evt.newValue;
+                GraphView.SetDirty();
+            });
+            root.Add(shaderName);
+
+            var properties = new ListView()
+            {
+                headerTitle = "Properties",
+                showAddRemoveFooter = true,
+                reorderMode = ListViewReorderMode.Animated,
+                showFoldoutHeader = true,
+                reorderable = true,
+                itemsSource = graphData.properties
+            };
+            properties.itemsSource = graphData.properties;
+            properties.bindItem = (e, i) =>
+            {
+                var nameField = e.Q<TextField>("Name");
+                var typeLabel = e.Q<Label>("Type");
+                if (graphData.properties[i] is null)
+                {
+                    graphData.properties[i] = new PropertyDescriptor(PropertyType.Float, "Display Name");
+                }
+                nameField.value = graphData.properties[i].displayName;
+                nameField.RegisterValueChangedCallback((evt) =>
+                {
+                    graphData.properties[i].displayName = evt.newValue;
+                });
+
+                typeLabel.text = graphData.properties[i].type.ToString();
+            };
+            properties.makeItem = () =>
+            {
+                var root = new VisualElement();
+                root.style.flexDirection = FlexDirection.Row;
+                var nameField = new TextField() { name = "Name"};
+                nameField.style.width = 200;
+                root.Add(nameField);
+                root.Add(new Label("asd") { name = "Type" });
+                return root;
+            };
+            var addButton = properties.Q<Button>("unity-list-view__add-button");
+            addButton.clickable = new Clickable((evt) =>
+            {
+                void OnTypeSelected(object data)
+                {
+                    var type = (PropertyType)data;
+                    GraphView.graphData.properties.Add(new PropertyDescriptor(type, "Display Name"));
+                    properties.RefreshItems();
+                }
+
+                var menu = new GenericMenu();
+                menu.AddItem(new GUIContent("Float"), false, OnTypeSelected, PropertyType.Float);
+                menu.AddItem(new GUIContent("Float2"), false, OnTypeSelected, PropertyType.Float2);
+                menu.AddItem(new GUIContent("Float3"), false, OnTypeSelected, PropertyType.Float3);
+                menu.AddItem(new GUIContent("Float4"), false, OnTypeSelected, PropertyType.Float4);
+                menu.ShowAsContext();
+            });
+
+            root.Add(properties);
+
+        }
     }
 
     public abstract class TemplateOutput : ShaderNode
@@ -70,6 +147,10 @@ namespace ZSG
             separator.style.backgroundColor = Color.gray;
             inputContainer.Add(separator);
             AddPort(new(PortDirection.Input, new Float(4, false), COLOR, "Color"));
+
+            Bind(POSITION, PortBinding.PositionOS);
+            Bind(NORMAL, PortBinding.NormalOS);
+            Bind(TANGENT, PortBinding.TangentOS);
         }
 
         public override void BuilderPassthourgh(ShaderBuilder builder)

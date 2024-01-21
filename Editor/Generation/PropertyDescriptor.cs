@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
 namespace ZSG
 {
+    [Serializable]
     public enum PropertyType
     {
         Float,
@@ -23,32 +25,39 @@ namespace ZSG
         Property
     }
 
+    [Serializable]
     public class PropertyDescriptor
     {
-        public PropertyDescriptor(PropertyType type, string displayName, string name = null, string defaultValue = null, List<string> attributes = null)
-        {
-            Type = type;
-            DisplayName = displayName;
-            DefaultValue = defaultValue;
-            Attributes = attributes;
-            if (string.IsNullOrEmpty(name))
-            {
-                Name = "_" + displayName?.RemoveWhitespace();
-            }
-            else
-            {
-                Name = name;
-            }
+        [SerializeField] public string guid;
+        [SerializeField] public string referenceName;
+        [SerializeField] public string displayName;
+        [SerializeField] public PropertyType type;
+        [SerializeField] public List<string> attributes;
+        [SerializeField] public Vector2 range;
+        [SerializeField] public float floatValue;
+        [SerializeField] public Vector4 vectorValue;
 
-            if (defaultValue is null)
-            {
-                DefaultValue = GetDefaultValue();
-            }
+
+        public PropertyDescriptor(PropertyType type, string displayName, string referenceName = "", List<string> attributes = null)
+        {
+            this.type = type;
+            this.displayName = displayName;
+            this.attributes = attributes;
+            this.referenceName = referenceName;
+            guid = Guid.NewGuid().ToString();
         }
 
         public string GetDefaultValue()
         {
-            return Type switch
+            if (floatValue != 0)
+            {
+                return floatValue.ToString();
+            }
+            if (vectorValue != Vector4.zero)
+            {
+                return vectorValue.ToString();
+            }
+            return type switch
             {
                 PropertyType.Float => "0",
                 PropertyType.Float2 => "(0,0,0,0)",
@@ -63,27 +72,21 @@ namespace ZSG
             };
         }
 
-        public string Name { get; set; }
-        public string DisplayName { get; set; }
-        public string DefaultValue { get; set; }
-        public PropertyType Type { get; set; }
-        public List<string> Attributes { get; set; }
-        public Vector2 Range { get; set; }
-
+/*
         public void SetPreviewName(SerializableNode serializableNode)
         {
-            Name = "_" + serializableNode.guid;
-        }
+            referenceName = "_" + serializableNode.guid;
+        }*/
 
         public string TypeToString()
         {
-            return Type switch
+            return type switch
             {
                 PropertyType.Float => "Float",
                 PropertyType.Float2 => "Vector",
                 PropertyType.Float3 => "Vector",
                 PropertyType.Float4 => "Vector",
-                PropertyType.Range => $"Range ({Range.x.ToString("R")}, {Range.y.ToString("R")})",
+                PropertyType.Range => $"Range ({range.x.ToString("R")}, {range.y.ToString("R")})",
                 PropertyType.Color => "Color",
                 PropertyType.Intiger => "Intiger",
                 PropertyType.Texture2D => "2D",
@@ -94,30 +97,32 @@ namespace ZSG
 
         public string Declaration()
         {
-            return Type switch
+            var referenceName = GetReferenceName();
+
+            return type switch
             {
-                PropertyType.Float => $"float {Name};",
-                PropertyType.Float2 => $"float2 {Name};",
-                PropertyType.Float3 => $"float3 {Name};",
-                PropertyType.Float4 => $"float4 {Name};",
-                PropertyType.Range => $"float {Name};",
-                PropertyType.Color => $"float4 {Name};",
-                PropertyType.Intiger => $"int {Name};",
-                PropertyType.Texture2D => $"Texture2D {Name}; SamplerState sampler{Name};",
-                PropertyType.TextureCube => $"TextureCube {Name}; SamplerState sampler{Name};",
+                PropertyType.Float => $"float {referenceName};",
+                PropertyType.Float2 => $"float2 {referenceName};",
+                PropertyType.Float3 => $"float3 {referenceName};",
+                PropertyType.Float4 => $"float4 {referenceName};",
+                PropertyType.Range => $"float {referenceName};",
+                PropertyType.Color => $"float4 {referenceName};",
+                PropertyType.Intiger => $"int {referenceName};",
+                PropertyType.Texture2D => $"Texture2D {referenceName}; SamplerState sampler{referenceName};",
+                PropertyType.TextureCube => $"TextureCube {referenceName}; SamplerState sampler{referenceName};",
                 _ => throw new System.NotImplementedException()
             };
         }
 
         public string AttributesToString()
         {
-            if (Attributes is null)
+            if (attributes is null)
             {
                 return string.Empty;
             }
 
             var sb = new StringBuilder();
-            foreach (var attribute in Attributes)
+            foreach (var attribute in attributes)
             {
                 sb.Append("[");
                 sb.Append(attribute.ToString());
@@ -126,12 +131,19 @@ namespace ZSG
             return sb.ToString();
         }
 
+        public string GetReferenceName()
+        {
+            return string.IsNullOrEmpty(this.referenceName) ? "_" + displayName?.RemoveWhitespace() : this.referenceName;
+        }
+
         public override string ToString()
         {
-            var name = Name;
+            var referenceName = GetReferenceName();
             var type = TypeToString();
             var attributes = AttributesToString();
-            return $"{attributes} {name} (\"{DisplayName}\", {type}) = {DefaultValue}";
+            var defaultValue = GetDefaultValue();
+
+            return $"{attributes} {referenceName} (\"{displayName}\", {type}) = {defaultValue}";
         }
     }
 }
