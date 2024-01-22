@@ -10,10 +10,7 @@ using System.Linq;
 using UnityEditor.UIElements;
 using UnityEditor;
 using Texture2D = UnityEngine.Texture2D;
-using UnityEditor.Build.Content;
-using static UnityEditor.MaterialProperty;
 using UnityEditor.Experimental.GraphView;
-using NUnit.Framework.Internal;
 
 namespace ZSG
 {
@@ -106,8 +103,8 @@ namespace ZSG
     {
         const int OUT = 0;
         [SerializeField] private Vector3 _value;
-        public override bool EnablePreview => false;
 
+        public override PreviewType DefaultPreview => PreviewType.Disabled;
         public override void AddElements()
         {
             AddPort(new(PortDirection.Output, new Float(3, true), OUT));
@@ -159,8 +156,8 @@ namespace ZSG
         [SerializeField] protected string _ref;
         public override Color Accent => new Color(0.3f,0.7f,0.3f);
         protected PropertyDescriptor propertyDescriptor;
-        public override bool EnablePreview => false;
 
+        public override PreviewType DefaultPreview => PreviewType.Disabled;
         public override void AddElements()
         {
             var graphData = GraphView.graphData;
@@ -188,7 +185,7 @@ namespace ZSG
         // imagine dealing with binding
         void OnGUI()
         {
-            EditorGUILayout.LabelField(propertyDescriptor.GetReferenceName());
+            EditorGUILayout.LabelField(propertyDescriptor.displayName);
         }
 
         public override void AdditionalElements(VisualElement root)
@@ -343,8 +340,7 @@ namespace ZSG
     {
         const int OUT = 0;
         [SerializeField] private Vector4 _value;
-        public override bool EnablePreview => false;
-
+        public override PreviewType DefaultPreview => PreviewType.Disabled;
         public override void AddElements()
         {
             AddPort(new(PortDirection.Output, new Float(4, true), OUT));
@@ -386,8 +382,7 @@ namespace ZSG
     {
         const int OUT = 0;
         [SerializeField] private Vector2 _value;
-        public override bool EnablePreview => false;
-
+        public override PreviewType DefaultPreview => PreviewType.Disabled;
         public override void AddElements()
         {
             AddPort(new(PortDirection.Output, new Float(2, true), OUT));
@@ -432,8 +427,7 @@ namespace ZSG
         const int OUT = 0;
         [SerializeField] private float _value;
 
-        public override bool EnablePreview => false;
-
+        public override PreviewType DefaultPreview => PreviewType.Disabled;
         public override void AddElements()
         {
             AddPort(new(PortDirection.Output, new Float(1), OUT));
@@ -562,10 +556,7 @@ namespace ZSG
     {
         const int OUT = 0;
         public abstract (string, Float) Parameter { get; }
-
-        public override bool LowProfile => true;
-        public override bool EnablePreview => false;
-
+        public override PreviewType DefaultPreview => PreviewType.Disabled;
         public sealed override void AddElements()
         {
             AddPort(new(PortDirection.Output, Parameter.Item2, OUT, Parameter.Item1));
@@ -644,7 +635,7 @@ namespace ZSG
         [SerializeField] PortBinding _binding = PortBinding.UV0;
         [SerializeField] int _components = 3;
 
-
+        public override PreviewType DefaultPreview => PreviewType._3D;
         public override void AddElements()
         {
             AddPort(new(PortDirection.Output, new Float(_components), 0));
@@ -672,7 +663,6 @@ namespace ZSG
             inputContainer.Add(intField);
 
             Bind(0, _binding);
-            preview3D = true;
         }
 
         protected override void Generate(NodeVisitor visitor)

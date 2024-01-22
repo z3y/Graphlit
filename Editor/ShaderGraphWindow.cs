@@ -89,7 +89,7 @@ namespace ZSG
             var toolbar = new VisualElement();
             {
                 var s = toolbar.style;
-                s.height = 24;
+                s.height = 32;
                 s.flexDirection = FlexDirection.Row;
                 s.backgroundColor = Color.clear;
             }

@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 namespace ZSG
 {
-    enum PreviewType
+    public enum PreviewType
     {
         Disabled = 0,
         _2D = 1,
@@ -15,8 +15,6 @@ namespace ZSG
     {
         const int Resolution = 96;
         private Shader _shader;
-
-        public bool preview3D = false;
         private Material _material;
 
         public PreviewDrawer(ShaderGraphView graphView)

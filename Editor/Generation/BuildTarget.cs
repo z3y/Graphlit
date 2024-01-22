@@ -49,7 +49,7 @@ namespace ZSG
                 var typeLabel = e.Q<Label>("Type");
                 if (graphData.properties[i] is null)
                 {
-                    graphData.properties[i] = new PropertyDescriptor(PropertyType.Float, "Display Name");
+                    graphData.properties[i] = new PropertyDescriptor(PropertyType.Float, "Prop");
                 }
                 nameField.value = graphData.properties[i].displayName;
                 nameField.RegisterValueChangedCallback((evt) =>
@@ -75,7 +75,7 @@ namespace ZSG
                 void OnTypeSelected(object data)
                 {
                     var type = (PropertyType)data;
-                    GraphView.graphData.properties.Add(new PropertyDescriptor(type, "Display Name"));
+                    GraphView.graphData.properties.Add(new PropertyDescriptor(type, "Prop"));
                     properties.RefreshItems();
                 }
 
@@ -127,8 +127,7 @@ namespace ZSG
                 }
             }
         }
-
-        public override bool EnablePreview => false;
+        public override PreviewType DefaultPreview => PreviewType.Disabled; 
 
         protected sealed override void Generate(NodeVisitor visitor) { }
     }

@@ -42,15 +42,15 @@ namespace ZSG
             base.BuildContextualMenu(evt);
 
             evt.menu.AppendAction("Generate Preview", GeneratePreview);
-            evt.menu.AppendAction("Remove Preview", RemovePreview);
-            evt.menu.AppendAction("Preview 3D Toggle", Preview3DToggle);
+            //evt.menu.AppendAction("Remove Preview", RemovePreview);
+            //evt.menu.AppendAction("Preview 3D Toggle", Preview3DToggle);
         }
 
-        public void Preview3DToggle(DropdownMenuAction action)
+        /*public void Preview3DToggle(DropdownMenuAction action)
         {
             preview3D = !preview3D;
             GeneratePreviewForAffectedNodes();
-        }
+        }*/
         public void GeneratePreview(DropdownMenuAction action)
         {
             ShaderBuilder.GeneratePreview(GraphView, this, action != null);
@@ -128,9 +128,58 @@ namespace ZSG
 
         public abstract void AddElements();
 
-        public virtual bool EnablePreview => true;
-        public virtual bool LowProfile => false;
-        public bool preview3D = false;
+        public virtual PreviewType DefaultPreview => PreviewType._2D;
+        public PreviewType inheritedPreview;
+        public virtual void InheritPreview()
+        {
+            int is3D = 0;
+            int is2D = 0;
+
+            int connectedCount = 0;
+
+            foreach (var port in Inputs)
+            {
+                if (!port.connected)
+                {
+                    continue;
+                }
+
+                foreach(var edge in port.connections)
+                {
+                    var node = (ShaderNode)edge.output.node;
+                    if (node is null)
+                    {
+                        continue;
+                    }
+                    is3D += node.inheritedPreview == PreviewType._3D ? 1 : 0;
+                    is2D += node.inheritedPreview == PreviewType._2D ? 1 : 0;
+
+                    //Debug.Log(node.inheritedPreview);
+                    connectedCount++;
+                    break;
+                }
+            }
+
+
+            if (connectedCount == 0)
+            {
+                inheritedPreview = DefaultPreview;
+            }
+            else if (is2D == 0 && is3D == 0)
+            {
+                inheritedPreview = PreviewType.Disabled;
+            }
+            else if (is3D > 0)
+            {
+                inheritedPreview = PreviewType._3D;
+            }
+            else
+            {
+                inheritedPreview = PreviewType._2D;
+            }
+
+            //Debug.Log(inheritedPreview + Info.name);
+        }
 
         private void AddDefaultElements()
         {
@@ -138,7 +187,7 @@ namespace ZSG
             AddStyles();
             AddTitleElement();
             AddElements();
-            if (EnablePreview)
+            if (DefaultPreview != PreviewType.Disabled)
             {
                 AddPreview();
             }
@@ -172,11 +221,11 @@ namespace ZSG
         }
         private void AddTitleElement()
         {
-            if (LowProfile)
+            /*if (LowProfile)
             {
                 titleContainer.parent.Remove(titleContainer);
                 return;
-            }
+            }*/
             var nodeInfo = Info;
 
             var titleLabel = (Label)titleContainer.Q("title-label");
@@ -248,6 +297,8 @@ namespace ZSG
 
         internal void BuilderVisit(NodeVisitor visitor, int[] portsMask = null)
         {
+            InheritPreview();
+
             foreach (var descriptor in portDescriptors.Values)
             {
                 int id = descriptor.ID;
@@ -458,10 +509,7 @@ namespace ZSG
         public PreviewDrawer previewDrawer;
         private void AddPreview()
         {
-            previewDrawer = new PreviewDrawer(GraphView)
-            {
-                preview3D = preview3D
-            };
+            previewDrawer = new PreviewDrawer(GraphView);
             extensionContainer.Add(previewDrawer);
         }
 

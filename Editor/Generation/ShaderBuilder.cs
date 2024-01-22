@@ -104,7 +104,7 @@ namespace ZSG
 
         public static void GeneratePreview(ShaderGraphView graphView, ShaderNode shaderNode, bool log = false)
         {
-            if (!shaderNode.EnablePreview)
+            if (shaderNode.DefaultPreview == PreviewType.Disabled)
             {
                 return;
             }
@@ -125,13 +125,8 @@ namespace ZSG
             pass.varyings.RequireCustom(1, "float(1)");
 
             pass.pragmas.Add("#include \"UnityShaderVariables.cginc\"");
-                //basePass.pragmas.Add("#define _WorldSpaceCameraPos float3(0, 0, -2.23)");
             pass.pragmas.Add("#define PREVIEW");
 
-            if (shaderNode.preview3D)
-            {
-                pass.pragmas.Add("#define PREVIEW3D");
-            }
             pass.pragmas.Add("#include \"Packages/com.z3y.myshadergraph/Editor/Targets/Graph.hlsl\"");
             pass.pragmas.Add("#include \"UnityCG.cginc\"");
 
@@ -147,6 +142,11 @@ namespace ZSG
 
             //shaderBuilder.passBuilders[0].renderStates.Add("Cull", "Off");
             shaderBuilder.Build(shaderNode);
+
+            if (shaderNode.inheritedPreview == PreviewType._3D)
+            {
+                pass.pragmas.Insert(0, "#define PREVIEW3D");
+            }
 
             string result = shaderBuilder.ToString();
 
