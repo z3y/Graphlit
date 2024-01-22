@@ -10,7 +10,6 @@ namespace ZSG.Nodes.PortType
     public struct Float : IPortType
     {
         public int components;
-        public bool fullPrecision;
         public bool dynamic;
         public Float(int components, bool dynamic = false, bool fullPrecision = true)
         {
@@ -19,34 +18,19 @@ namespace ZSG.Nodes.PortType
                 Debug.LogError("Invalid component count");
             }
             this.components = components;
-            this.fullPrecision = fullPrecision;
             this.dynamic = dynamic;
         }
 
         public override string ToString()
         {
-            if (fullPrecision)
+            return components switch
             {
-                return components switch
-                {
-                    1 => "float",
-                    2 => "float2",
-                    3 => "float3",
-                    4 => "float4",
-                    _ => null,
-                };
-            }
-            else
-            {
-                return components switch
-                {
-                    1 => "half",
-                    2 => "half2",
-                    3 => "half3",
-                    4 => "half4",
-                    _ => null,
-                };
-            }
+                1 => "float",
+                2 => "float2",
+                3 => "float3",
+                4 => "float4",
+                _ => null,
+            };
         }
 
         public static Color Float1Color = Color.grey;

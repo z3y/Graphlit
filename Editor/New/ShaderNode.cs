@@ -23,6 +23,13 @@ namespace ZSG
         public string Name;
     }
 
+    public enum Precision
+    {
+        Inherit,
+        Float,
+        Half
+    }
+
     public abstract class ShaderNode : Node
     {
         public void Initialize(ShaderGraphView graphView, Vector2 position, string guid = null)
@@ -127,9 +134,9 @@ namespace ZSG
                 }*/
 
         public abstract void AddElements();
-
+        public virtual int PreviewResolution => 96;
         public virtual PreviewType DefaultPreview => PreviewType._2D;
-        public PreviewType inheritedPreview;
+        [NonSerialized] public PreviewType inheritedPreview;
         public virtual void InheritPreview()
         {
             int is3D = 0;
@@ -180,6 +187,9 @@ namespace ZSG
 
             //Debug.Log(inheritedPreview + Info.name);
         }
+
+        public virtual Precision DefaultPrecision => Precision.Half;
+        [NonSerialized] public bool isFloat;
 
         private void AddDefaultElements()
         {
@@ -292,12 +302,15 @@ namespace ZSG
                 }
             }
 
-            return "float4(0,0,0,0)";
+            return PrecisionString(4) + "(0,0,0,0)";
         }
 
         internal void BuilderVisit(NodeVisitor visitor, int[] portsMask = null)
         {
             InheritPreview();
+            var stage = visitor.Stage;
+
+            isFloat = stage == ShaderStage.Vertex ? true : DefaultPrecision == Precision.Float;
 
             foreach (var descriptor in portDescriptors.Values)
             {
@@ -326,8 +339,6 @@ namespace ZSG
                             resultFloat.components = incomingFloat.components;
                         }
 
-                        // inherit precision
-                        resultFloat.fullPrecision = incomingFloat.fullPrecision;
                         newData.Type = resultFloat;
                     }
 
@@ -336,11 +347,45 @@ namespace ZSG
                 else
                 {
                     var name = SetDefaultBinding(descriptor, visitor);
-                    PortData[id] = new GeneratedPortData(descriptor.Type, name);
+                    var type = descriptor.Type;
+                    PortData[id] = new GeneratedPortData(type, name);
                 }
             }
 
             Generate(visitor);
+        }
+        public string UniqueVariable => Info.name + UniqueVariableID++;
+        public void SetVariable(int id, string name)
+        {
+            var data = PortData[id];
+            data.Name = name;
+            PortData[id] = data;
+        }
+        public string PrecisionString(int component)
+        {
+            string precisionString = isFloat ? "float" : "half";
+            if (component == 1) return precisionString;
+            if (component > 4 || component < 0) return "error" + component;
+            return precisionString + component;
+        }
+
+        public void ChangeComponents(int id, int components)
+        {
+            var data = PortData[id];
+            if (data.Type is Float @float)
+            {
+                @float.components = components;
+                data.Type = @float;
+            }
+            PortData[id] = data;
+        }
+        public void Output(NodeVisitor visitor, int outID, string line)
+        {
+            SetVariable(outID, UniqueVariable);
+
+            var data = PortData[outID];
+            var type = (Float)data.Type;
+            visitor.AppendLine($"{PrecisionString(type.components)} {data.Name} = {line};");
         }
 
         public Float ImplicitTruncation(params int[] IDs)
@@ -376,7 +421,7 @@ namespace ZSG
             var name = data.Name;
             var type = (Float)PortData[portID].Type;
             var components = type.components;
-            string typeName = type.fullPrecision ? "float" : "half";
+            string typeName = name.StartsWith("half") ? "half" : "float";
 
             if (components == targetComponent)
             {
@@ -509,7 +554,7 @@ namespace ZSG
         public PreviewDrawer previewDrawer;
         private void AddPreview()
         {
-            previewDrawer = new PreviewDrawer(GraphView);
+            previewDrawer = new PreviewDrawer(GraphView, PreviewResolution);
             extensionContainer.Add(previewDrawer);
         }
 

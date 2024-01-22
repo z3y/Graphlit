@@ -30,9 +30,8 @@ namespace ZSG
 
         protected override void Generate(NodeVisitor visitor)
         {
-            PortData[OUT] = new GeneratedPortData(ImplicitTruncation(A, B), "Multiply" + UniqueVariableID++);
-
-            visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = {PortData[A].Name} * {PortData[B].Name};");
+            ChangeComponents(OUT, ImplicitTruncation(A, B).components);
+            Output(visitor, OUT, $"{PortData[A].Name} * {PortData[B].Name}");
         }
     }
     [NodeInfo("Dot", "dot(a, b)")]
@@ -52,9 +51,7 @@ namespace ZSG
         protected override void Generate(NodeVisitor visitor)
         {
             ImplicitTruncation(A, B);
-            PortData[OUT] = new GeneratedPortData(new Float(1), "Dot" + UniqueVariableID++);
-
-            visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = dot({PortData[A].Name}, {PortData[B].Name});");
+            Output(visitor, OUT, $"dot({PortData[A].Name}, {PortData[B].Name})");
         }
     }
     [NodeInfo("Normalize", "normalize(a)")]
@@ -71,9 +68,7 @@ namespace ZSG
 
         protected override void Generate(NodeVisitor visitor)
         {
-            PortData[OUT] = new GeneratedPortData(PortData[IN].Type, "Normalize" + UniqueVariableID++);
-
-            visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = normalize({PortData[IN].Name});");
+            Output(visitor, OUT, $"normalize({PortData[IN].Name})");
         }
     }
     [NodeInfo("Add", "a + b")]
@@ -92,54 +87,9 @@ namespace ZSG
 
         protected override void Generate(NodeVisitor visitor)
         {
-            PortData[OUT] = new GeneratedPortData(ImplicitTruncation(A, B), "Add" + UniqueVariableID++);
+            ChangeComponents(OUT, ImplicitTruncation(A, B).components);
 
-            visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = {PortData[A].Name} + {PortData[B].Name};");
-        }
-    }
-
-    [NodeInfo("Float3"), Serializable]
-    public class Float3Node : ShaderNode
-    {
-        const int OUT = 0;
-        [SerializeField] private Vector3 _value;
-
-        public override PreviewType DefaultPreview => PreviewType.Disabled;
-        public override void AddElements()
-        {
-            AddPort(new(PortDirection.Output, new Float(3, true), OUT));
-            string propertyName = GetVariableNameForPreview(OUT);
-
-            onUpdatePreviewMaterial += (mat) =>
-            {
-                mat.SetVector(propertyName, _value);
-            };
-
-            var f = new Vector3Field { value = _value };
-            f.RegisterValueChangedCallback((evt) =>
-            {
-                _value = evt.newValue;
-                UpdatePreviewMaterial();
-            });
-            inputContainer.Add(f);
-        }
-
-        protected override void Generate(NodeVisitor visitor)
-        {
-            if (visitor.GenerationMode == GenerationMode.Preview)
-            {
-                string propertyName = GetVariableNameForPreview(OUT);
-                var prop = new PropertyDescriptor(PropertyType.Float3, "", propertyName)
-                {
-                    vectorValue = _value
-                };
-                visitor.AddProperty(prop);
-                PortData[OUT] = new GeneratedPortData(new Float(3), propertyName);
-            }
-            else
-            {
-                PortData[OUT] = new GeneratedPortData(new Float(3), "float3" + _value.ToString());
-            }
+            Output(visitor, OUT, $"{PortData[A].Name} + {PortData[B].Name}");
         }
     }
 
@@ -334,24 +284,25 @@ namespace ZSG
         }
     }
 
-
-    [NodeInfo("Float4"), Serializable]
-    public class Float4Node : ShaderNode
+    [NodeInfo("Float"), Serializable]
+    public class FloatNode : ShaderNode
     {
         const int OUT = 0;
-        [SerializeField] private Vector4 _value;
+        [SerializeField] private float _value;
+
         public override PreviewType DefaultPreview => PreviewType.Disabled;
         public override void AddElements()
         {
-            AddPort(new(PortDirection.Output, new Float(4, true), OUT));
+            AddPort(new(PortDirection.Output, new Float(1), OUT));
             string propertyName = GetVariableNameForPreview(OUT);
 
             onUpdatePreviewMaterial += (mat) =>
             {
-                mat.SetVector(propertyName, _value);
+                mat.SetFloat(propertyName, _value);
             };
 
-            var f = new Vector4Field { value = _value };
+            var f = new FloatField("X") { value = _value };
+            f.Children().First().style.minWidth = 0;
             f.RegisterValueChangedCallback((evt) =>
             {
                 _value = evt.newValue;
@@ -365,14 +316,16 @@ namespace ZSG
             if (visitor.GenerationMode == GenerationMode.Preview)
             {
                 string propertyName = GetVariableNameForPreview(OUT);
-                var prop = new PropertyDescriptor(PropertyType.Float4, "", propertyName);
-                prop.vectorValue = _value;
+                var prop = new PropertyDescriptor(PropertyType.Float, "", propertyName)
+                {
+                    floatValue = _value
+                };
                 visitor.AddProperty(prop);
-                PortData[OUT] = new GeneratedPortData(new Float(4), propertyName);
+                PortData[OUT] = new GeneratedPortData(new Float(1), propertyName);
             }
             else
             {
-                PortData[OUT] = new GeneratedPortData(new Float(4), "float4" + _value.ToString());
+                SetVariable(OUT, $"{PrecisionString(1)}({_value})");
             }
         }
     }
@@ -416,30 +369,29 @@ namespace ZSG
             }
             else
             {
-                PortData[OUT] = new GeneratedPortData(new Float(2), "float2" + _value.ToString());
+                SetVariable(OUT, $"{PrecisionString(2)}{_value}");
             }
         }
     }
 
-    [NodeInfo("Float"), Serializable]
-    public class FloatNode : ShaderNode
+    [NodeInfo("Float3"), Serializable]
+    public class Float3Node : ShaderNode
     {
         const int OUT = 0;
-        [SerializeField] private float _value;
+        [SerializeField] private Vector3 _value;
 
         public override PreviewType DefaultPreview => PreviewType.Disabled;
         public override void AddElements()
         {
-            AddPort(new(PortDirection.Output, new Float(1), OUT));
+            AddPort(new(PortDirection.Output, new Float(3, true), OUT));
             string propertyName = GetVariableNameForPreview(OUT);
 
             onUpdatePreviewMaterial += (mat) =>
             {
-                mat.SetFloat(propertyName, _value);
+                mat.SetVector(propertyName, _value);
             };
 
-            var f = new FloatField ("X") { value = _value };
-            f.Children().First().style.minWidth = 0;
+            var f = new Vector3Field { value = _value };
             f.RegisterValueChangedCallback((evt) =>
             {
                 _value = evt.newValue;
@@ -453,16 +405,57 @@ namespace ZSG
             if (visitor.GenerationMode == GenerationMode.Preview)
             {
                 string propertyName = GetVariableNameForPreview(OUT);
-                var prop = new PropertyDescriptor(PropertyType.Float, "", propertyName)
+                var prop = new PropertyDescriptor(PropertyType.Float3, "", propertyName)
                 {
-                    floatValue = _value
+                    vectorValue = _value
                 };
                 visitor.AddProperty(prop);
-                PortData[OUT] = new GeneratedPortData(new Float(1), propertyName);
+                PortData[OUT] = new GeneratedPortData(new Float(3), propertyName);
             }
             else
             {
-                PortData[OUT] = new GeneratedPortData(new Float(1), "float(" + _value.ToString() + ")");
+                SetVariable(OUT, $"{PrecisionString(3)}{_value}");
+            }
+        }
+    }
+    [NodeInfo("Float4"), Serializable]
+    public class Float4Node : ShaderNode
+    {
+        const int OUT = 0;
+        [SerializeField] private Vector4 _value;
+        public override PreviewType DefaultPreview => PreviewType.Disabled;
+        public override void AddElements()
+        {
+            AddPort(new(PortDirection.Output, new Float(4, true), OUT));
+            string propertyName = GetVariableNameForPreview(OUT);
+
+            onUpdatePreviewMaterial += (mat) =>
+            {
+                mat.SetVector(propertyName, _value);
+            };
+
+            var f = new Vector4Field { value = _value };
+            f.RegisterValueChangedCallback((evt) =>
+            {
+                _value = evt.newValue;
+                UpdatePreviewMaterial();
+            });
+            inputContainer.Add(f);
+        }
+
+        protected override void Generate(NodeVisitor visitor)
+        {
+            if (visitor.GenerationMode == GenerationMode.Preview)
+            {
+                string propertyName = GetVariableNameForPreview(OUT);
+                var prop = new PropertyDescriptor(PropertyType.Float4, "", propertyName);
+                prop.vectorValue = _value;
+                visitor.AddProperty(prop);
+                PortData[OUT] = new GeneratedPortData(new Float(4), propertyName);
+            }
+            else
+            {
+                SetVariable(OUT, $"{PrecisionString(4)}{_value}");
             }
         }
     }
@@ -473,7 +466,7 @@ namespace ZSG
         const int OUT = 0;
 
         [SerializeField] Channel _uv = Channel.UV0;
-
+        public override Precision DefaultPrecision => Precision.Float;
         enum Channel
         {
             UV0, UV1, UV2, UV3
@@ -555,6 +548,7 @@ namespace ZSG
     public abstract class ParameterNode : ShaderNode
     {
         const int OUT = 0;
+        public override Precision DefaultPrecision => Precision.Float;
         public abstract (string, Float) Parameter { get; }
         public override PreviewType DefaultPreview => PreviewType.Disabled;
         public sealed override void AddElements()
@@ -575,6 +569,7 @@ namespace ZSG
     {
         const int IN = 0;
         const int OUT = 1;
+        public override Precision DefaultPrecision => Precision.Float;
 
         public override void AddElements()
         {
@@ -584,9 +579,7 @@ namespace ZSG
 
         protected override void Generate(NodeVisitor visitor)
         {
-            PortData[OUT] = new GeneratedPortData(new Float(1, true), "Sin" + UniqueVariableID++);
-
-            visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = sin({PortData[IN].Name});");
+            Output(visitor, OUT, $"sin({PortData[IN].Name})");
         }
     }
 
@@ -595,6 +588,7 @@ namespace ZSG
     {
         const int IN = 0;
         const int OUT = 1;
+        public override Precision DefaultPrecision => Precision.Float;
 
         public override void AddElements()
         {
@@ -604,9 +598,7 @@ namespace ZSG
 
         protected override void Generate(NodeVisitor visitor)
         {
-            PortData[OUT] = new GeneratedPortData(new Float(1, true), "DDX" + UniqueVariableID++);
-
-            visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = ddx({PortData[IN].Name});");
+            Output(visitor, OUT, $"ddx({PortData[IN].Name})");
         }
     }
     [NodeInfo("DDY")]
@@ -615,6 +607,8 @@ namespace ZSG
         const int IN = 0;
         const int OUT = 1;
 
+        public override Precision DefaultPrecision => Precision.Float;
+
         public override void AddElements()
         {
             AddPort(new(PortDirection.Input, new Float(1, true), IN));
@@ -623,9 +617,7 @@ namespace ZSG
 
         protected override void Generate(NodeVisitor visitor)
         {
-            PortData[OUT] = new GeneratedPortData(new Float(1, true), "DDY" + UniqueVariableID++);
-
-            visitor.AppendLine($"{PortData[OUT].Type} {PortData[OUT].Name} = ddy({PortData[IN].Name});");
+            Output(visitor, OUT, $"ddy({PortData[IN].Name})");
         }
     }
 
@@ -737,16 +729,20 @@ namespace ZSG
         const int OUT_B = 6;
         const int OUT_A = 7;
 
+        public override Color Accent => new Color(0.8f, 0.2f, 0.2f);
+
+        public override int PreviewResolution => 138;
+
         Port _texturePort;
         public override void AddElements()
         {
-            _texturePort = AddPort(new(PortDirection.Input, new Nodes.PortType.Texture2D(), TEX, "Texture 2D"));
+            _texturePort = AddPort(new(PortDirection.Input, new Nodes.PortType.Texture2D(), TEX, "Texture"));
             AddPort(new(PortDirection.Input, new Float(2), UV, "UV"));
             AddPort(new(PortDirection.Output, new Float(4), OUT_RGBA, "RGBA"));
 
-            AddPort(new(PortDirection.Output, new Float(1), OUT_R, "R"));
-            AddPort(new(PortDirection.Output, new Float(1), OUT_G, "G"));
-            AddPort(new(PortDirection.Output, new Float(1), OUT_B, "B"));
+            AddPort(new(PortDirection.Output, new Float(1), OUT_R, "<color=red>R</color>"));
+            AddPort(new(PortDirection.Output, new Float(1), OUT_G, "<color=green>G</color>"));
+            AddPort(new(PortDirection.Output, new Float(1), OUT_B, "<color=blue>B</color>"));
             AddPort(new(PortDirection.Output, new Float(1), OUT_A, "A"));
 
 
@@ -755,28 +751,26 @@ namespace ZSG
 
         protected override void Generate(NodeVisitor visitor)
         {
-            PortData[OUT_RGBA] = new GeneratedPortData(new Float(4), "TextureSample" + UniqueVariableID++);
-            PortData[OUT_R] = new GeneratedPortData(new Float(1), "TextureSample_R" + UniqueVariableID++);
-            PortData[OUT_G] = new GeneratedPortData(new Float(1), "TextureSample_G" + UniqueVariableID++);
-            PortData[OUT_B] = new GeneratedPortData(new Float(1), "TextureSample_B" + UniqueVariableID++);
-            PortData[OUT_A] = new GeneratedPortData(new Float(1), "TextureSample_A" + UniqueVariableID++);
-
-
+            SetVariable(OUT_RGBA, "TextureSample" + UniqueVariableID++);
+            SetVariable(OUT_R, "TextureSampleR" + UniqueVariableID++);
+            SetVariable(OUT_G, "TextureSampleG" + UniqueVariableID++);
+            SetVariable(OUT_B, "TextureSampleB" + UniqueVariableID++);
+            SetVariable(OUT_A, "TextureSampleA" + UniqueVariableID++);
 
             if (_texturePort.connected)
             {
                 var propertyName = PortData[TEX].Name;
-                visitor.AppendLine($"{PortData[OUT_RGBA].Type} {PortData[OUT_RGBA].Name} = {propertyName}.Sample(sampler{propertyName}, {PortData[UV].Name});");
+                visitor.AppendLine($"{PrecisionString(4)} {PortData[OUT_RGBA].Name} = {propertyName}.Sample(sampler{propertyName}, {PortData[UV].Name});");
             }
             else
             {
-                visitor.AppendLine($"{PortData[OUT_RGBA].Type} {PortData[OUT_RGBA].Name} = float4(1,1,1,1);");
+                visitor.AppendLine($"{PrecisionString(4)} {PortData[OUT_RGBA].Name} = {PrecisionString(4)}(1,1,1,1);");
             }
 
-            visitor.AppendLine($"{PortData[OUT_R].Type} {PortData[OUT_R].Name} = {PortData[OUT_RGBA].Name}.r;");
-            visitor.AppendLine($"{PortData[OUT_G].Type} {PortData[OUT_G].Name} = {PortData[OUT_RGBA].Name}.g;");
-            visitor.AppendLine($"{PortData[OUT_B].Type} {PortData[OUT_B].Name} = {PortData[OUT_RGBA].Name}.b;");
-            visitor.AppendLine($"{PortData[OUT_A].Type} {PortData[OUT_A].Name} = {PortData[OUT_RGBA].Name}.a;");
+            visitor.AppendLine($"{PrecisionString(1)} {PortData[OUT_R].Name} = {PortData[OUT_RGBA].Name}.r;");
+            visitor.AppendLine($"{PrecisionString(1)} {PortData[OUT_G].Name} = {PortData[OUT_RGBA].Name}.g;");
+            visitor.AppendLine($"{PrecisionString(1)} {PortData[OUT_B].Name} = {PortData[OUT_RGBA].Name}.b;");
+            visitor.AppendLine($"{PrecisionString(1)} {PortData[OUT_A].Name} = {PortData[OUT_RGBA].Name}.a;");
         }
     }
 

@@ -13,15 +13,16 @@ namespace ZSG
 
     public class PreviewDrawer : ImmediateModeElement, IDisposable
     {
-        const int Resolution = 96;
+        int _resolution = 96;
         private Shader _shader;
         private Material _material;
 
-        public PreviewDrawer(ShaderGraphView graphView)
+        public PreviewDrawer(ShaderGraphView graphView, int resolution = 96)
         {
             _material = graphView.PreviewMaterial;
-            style.width = Resolution;
-            style.height = Resolution;
+            _resolution = resolution;
+            style.width = _resolution;
+            style.height = _resolution;
 
             name = "PreviewDrawer";
         }
