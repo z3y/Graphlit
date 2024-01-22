@@ -724,6 +724,7 @@ namespace ZSG
         const int TEX = 1;
         const int OUT_RGBA = 3;
 
+        const int OUT_RGB = 2;
         const int OUT_R = 4;
         const int OUT_G = 5;
         const int OUT_B = 6;
@@ -731,14 +732,16 @@ namespace ZSG
 
         public override Color Accent => new Color(0.8f, 0.2f, 0.2f);
 
-        public override int PreviewResolution => 138;
+        public override int PreviewResolution => 156;
 
         Port _texturePort;
         public override void AddElements()
         {
-            _texturePort = AddPort(new(PortDirection.Input, new Nodes.PortType.Texture2D(), TEX, "Texture"));
+            _texturePort = AddPort(new(PortDirection.Input, new Nodes.PortType.Texture2D(), TEX, "Texture 2D"));
             AddPort(new(PortDirection.Input, new Float(2), UV, "UV"));
             AddPort(new(PortDirection.Output, new Float(4), OUT_RGBA, "RGBA"));
+
+            AddPort(new(PortDirection.Output, new Float(3), OUT_RGB, "<color=red>R</color><color=green>G</color><color=blue>B</color>"));
 
             AddPort(new(PortDirection.Output, new Float(1), OUT_R, "<color=red>R</color>"));
             AddPort(new(PortDirection.Output, new Float(1), OUT_G, "<color=green>G</color>"));
@@ -751,11 +754,9 @@ namespace ZSG
 
         protected override void Generate(NodeVisitor visitor)
         {
-            SetVariable(OUT_RGBA, "TextureSample" + UniqueVariableID++);
-            SetVariable(OUT_R, "TextureSampleR" + UniqueVariableID++);
-            SetVariable(OUT_G, "TextureSampleG" + UniqueVariableID++);
-            SetVariable(OUT_B, "TextureSampleB" + UniqueVariableID++);
-            SetVariable(OUT_A, "TextureSampleA" + UniqueVariableID++);
+            string name = "TextureSample" + UniqueVariableID++.ToString();
+            SetVariable(OUT_RGBA, name);
+
 
             if (_texturePort.connected)
             {
@@ -767,10 +768,11 @@ namespace ZSG
                 visitor.AppendLine($"{PrecisionString(4)} {PortData[OUT_RGBA].Name} = {PrecisionString(4)}(1,1,1,1);");
             }
 
-            visitor.AppendLine($"{PrecisionString(1)} {PortData[OUT_R].Name} = {PortData[OUT_RGBA].Name}.r;");
-            visitor.AppendLine($"{PrecisionString(1)} {PortData[OUT_G].Name} = {PortData[OUT_RGBA].Name}.g;");
-            visitor.AppendLine($"{PrecisionString(1)} {PortData[OUT_B].Name} = {PortData[OUT_RGBA].Name}.b;");
-            visitor.AppendLine($"{PrecisionString(1)} {PortData[OUT_A].Name} = {PortData[OUT_RGBA].Name}.a;");
+            SetVariable(OUT_RGB, $"{PrecisionString(3)}({name}.rgb)");
+            SetVariable(OUT_R, $"{PrecisionString(1)}({name}.r)");
+            SetVariable(OUT_G, $"{PrecisionString(1)}({name}.g)");
+            SetVariable(OUT_B, $"{PrecisionString(1)}({name}.b)");
+            SetVariable(OUT_A, $"{PrecisionString(1)}({name}.a)");
         }
     }
 
