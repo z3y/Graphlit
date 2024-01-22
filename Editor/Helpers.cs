@@ -1,7 +1,11 @@
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
+using UnityEditor.Build.Content;
 using UnityEditor.Experimental.GraphView;
+using UnityEngine;
 
 namespace ZSG
 {
@@ -26,6 +30,55 @@ namespace ZSG
 
             return c;
         }
+
+        public static string AssetSerializableReference(UnityEngine.Object @object)
+        {
+            ObjectIdentifier.TryGetObjectIdentifier(@object, out var id);
+            return id.localIdentifierInFile + "|" + id.guid.ToString();
+        }
+
+        public static T SerializableReferenceToObject<T>(string reference) where T : UnityEngine.Object
+        {
+            if (string.IsNullOrEmpty(reference))
+            {
+                return null;
+            }
+            else if (!reference.Contains('|'))
+            {
+                return null;
+            }
+            string[] split = reference.Split('|');
+            long localId = long.Parse(split[0]);
+            string guid = split[1];
+
+            var path = AssetDatabase.GUIDToAssetPath(guid);
+
+
+            var mainAsset = AssetDatabase.LoadMainAssetAtPath(path);
+
+            if (mainAsset is T x)
+            {
+                return x;
+            }
+
+            if (path.StartsWith("Resources/"))
+            {
+                //Debug.Log(path.Substring("Resources/".Length));
+                //asset = AssetDatabase.GetBuiltinExtraResource<T>(path.Substring("Resources/".Length));
+                return null;
+            }
+
+            T asset = AssetDatabase.LoadAllAssetRepresentationsAtPath(path)
+                .Where(x => x is T).Cast<T>()
+                .Where(x =>
+                {
+                    AssetDatabase.TryGetGUIDAndLocalFileIdentifier(x, out string guid2, out long localId2);
+                    return localId2 == localId;
+                }).First();
+
+            return asset;
+        }
+
     }
 
     public static class PortExtenstions
@@ -44,4 +97,5 @@ namespace ZSG
             return portDescriptors.Where(x => x.ID == ID).First();
         }
     }
+
 }

@@ -2,15 +2,15 @@
 
 using System.Collections.Generic;
 using System;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 using UnityEngine;
 using ZSG.Nodes.PortType;
 using ZSG.Nodes;
-using ZSG;
 using System.Linq;
 using UnityEditor.UIElements;
-using NUnit.Framework.Internal;
+using UnityEditor;
+using Texture2D = UnityEngine.Texture2D;
+using UnityEditor.Build.Content;
 
 namespace ZSG
 {
@@ -407,16 +407,9 @@ namespace ZSG
     {
         const int OUT = 0;
         [SerializeField] private float _value;
-        [SerializeField] PropertyDeclaration _decl;
-        [SerializeField] string _name;
-        [SerializeField] string _displayName;
-
-        FloatField _valueField;
-        Port _port;
-
         public override void AddElements()
         {
-            _port = AddPort(new(PortDirection.Output, new Float(3, true), OUT));
+            AddPort(new(PortDirection.Output, new Float(1), OUT));
             string propertyName = GetVariableNameForPreview(OUT);
 
             onUpdatePreviewMaterial += (mat) =>
@@ -424,85 +417,29 @@ namespace ZSG
                 mat.SetFloat(propertyName, _value);
             };
 
-
-            _valueField = new FloatField { value = _value, label = "X" };
-            _valueField.Children().First().style.minWidth = 0;
-            _valueField.RegisterValueChangedCallback((evt) =>
+            var f = new FloatField ("X") { value = _value };
+            f.Children().First().style.minWidth = 0;
+            f.RegisterValueChangedCallback((evt) =>
             {
                 _value = evt.newValue;
                 UpdatePreviewMaterial();
             });
-            inputContainer.Add(_valueField);
-            UpdateVisuals();
+            inputContainer.Add(f);
         }
 
-        private void UpdateVisuals()
-        {
-            if (_decl == PropertyDeclaration.Constant)
-            {
-                _valueField.style.display = DisplayStyle.Flex;
-                _port.portName = "";
-            }
-            else
-            {
-                _valueField.style.display = DisplayStyle.None;
-                _port.portName = _displayName;
-            }
-        }
-
-        public override void AdditionalElements(VisualElement root)
-        {
-            var isProperty = new EnumField("Type", PropertyDeclaration.Constant)
-            {
-                value = _decl
-            };
-            isProperty.RegisterValueChangedCallback(evt =>
-            {
-                _decl = (PropertyDeclaration)evt.newValue;
-                GeneratePreviewForAffectedNodes();
-                UpdateVisuals();
-            });
-            root.Add(isProperty);
-
-            var displayName = new TextField("Display Name") { value = _displayName };
-            displayName.RegisterValueChangedCallback((evt) =>
-            {
-                _displayName = evt.newValue;
-                UpdateVisuals();
-            });
-            root.Add(displayName);
-
-            var name = new TextField("Name") { value = _name };
-            name.RegisterValueChangedCallback((evt) =>
-            {
-                _name = evt.newValue;
-            });
-            root.Add(name);
-
-            var defaultValue = new FloatField { value = _value, label = "Default Value" };
-            defaultValue.RegisterValueChangedCallback((evt) =>
-            {
-                _value = evt.newValue;
-                UpdatePreviewMaterial();
-            });
-            root.Add(defaultValue);
-        }
-
-        public override bool LowProfile => true;
-        public override bool EnablePreview => false;
+        //public override bool EnablePreview => false;
 
         protected override void Generate(NodeVisitor visitor)
         {
-            bool preview = visitor.GenerationMode == GenerationMode.Preview;
-            if (preview || _decl == PropertyDeclaration.Property)
+            if (visitor.GenerationMode == GenerationMode.Preview)
             {
-                string propertyName = preview ? GetVariableNameForPreview(OUT) : _name;
-                var prop = new PropertyDescriptor(PropertyType.Float, _displayName, propertyName)
+                string propertyName = GetVariableNameForPreview(OUT);
+                var prop = new PropertyDescriptor(PropertyType.Float, "", propertyName)
                 {
                     floatValue = _value
                 };
                 visitor.AddProperty(prop);
-                PortData[OUT] = new GeneratedPortData(new Float(1), prop.referenceName);
+                PortData[OUT] = new GeneratedPortData(new Float(1), propertyName);
             }
             else
             {
@@ -723,14 +660,14 @@ namespace ZSG
         }
     }
 
-    [NodeInfo("SampleTexture2D"), Serializable]
+    [NodeInfo("Sample Texture 2D"), Serializable]
     public class SampleTexture2DNode : ShaderNode
     {
         const int UV = 0;
         const int OUT = 3;
 
-        [SerializeField] UnityEngine.Texture2D _texture;
-        UnityEngine.Texture2D GetTexture() => _texture;
+        [SerializeField] string _textureID;
+        Texture2D GetTexture => Helpers.SerializableReferenceToObject<Texture2D>(_textureID);
 
         public override void AddElements()
         {
@@ -742,17 +679,22 @@ namespace ZSG
 
             onUpdatePreviewMaterial = (mat) =>
             {
-                mat.SetTexture(propertyName, GetTexture());
+                mat.SetTexture(propertyName, GetTexture);
             };
+            UpdatePreviewMaterial();
 
             var texField = new ObjectField
             {
-                value = _texture,
-                objectType = typeof(UnityEngine.Texture2D)
+                value = GetTexture,
+                objectType = typeof(Texture2D)
             };
             texField.RegisterValueChangedCallback((evt) =>
             {
-                _texture = (UnityEngine.Texture2D)evt.newValue;
+                _textureID = Helpers.AssetSerializableReference(evt.newValue);
+                onUpdatePreviewMaterial = (mat) =>
+                {
+                    mat.SetTexture(propertyName, GetTexture);
+                };
                 UpdatePreviewMaterial();
             });
             extensionContainer.Add(texField);

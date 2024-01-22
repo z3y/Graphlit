@@ -88,7 +88,15 @@ namespace ZSG
             });
 
             root.Add(properties);
-
+/*
+            properties.selectionChanged += (x) => {
+                foreach (PropertyDescriptor property in x)
+                {
+                    GraphView.graphElements.Where(x => is)
+                }
+            
+            };
+*/
         }
     }
 

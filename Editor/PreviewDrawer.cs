@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -16,19 +14,16 @@ namespace ZSG
     public class PreviewDrawer : ImmediateModeElement, IDisposable
     {
         const int Resolution = 96;
-        public Material material;
-        public static List<Material> materials = new List<Material>();
+        public static Material PreviewMaterial = new (Shader.Find("Unlit/Color"))
+        {
+            hideFlags = HideFlags.HideAndDontSave
+        };
+        private Shader _shader;
+
         public bool preview3D = false;
 
         public PreviewDrawer()
         {
-            material = new Material(Shader.Find("Unlit/Color"))
-            {
-                hideFlags = HideFlags.HideAndDontSave
-            };
-
-            materials.Add(material);
-
             style.width = Resolution;
             style.height = Resolution;
 
@@ -37,30 +32,35 @@ namespace ZSG
 
         public void SetShader(Shader shader)
         {
-            if (!material)
-            {
-                return;
-            }
-            material.shader = shader;
+            _shader = shader;
             MarkDirtyRepaint();
         }
 
         public void Dispose()
         {
-            if (material)
+            if (PreviewMaterial)
             {
-                if (material.shader)
+                if (PreviewMaterial.shader)
                 {
-                    GameObject.DestroyImmediate(material.shader);
+                    GameObject.DestroyImmediate(PreviewMaterial.shader);
                 }
-                materials.Remove(material);
-                GameObject.DestroyImmediate(material);
+                GameObject.DestroyImmediate(PreviewMaterial);
             }
         }
 
         protected override void ImmediateRepaint()
         {
-            Graphics.DrawTexture(contentRect, Texture2D.whiteTexture, material, 0);
+            if (!PreviewMaterial)
+            {
+                return;
+            }
+
+            if (_shader is not null)
+            {
+                PreviewMaterial.shader = _shader;
+            }
+
+            Graphics.DrawTexture(contentRect, Texture2D.whiteTexture, PreviewMaterial, 0);
 
             MarkDirtyRepaint();
         }

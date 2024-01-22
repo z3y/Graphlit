@@ -469,11 +469,14 @@ namespace ZSG
 
         public void UpdatePreviewMaterial()
         {
-            foreach (var material in PreviewDrawer.materials)
+            /*foreach (var material in PreviewDrawer.materials)
             {
                 if (material is null) continue;
                 onUpdatePreviewMaterial(material);
-            }
+            }*/
+            onUpdatePreviewMaterial(PreviewDrawer.PreviewMaterial);
+            //PreviewDrawer.SetProperties -= (mat) => onUpdatePreviewMaterial(mat);
+            //PreviewDrawer.SetProperties += (mat) => onUpdatePreviewMaterial(mat);
         }
         public string GetVariableNameForPreview(int ID)
         {

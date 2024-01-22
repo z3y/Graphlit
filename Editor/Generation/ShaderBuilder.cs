@@ -278,12 +278,23 @@ namespace ZSG
 
         private void AppendProperties()
         {
-            //var allProperties = passBuilders.SelectMany(x => x.properties);
-
-            foreach (var property in ShaderGraphView.graphData.properties)
+            if (GenerationMode == GenerationMode.Preview)
             {
-                _sb.AppendLine(property.ToString());
+                var allProperties = passBuilders.SelectMany(x => x.properties);
+
+                foreach (var property in allProperties)
+                {
+                    _sb.AppendLine(property.ToString());
+                }
             }
+            else
+            {
+                foreach (var property in ShaderGraphView.graphData.properties)
+                {
+                    _sb.AppendLine(property.ToString());
+                }
+            }
+
         }
 
         public static void AppendTags(ShaderStringBuilder sb, Dictionary<string, string> tags)
