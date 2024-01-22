@@ -33,7 +33,10 @@ namespace ZSG
 
         public static string AssetSerializableReference(UnityEngine.Object @object)
         {
-            ObjectIdentifier.TryGetObjectIdentifier(@object, out var id);
+            if (!ObjectIdentifier.TryGetObjectIdentifier(@object, out var id))
+            {
+                return string.Empty;
+            }
             return id.localIdentifierInFile + "|" + id.guid.ToString();
         }
 
@@ -68,8 +71,13 @@ namespace ZSG
                 return null;
             }
 
-            T asset = AssetDatabase.LoadAllAssetRepresentationsAtPath(path)
-                .Where(x => x is T).Cast<T>()
+            var assetRepresentations = AssetDatabase.LoadAllAssetRepresentationsAtPath(path);
+            if (assetRepresentations.Length == 0)
+            {
+                return null;
+            };
+
+            T asset = assetRepresentations.Where(x => x is T).Cast<T>()
                 .Where(x =>
                 {
                     AssetDatabase.TryGetGUIDAndLocalFileIdentifier(x, out string guid2, out long localId2);

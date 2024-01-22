@@ -36,6 +36,7 @@ namespace ZSG
         [SerializeField] public Vector2 range;
         [SerializeField] public float floatValue;
         [SerializeField] public Vector4 vectorValue;
+        [SerializeField] public string defaultTexture;
 
 
         public PropertyDescriptor(PropertyType type, string displayName, string referenceName = "", List<string> attributes = null)
@@ -66,8 +67,8 @@ namespace ZSG
                 PropertyType.Range => "0",
                 PropertyType.Color => "(0,0,0,0)",
                 PropertyType.Intiger => "0",
-                PropertyType.Texture2D => "\"black\" {}",
-                PropertyType.TextureCube => "\"black\" {}",
+                PropertyType.Texture2D => "\"white\" {}",
+                PropertyType.TextureCube => "\"white\" {}",
                 _ => throw new System.NotImplementedException(),
             };
         }

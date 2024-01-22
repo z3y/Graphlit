@@ -152,6 +152,7 @@ namespace ZSG
 
             var shader = ShaderUtil.CreateShaderAsset(result);
             shaderNode.previewDrawer?.SetShader(shader);
+            shaderNode.UpdatePreviewMaterial();
 
             if (log) UnityEngine.Debug.Log(shaderBuilder);
         }

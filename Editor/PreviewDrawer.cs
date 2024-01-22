@@ -14,16 +14,14 @@ namespace ZSG
     public class PreviewDrawer : ImmediateModeElement, IDisposable
     {
         const int Resolution = 96;
-        public static Material PreviewMaterial = new (Shader.Find("Unlit/Color"))
-        {
-            hideFlags = HideFlags.HideAndDontSave
-        };
         private Shader _shader;
 
         public bool preview3D = false;
+        private Material _material;
 
-        public PreviewDrawer()
+        public PreviewDrawer(ShaderGraphView graphView)
         {
+            _material = graphView.PreviewMaterial;
             style.width = Resolution;
             style.height = Resolution;
 
@@ -38,29 +36,25 @@ namespace ZSG
 
         public void Dispose()
         {
-            if (PreviewMaterial)
+            if (_shader)
             {
-                if (PreviewMaterial.shader)
-                {
-                    GameObject.DestroyImmediate(PreviewMaterial.shader);
-                }
-                GameObject.DestroyImmediate(PreviewMaterial);
+                GameObject.DestroyImmediate(_shader);
             }
         }
 
         protected override void ImmediateRepaint()
         {
-            if (!PreviewMaterial)
+            if (!_material)
             {
                 return;
             }
 
             if (_shader is not null)
             {
-                PreviewMaterial.shader = _shader;
+                _material.shader = _shader;
             }
 
-            Graphics.DrawTexture(contentRect, Texture2D.whiteTexture, PreviewMaterial, 0);
+            Graphics.DrawTexture(contentRect, Texture2D.whiteTexture, _material, 0);
 
             MarkDirtyRepaint();
         }

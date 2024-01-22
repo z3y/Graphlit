@@ -17,6 +17,19 @@ namespace ZSG
         public GraphData graphData;
         public VisualElement additionalNodeElements;
 
+        public Material PreviewMaterial = new(Shader.Find("Unlit/Color"))
+        {
+            hideFlags = HideFlags.HideAndDontSave
+        };
+
+        ~ShaderGraphView()
+        {
+            if (PreviewMaterial)
+            {
+                GameObject.DestroyImmediate(PreviewMaterial);
+            }
+        }
+
         public ShaderGraphView(ShaderGraphWindow editorWindow)
         {
             _editorWindow = editorWindow;

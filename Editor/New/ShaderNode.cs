@@ -458,7 +458,7 @@ namespace ZSG
         public PreviewDrawer previewDrawer;
         private void AddPreview()
         {
-            previewDrawer = new PreviewDrawer
+            previewDrawer = new PreviewDrawer(GraphView)
             {
                 preview3D = preview3D
             };
@@ -474,7 +474,7 @@ namespace ZSG
                 if (material is null) continue;
                 onUpdatePreviewMaterial(material);
             }*/
-            onUpdatePreviewMaterial(PreviewDrawer.PreviewMaterial);
+            onUpdatePreviewMaterial(GraphView.PreviewMaterial);
             //PreviewDrawer.SetProperties -= (mat) => onUpdatePreviewMaterial(mat);
             //PreviewDrawer.SetProperties += (mat) => onUpdatePreviewMaterial(mat);
         }
