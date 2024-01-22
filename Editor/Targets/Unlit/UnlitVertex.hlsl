@@ -19,7 +19,9 @@ VaryingsWrapper vert(AttributesWrapper input)
     UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(varyings);
 
     VertexDescription vertexDescription = VertexDescriptionFunction((Attributes) input, (Varyings)varyings);
-    // input.positionOS += vertexDescription.Position;
+    #ifndef PREVIEW
+    input.positionOS = vertexDescription.Position;
+    #endif
 
     varyings.positionCS = UnityObjectToClipPos(input.positionOS);
     //varyings.uv0 = input.uv0;

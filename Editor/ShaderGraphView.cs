@@ -19,7 +19,7 @@ namespace ZSG
 
         public Material PreviewMaterial = new(Shader.Find("Unlit/Color"))
         {
-            hideFlags = HideFlags.HideAndDontSave
+            hideFlags = HideFlags.HideInHierarchy
         };
 
         ~ShaderGraphView()

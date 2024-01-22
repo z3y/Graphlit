@@ -1,11 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Xml.Linq;
 using UnityEditor;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 using ZSG.Nodes;
@@ -123,6 +118,7 @@ namespace ZSG
                 {
                     var inputData = PortData[currentID];
                     visitor.AppendLine($"output.{portDesc.Name} = {inputData.Name};");
+
                     structField.Add($"{@float} {portDesc.Name};");
                 }
             }
@@ -164,6 +160,8 @@ namespace ZSG
         {
             var basePass = new PassBuilder("FORWARD", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitVertex.hlsl", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitFragment.hlsl",
                 POSITION,
+                NORMAL,
+                TANGENT,
                 COLOR
                 );
 

@@ -68,7 +68,7 @@ namespace ZSG
                 target.BuilderVisit(vertexVisitor, vertexPorts);
                 target.BuilderVisit(fragmentVisitor, fragmentPorts);
 
-                //target.VisitTemplate(vertexVisitor, vertexPorts);
+                target.VisitTemplate(vertexVisitor, vertexPorts);
                 target.VisitTemplate(fragmentVisitor, fragmentPorts);
             }
 
