@@ -11,6 +11,13 @@ namespace ZSG
 
     public class ShaderGraphView : GraphView
     {
+        /*[InitializeOnEnterPlayMode]
+        public void RegeneratePreviews(PlayModeStateChange change)
+        {
+            Debug.Log("a");
+            ShaderBuilder.GenerateAllPreviews(this);
+        }*/
+
         private ShaderNodeSearchWindow _searchWindow;
         private ShaderGraphWindow _editorWindow;
 
@@ -19,16 +26,8 @@ namespace ZSG
 
         public Material PreviewMaterial = new(Shader.Find("Unlit/Color"))
         {
-            hideFlags = HideFlags.HideInHierarchy
+            hideFlags = HideFlags.HideAndDontSave
         };
-
-        ~ShaderGraphView()
-        {
-            if (PreviewMaterial)
-            {
-                GameObject.DestroyImmediate(PreviewMaterial);
-            }
-        }
 
         public ShaderGraphView(ShaderGraphWindow editorWindow)
         {

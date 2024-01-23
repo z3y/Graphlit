@@ -150,8 +150,7 @@ namespace ZSG
 
             string result = shaderBuilder.ToString();
 
-            var shader = ShaderUtil.CreateShaderAsset(result);
-            shaderNode.previewDrawer?.SetShader(shader);
+            shaderNode.previewDrawer?.SetShader(result);
             shaderNode.UpdatePreviewMaterial();
 
             if (log) Debug.Log(shaderBuilder);

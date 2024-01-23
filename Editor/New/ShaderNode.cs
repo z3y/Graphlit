@@ -66,7 +66,7 @@ namespace ZSG
         {
             var d = extensionContainer.Q("PreviewDrawer");
             extensionContainer.Remove(d);
-            previewDrawer.Dispose();
+            //previewDrawer.Dispose();
         }
 
         public IEnumerable<Port> PortElements => inputContainer.Children().Concat(outputContainer.Children()).Where(x => x is Port).Cast<Port>();
@@ -568,7 +568,7 @@ namespace ZSG
         }
 
         public PreviewDrawer previewDrawer;
-        private void AddPreview()
+        void AddPreview()
         {
             previewDrawer = new PreviewDrawer(GraphView, PreviewResolution);
             extensionContainer.Add(previewDrawer);
