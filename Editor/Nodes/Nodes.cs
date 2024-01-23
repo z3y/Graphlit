@@ -174,6 +174,8 @@ namespace ZSG
         Port _b;
         Port _a;
 
+        public override PreviewType DefaultPreview => PreviewType.Disabled;
+
         public override void AddElements()
         {
             AddPort(new(PortDirection.Input, new Float(4, true), IN));
@@ -188,6 +190,7 @@ namespace ZSG
         {
             int c = GetComponents(IN);
             string name = PortData[IN].Name;
+
             _r.visible = c >= 1;
             _g.visible = c >= 2;
             _b.visible = c >= 3;
