@@ -354,7 +354,7 @@ namespace ZSG
 
             Generate(visitor);
         }
-        public string UniqueVariable => Info.name + UniqueVariableID++;
+        public string UniqueVariable => Info.name.Replace(" ", "") + UniqueVariableID++;
         public void SetVariable(int id, string name)
         {
             var data = PortData[id];
@@ -414,8 +414,13 @@ namespace ZSG
 
             return new Float(trunc);
         }
+        public int GetComponents(int id)
+        {
+            var type = (Float)PortData[id].Type;
+            return type.components;
+        }
 
-        public GeneratedPortData Cast(int portID, int targetComponent, bool updatePort = true)
+            public GeneratedPortData Cast(int portID, int targetComponent, bool updatePort = true)
         {
             var data = PortData[portID];
             var name = data.Name;

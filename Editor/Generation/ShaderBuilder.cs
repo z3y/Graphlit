@@ -154,7 +154,7 @@ namespace ZSG
             shaderNode.previewDrawer?.SetShader(shader);
             shaderNode.UpdatePreviewMaterial();
 
-            if (log) UnityEngine.Debug.Log(shaderBuilder);
+            if (log) Debug.Log(shaderBuilder);
         }
 
         public static void GenerateAllPreviews(ShaderGraphView graphView)

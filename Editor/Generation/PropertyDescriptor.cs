@@ -34,9 +34,56 @@ namespace ZSG
         [SerializeField] public PropertyType type;
         [SerializeField] public List<string> attributes;
         [SerializeField] public Vector2 range;
-        [SerializeField] public float floatValue;
-        [SerializeField] public Vector4 vectorValue;
-        [SerializeField] public string defaultTexture;
+        [SerializeField] string _value;
+        public float FloatValue
+        {
+            get
+            {
+                float.TryParse(_value, out float value);
+                return value;
+            }
+            set
+            {
+                _value = value.ToString();
+            }
+        }
+        public Vector4 VectorValue
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_value))
+                {
+                    return Vector4.zero;
+                }
+
+                string withoutParens = _value.Replace(")", "").Replace("(", "");
+                string[] split = withoutParens.Split(',');
+                float.TryParse(split[0], out float x);
+                float.TryParse(split[1], out float y);
+                float.TryParse(split[2], out float z);
+                float.TryParse(split[3], out float w);
+                return new Vector4(x, y, z , w);
+            }
+            set
+            {
+                _value = value.ToString();
+            }
+        }
+        public Texture DefaultTexture
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_value))
+                {
+                    return null;
+                }
+                return Helpers.SerializableReferenceToObject<Texture>(_value);
+            }
+            set
+            {
+                _value = Helpers.AssetSerializableReference(value);
+            }
+        }
 
 
         public PropertyDescriptor(PropertyType type, string displayName, string referenceName = "", List<string> attributes = null)
@@ -50,23 +97,14 @@ namespace ZSG
 
         public string GetDefaultValue()
         {
-            if (floatValue != 0)
-            {
-                return floatValue.ToString();
-            }
-            if (vectorValue != Vector4.zero)
-            {
-                return vectorValue.ToString();
-            }
             return type switch
             {
-                PropertyType.Float => "0",
-                PropertyType.Float2 => "(0,0,0,0)",
-                PropertyType.Float3 => "(0,0,0,0)",
-                PropertyType.Float4 => "(0,0,0,0)",
-                PropertyType.Range => "0",
-                PropertyType.Color => "(0,0,0,0)",
-                PropertyType.Intiger => "0",
+                PropertyType.Float => _value,
+                PropertyType.Float2 => _value,
+                PropertyType.Float3 => _value,
+                PropertyType.Float4 => _value,
+                PropertyType.Color => _value,
+                PropertyType.Intiger => _value,
                 PropertyType.Texture2D => "\"white\" {}",
                 PropertyType.TextureCube => "\"white\" {}",
                 _ => throw new System.NotImplementedException(),
@@ -87,7 +125,7 @@ namespace ZSG
                 PropertyType.Float2 => "Vector",
                 PropertyType.Float3 => "Vector",
                 PropertyType.Float4 => "Vector",
-                PropertyType.Range => $"Range ({range.x.ToString("R")}, {range.y.ToString("R")})",
+                //PropertyType.Range => $"Range ({range.x.ToString("R")}, {range.y.ToString("R")})",
                 PropertyType.Color => "Color",
                 PropertyType.Intiger => "Intiger",
                 PropertyType.Texture2D => "2D",
