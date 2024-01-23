@@ -21,10 +21,12 @@ namespace ZSG
         TextureCube = 8,
     }
 
+    [Serializable]
     public enum PropertyDeclaration
     {
-        Constant,
-        Property
+        Local = 0,
+        Global = 1,
+        Instance = 3,
     }
 
     [Serializable]
@@ -39,6 +41,8 @@ namespace ZSG
         [SerializeField] public float rangeY;
         [SerializeField] string _value;
         [SerializeField] bool tileOffset;
+        [SerializeField] PropertyDeclaration declaration = PropertyDeclaration.Local;
+
         public float FloatValue
         {
             get
@@ -88,7 +92,19 @@ namespace ZSG
                 _value = Helpers.AssetSerializableReference(value);
             }
         }
-        public Vector2 Range => new(rangeX, rangeY);
+        public Vector2 Range
+        {
+            get
+            {
+                return new(rangeX, rangeY);
+            }
+            set
+            {
+                rangeX = value.x;
+                rangeY = value.y;
+            }
+        }
+
         public bool HasRange => rangeX != rangeY;
 
 
@@ -188,7 +204,7 @@ namespace ZSG
 
             return "_" + displayName.RemoveWhitespace().Replace("-", "_");
         }
-
+        public bool ShouldDeclare() => declaration == PropertyDeclaration.Local;
         public string GetPropertyDeclaration(GenerationMode generationMode)
         {
             var referenceName = GetReferenceName(generationMode);
@@ -201,17 +217,32 @@ namespace ZSG
 
         void OnDefaultGUI()
         {
-            EditorGUILayout.LabelField(guid);
-            EditorGUILayout.LabelField(type.ToString());
+            // EditorGUILayout.LabelField(guid);
 
             displayName = EditorGUILayout.TextField(new GUIContent("Display Name"), displayName);
             referenceName = EditorGUILayout.TextField(new GUIContent("Reference Name"), referenceName);
+            if (type != PropertyType.Texture2D && type != PropertyType.TextureCube)
+            {
+                declaration = (PropertyDeclaration)EditorGUILayout.EnumPopup("Declaration", declaration);
+            }
         }
 
         void OnGUIFloat()
         {
             EditorGUI.BeginChangeCheck();
-            float newValue = EditorGUILayout.FloatField("Value", FloatValue);
+            GUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Range", GUILayout.Width(150));
+            Range = EditorGUILayout.Vector2Field("", Range);
+            GUILayout.EndHorizontal();
+            float newValue;
+            if (HasRange)
+            {
+                newValue = EditorGUILayout.Slider("Value", FloatValue, rangeX, rangeY);
+            }
+            else
+            {
+                newValue = EditorGUILayout.FloatField("Value", FloatValue);
+            }
             if (EditorGUI.EndChangeCheck())
             {
                 FloatValue = newValue;
@@ -221,7 +252,7 @@ namespace ZSG
         void OnGUIVector()
         {
             EditorGUI.BeginChangeCheck();
-            Vector4 newValue = EditorGUILayout.Vector4Field("Value", VectorValue);
+            Vector4 newValue = EditorGUILayout.Vector4Field("", VectorValue);
             if (EditorGUI.EndChangeCheck())
             {
                 VectorValue = newValue;
@@ -254,10 +285,15 @@ namespace ZSG
         public VisualElement PropertyEditorGUI()
         {
             var imgui = new IMGUIContainer(OnDefaultGUI); // too much data to bind, easier to just use imgui
-            //imgui.onGUIHandler += OnDefaultGUI;
             if (type == PropertyType.Float) imgui.onGUIHandler += OnGUIFloat;
             else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) imgui.onGUIHandler += OnGUIVector;
             else if (type == PropertyType.Texture2D) imgui.onGUIHandler += OnGUITexture;
+
+            var s = imgui.style;
+            s.marginLeft = 6;
+            s.marginRight = 6;
+            s.marginTop = 6;
+            s.marginBottom = 6;
 
 
             return imgui;

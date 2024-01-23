@@ -59,7 +59,7 @@ namespace ZSG
                 var root = new VisualElement();
                 root.style.flexDirection = FlexDirection.Row;
                 var nameField = new TextField() { name = "Name"};
-                nameField.style.width = 200;
+                nameField.style.width = 250;
                 root.Add(nameField);
                 root.Add(new Label("asd") { name = "Type" });
                 return root;
@@ -79,19 +79,23 @@ namespace ZSG
                 menu.AddItem(new GUIContent("Float2"), false, OnTypeSelected, PropertyType.Float2);
                 menu.AddItem(new GUIContent("Float3"), false, OnTypeSelected, PropertyType.Float3);
                 menu.AddItem(new GUIContent("Float4"), false, OnTypeSelected, PropertyType.Float4);
+                menu.AddItem(new GUIContent("Texture2D"), false, OnTypeSelected, PropertyType.Texture2D);
+
                 menu.ShowAsContext();
             });
 
             root.Add(properties);
-/*
-            properties.selectionChanged += (x) => {
-                foreach (PropertyDescriptor property in x)
+            var propertyEditor = new VisualElement();
+            root.Add(propertyEditor);
+
+            properties.selectionChanged += objects =>
+            {
+                propertyEditor.Clear();
+                foreach (PropertyDescriptor obj in objects)
                 {
-                    GraphView.graphElements.Where(x => is)
+                    propertyEditor.Add(obj.PropertyEditorGUI());
                 }
-            
             };
-*/
         }
     }
 

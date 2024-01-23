@@ -123,7 +123,7 @@ namespace ZSG
         {
             var properties = new VisualElement();
             var style = properties.style;
-            style.width = 350;
+            style.width = 400;
             style.paddingTop = 6;
             //style.paddingLeft = 5;
             //style.paddingRight = 6;

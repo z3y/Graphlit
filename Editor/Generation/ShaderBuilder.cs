@@ -285,14 +285,16 @@ namespace ZSG
 
                 foreach (var property in allProperties)
                 {
-                    _sb.AppendLine(property.GetPropertyDeclaration(GenerationMode.Preview));
+                    if (property.ShouldDeclare())
+                        _sb.AppendLine(property.GetPropertyDeclaration(GenerationMode.Preview));
                 }
             }
             else
             {
                 foreach (var property in ShaderGraphView.graphData.properties)
                 {
-                    _sb.AppendLine(property.GetPropertyDeclaration(GenerationMode.Final));
+                    if (property.ShouldDeclare())
+                        _sb.AppendLine(property.GetPropertyDeclaration(GenerationMode.Final));
                 }
             }
 
