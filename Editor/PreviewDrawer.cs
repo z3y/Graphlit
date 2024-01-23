@@ -69,7 +69,7 @@ namespace ZSG
                 GameObject.DestroyImmediate(_cachedShader);
             }
         }
-
+        int _graphTimeId = Shader.PropertyToID("_GraphTime");
         protected override void ImmediateRepaint()
         {
             if (!_material)
@@ -83,6 +83,12 @@ namespace ZSG
                 _material.shader = PreviewShader;
             }
 
+            float t = Time.realtimeSinceStartup;
+
+            Vector4 time = new (t / 20.0f, t, t * 2.0f, t * 3.0f);
+            //Vector4 timeParameters = new Vector4(t, Mathf.Sin(t), Mathf.Cos(t), 0.0f);
+
+            _material.SetVector(_graphTimeId, time);
             Graphics.DrawTexture(contentRect, Texture2D.whiteTexture, _material, 0);
 
             MarkDirtyRepaint();

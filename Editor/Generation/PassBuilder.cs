@@ -109,6 +109,10 @@ namespace ZSG
 
             foreach (var function in functions)
             {
+                if (string.IsNullOrEmpty(function))
+                {
+                    continue;
+                }
                 var lines = function.Split('\n');
                 foreach (var line in lines)
                 {
