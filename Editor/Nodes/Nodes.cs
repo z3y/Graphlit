@@ -7,10 +7,9 @@ using UnityEngine;
 using ZSG.Nodes.PortType;
 using ZSG.Nodes;
 using System.Linq;
-using UnityEditor.UIElements;
 using UnityEditor;
-using Texture2D = UnityEngine.Texture2D;
 using UnityEditor.Experimental.GraphView;
+using System.Threading.Tasks;
 
 namespace ZSG
 {
@@ -264,6 +263,8 @@ namespace ZSG
                 s.marginLeft = 6;
             }
             inputContainer.Add(imguiContainer);
+
+            propertyDescriptor.UpdatePreviewMaterial();
         }
 
         // imagine dealing with binding
@@ -715,27 +716,13 @@ namespace ZSG
             base.AddElements();
 
             AddPort(new(PortDirection.Output, new Nodes.PortType.Texture2D(), OUT));
+
+            InitializeTexture(); // TODO: figure out why textures arent set on time
         }
-
-        public override void AdditionalElements(VisualElement root)
+        async void InitializeTexture()
         {
-            base.AdditionalElements(root);
-
-          /*  var texField = new ObjectField
-            {
-                value = propertyDescriptor.DefaultTexture,
-                objectType = typeof(Texture2D)
-            };
-            texField.RegisterValueChangedCallback((evt) =>
-            {
-                propertyDescriptor.DefaultTexture = (Texture)evt.newValue;
-                onUpdatePreviewMaterial = (mat) =>
-                {
-                    mat.SetTexture(propertyDescriptor.GetReferenceName(), propertyDescriptor.DefaultTexture);
-                };
-                UpdatePreviewMaterial();
-            });
-            root.Add(texField);*/
+            await Task.Delay(1000);
+            propertyDescriptor.UpdatePreviewMaterial();
         }
     }
 

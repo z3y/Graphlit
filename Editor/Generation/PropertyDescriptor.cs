@@ -35,7 +35,8 @@ namespace ZSG
         [SerializeField] public string displayName;
         [SerializeField] public PropertyType type;
         [SerializeField] public List<string> attributes;
-        [SerializeField] public Vector2 range;
+        [SerializeField] public float rangeX;
+        [SerializeField] public float rangeY;
         [SerializeField] string _value;
         [SerializeField] bool tileOffset;
         public float FloatValue
@@ -87,6 +88,8 @@ namespace ZSG
                 _value = Helpers.AssetSerializableReference(value);
             }
         }
+        public Vector2 Range => new(rangeX, rangeY);
+        public bool HasRange => rangeX != rangeY;
 
 
         public PropertyDescriptor(PropertyType type, string displayName = "", string referenceName = "", List<string> attributes = null)
@@ -208,12 +211,42 @@ namespace ZSG
         void OnGUIFloat()
         {
             EditorGUI.BeginChangeCheck();
-            float newValue = EditorGUILayout.FloatField("Default Value", FloatValue);
+            float newValue = EditorGUILayout.FloatField("Value", FloatValue);
             if (EditorGUI.EndChangeCheck())
             {
                 FloatValue = newValue;
-                graphView.PreviewMaterial.SetFloat(GetReferenceName(GenerationMode.Preview), newValue);
+                UpdatePreviewMaterial();
             }
+        }
+        void OnGUIVector()
+        {
+            EditorGUI.BeginChangeCheck();
+            Vector4 newValue = EditorGUILayout.Vector4Field("Value", VectorValue);
+            if (EditorGUI.EndChangeCheck())
+            {
+                VectorValue = newValue;
+                UpdatePreviewMaterial();
+            }
+        }
+
+        void OnGUITexture()
+        {
+            EditorGUI.BeginChangeCheck();
+            Texture newValue = (Texture)EditorGUILayout.ObjectField(DefaultTexture, typeof(Texture2D), false);
+            if (EditorGUI.EndChangeCheck())
+            {
+                DefaultTexture = newValue;
+                UpdatePreviewMaterial();
+            }
+        }
+
+        public void UpdatePreviewMaterial()
+        {
+            Material m = graphView.PreviewMaterial;
+            string name = GetReferenceName(GenerationMode.Preview);
+            if (type == PropertyType.Float) m.SetFloat(name, FloatValue);
+            else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) m.SetVector(name, VectorValue);
+            else if (type == PropertyType.Texture2D) m.SetTexture(name, DefaultTexture);
         }
 
         [NonSerialized] public ShaderGraphView graphView;
@@ -223,6 +256,9 @@ namespace ZSG
             var imgui = new IMGUIContainer(OnDefaultGUI); // too much data to bind, easier to just use imgui
             //imgui.onGUIHandler += OnDefaultGUI;
             if (type == PropertyType.Float) imgui.onGUIHandler += OnGUIFloat;
+            else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) imgui.onGUIHandler += OnGUIVector;
+            else if (type == PropertyType.Texture2D) imgui.onGUIHandler += OnGUITexture;
+
 
             return imgui;
         }
