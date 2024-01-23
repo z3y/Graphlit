@@ -301,6 +301,17 @@ namespace ZSG
                     return PortBindings.GetBindingString(pass, visitor.Stage, @float.components, binding);
                 }
             }
+            else if (portDescriptor.Type is Float @float)
+            {
+                int c = @float.components;
+                return c switch
+                {
+                    1 => PrecisionString(1) + "(0)",
+                    2 => PrecisionString(2) + "(0, 0)",
+                    3 => PrecisionString(3) + "(0, 0, 0)",
+                    4 or _ => PrecisionString(4) + "(0, 0, 0, 0)",
+                };
+            }
 
             return PrecisionString(4) + "(0,0,0,0)";
         }
