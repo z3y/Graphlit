@@ -36,6 +36,7 @@ namespace ZSG
 
         public void AddPass(PassBuilder passBuilder)
         {
+            passBuilder.generationMode = GenerationMode;
             passBuilders.Add(passBuilder);
         }
 
@@ -284,14 +285,14 @@ namespace ZSG
 
                 foreach (var property in allProperties)
                 {
-                    _sb.AppendLine(property.ToString());
+                    _sb.AppendLine(property.GetPropertyDeclaration(GenerationMode.Preview));
                 }
             }
             else
             {
                 foreach (var property in ShaderGraphView.graphData.properties)
                 {
-                    _sb.AppendLine(property.ToString());
+                    _sb.AppendLine(property.GetPropertyDeclaration(GenerationMode.Final));
                 }
             }
 

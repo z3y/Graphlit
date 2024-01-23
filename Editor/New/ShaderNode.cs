@@ -587,10 +587,6 @@ namespace ZSG
             //PreviewDrawer.SetProperties -= (mat) => onUpdatePreviewMaterial(mat);
             //PreviewDrawer.SetProperties += (mat) => onUpdatePreviewMaterial(mat);
         }
-        public string GetVariableNameForPreview(int ID)
-        {
-            return "_" + viewDataKey.Replace("-", "_") + "_" + ID;
-        }
     }
 
     public class EdgeConnectorListener : IEdgeConnectorListener

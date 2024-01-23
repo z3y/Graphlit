@@ -36,6 +36,8 @@ namespace ZSG
 
         const string FragmentDataPath = "Packages/com.z3y.myshadergraph/Editor/Targets/FragmentData.hlsl";
 
+        public GenerationMode generationMode;
+
 
         public string vertexShaderPath;
         public string fragmentShaderPath;
@@ -102,7 +104,7 @@ namespace ZSG
                     continue;
                 }
 */
-                sb.AppendLine(property.Declaration());
+                sb.AppendLine(property.GetFieldDeclaration(generationMode));
             }
             sb.AppendLine("// CBUFFER END");
             sb.AppendLine();

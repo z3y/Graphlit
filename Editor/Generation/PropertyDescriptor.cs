@@ -1,22 +1,24 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace ZSG
 {
     [Serializable]
     public enum PropertyType
     {
-        Float,
-        Float2,
-        Float3,
-        Float4,
-        Range,
-        Color,
-        Intiger,
-        Texture2D,
-        TextureCube,
+        Float = 1,
+        Float2 = 2,
+        Float3 = 3,
+        Float4 = 4,
+        Color = 5,
+        Intiger = 6,
+        Texture2D = 7,
+        TextureCube = 8,
     }
 
     public enum PropertyDeclaration
@@ -35,6 +37,7 @@ namespace ZSG
         [SerializeField] public List<string> attributes;
         [SerializeField] public Vector2 range;
         [SerializeField] string _value;
+        [SerializeField] bool tileOffset;
         public float FloatValue
         {
             get
@@ -86,25 +89,25 @@ namespace ZSG
         }
 
 
-        public PropertyDescriptor(PropertyType type, string displayName, string referenceName = "", List<string> attributes = null)
+        public PropertyDescriptor(PropertyType type, string displayName = "", string referenceName = "", List<string> attributes = null)
         {
+            guid = Guid.NewGuid().ToString();
             this.type = type;
-            this.displayName = displayName;
+            this.displayName = string.IsNullOrEmpty(displayName) ? guid : displayName;
             this.attributes = attributes;
             this.referenceName = referenceName;
-            guid = Guid.NewGuid().ToString();
         }
 
         public string GetDefaultValue()
         {
             return type switch
             {
-                PropertyType.Float => _value,
-                PropertyType.Float2 => _value,
-                PropertyType.Float3 => _value,
-                PropertyType.Float4 => _value,
-                PropertyType.Color => _value,
-                PropertyType.Intiger => _value,
+                PropertyType.Float => FloatValue.ToString(),
+                PropertyType.Float2 => VectorValue.ToString(),
+                PropertyType.Float3 => VectorValue.ToString(),
+                PropertyType.Float4 => VectorValue.ToString(),
+                PropertyType.Color => VectorValue.ToString(),
+                PropertyType.Intiger => FloatValue.ToString(),
                 PropertyType.Texture2D => "\"white\" {}",
                 PropertyType.TextureCube => "\"white\" {}",
                 _ => throw new System.NotImplementedException(),
@@ -134,9 +137,9 @@ namespace ZSG
             };
         }
 
-        public string Declaration()
+        public string GetFieldDeclaration(GenerationMode generationMode)
         {
-            var referenceName = GetReferenceName();
+            var referenceName = GetReferenceName(generationMode);
 
             return type switch
             {
@@ -144,7 +147,6 @@ namespace ZSG
                 PropertyType.Float2 => $"float2 {referenceName};",
                 PropertyType.Float3 => $"float3 {referenceName};",
                 PropertyType.Float4 => $"float4 {referenceName};",
-                PropertyType.Range => $"float {referenceName};",
                 PropertyType.Color => $"float4 {referenceName};",
                 PropertyType.Intiger => $"int {referenceName};",
                 PropertyType.Texture2D => $"Texture2D {referenceName}; SamplerState sampler{referenceName};",
@@ -170,19 +172,59 @@ namespace ZSG
             return sb.ToString();
         }
 
-        public string GetReferenceName()
+        public string GetReferenceName(GenerationMode generationMode)
         {
-            return string.IsNullOrEmpty(this.referenceName) ? "_" + displayName?.RemoveWhitespace() : this.referenceName;
+            if (generationMode == GenerationMode.Preview)
+            {
+                return "_" + guid.RemoveWhitespace().Replace("-", "_");
+            }
+            if (!string.IsNullOrEmpty(referenceName))
+            {
+                return referenceName;
+            }
+
+            return "_" + displayName.RemoveWhitespace().Replace("-", "_");
         }
 
-        public override string ToString()
+        public string GetPropertyDeclaration(GenerationMode generationMode)
         {
-            var referenceName = GetReferenceName();
+            var referenceName = GetReferenceName(generationMode);
             var type = TypeToString();
             var attributes = AttributesToString();
             var defaultValue = GetDefaultValue();
 
             return $"{attributes} {referenceName} (\"{displayName}\", {type}) = {defaultValue}";
+        }
+
+        void OnDefaultGUI()
+        {
+            EditorGUILayout.LabelField(guid);
+            EditorGUILayout.LabelField(type.ToString());
+
+            displayName = EditorGUILayout.TextField(new GUIContent("Display Name"), displayName);
+            referenceName = EditorGUILayout.TextField(new GUIContent("Reference Name"), referenceName);
+        }
+
+        void OnGUIFloat()
+        {
+            EditorGUI.BeginChangeCheck();
+            float newValue = EditorGUILayout.FloatField("Default Value", FloatValue);
+            if (EditorGUI.EndChangeCheck())
+            {
+                FloatValue = newValue;
+                graphView.PreviewMaterial.SetFloat(GetReferenceName(GenerationMode.Preview), newValue);
+            }
+        }
+
+        [NonSerialized] public ShaderGraphView graphView;
+
+        public VisualElement PropertyEditorGUI()
+        {
+            var imgui = new IMGUIContainer(OnDefaultGUI); // too much data to bind, easier to just use imgui
+            //imgui.onGUIHandler += OnDefaultGUI;
+            if (type == PropertyType.Float) imgui.onGUIHandler += OnGUIFloat;
+
+            return imgui;
         }
     }
 }

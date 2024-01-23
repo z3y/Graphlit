@@ -92,7 +92,7 @@ namespace ZSG
         }
         public void AddProperty(PropertyDescriptor property)
         {
-            if (!_props.Any(x => x.referenceName == property.referenceName))
+            if (!_props.Any(x => x.GetReferenceName(GenerationMode) == property.GetReferenceName(GenerationMode)))
             {
                 _props.Add(property);
             }

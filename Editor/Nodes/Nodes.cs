@@ -34,6 +34,28 @@ namespace ZSG
             Output(visitor, OUT, $"{PortData[A].Name} * {PortData[B].Name}");
         }
     }
+    [NodeInfo("Multiply Add", "a * b + c")]
+    public class MultiplyAddNode : ShaderNode
+    {
+        const int A = 0;
+        const int B = 1;
+        const int C = 2;
+        const int OUT = 3;
+
+        public override void AddElements()
+        {
+            AddPort(new(PortDirection.Input, new Float(1, true), A, "A"));
+            AddPort(new(PortDirection.Input, new Float(1, true), B, "B"));
+            AddPort(new(PortDirection.Input, new Float(1, true), C, "C"));
+            AddPort(new(PortDirection.Output, new Float(1, true), OUT));
+        }
+
+        protected override void Generate(NodeVisitor visitor)
+        {
+            ChangeComponents(OUT, ImplicitTruncation(A, B, C).components);
+            Output(visitor, OUT, $"mad({PortData[A].Name}, {PortData[B].Name}, {PortData[C].Name})");
+        }
+    }
     [NodeInfo("Dot", "dot(a, b)")]
     public class DotNode : ShaderNode
     {
@@ -224,7 +246,7 @@ namespace ZSG
             propertyDescriptor = graphData.properties.Find(x => x.guid == _ref);
             if (string.IsNullOrEmpty(_ref) || propertyDescriptor is null)
             {
-                propertyDescriptor = new PropertyDescriptor(propertyType, "Display Name");
+                propertyDescriptor = new PropertyDescriptor(propertyType);
                 graphData.properties.Add(propertyDescriptor);
                 _ref = propertyDescriptor.guid;
             }
@@ -232,6 +254,8 @@ namespace ZSG
             {
                 _ref = propertyDescriptor.guid;
             }
+
+            propertyDescriptor.graphView = GraphView;
 
             var imguiContainer = new IMGUIContainer(OnGUI);
             {
@@ -250,26 +274,13 @@ namespace ZSG
 
         public override void AdditionalElements(VisualElement root)
         {
-            var guid = new Label(_ref);
-            root.Add(guid);
-            var displayName = new TextField("Display Name") { value = propertyDescriptor.displayName };
-            displayName.RegisterValueChangedCallback(evt => {
-                propertyDescriptor.displayName = evt.newValue;
-            });
-            root.Add(displayName);
-
-            var referenceName = new TextField("Reference Name") { value = propertyDescriptor.referenceName };
-            referenceName.RegisterValueChangedCallback(evt => {
-                propertyDescriptor.referenceName = evt.newValue;
-            });
-            root.Add(referenceName);
+            root.Add(propertyDescriptor.PropertyEditorGUI());
         }
 
         protected override void Generate(NodeVisitor visitor)
         {
-            //string propertyName = GetVariableNameForPreview(OUT);
             visitor.AddProperty(propertyDescriptor);
-            PortData[OUT] = new GeneratedPortData(portDescriptors[OUT].Type, propertyDescriptor.GetReferenceName());
+            PortData[OUT] = new GeneratedPortData(portDescriptors[OUT].Type, propertyDescriptor.GetReferenceName(visitor.GenerationMode));
         }
     }
 
@@ -282,25 +293,6 @@ namespace ZSG
             base.AddElements();
 
             AddPort(new(PortDirection.Output, new Float(1), OUT));
-
-            onUpdatePreviewMaterial += (mat) =>
-            {
-                mat.SetFloat(propertyDescriptor.GetReferenceName(), propertyDescriptor.FloatValue);
-            };
-
-        }
-
-        public override void AdditionalElements(VisualElement root)
-        {
-            base.AdditionalElements(root);
-
-            var value = new FloatField("X") { value = propertyDescriptor.FloatValue };
-            value.RegisterValueChangedCallback(evt =>
-            {
-                propertyDescriptor.FloatValue = evt.newValue;
-                UpdatePreviewMaterial();
-            });
-            root.Add(value);
         }
     }
     [NodeInfo("Float2 Property"), Serializable]
@@ -310,27 +302,7 @@ namespace ZSG
         public override void AddElements()
         {
             base.AddElements();
-
             AddPort(new(PortDirection.Output, new Float(2), OUT));
-
-            onUpdatePreviewMaterial += (mat) =>
-            {
-                mat.SetVector(propertyDescriptor.GetReferenceName(), propertyDescriptor.VectorValue);
-            };
-
-        }
-
-        public override void AdditionalElements(VisualElement root)
-        {
-            base.AdditionalElements(root);
-
-            var value = new Vector2Field() { value = propertyDescriptor.VectorValue };
-            value.RegisterValueChangedCallback(evt =>
-            {
-                propertyDescriptor.VectorValue = evt.newValue;
-                UpdatePreviewMaterial();
-            });
-            root.Add(value);
         }
     }
     [NodeInfo("Float3 Property"), Serializable]
@@ -340,27 +312,7 @@ namespace ZSG
         public override void AddElements()
         {
             base.AddElements();
-
             AddPort(new(PortDirection.Output, new Float(3), OUT));
-
-            onUpdatePreviewMaterial += (mat) =>
-            {
-                mat.SetVector(propertyDescriptor.GetReferenceName(), propertyDescriptor.VectorValue);
-            };
-
-        }
-
-        public override void AdditionalElements(VisualElement root)
-        {
-            base.AdditionalElements(root);
-
-            var value = new Vector3Field() { value = propertyDescriptor.VectorValue };
-            value.RegisterValueChangedCallback(evt =>
-            {
-                propertyDescriptor.VectorValue = evt.newValue;
-                UpdatePreviewMaterial();
-            });
-            root.Add(value);
         }
     }
     [NodeInfo("Float4 Property"), Serializable]
@@ -372,25 +324,6 @@ namespace ZSG
             base.AddElements();
 
             AddPort(new(PortDirection.Output, new Float(4), OUT));
-
-            onUpdatePreviewMaterial += (mat) =>
-            {
-                mat.SetVector(propertyDescriptor.GetReferenceName(), propertyDescriptor.VectorValue);
-            };
-
-        }
-
-        public override void AdditionalElements(VisualElement root)
-        {
-            base.AdditionalElements(root);
-
-            var value = new Vector4Field() { value = propertyDescriptor.VectorValue };
-            value.RegisterValueChangedCallback(evt =>
-            {
-                propertyDescriptor.VectorValue = evt.newValue;
-                UpdatePreviewMaterial();
-            });
-            root.Add(value);
         }
     }
 
@@ -400,15 +333,16 @@ namespace ZSG
         const int OUT = 0;
         [SerializeField] private float _value;
 
+        PropertyDescriptor _descriptor = new (PropertyType.Float);
+
         public override PreviewType DefaultPreview => PreviewType.Disabled;
         public override void AddElements()
         {
             AddPort(new(PortDirection.Output, new Float(1), OUT));
-            string propertyName = GetVariableNameForPreview(OUT);
 
             onUpdatePreviewMaterial += (mat) =>
             {
-                mat.SetFloat(propertyName, _value);
+                mat.SetFloat(_descriptor.GetReferenceName(GenerationMode.Preview), _value);
             };
 
             var f = new FloatField("X") { value = _value };
@@ -425,13 +359,9 @@ namespace ZSG
         {
             if (visitor.GenerationMode == GenerationMode.Preview)
             {
-                string propertyName = GetVariableNameForPreview(OUT);
-                var prop = new PropertyDescriptor(PropertyType.Float, "", propertyName)
-                {
-                    FloatValue = _value
-                };
-                visitor.AddProperty(prop);
-                PortData[OUT] = new GeneratedPortData(new Float(1), propertyName);
+                _descriptor.FloatValue = _value;
+                visitor.AddProperty(_descriptor);
+                PortData[OUT] = new GeneratedPortData(new Float(1), _descriptor.GetReferenceName(GenerationMode.Preview));
             }
             else
             {
@@ -445,18 +375,21 @@ namespace ZSG
     {
         const int OUT = 0;
         [SerializeField] private Vector2 _value;
+
+        PropertyDescriptor _descriptor = new(PropertyType.Float2);
+
         public override PreviewType DefaultPreview => PreviewType.Disabled;
         public override void AddElements()
         {
-            AddPort(new(PortDirection.Output, new Float(2, true), OUT));
-            string propertyName = GetVariableNameForPreview(OUT);
+            AddPort(new(PortDirection.Output, new Float(2), OUT));
 
             onUpdatePreviewMaterial += (mat) =>
             {
-                mat.SetVector(propertyName, _value);
+                mat.SetVector(_descriptor.GetReferenceName(GenerationMode.Preview), _value);
             };
 
-            var f = new Vector2Field { value = _value };
+            var f = new Vector2Field() { value = _value };
+            f.Children().First().style.minWidth = 0;
             f.RegisterValueChangedCallback((evt) =>
             {
                 _value = evt.newValue;
@@ -469,13 +402,9 @@ namespace ZSG
         {
             if (visitor.GenerationMode == GenerationMode.Preview)
             {
-                string propertyName = GetVariableNameForPreview(OUT);
-                var prop = new PropertyDescriptor(PropertyType.Float2, "", propertyName)
-                {
-                    VectorValue = _value
-                };
-                visitor.AddProperty(prop);
-                PortData[OUT] = new GeneratedPortData(new Float(2), propertyName);
+                _descriptor.VectorValue = _value;
+                visitor.AddProperty(_descriptor);
+                PortData[OUT] = new GeneratedPortData(new Float(2), _descriptor.GetReferenceName(GenerationMode.Preview));
             }
             else
             {
@@ -490,18 +419,20 @@ namespace ZSG
         const int OUT = 0;
         [SerializeField] private Vector3 _value;
 
+        PropertyDescriptor _descriptor = new(PropertyType.Float3);
+
         public override PreviewType DefaultPreview => PreviewType.Disabled;
         public override void AddElements()
         {
-            AddPort(new(PortDirection.Output, new Float(3, true), OUT));
-            string propertyName = GetVariableNameForPreview(OUT);
+            AddPort(new(PortDirection.Output, new Float(3), OUT));
 
             onUpdatePreviewMaterial += (mat) =>
             {
-                mat.SetVector(propertyName, _value);
+                mat.SetVector(_descriptor.GetReferenceName(GenerationMode.Preview), _value);
             };
 
-            var f = new Vector3Field { value = _value };
+            var f = new Vector3Field() { value = _value };
+            f.Children().First().style.minWidth = 0;
             f.RegisterValueChangedCallback((evt) =>
             {
                 _value = evt.newValue;
@@ -514,13 +445,9 @@ namespace ZSG
         {
             if (visitor.GenerationMode == GenerationMode.Preview)
             {
-                string propertyName = GetVariableNameForPreview(OUT);
-                var prop = new PropertyDescriptor(PropertyType.Float3, "", propertyName)
-                {
-                    VectorValue = _value
-                };
-                visitor.AddProperty(prop);
-                PortData[OUT] = new GeneratedPortData(new Float(3), propertyName);
+                _descriptor.VectorValue = _value;
+                visitor.AddProperty(_descriptor);
+                PortData[OUT] = new GeneratedPortData(new Float(3), _descriptor.GetReferenceName(GenerationMode.Preview));
             }
             else
             {
@@ -533,18 +460,21 @@ namespace ZSG
     {
         const int OUT = 0;
         [SerializeField] private Vector4 _value;
+
+        PropertyDescriptor _descriptor = new(PropertyType.Float4);
+
         public override PreviewType DefaultPreview => PreviewType.Disabled;
         public override void AddElements()
         {
-            AddPort(new(PortDirection.Output, new Float(4, true), OUT));
-            string propertyName = GetVariableNameForPreview(OUT);
+            AddPort(new(PortDirection.Output, new Float(4), OUT));
 
             onUpdatePreviewMaterial += (mat) =>
             {
-                mat.SetVector(propertyName, _value);
+                mat.SetVector(_descriptor.GetReferenceName(GenerationMode.Preview), _value);
             };
 
-            var f = new Vector4Field { value = _value };
+            var f = new Vector4Field() { value = _value };
+            f.Children().First().style.minWidth = 0;
             f.RegisterValueChangedCallback((evt) =>
             {
                 _value = evt.newValue;
@@ -557,11 +487,9 @@ namespace ZSG
         {
             if (visitor.GenerationMode == GenerationMode.Preview)
             {
-                string propertyName = GetVariableNameForPreview(OUT);
-                var prop = new PropertyDescriptor(PropertyType.Float4, "", propertyName);
-                prop.VectorValue = _value;
-                visitor.AddProperty(prop);
-                PortData[OUT] = new GeneratedPortData(new Float(4), propertyName);
+                _descriptor.VectorValue = _value;
+                visitor.AddProperty(_descriptor);
+                PortData[OUT] = new GeneratedPortData(new Float(4), _descriptor.GetReferenceName(GenerationMode.Preview));
             }
             else
             {
@@ -787,25 +715,13 @@ namespace ZSG
             base.AddElements();
 
             AddPort(new(PortDirection.Output, new Nodes.PortType.Texture2D(), OUT));
-
-            onUpdatePreviewMaterial = (mat) =>
-            {
-                mat.SetTexture(propertyDescriptor.GetReferenceName(), propertyDescriptor.DefaultTexture);
-            };
-
-            EditorApplication.delayCall += () =>
-            {
-                UpdatePreviewMaterial();
-            };
         }
 
         public override void AdditionalElements(VisualElement root)
         {
             base.AdditionalElements(root);
 
-
-
-            var texField = new ObjectField
+          /*  var texField = new ObjectField
             {
                 value = propertyDescriptor.DefaultTexture,
                 objectType = typeof(Texture2D)
@@ -819,7 +735,7 @@ namespace ZSG
                 };
                 UpdatePreviewMaterial();
             });
-            root.Add(texField);
+            root.Add(texField);*/
         }
     }
 

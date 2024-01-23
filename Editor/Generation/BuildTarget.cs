@@ -44,7 +44,7 @@ namespace ZSG
                 var typeLabel = e.Q<Label>("Type");
                 if (graphData.properties[i] is null)
                 {
-                    graphData.properties[i] = new PropertyDescriptor(PropertyType.Float, "Prop");
+                    graphData.properties[i] = new PropertyDescriptor(PropertyType.Float);
                 }
                 nameField.value = graphData.properties[i].displayName;
                 nameField.RegisterValueChangedCallback((evt) =>
@@ -70,7 +70,7 @@ namespace ZSG
                 void OnTypeSelected(object data)
                 {
                     var type = (PropertyType)data;
-                    GraphView.graphData.properties.Add(new PropertyDescriptor(type, "Prop"));
+                    GraphView.graphData.properties.Add(new PropertyDescriptor(type));
                     properties.RefreshItems();
                 }
 
