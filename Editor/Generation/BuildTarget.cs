@@ -53,6 +53,7 @@ namespace ZSG
                 });
 
                 typeLabel.text = graphData.properties[i].type.ToString();
+                graphData.properties[i].graphView = GraphView;
             };
             properties.makeItem = () =>
             {

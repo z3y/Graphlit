@@ -234,9 +234,9 @@ namespace ZSG
         protected abstract PropertyType propertyType { get; }
 
         protected const int OUT = 0;
-        [SerializeField] protected string _ref;
+        [SerializeField] internal string _ref;
         public override Color Accent => new Color(0.3f,0.7f,0.3f);
-        protected PropertyDescriptor propertyDescriptor;
+        [NonSerialized] public PropertyDescriptor propertyDescriptor;
 
         public override PreviewType DefaultPreview => PreviewType.Disabled;
         public override void AddElements()

@@ -171,12 +171,16 @@ namespace ZSG
             return group;
         }
 
-        public void CreateNode(Type type, Vector2 position, bool transform = true)
+        public void CreateNode(Type type, Vector2 position, bool transform = true, string propertyGuid = "")
         {
             //RecordUndo();
             _editorWindow.SetDirty();
             if (transform) TransformMousePositionToLocalSpace(ref position, true);
             var node = (ShaderNode)Activator.CreateInstance(type);
+            if (!string.IsNullOrEmpty(propertyGuid) && node is PropertyNode propertyNode)
+            {
+                propertyNode._ref = propertyGuid;
+            }
             node.Initialize(this, position);
             AddElement(node);
             node.GeneratePreview(null);

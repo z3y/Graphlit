@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 
 namespace ZSG
@@ -298,5 +299,22 @@ namespace ZSG
 
             return imgui;
         }
+
+        public Type GetNodeType()
+        {
+            return type switch
+            {
+                PropertyType.Float => typeof(FloatPropertyNode),
+                PropertyType.Float2 => typeof(Float2PropertyNode),
+                PropertyType.Float3 => typeof(Float3PropertyNode),
+                PropertyType.Float4 => typeof(Float4PropertyNode),
+                PropertyType.Color => throw new NotImplementedException(),
+                PropertyType.Intiger => throw new NotImplementedException(),
+                PropertyType.Texture2D => typeof(Texture2DPropertyNode),
+                PropertyType.TextureCube => throw new NotImplementedException(),
+                _ => throw new NotImplementedException(),
+            };
+        }
     }
+
 }
