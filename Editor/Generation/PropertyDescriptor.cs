@@ -41,8 +41,7 @@ namespace ZSG
         [SerializeField] public float rangeX;
         [SerializeField] public float rangeY;
         [SerializeField] string _value;
-        [SerializeField] bool tileOffset;
-        [SerializeField] PropertyDeclaration declaration = PropertyDeclaration.Local;
+        [SerializeField] public PropertyDeclaration declaration = PropertyDeclaration.Local;
 
         public float FloatValue
         {
@@ -232,7 +231,7 @@ namespace ZSG
         {
             EditorGUI.BeginChangeCheck();
             GUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("Range", GUILayout.Width(150));
+            EditorGUILayout.LabelField("Range", GUILayout.Width(149));
             Range = EditorGUILayout.Vector2Field("", Range);
             GUILayout.EndHorizontal();
             float newValue;
@@ -264,7 +263,11 @@ namespace ZSG
         void OnGUITexture()
         {
             EditorGUI.BeginChangeCheck();
+
+            GUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Default Texture", GUILayout.Width(149));
             Texture newValue = (Texture)EditorGUILayout.ObjectField(DefaultTexture, typeof(Texture2D), false);
+            GUILayout.EndHorizontal();
             if (EditorGUI.EndChangeCheck())
             {
                 DefaultTexture = newValue;

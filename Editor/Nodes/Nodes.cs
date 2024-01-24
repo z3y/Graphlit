@@ -710,12 +710,16 @@ namespace ZSG
     public class Texture2DPropertyNode : PropertyNode
     {
         protected override PropertyType propertyType => PropertyType.Texture2D;
-
+        const int samplerID = 1;
+        const int scaleOffsetID = 2;
+        Port _scaleOffsetPort;
         public override void AddElements()
         {
             base.AddElements();
 
-            AddPort(new(PortDirection.Output, new Nodes.PortType.Texture2D(), OUT));
+            AddPort(new(PortDirection.Output, new Texture2DObject(), OUT, "Texture2D"));
+            AddPort(new(PortDirection.Output, new SamplerState(), samplerID, "SamplerState"));
+            _scaleOffsetPort = AddPort(new(PortDirection.Output, new Float(4, false), scaleOffsetID, "Scale Offset"));
 
             InitializeTexture(); // TODO: figure out why textures arent set on time
         }
@@ -723,6 +727,29 @@ namespace ZSG
         {
             await Task.Delay(1000);
             propertyDescriptor.UpdatePreviewMaterial();
+        }
+
+        protected override void Generate(NodeVisitor visitor)
+        {
+            base.Generate(visitor);
+            var generation = visitor.GenerationMode;
+            if (_scaleOffsetPort.connected)
+            {
+                var scaleOffsetProperty = new PropertyDescriptor(PropertyType.Float4, "ScaleOffset", propertyDescriptor.GetReferenceName(generation) + "_ST")
+                {
+                    declaration = PropertyDeclaration.Global
+                };
+                visitor.AddProperty(scaleOffsetProperty);
+
+                if (generation == GenerationMode.Preview)
+                {
+                    PortData[scaleOffsetID] = new GeneratedPortData(portDescriptors[scaleOffsetID].Type, "float4(1,1,0,0)");
+                }
+                else
+                {
+                    PortData[scaleOffsetID] = new GeneratedPortData(portDescriptors[scaleOffsetID].Type, scaleOffsetProperty.GetReferenceName(GenerationMode.Final));
+                }
+            }
         }
     }
 
@@ -746,7 +773,7 @@ namespace ZSG
         Port _texturePort;
         public override void AddElements()
         {
-            _texturePort = AddPort(new(PortDirection.Input, new Nodes.PortType.Texture2D(), TEX, "Texture 2D"));
+            _texturePort = AddPort(new(PortDirection.Input, new Texture2DObject(), TEX, "Texture 2D"));
             AddPort(new(PortDirection.Input, new Float(2), UV, "UV"));
             AddPort(new(PortDirection.Output, new Float(4), OUT_RGBA, "RGBA"));
 

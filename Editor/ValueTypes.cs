@@ -50,12 +50,12 @@ namespace ZSG.Nodes.PortType
         }
     }
 
-    public struct Texture2D : IPortType
+    public struct Texture2DObject : IPortType
     {
         public Color GetPortColor() => Color.cyan;
     }
     public struct SamplerState : IPortType
     {
-        public Color GetPortColor() => Color.gray;
+        public Color GetPortColor() => Color.yellow;
     }
 }
