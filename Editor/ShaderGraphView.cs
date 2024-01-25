@@ -181,9 +181,10 @@ namespace ZSG
             {
                 propertyNode._ref = propertyGuid;
             }
+            node._previewDisabled = graphData.defaultPreviewState == GraphData.DefaultPreviewState.Disabled;
             node.Initialize(this, position);
             AddElement(node);
-            node.GeneratePreview(null);
+            node.GeneratePreview();
         }
 
         public ShaderNode AddNode(SerializableNode serializableNode)

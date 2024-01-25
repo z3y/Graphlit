@@ -32,6 +32,10 @@ namespace ZSG
             graphPrecisionSelection.RegisterValueChangedCallback(x => graphData.precision = (GraphData.GraphPrecision)x.newValue);
             root.Add(graphPrecisionSelection);
 
+            var defaultPreviewState = new EnumField("Default Preview State", graphData.defaultPreviewState);
+            defaultPreviewState.RegisterValueChangedCallback(x => graphData.defaultPreviewState = (GraphData.DefaultPreviewState)x.newValue);
+            root.Add(defaultPreviewState);
+
             var properties = new ListView()
             {
                 headerTitle = "Properties",
@@ -129,7 +133,7 @@ namespace ZSG
                 }
             }
         }
-        public override PreviewType DefaultPreview => PreviewType.Disabled;
+        public override bool DisablePreview => true;
 
         protected sealed override void Generate(NodeVisitor visitor) { }
     }

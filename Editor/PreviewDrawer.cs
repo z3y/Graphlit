@@ -1,6 +1,5 @@
 using System;
 using UnityEditor;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -8,9 +7,9 @@ namespace ZSG
 {
     public enum PreviewType
     {
-        Disabled = 0,
-        _2D = 1,
-        _3D = 2,
+        Inherit = 0,
+        Preview2D = 1,
+        Preview3D = 2,
     }
 
     public class PreviewDrawer : ImmediateModeElement
@@ -21,6 +20,7 @@ namespace ZSG
         Material _material;
         ShaderGraphView _graphView;
         static Shader _defaultShader = Shader.Find("Unlit/Color");
+        private bool _disabled = false;
         Shader PreviewShader
         {
             get
@@ -40,7 +40,7 @@ namespace ZSG
                 _cachedShader = _defaultShader;
                 return;
             }
-            _cachedShader = ShaderUtil.CreateShaderAsset(_shader);
+            _cachedShader = ShaderUtil.CreateShaderAsset(_shader, false);
         }
 
         public PreviewDrawer(ShaderGraphView graphView, int resolution = 96)
@@ -63,16 +63,37 @@ namespace ZSG
             MarkDirtyRepaint();
         }
 
+        public void Disable()
+        {
+            _disabled = true;
+            style.height = 0;
+            style.width = 0;
+            Dispose();
+        }
+
+        public void Enable()
+        {
+            _disabled = false;
+            style.width = _resolution;
+            style.height = _resolution;
+        }
+
         public void Dispose()
         {
             if (_cachedShader)
             {
                 GameObject.DestroyImmediate(_cachedShader);
             }
+            _shader = string.Empty;
         }
         int _graphTimeId = Shader.PropertyToID("_GraphTime");
         protected override void ImmediateRepaint()
         {
+            if (_disabled)
+            {
+                return;
+            }
+
             if (!_material)
             {
                 _material = _graphView.PreviewMaterial;
@@ -82,6 +103,11 @@ namespace ZSG
             if (!string.IsNullOrEmpty(_shader))
             {
                 _material.shader = PreviewShader;
+            }
+
+            if (_material.shader == null)
+            {
+                return;
             }
 
             float t = Time.realtimeSinceStartup;

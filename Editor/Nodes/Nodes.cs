@@ -135,11 +135,10 @@ namespace ZSG
             Output(visitor, OUT, $"{PortData[A].Name} - {PortData[B].Name}");
         }
     }
-    [NodeInfo("One Minus", "1 - a")]
-    public class OneMinusNode : ShaderNode
+    public class PasstroughNode : ShaderNode
     {
-        const int IN = 0;
-        const int OUT = 1;
+        protected const int IN = 0;
+        protected const int OUT = 1;
 
         public override void AddElements()
         {
@@ -150,9 +149,28 @@ namespace ZSG
         protected override void Generate(NodeVisitor visitor)
         {
             ChangeComponents(OUT, GetComponents(IN));
+        }
+    }
+
+    [NodeInfo("One Minus", "1 - a")]
+    public class OneMinusNode : PasstroughNode
+    {
+        protected override void Generate(NodeVisitor visitor)
+        {
+            base.Generate(visitor);
             Output(visitor, OUT, $"1.0 - {PortData[IN].Name}");
         }
     }
+    [NodeInfo("Preview"), Serializable]
+    public class PreviewNode : PasstroughNode
+    {
+        protected override void Generate(NodeVisitor visitor)
+        {
+            base.Generate(visitor);
+            Output(visitor, OUT, $"{PortData[IN].Name}");
+        }
+    }
+
     [NodeInfo("Append")]
     public class AppendNode : ShaderNode
     {
@@ -195,7 +213,7 @@ namespace ZSG
         Port _b;
         Port _a;
 
-        public override PreviewType DefaultPreview => PreviewType.Disabled;
+        public override bool DisablePreview => true;
 
         public override void AddElements()
         {
@@ -238,7 +256,7 @@ namespace ZSG
         public override Color Accent => new Color(0.3f,0.7f,0.3f);
         [NonSerialized] public PropertyDescriptor propertyDescriptor;
 
-        public override PreviewType DefaultPreview => PreviewType.Disabled;
+        public override bool DisablePreview => true;
         public override void AddElements()
         {
             var graphData = GraphView.graphData;
@@ -336,7 +354,7 @@ namespace ZSG
 
         PropertyDescriptor _descriptor = new (PropertyType.Float);
 
-        public override PreviewType DefaultPreview => PreviewType.Disabled;
+        public override bool DisablePreview => true;
         public override void AddElements()
         {
             AddPort(new(PortDirection.Output, new Float(1), OUT));
@@ -379,7 +397,7 @@ namespace ZSG
 
         PropertyDescriptor _descriptor = new(PropertyType.Float2);
 
-        public override PreviewType DefaultPreview => PreviewType.Disabled;
+        public override bool DisablePreview => true;
         public override void AddElements()
         {
             AddPort(new(PortDirection.Output, new Float(2), OUT));
@@ -422,7 +440,7 @@ namespace ZSG
 
         PropertyDescriptor _descriptor = new(PropertyType.Float3);
 
-        public override PreviewType DefaultPreview => PreviewType.Disabled;
+        public override bool DisablePreview => true;
         public override void AddElements()
         {
             AddPort(new(PortDirection.Output, new Float(3), OUT));
@@ -464,7 +482,7 @@ namespace ZSG
 
         PropertyDescriptor _descriptor = new(PropertyType.Float4);
 
-        public override PreviewType DefaultPreview => PreviewType.Disabled;
+        public override bool DisablePreview => true;
         public override void AddElements()
         {
             AddPort(new(PortDirection.Output, new Float(4), OUT));
@@ -589,7 +607,7 @@ namespace ZSG
         const int OUT = 0;
         public override Precision DefaultPrecisionOverride => Precision.Float;
         public abstract (string, Float) Parameter { get; }
-        public override PreviewType DefaultPreview => PreviewType.Disabled;
+        public override bool DisablePreview => true;
         public sealed override void AddElements()
         {
             AddPort(new(PortDirection.Output, Parameter.Item2, OUT, Parameter.Item1));
@@ -666,7 +684,7 @@ namespace ZSG
         [SerializeField] PortBinding _binding = PortBinding.UV0;
         [SerializeField] int _components = 3;
 
-        public override PreviewType DefaultPreview => PreviewType._3D;
+        public override PreviewType DefaultPreviewOverride => PreviewType.Preview3D;
         public override void AddElements()
         {
             AddPort(new(PortDirection.Output, new Float(_components), 0));

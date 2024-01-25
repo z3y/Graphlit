@@ -105,7 +105,7 @@ namespace ZSG
 
         public static void GeneratePreview(ShaderGraphView graphView, ShaderNode shaderNode, bool log = false)
         {
-            if (shaderNode.DefaultPreview == PreviewType.Disabled)
+            if (shaderNode.DisablePreview)
             {
                 return;
             }
@@ -144,17 +144,18 @@ namespace ZSG
             //shaderBuilder.passBuilders[0].renderStates.Add("Cull", "Off");
             shaderBuilder.Build(shaderNode);
 
-            if (shaderNode._inheritedPreview == PreviewType._3D)
+            if (shaderNode._inheritedPreview == PreviewType.Preview3D)
             {
                 pass.pragmas.Insert(0, "#define PREVIEW3D");
             }
 
-            string result = shaderBuilder.ToString();
-
-            shaderNode.previewDrawer?.SetShader(result);
-            shaderNode.UpdatePreviewMaterial();
-
-            if (log) Debug.Log(shaderBuilder);
+            if (!shaderNode._previewDisabled)
+            {
+                string result = shaderBuilder.ToString();
+                shaderNode.previewDrawer?.SetShader(result);
+                shaderNode.UpdatePreviewMaterial();
+                if (log) Debug.Log(shaderBuilder);
+            }
         }
 
         public static void GenerateAllPreviews(ShaderGraphView graphView)

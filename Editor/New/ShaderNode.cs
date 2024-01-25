@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -48,14 +49,21 @@ namespace ZSG
         {
             base.BuildContextualMenu(evt);
 
-            evt.menu.AppendAction("Generate Preview", GeneratePreview);
-            //evt.menu.AppendAction("Remove Preview", RemovePreview);
-            //evt.menu.AppendAction("Preview 3D Toggle", Preview3DToggle);
+            if (!DisablePreview)
+            {
+                evt.menu.AppendAction("Preview/Generate", GeneratePreview);
+                evt.menu.AppendAction("Preview/Enable", SetPreviewStateEnabled);
+                evt.menu.AppendAction("Preview/Disable", SetPreviewStateDisabled);
+            }
         }
 
         public void GeneratePreview(DropdownMenuAction action)
         {
             InvokeOnSelection(x => ShaderBuilder.GeneratePreview(GraphView, x, action != null));
+        }
+        public void GeneratePreview()
+        {
+            ShaderBuilder.GeneratePreview(GraphView, this, false);
         }
 
         void InvokeOnSelection(Action<ShaderNode> action)
@@ -124,8 +132,27 @@ namespace ZSG
 
         public abstract void AddElements();
         public virtual int PreviewResolution => 96;
-        public virtual PreviewType DefaultPreview => PreviewType._2D;
+        protected internal PreviewType? _defaultPreview = null;
+        public PreviewType DefaultPreview
+        {
+            get
+            {
+                if (_defaultPreview is PreviewType preview)
+                {
+                    return preview;
+                }
+                return DefaultPreviewOverride;
+            }
+            internal set
+            {
+                _defaultPreview = value;
+            }
+        }
+        public virtual PreviewType DefaultPreviewOverride => PreviewType.Inherit;
         protected internal PreviewType _inheritedPreview;
+
+        protected internal bool _previewDisabled = false;
+        public virtual bool DisablePreview => false;
 
         protected internal Precision? _defaultPrecision = null;
         public Precision DefaultPrecision
@@ -143,7 +170,6 @@ namespace ZSG
                 _defaultPrecision = value;
             }
         }
-
         public virtual Precision DefaultPrecisionOverride => Precision.Inherit;
         protected internal bool _inheritedPrecision;
 
@@ -170,8 +196,8 @@ namespace ZSG
                     {
                         continue;
                     }
-                    is3D += node._inheritedPreview == PreviewType._3D ? 1 : 0;
-                    is2D += node._inheritedPreview == PreviewType._2D ? 1 : 0;
+                    is3D += node._inheritedPreview == PreviewType.Preview3D ? 1 : 0;
+                    is2D += node._inheritedPreview == PreviewType.Preview2D ? 1 : 0;
 
                     //Debug.Log(node.inheritedPreview);
                     connectedCount++;
@@ -189,15 +215,15 @@ namespace ZSG
             }
             else if (is2D == 0 && is3D == 0)
             {
-                _inheritedPreview = PreviewType.Disabled;
+                _inheritedPreview = PreviewType.Preview2D;
             }
             else if (is3D > 0)
             {
-                _inheritedPreview = PreviewType._3D;
+                _inheritedPreview = PreviewType.Preview3D;
             }
             else
             {
-                _inheritedPreview = PreviewType._2D;
+                _inheritedPreview = PreviewType.Preview2D;
             }
 
             if (DefaultPrecision == Precision.Float)
@@ -213,6 +239,11 @@ namespace ZSG
                 _inheritedPrecision = inheritedPrecisionIsFloat;
             }
 
+            if (DefaultPreview != PreviewType.Inherit)
+            {
+                _inheritedPreview = DefaultPreview;
+            }
+
             //Debug.Log(inheritedPreview + Info.name);
         }
 
@@ -222,7 +253,7 @@ namespace ZSG
             AddStyles();
             AddTitleElement();
             AddElements();
-            if (DefaultPreview != PreviewType.Disabled)
+            if (!DisablePreview)
             {
                 AddPreview();
             }
@@ -274,7 +305,24 @@ namespace ZSG
             var titleStyle = titleContainer.style;
             titleStyle.height = 24;
             titleStyle.backgroundColor = Color.black;
+
+            /*var precisionLabel = new IMGUIContainer(OnTitleContainerGUI);
+            precisionLabel.style.opacity = 0.2f;
+            precisionLabel.style.marginLeft = 6;
+            titleContainer.Insert(0, precisionLabel);*/
         }
+
+       /* void OnTitleContainerGUI()
+        {
+            EditorGUILayout.BeginHorizontal();
+            switch (DefaultPrecision)
+            {
+                case Precision.Inherit: EditorGUILayout.LabelField("I", GUILayout.Width(15)); break;
+                case Precision.Half: EditorGUILayout.LabelField("H", GUILayout.Width(15)); break;
+                case Precision.Float: EditorGUILayout.LabelField("F", GUILayout.Width(15)); break;
+            }
+            EditorGUILayout.EndHorizontal();
+        }*/
 
         public static int UniqueVariableID = 0;
         public Dictionary<int, GeneratedPortData> PortData { get; set; } = new();
@@ -426,6 +474,7 @@ namespace ZSG
         {
             int trunc = 4;
             int max = 1;
+
             for (int i = 0; i < IDs.Length; i++)
             {
                 var ID = IDs[i];
@@ -445,6 +494,7 @@ namespace ZSG
                 var ID = IDs[i];
                 Cast(ID, trunc);
             }
+
 
             return new Float(trunc);
         }
@@ -589,6 +639,17 @@ namespace ZSG
                 ve.Add(precisionSelection);
             }
 
+            if (!DisablePreview)
+            {
+                var previewSelection = new EnumField("Preview", DefaultPreview);
+                previewSelection.RegisterValueChangedCallback(x =>
+                {
+                    DefaultPreview = (PreviewType)x.newValue;
+                    GeneratePreviewForAffectedNodes();
+                });
+                ve.Add(previewSelection);
+            }
+
             AdditionalElements(ve);
             root.Add(ve);
         }
@@ -596,12 +657,32 @@ namespace ZSG
         public virtual void AdditionalElements(VisualElement root)
         {
         }
+        void SetPreviewState(bool enabled)
+        {
+            _previewDisabled = !enabled;
+            if (enabled)
+            {
+                GeneratePreview();
+                previewDrawer.Enable();
+            }
+            else
+            {
+                previewDrawer.Disable();
+            }
+        }
+
+        void SetPreviewStateEnabled(DropdownMenuAction action) => InvokeOnSelection(x => x.SetPreviewState(true));
+        void SetPreviewStateDisabled(DropdownMenuAction action) => InvokeOnSelection(x => x.SetPreviewState(false));
 
         public PreviewDrawer previewDrawer;
         void AddPreview()
         {
             previewDrawer = new PreviewDrawer(GraphView, PreviewResolution);
             extensionContainer.Add(previewDrawer);
+            if (_previewDisabled)
+            {
+                previewDrawer.Disable();
+            }
         }
 
         public Action<Material> onUpdatePreviewMaterial = (mat) => { };

@@ -12,8 +12,11 @@ namespace ZSG
         public int x;
         public int y;
         public List<NodeConnection> connections;
-        public string data;
         public Precision precision;
+        public PreviewType preview;
+        public bool previewDisabled;
+
+        public string data;
 
         public readonly Vector2 Position => new (x, y);
 
@@ -27,6 +30,8 @@ namespace ZSG
             this.x = (int)pos.x;
             this.y = (int)pos.y;
             this.precision = node.DefaultPrecision;
+            this.preview = node.DefaultPreview;
+            this.previewDisabled = node._previewDisabled;
 
             this.connections = NodeConnection.GetConnections(node.PortElements);
 
@@ -59,9 +64,12 @@ namespace ZSG
             }
 
             shaderNode = (ShaderNode)instance;
-            shaderNode.Initialize(graphView, Position, guid);
 
             shaderNode._defaultPrecision = this.precision;
+            shaderNode._defaultPreview = this.preview;
+            shaderNode._previewDisabled = this.previewDisabled;
+
+            shaderNode.Initialize(graphView, Position, guid);
 
             return true;
         }

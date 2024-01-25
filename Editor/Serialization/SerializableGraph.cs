@@ -50,7 +50,7 @@ namespace ZSG
             {
                 if (node is ShaderNode shaderNode)
                 {
-                    shaderNode.GeneratePreview(null);
+                    shaderNode.GeneratePreview();
                 }
             }
         }
