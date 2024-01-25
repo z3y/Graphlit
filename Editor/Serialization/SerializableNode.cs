@@ -13,6 +13,7 @@ namespace ZSG
         public int y;
         public List<NodeConnection> connections;
         public string data;
+        public Precision precision;
 
         public readonly Vector2 Position => new (x, y);
 
@@ -25,6 +26,7 @@ namespace ZSG
             var pos = node.GetPosition().position;
             this.x = (int)pos.x;
             this.y = (int)pos.y;
+            this.precision = node.DefaultPrecision;
 
             this.connections = NodeConnection.GetConnections(node.PortElements);
 
@@ -58,6 +60,8 @@ namespace ZSG
 
             shaderNode = (ShaderNode)instance;
             shaderNode.Initialize(graphView, Position, guid);
+
+            shaderNode._defaultPrecision = this.precision;
 
             return true;
         }

@@ -112,7 +112,7 @@ namespace ZSG
             selectMasterNode.clicked += () =>
             {
                 graphView.ClearSelection();
-                graphView.AddToSelection(graphView.graphElements.Where(x => x is BuildTarget).First());
+                graphView.AddToSelection(graphView.graphElements.Where(x => x is TemplateOutput).First());
             };
             toolbar.Add(selectMasterNode);
 

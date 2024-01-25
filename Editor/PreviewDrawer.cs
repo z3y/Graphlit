@@ -50,6 +50,7 @@ namespace ZSG
             _resolution = resolution;
             style.width = _resolution;
             style.height = _resolution;
+            cullingEnabled = true;
 
             name = "PreviewDrawer";
         }

@@ -505,7 +505,7 @@ namespace ZSG
         const int OUT = 0;
 
         [SerializeField] Channel _uv = Channel.UV0;
-        public override Precision DefaultPrecision => Precision.Float;
+        public override Precision DefaultPrecisionOverride => Precision.Float;
         enum Channel
         {
             UV0, UV1, UV2, UV3
@@ -587,7 +587,7 @@ namespace ZSG
     public abstract class ParameterNode : ShaderNode
     {
         const int OUT = 0;
-        public override Precision DefaultPrecision => Precision.Float;
+        public override Precision DefaultPrecisionOverride => Precision.Float;
         public abstract (string, Float) Parameter { get; }
         public override PreviewType DefaultPreview => PreviewType.Disabled;
         public sealed override void AddElements()
@@ -608,7 +608,7 @@ namespace ZSG
     {
         const int IN = 0;
         const int OUT = 1;
-        public override Precision DefaultPrecision => Precision.Float;
+        public override Precision DefaultPrecisionOverride => Precision.Float;
 
         public override void AddElements()
         {
@@ -627,7 +627,7 @@ namespace ZSG
     {
         const int IN = 0;
         const int OUT = 1;
-        public override Precision DefaultPrecision => Precision.Float;
+        public override Precision DefaultPrecisionOverride => Precision.Float;
 
         public override void AddElements()
         {
@@ -646,7 +646,7 @@ namespace ZSG
         const int IN = 0;
         const int OUT = 1;
 
-        public override Precision DefaultPrecision => Precision.Float;
+        public override Precision DefaultPrecisionOverride => Precision.Float;
 
         public override void AddElements()
         {
@@ -660,7 +660,7 @@ namespace ZSG
         }
     }
 
-    [NodeInfo("BindingTest"), Serializable]
+    [NodeInfo("Bind Test"), Serializable]
     public class BindingTestNode : ShaderNode
     {
         [SerializeField] PortBinding _binding = PortBinding.UV0;
@@ -717,8 +717,8 @@ namespace ZSG
         {
             base.AddElements();
 
-            AddPort(new(PortDirection.Output, new Texture2DObject(), OUT, "Texture2D"));
-            AddPort(new(PortDirection.Output, new SamplerState(), samplerID, "SamplerState"));
+            AddPort(new(PortDirection.Output, new Texture2DObject(), OUT, "Texture 2D"));
+            AddPort(new(PortDirection.Output, new SamplerState(), samplerID, "Sampler State"));
             _scaleOffsetPort = AddPort(new(PortDirection.Output, new Float(4, false), scaleOffsetID, "Scale Offset"));
 
             InitializeTexture(); // TODO: figure out why textures arent set on time

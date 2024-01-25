@@ -11,7 +11,7 @@ namespace ZSG.Nodes.PortType
     {
         public int components;
         public bool dynamic;
-        public Float(int components, bool dynamic = false, bool fullPrecision = true)
+        public Float(int components, bool dynamic = false)
         {
             if (components < 1 || components > 4)
             {
@@ -56,6 +56,6 @@ namespace ZSG.Nodes.PortType
     }
     public struct SamplerState : IPortType
     {
-        public Color GetPortColor() => Color.yellow;
+        public Color GetPortColor() => new Color(0.8f, 0.2f, 0.2f);
     }
 }

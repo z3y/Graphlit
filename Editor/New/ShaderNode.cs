@@ -25,9 +25,9 @@ namespace ZSG
 
     public enum Precision
     {
-        Inherit,
-        Float,
-        Half
+        Inherit = 0,
+        Float = 1,
+        Half = 2
     }
 
     public abstract class ShaderNode : Node
@@ -53,20 +53,20 @@ namespace ZSG
             //evt.menu.AppendAction("Preview 3D Toggle", Preview3DToggle);
         }
 
-        /*public void Preview3DToggle(DropdownMenuAction action)
-        {
-            preview3D = !preview3D;
-            GeneratePreviewForAffectedNodes();
-        }*/
         public void GeneratePreview(DropdownMenuAction action)
         {
-            ShaderBuilder.GeneratePreview(GraphView, this, action != null);
+            InvokeOnSelection(x => ShaderBuilder.GeneratePreview(GraphView, x, action != null));
         }
-        public void RemovePreview(DropdownMenuAction action)
+
+        void InvokeOnSelection(Action<ShaderNode> action)
         {
-            var d = extensionContainer.Q("PreviewDrawer");
-            extensionContainer.Remove(d);
-            //previewDrawer.Dispose();
+            foreach (var item in GraphView.selection)
+            {
+                if (item is ShaderNode node)
+                {
+                    action.Invoke(node);
+                }
+            }
         }
 
         public IEnumerable<Port> PortElements => inputContainer.Children().Concat(outputContainer.Children()).Where(x => x is Port).Cast<Port>();
@@ -121,28 +121,40 @@ namespace ZSG
                 }
             }
         }
-        /*
-                public void RemovePort(int id)
-                {
-                    int i = portDescriptors.FindIndex(x => x.ID == id);
-                    if (i < 0)
-                    { 
-                        return;
-                    }
-                    portDescriptors.RemoveAt(i);
-                    //TODO:
-                }*/
 
         public abstract void AddElements();
         public virtual int PreviewResolution => 96;
         public virtual PreviewType DefaultPreview => PreviewType._2D;
-        [NonSerialized] public PreviewType inheritedPreview;
-        public virtual void InheritPreview()
+        protected internal PreviewType _inheritedPreview;
+
+        protected internal Precision? _defaultPrecision = null;
+        public Precision DefaultPrecision
+        {
+            get
+            {
+                if (_defaultPrecision is Precision precision)
+                {
+                    return precision;
+                }
+                return DefaultPrecisionOverride;
+            }
+            internal set
+            {
+                _defaultPrecision = value;
+            }
+        }
+
+        public virtual Precision DefaultPrecisionOverride => Precision.Inherit;
+        protected internal bool _inheritedPrecision;
+
+        public virtual void InheritPreviewAndPrecision()
         {
             int is3D = 0;
             int is2D = 0;
 
             int connectedCount = 0;
+
+            bool inheritedPrecisionIsFloat = false;
 
             foreach (var port in Inputs)
             {
@@ -158,11 +170,13 @@ namespace ZSG
                     {
                         continue;
                     }
-                    is3D += node.inheritedPreview == PreviewType._3D ? 1 : 0;
-                    is2D += node.inheritedPreview == PreviewType._2D ? 1 : 0;
+                    is3D += node._inheritedPreview == PreviewType._3D ? 1 : 0;
+                    is2D += node._inheritedPreview == PreviewType._2D ? 1 : 0;
 
                     //Debug.Log(node.inheritedPreview);
                     connectedCount++;
+
+                    inheritedPrecisionIsFloat |= node._inheritedPrecision;
                     break;
                 }
             }
@@ -170,26 +184,37 @@ namespace ZSG
 
             if (connectedCount == 0)
             {
-                inheritedPreview = DefaultPreview;
+                _inheritedPreview = DefaultPreview;
+                inheritedPrecisionIsFloat = GraphView.graphData.precision == GraphData.GraphPrecision.Float;
             }
             else if (is2D == 0 && is3D == 0)
             {
-                inheritedPreview = PreviewType.Disabled;
+                _inheritedPreview = PreviewType.Disabled;
             }
             else if (is3D > 0)
             {
-                inheritedPreview = PreviewType._3D;
+                _inheritedPreview = PreviewType._3D;
             }
             else
             {
-                inheritedPreview = PreviewType._2D;
+                _inheritedPreview = PreviewType._2D;
+            }
+
+            if (DefaultPrecision == Precision.Float)
+            {
+                _inheritedPrecision = true;
+            }
+            else if (DefaultPrecision == Precision.Half)
+            {
+                _inheritedPrecision = false;
+            }
+            else
+            {
+                _inheritedPrecision = inheritedPrecisionIsFloat;
             }
 
             //Debug.Log(inheritedPreview + Info.name);
         }
-
-        public virtual Precision DefaultPrecision => Precision.Half;
-        [NonSerialized] public bool isFloat;
 
         private void AddDefaultElements()
         {
@@ -207,13 +232,8 @@ namespace ZSG
             RefreshPorts();
         }
         public virtual Color Accent => Color.gray;
-        private void AddStyles()
+        void AddStyles()
         {
-            //extensionContainer.AddToClassList("sg-node__extension-container");
-            //titleContainer.AddToClassList("sg-node__title-container");
-            //inputContainer.AddToClassList("sg-node__input-container");
-            //outputContainer.AddToClassList("sg-node__output-container");
-
             var color = new Color(0.07f, 0.07f, 0.07f, 1);
             extensionContainer.style.backgroundColor = color;
             inputContainer.style.backgroundColor = color;
@@ -229,7 +249,7 @@ namespace ZSG
             }
             titleContainer.Add(accentLine);
         }
-        private void AddTitleElement()
+        void AddTitleElement()
         {
             /*if (LowProfile)
             {
@@ -318,10 +338,13 @@ namespace ZSG
 
         internal void BuilderVisit(NodeVisitor visitor, int[] portsMask = null)
         {
-            InheritPreview();
+            InheritPreviewAndPrecision();
             var stage = visitor.Stage;
 
-            isFloat = stage == ShaderStage.Vertex ? true : DefaultPrecision == Precision.Float;
+            if (stage == ShaderStage.Vertex)
+            {
+                _inheritedPrecision = true;
+            }
 
             foreach (var descriptor in portDescriptors.Values)
             {
@@ -374,7 +397,7 @@ namespace ZSG
         }
         public string PrecisionString(int component)
         {
-            string precisionString = isFloat ? "float" : "half";
+            string precisionString = _inheritedPrecision ? "float" : "half";
             if (component == 1) return precisionString;
             if (component > 4 || component < 0) return "error" + component;
             return precisionString + component;
@@ -431,13 +454,13 @@ namespace ZSG
             return type.components;
         }
 
-            public GeneratedPortData Cast(int portID, int targetComponent, bool updatePort = true)
+        public GeneratedPortData Cast(int portID, int targetComponent, bool updatePort = true)
         {
             var data = PortData[portID];
             var name = data.Name;
             var type = (Float)PortData[portID].Type;
             var components = type.components;
-            string typeName = name.StartsWith("half") ? "half" : "float";
+            string typeName = _inheritedPrecision ? "float" : "half";
 
             if (components == targetComponent)
             {
@@ -558,6 +581,13 @@ namespace ZSG
             style.marginTop = 5;
             style.marginRight = 5;
             style.bottom = 5;
+
+            if (this is not TemplateOutput)
+            {
+                var precisionSelection = new EnumField("Precision", DefaultPrecision);
+                precisionSelection.RegisterValueChangedCallback(x => DefaultPrecision = (Precision)x.newValue);
+                ve.Add(precisionSelection);
+            }
 
             AdditionalElements(ve);
             root.Add(ve);

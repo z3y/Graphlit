@@ -40,12 +40,12 @@ namespace ZSG
             passBuilders.Add(passBuilder);
         }
 
-        public void Build<T>() where T : BuildTarget
+        public void Build<T>() where T : TemplateOutput
         {
             ShaderNode.UniqueVariableID = 0;
 
             var shaderNodes = ShaderGraphView.graphElements.Where(x => x is ShaderNode).Cast<ShaderNode>().ToList();
-            var target = (BuildTarget)ShaderGraphView.graphElements.First(x => x is T);
+            var target = (TemplateOutput)ShaderGraphView.graphElements.First(x => x is T);
 
             target.BuilderPassthourgh(this);
 
@@ -144,7 +144,7 @@ namespace ZSG
             //shaderBuilder.passBuilders[0].renderStates.Add("Cull", "Off");
             shaderBuilder.Build(shaderNode);
 
-            if (shaderNode.inheritedPreview == PreviewType._3D)
+            if (shaderNode._inheritedPreview == PreviewType._3D)
             {
                 pass.pragmas.Insert(0, "#define PREVIEW3D");
             }

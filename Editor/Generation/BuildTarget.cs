@@ -8,7 +8,7 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    public abstract class BuildTarget : TemplateOutput
+    public abstract class TemplateOutput : ShaderNode
     {
         public abstract string Name { get; }
         public abstract void BuilderPassthourgh(ShaderBuilder builder);
@@ -27,6 +27,10 @@ namespace ZSG
                 GraphView.SetDirty();
             });
             root.Add(shaderName);
+
+            var graphPrecisionSelection = new EnumField("Graph Precision", graphData.precision);
+            graphPrecisionSelection.RegisterValueChangedCallback(x => graphData.precision = (GraphData.GraphPrecision)x.newValue);
+            root.Add(graphPrecisionSelection);
 
             var properties = new ListView()
             {
@@ -98,15 +102,12 @@ namespace ZSG
                 }
             };
         }
-    }
 
-    public abstract class TemplateOutput : ShaderNode
-    {
         public void VisitTemplate(NodeVisitor visitor, int[] ports)
         {
-           var structField = visitor.Stage == ShaderStage.Fragment ?
-                visitor._shaderBuilder.passBuilders[visitor.Pass].surfaceDescriptionStruct
-                : visitor._shaderBuilder.passBuilders[visitor.Pass].vertexDescriptionStruct;
+            var structField = visitor.Stage == ShaderStage.Fragment ?
+                 visitor._shaderBuilder.passBuilders[visitor.Pass].surfaceDescriptionStruct
+                 : visitor._shaderBuilder.passBuilders[visitor.Pass].vertexDescriptionStruct;
 
             foreach (var input in Inputs)
             {
@@ -128,13 +129,13 @@ namespace ZSG
                 }
             }
         }
-        public override PreviewType DefaultPreview => PreviewType.Disabled; 
+        public override PreviewType DefaultPreview => PreviewType.Disabled;
 
         protected sealed override void Generate(NodeVisitor visitor) { }
     }
 
     [NodeInfo("Unlit")]
-    public class UnlitBuildTarget : BuildTarget
+    public class UnlitBuildTarget : TemplateOutput
     {
         public override string Name { get; } = "Unlit";
         public override int[] VertexPorts => new int[] { POSITION , NORMAL, TANGENT };
