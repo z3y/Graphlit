@@ -616,13 +616,13 @@ namespace ZSG
             style.borderTopColor = borderColor;
             style.borderBottomColor = borderColor;
 
-            const int w = 2;
+            const int w = 3;
             style.borderLeftWidth = w;
             style.borderRightWidth = w;
             style.borderTopWidth = w;
             style.borderBottomWidth = w;
 
-            const int r = 5;
+            const int r = 8;
             style.borderBottomLeftRadius = r;
             style.borderTopLeftRadius = r;
             style.borderTopRightRadius = r;

@@ -35,6 +35,9 @@ namespace ZSG
         public SerializableGraph SerializableGraph { get; }
         public ShaderGraphView ShaderGraphView { get; }
 
+        public Dictionary<string, Texture> _nonModifiableTextures = new();
+        public Dictionary<string, Texture> _defaultTextures = new();
+
         public void AddPass(PassBuilder passBuilder)
         {
             passBuilder.generationMode = GenerationMode;

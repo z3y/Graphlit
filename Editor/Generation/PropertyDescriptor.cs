@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
+using UnityEngineInternal;
 
 namespace ZSG
 {
@@ -19,7 +21,9 @@ namespace ZSG
         Color = 5,
         Intiger = 6,
         Texture2D = 7,
-        TextureCube = 8,
+        Texture2DArray = 8,
+        TextureCube = 9,
+        Texture3D = 10,
     }
 
     [Serializable]
@@ -27,7 +31,28 @@ namespace ZSG
     {
         Local = 0,
         Global = 1,
-        Instance = 3,
+        Instance = 2,
+    }
+
+    static class PropertyAttributes
+    {
+        public static bool Get(List<string> attributes, string name)
+        {
+            return attributes.Contains(name);
+        }
+
+        public static void Set(List<string> attributes, bool value, string name)
+        {
+            bool contains = attributes.Contains(name);
+            if (value && !contains)
+            {
+                attributes.Add(name);
+            }
+            else if (!value && contains)
+            {
+                attributes.Remove(name);
+            }
+        }
     }
 
     [Serializable]
@@ -37,10 +62,11 @@ namespace ZSG
         [SerializeField] public string referenceName;
         [SerializeField] public string displayName;
         [SerializeField] public PropertyType type;
-        [SerializeField] public List<string> attributes;
+        [SerializeField] public List<string> attributes = new();
         [SerializeField] public float rangeX;
         [SerializeField] public float rangeY;
         [SerializeField] string _value;
+        [SerializeField] string _defaultTexture;
         [SerializeField] public PropertyDeclaration declaration = PropertyDeclaration.Local;
 
         public float FloatValue
@@ -81,15 +107,15 @@ namespace ZSG
         {
             get
             {
-                if (string.IsNullOrEmpty(_value))
+                if (string.IsNullOrEmpty(_defaultTexture))
                 {
                     return null;
                 }
-                return Helpers.SerializableReferenceToObject<Texture>(_value);
+                return Helpers.SerializableReferenceToObject<Texture>(_defaultTexture);
             }
             set
             {
-                _value = Helpers.AssetSerializableReference(value);
+                _defaultTexture = Helpers.AssetSerializableReference(value);
             }
         }
         public Vector2 Range
@@ -105,17 +131,23 @@ namespace ZSG
             }
         }
 
+        public bool IsTextureType => type == PropertyType.Texture2D || type == PropertyType.Texture2DArray || type == PropertyType.TextureCube || type == PropertyType.Texture3D;
+
         public bool HasRange => rangeX != rangeY;
 
-
-        public PropertyDescriptor(PropertyType type, string displayName = "", string referenceName = "", List<string> attributes = null)
+        public PropertyDescriptor(PropertyType type, string displayName = "", string referenceName = "")
         {
             guid = Guid.NewGuid().ToString();
             this.type = type;
             this.displayName = string.IsNullOrEmpty(displayName) ? guid : displayName;
-            this.attributes = attributes;
             this.referenceName = referenceName;
         }
+
+        const string NormalAttribute = "Normal";
+        const string HdrAttribute = "HDR";
+        const string HideInInspectorAttribute = "HideInInspector";
+        const string NoScaleOffsetAttribute = "NoScaleOffset";
+        const string NonModifiableTextureAttribute = "NonModifiableTextureData";
 
         public string GetDefaultValue()
         {
@@ -141,13 +173,18 @@ namespace ZSG
 
         public string TypeToString()
         {
+            if (type == PropertyType.Float && HasRange)
+            {
+                var range = Range;
+                return $"Range ({range.x:R}, {range.y:R})";
+            }
+
             return type switch
             {
                 PropertyType.Float => "Float",
                 PropertyType.Float2 => "Vector",
                 PropertyType.Float3 => "Vector",
                 PropertyType.Float4 => "Vector",
-                //PropertyType.Range => $"Range ({range.x.ToString("R")}, {range.y.ToString("R")})",
                 PropertyType.Color => "Color",
                 PropertyType.Intiger => "Intiger",
                 PropertyType.Texture2D => "2D",
@@ -174,6 +211,7 @@ namespace ZSG
             };
         }
 
+
         public string AttributesToString()
         {
             if (attributes is null)
@@ -184,8 +222,13 @@ namespace ZSG
             var sb = new StringBuilder();
             foreach (var attribute in attributes)
             {
+                if (string.IsNullOrEmpty(attribute))
+                {
+                    continue;
+                }
+
                 sb.Append("[");
-                sb.Append(attribute.ToString());
+                sb.Append(attribute);
                 sb.Append("] ");
             }
             return sb.ToString();
@@ -219,11 +262,20 @@ namespace ZSG
         {
             // EditorGUILayout.LabelField(guid);
 
+            EditorGUI.BeginChangeCheck();
+
             displayName = EditorGUILayout.TextField(new GUIContent("Display Name"), displayName);
             referenceName = EditorGUILayout.TextField(new GUIContent("Reference Name"), referenceName);
             if (type != PropertyType.Texture2D && type != PropertyType.TextureCube)
             {
                 declaration = (PropertyDeclaration)EditorGUILayout.EnumPopup("Declaration", declaration);
+            }
+
+            bool hideInInspector = EditorGUILayout.Toggle("Hide In Inspector", PropertyAttributes.Get(attributes, HideInInspectorAttribute));
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                PropertyAttributes.Set(attributes, hideInInspector, HideInInspectorAttribute);
             }
         }
 
@@ -268,8 +320,17 @@ namespace ZSG
             EditorGUILayout.LabelField("Default Texture", GUILayout.Width(149));
             Texture newValue = (Texture)EditorGUILayout.ObjectField(DefaultTexture, typeof(Texture2D), false);
             GUILayout.EndHorizontal();
+
+            bool modifable = EditorGUILayout.Toggle("Non Modifiable", PropertyAttributes.Get(attributes, NonModifiableTextureAttribute));
+            bool scaleOffset = EditorGUILayout.Toggle("No Scale Offset", PropertyAttributes.Get(attributes, NoScaleOffsetAttribute));
+            bool normal = EditorGUILayout.Toggle("Normal", PropertyAttributes.Get(attributes, NormalAttribute));
+
             if (EditorGUI.EndChangeCheck())
             {
+                PropertyAttributes.Set(attributes, modifable, NonModifiableTextureAttribute);
+                PropertyAttributes.Set(attributes, scaleOffset, NoScaleOffsetAttribute);
+                PropertyAttributes.Set(attributes, normal, NormalAttribute);
+
                 DefaultTexture = newValue;
                 UpdatePreviewMaterial();
             }
