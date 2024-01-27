@@ -75,6 +75,15 @@ namespace ZSG
             var result = builder.ToString();
             var shader = ShaderUtil.CreateShaderAsset(ctx, result, false);
 
+            if (builder._nonModifiableTextures.Count > 0)
+            {
+                EditorMaterialUtility.SetShaderNonModifiableDefaults(shader, builder._nonModifiableTextures.Keys.ToArray(), builder._nonModifiableTextures.Values.ToArray());
+            }
+            if (builder._defaultTextures.Count > 0)
+            {
+                EditorMaterialUtility.SetShaderNonModifiableDefaults(shader, builder._defaultTextures.Keys.ToArray(), builder._defaultTextures.Values.ToArray());
+            }
+
             var material = new Material(shader)
             {
                 name = "Material"

@@ -55,6 +55,37 @@ namespace ZSG
         }
     }
 
+    // thanks pema
+    public enum DefaultTextureName
+    {
+        white,
+        black,
+        red,
+        gray,
+        grey,
+        linearGray,
+        linearGrey,
+        grayscaleRamp,
+        greyscaleRamp,
+        bump,
+        blackCube,
+        lightmap,
+        unity_Lightmap,
+        unity_LightmapInd,
+        unity_ShadowMask,
+        unity_DynamicLightmap,
+        unity_DynamicDirectionality,
+        unity_DynamicNormal,
+        unity_DitherMask,
+        _DitherMaskLOD,
+        _DitherMaskLOD2D,
+        unity_RandomRotation16,
+        unity_NHxRoughness,
+        unity_SpecCube0,
+        unity_SpecCube1,
+        none
+    }
+
     [Serializable]
     public class PropertyDescriptor
     {
@@ -103,7 +134,7 @@ namespace ZSG
                 _value = value.ToString();
             }
         }
-        public Texture DefaultTexture
+        public Texture DefaultTextureValue
         {
             get
             {
@@ -130,6 +161,18 @@ namespace ZSG
                 rangeY = value.y;
             }
         }
+        public DefaultTextureName DefaultTextureEnum
+        {
+            get
+            {
+                Enum.TryParse(_value, out DefaultTextureName value);
+                return value;
+            }
+            set
+            {
+                _value = value.ToString();
+            }
+        }
 
         public bool IsTextureType => type == PropertyType.Texture2D || type == PropertyType.Texture2DArray || type == PropertyType.TextureCube || type == PropertyType.Texture3D;
 
@@ -151,6 +194,10 @@ namespace ZSG
 
         public string GetDefaultValue()
         {
+            if (IsTextureType)
+            {
+                return '"' + DefaultTextureEnum.ToString() + '"' + " {}";
+            }
             return type switch
             {
                 PropertyType.Float => FloatValue.ToString(),
@@ -159,8 +206,6 @@ namespace ZSG
                 PropertyType.Float4 => VectorValue.ToString(),
                 PropertyType.Color => VectorValue.ToString(),
                 PropertyType.Intiger => FloatValue.ToString(),
-                PropertyType.Texture2D => "\"white\" {}",
-                PropertyType.TextureCube => "\"white\" {}",
                 _ => throw new System.NotImplementedException(),
             };
         }
@@ -318,12 +363,13 @@ namespace ZSG
 
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Default Texture", GUILayout.Width(149));
-            Texture newValue = (Texture)EditorGUILayout.ObjectField(DefaultTexture, typeof(Texture2D), false);
+            Texture newValue = (Texture)EditorGUILayout.ObjectField(DefaultTextureValue, typeof(Texture2D), false);
             GUILayout.EndHorizontal();
 
             bool modifable = EditorGUILayout.Toggle("Non Modifiable", PropertyAttributes.Get(attributes, NonModifiableTextureAttribute));
             bool scaleOffset = EditorGUILayout.Toggle("No Scale Offset", PropertyAttributes.Get(attributes, NoScaleOffsetAttribute));
             bool normal = EditorGUILayout.Toggle("Normal", PropertyAttributes.Get(attributes, NormalAttribute));
+            var defaultTex = EditorGUILayout.EnumPopup("Default Texture", DefaultTextureEnum);
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -331,7 +377,8 @@ namespace ZSG
                 PropertyAttributes.Set(attributes, scaleOffset, NoScaleOffsetAttribute);
                 PropertyAttributes.Set(attributes, normal, NormalAttribute);
 
-                DefaultTexture = newValue;
+                DefaultTextureValue = newValue;
+                DefaultTextureEnum = (DefaultTextureName)defaultTex;
                 UpdatePreviewMaterial();
             }
         }
@@ -342,7 +389,7 @@ namespace ZSG
             string name = GetReferenceName(GenerationMode.Preview);
             if (type == PropertyType.Float) m.SetFloat(name, FloatValue);
             else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) m.SetVector(name, VectorValue);
-            else if (type == PropertyType.Texture2D) m.SetTexture(name, DefaultTexture);
+            else if (type == PropertyType.Texture2D) m.SetTexture(name, DefaultTextureValue);
         }
 
         [NonSerialized] public ShaderGraphView graphView;

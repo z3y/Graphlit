@@ -307,6 +307,19 @@ namespace ZSG
                 {
                     if (property.ShouldDeclare())
                         _sb.AppendLine(property.GetPropertyDeclaration(GenerationMode.Final));
+
+                    if (property.IsTextureType && property.DefaultTextureValue is Texture texture)
+                    {
+                        var referenceName = property.GetReferenceName(GenerationMode.Final);
+                        if (property.attributes.Contains("NonModifiableTextureData"))
+                        {
+                            _nonModifiableTextures.Add(referenceName, texture);
+                        }
+                        else
+                        {
+                            _defaultTextures.Add(referenceName, texture);
+                        }
+                    }
                 }
             }
 
