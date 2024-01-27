@@ -84,11 +84,10 @@ namespace ZSG
                 }
 
                 var menu = new GenericMenu();
-                menu.AddItem(new GUIContent("Float"), false, OnTypeSelected, PropertyType.Float);
-                menu.AddItem(new GUIContent("Float2"), false, OnTypeSelected, PropertyType.Float2);
-                menu.AddItem(new GUIContent("Float3"), false, OnTypeSelected, PropertyType.Float3);
-                menu.AddItem(new GUIContent("Float4"), false, OnTypeSelected, PropertyType.Float4);
-                menu.AddItem(new GUIContent("Texture2D"), false, OnTypeSelected, PropertyType.Texture2D);
+                foreach (PropertyType value in Enum.GetValues(typeof(PropertyType)))
+                {
+                    menu.AddItem(new GUIContent(Enum.GetName(typeof(PropertyType), value)), false, OnTypeSelected, value);
+                }
 
                 menu.ShowAsContext();
             });

@@ -270,11 +270,19 @@ namespace ZSG
                 case KeyCode.Alpha2: CreateNode(typeof(Float2Node), position, false); break;
                 case KeyCode.Alpha3: CreateNode(typeof(Float3Node), position, false); break;
                 case KeyCode.Alpha4: CreateNode(typeof(Float4Node), position, false); break;
+                case KeyCode.Alpha5: CreateNode(typeof(ColorNode), position, false); break;
                 case KeyCode.M: CreateNode(typeof(MultiplyNode), position, false); break;
                 case KeyCode.A: CreateNode(typeof(AddNode), position, false); break;
                 case KeyCode.Period: CreateNode(typeof(DotNode), position, false); break;
                 case KeyCode.Z: CreateNode(typeof(SwizzleNode), position, false); break;
+                case KeyCode.N: CreateNode(typeof(NormalizeNode), position, false); break;
+                case KeyCode.O: CreateNode(typeof(OneMinusNode), position, false); break;
+                case KeyCode.S: CreateNode(typeof(SubtractNode), position, false); break;
+                case KeyCode.T: CreateNode(typeof(SampleTexture2DNode), position, false); break;
+                case KeyCode.U: CreateNode(typeof(UVNode), position, false); break;
             }
+
+            //e.StopPropagation();
         }
     }
 }

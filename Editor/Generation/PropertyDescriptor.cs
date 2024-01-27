@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
-using UnityEngineInternal;
 
 namespace ZSG
 {
@@ -24,6 +20,7 @@ namespace ZSG
         Texture2DArray = 8,
         TextureCube = 9,
         Texture3D = 10,
+        TextureCubeArray = 11,
     }
 
     [Serializable]
@@ -184,6 +181,10 @@ namespace ZSG
             this.type = type;
             this.displayName = string.IsNullOrEmpty(displayName) ? guid : displayName;
             this.referenceName = referenceName;
+            if (type == PropertyType.Color)
+            {
+                VectorValue = Vector4.one;
+            }
         }
 
         const string NormalAttribute = "Normal";
@@ -233,7 +234,10 @@ namespace ZSG
                 PropertyType.Color => "Color",
                 PropertyType.Intiger => "Intiger",
                 PropertyType.Texture2D => "2D",
+                PropertyType.Texture3D => "3D",
                 PropertyType.TextureCube => "Cube",
+                PropertyType.Texture2DArray => "2DArray",
+                PropertyType.TextureCubeArray => "CubeArray",
                 _ => throw new System.NotImplementedException()
             };
         }
@@ -383,13 +387,30 @@ namespace ZSG
             }
         }
 
+        void OnGUIColor()
+        {
+            EditorGUI.BeginChangeCheck();
+            Color newValue = EditorGUILayout.ColorField("Color", VectorValue);
+
+            bool hdr = EditorGUILayout.Toggle("HDR", PropertyAttributes.Get(attributes, "HDR"));
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                PropertyAttributes.Set(attributes, hdr, "HDR");
+
+                VectorValue = newValue;
+                UpdatePreviewMaterial();
+            }
+        }
+
         public void UpdatePreviewMaterial()
         {
             Material m = graphView.PreviewMaterial;
             string name = GetReferenceName(GenerationMode.Preview);
             if (type == PropertyType.Float) m.SetFloat(name, FloatValue);
             else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) m.SetVector(name, VectorValue);
-            else if (type == PropertyType.Texture2D) m.SetTexture(name, DefaultTextureValue);
+            else if (type == PropertyType.Color) m.SetColor(name, VectorValue);
+            else if (IsTextureType) m.SetTexture(name, DefaultTextureValue);
         }
 
         [NonSerialized] public ShaderGraphView graphView;
@@ -399,6 +420,8 @@ namespace ZSG
             var imgui = new IMGUIContainer(OnDefaultGUI); // too much data to bind, easier to just use imgui
             if (type == PropertyType.Float) imgui.onGUIHandler += OnGUIFloat;
             else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) imgui.onGUIHandler += OnGUIVector;
+            else if (type == PropertyType.Color) imgui.onGUIHandler += OnGUIColor;
+
             else if (type == PropertyType.Texture2D) imgui.onGUIHandler += OnGUITexture;
 
             var s = imgui.style;
@@ -419,7 +442,7 @@ namespace ZSG
                 PropertyType.Float2 => typeof(Float2PropertyNode),
                 PropertyType.Float3 => typeof(Float3PropertyNode),
                 PropertyType.Float4 => typeof(Float4PropertyNode),
-                PropertyType.Color => throw new NotImplementedException(),
+                PropertyType.Color => typeof(ColorPropertyNode),
                 PropertyType.Intiger => throw new NotImplementedException(),
                 PropertyType.Texture2D => typeof(Texture2DPropertyNode),
                 PropertyType.TextureCube => throw new NotImplementedException(),
