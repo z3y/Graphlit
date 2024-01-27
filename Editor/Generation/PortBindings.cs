@@ -1,5 +1,4 @@
 using System;
-using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
@@ -16,8 +15,72 @@ namespace ZSG
         BitangentWS
     }
 
+    public enum BindingSpace
+    {
+        Object,
+        World,
+        Tangent,
+        View
+    }
+
     public static class PortBindings
     {
+        public static PortBinding PositionBindingFromSpace(BindingSpace space)
+        {
+            return space switch
+            {
+                BindingSpace.Object => PortBinding.PositionOS,
+                BindingSpace.World => PortBinding.PositionWS,
+                BindingSpace.Tangent => throw new NotImplementedException(),
+                BindingSpace.View => throw new NotImplementedException(),
+                _ => throw new NotImplementedException(),
+            };
+        }
+        public static PortBinding NormalBindingFromSpace(BindingSpace space)
+        {
+            return space switch
+            {
+                BindingSpace.Object => PortBinding.NormalOS,
+                BindingSpace.World => PortBinding.NormalWS,
+                BindingSpace.Tangent => throw new NotImplementedException(),
+                BindingSpace.View => throw new NotImplementedException(),
+                _ => throw new NotImplementedException(),
+            };
+        }
+        public static PortBinding TangentBindingFromSpace(BindingSpace space)
+        {
+            return space switch
+            {
+                BindingSpace.Object => PortBinding.TangentOS,
+                BindingSpace.World => PortBinding.TangentWS,
+                BindingSpace.Tangent => throw new NotImplementedException(),
+                BindingSpace.View => throw new NotImplementedException(),
+                _ => throw new NotImplementedException(),
+            };
+        }
+        public static PortBinding BitangentBindingFromSpace(BindingSpace space)
+        {
+            return space switch
+            {
+                BindingSpace.Object => throw new NotImplementedException(),
+                BindingSpace.World => PortBinding.BitangentWS,
+                BindingSpace.Tangent => throw new NotImplementedException(),
+                BindingSpace.View => throw new NotImplementedException(),
+                _ => throw new NotImplementedException(),
+            };
+        }
+        public static PortBinding ViewBindingFromSpace(BindingSpace space)
+        {
+            return space switch
+            {
+                BindingSpace.Object => throw new NotImplementedException(),
+                BindingSpace.World => PortBinding.ViewDirectionWS,
+                BindingSpace.Tangent => throw new NotImplementedException(),
+                BindingSpace.View => throw new NotImplementedException(),
+                _ => throw new NotImplementedException(),
+            };
+        }
+
         public static string GetBindingString(PassBuilder pass, ShaderStage stage, int components, PortBinding binding)
         {
             if (stage == ShaderStage.Vertex)

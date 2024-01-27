@@ -1,0 +1,28 @@
+using ZSG.Nodes;
+using ZSG.Nodes.PortType;
+
+namespace ZSG
+{
+    [NodeInfo("Multiply Add", "a * b + c")]
+    public class MadNode : ShaderNode
+    {
+        const int A = 0;
+        const int B = 1;
+        const int C = 2;
+        const int OUT = 3;
+
+        public override void AddElements()
+        {
+            AddPort(new(PortDirection.Input, new Float(1, true), A, "A"));
+            AddPort(new(PortDirection.Input, new Float(1, true), B, "B"));
+            AddPort(new(PortDirection.Input, new Float(1, true), C, "C"));
+            AddPort(new(PortDirection.Output, new Float(1, true), OUT));
+        }
+
+        protected override void Generate(NodeVisitor visitor)
+        {
+            ChangeComponents(OUT, ImplicitTruncation(A, B, C).components);
+            Output(visitor, OUT, $"mad({PortData[A].Name}, {PortData[B].Name}, {PortData[C].Name})");
+        }
+    }
+}

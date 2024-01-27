@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
@@ -93,23 +94,25 @@ namespace ZSG
                 foreach (var port in shaderNode.Outputs)
                 {
                     int id = port.GetPortID();
-                    var cast = shaderNode.Cast(id, 4, false);
-                    sb.Add("output.Color = " + cast.Name + ";");
-                    break;
-                }
+                    bool previewCapable = shaderNode.PortData[id].Type is Float;
+                    if (previewCapable)
+                    {
+                        var cast = shaderNode.Cast(id, 4, false);
+                        sb.Add("output.Color = " + cast.Name + ";");
+                    }
+                    else
+                    {
+                        sb.Add("output.Color = 0;");
+                    }
 
-                //sb.Add("return output;");
+                    break; // only first port for preview
+                }
             }
 
         }
 
         public static void GeneratePreview(ShaderGraphView graphView, ShaderNode shaderNode, bool log = false)
         {
-            if (shaderNode.DisablePreview)
-            {
-                return;
-            }
-
             var shaderBuilder = new ShaderBuilder(GenerationMode.Preview, graphView);
             shaderBuilder.shaderName = "Hidden/ZSGPreviews/" + shaderNode.viewDataKey;
             var pass = new PassBuilder("FORWARD", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitVertex.hlsl", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitFragment.hlsl",
@@ -147,6 +150,11 @@ namespace ZSG
             if (shaderNode._inheritedPreview == PreviewType.Preview3D)
             {
                 pass.pragmas.Insert(0, "#define PREVIEW3D");
+            }
+
+            if (shaderNode.DisablePreview)
+            {
+                return;
             }
 
             if (!shaderNode._previewDisabled)

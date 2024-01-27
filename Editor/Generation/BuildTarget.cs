@@ -32,7 +32,7 @@ namespace ZSG
             graphPrecisionSelection.RegisterValueChangedCallback(x => graphData.precision = (GraphData.GraphPrecision)x.newValue);
             root.Add(graphPrecisionSelection);
 
-            var defaultPreviewState = new EnumField("Default Preview State", graphData.defaultPreviewState);
+            var defaultPreviewState = new EnumField("Default Preview", graphData.defaultPreviewState);
             defaultPreviewState.RegisterValueChangedCallback(x => graphData.defaultPreviewState = (GraphData.DefaultPreviewState)x.newValue);
             root.Add(defaultPreviewState);
 

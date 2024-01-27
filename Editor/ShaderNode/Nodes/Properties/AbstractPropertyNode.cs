@@ -1,0 +1,68 @@
+using System;
+using UnityEditor;
+using UnityEngine.UIElements;
+using UnityEngine;
+
+namespace ZSG
+{
+    public abstract class PropertyNode : ShaderNode
+    {
+        public void SetReference(string guid)
+        {
+            _ref = guid;
+        }
+
+        protected abstract PropertyType propertyType { get; }
+
+        protected const int OUT = 0;
+        [SerializeField] internal string _ref;
+        public override Color Accent => new Color(0.3f, 0.7f, 0.3f);
+        [NonSerialized] public PropertyDescriptor propertyDescriptor;
+
+        public override bool DisablePreview => true;
+        public override void AddElements()
+        {
+            var graphData = GraphView.graphData;
+            propertyDescriptor = graphData.properties.Find(x => x.guid == _ref);
+            if (string.IsNullOrEmpty(_ref) || propertyDescriptor is null)
+            {
+                propertyDescriptor = new PropertyDescriptor(propertyType);
+                graphData.properties.Add(propertyDescriptor);
+                _ref = propertyDescriptor.guid;
+            }
+            else
+            {
+                _ref = propertyDescriptor.guid;
+            }
+
+            propertyDescriptor.graphView = GraphView;
+
+            var imguiContainer = new IMGUIContainer(OnGUI);
+            {
+                var s = imguiContainer.style;
+                s.width = 75;
+                s.marginLeft = 6;
+            }
+            inputContainer.Add(imguiContainer);
+
+            propertyDescriptor.UpdatePreviewMaterial();
+        }
+
+        // imagine dealing with binding
+        void OnGUI()
+        {
+            EditorGUILayout.LabelField(propertyDescriptor.displayName);
+        }
+
+        public override void AdditionalElements(VisualElement root)
+        {
+            root.Add(propertyDescriptor.PropertyEditorGUI());
+        }
+
+        protected override void Generate(NodeVisitor visitor)
+        {
+            visitor.AddProperty(propertyDescriptor);
+            PortData[OUT] = new GeneratedPortData(portDescriptors[OUT].Type, propertyDescriptor.GetReferenceName(visitor.GenerationMode));
+        }
+    }
+}
