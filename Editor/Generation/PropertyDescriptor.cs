@@ -97,6 +97,7 @@ namespace ZSG
         [SerializeField] string _defaultTexture;
         [SerializeField] public PropertyDeclaration declaration = PropertyDeclaration.Local;
 
+        [NonSerialized] public bool useReferenceName = false;
         public float FloatValue
         {
             get
@@ -175,7 +176,7 @@ namespace ZSG
 
         public bool HasRange => rangeX != rangeY;
 
-        public PropertyDescriptor(PropertyType type, string displayName = "", string referenceName = "")
+        public PropertyDescriptor(PropertyType type, string displayName = null, string referenceName = "")
         {
             guid = Guid.NewGuid().ToString();
             this.type = type;
@@ -285,6 +286,11 @@ namespace ZSG
 
         public string GetReferenceName(GenerationMode generationMode)
         {
+            if (useReferenceName)
+            {
+                generationMode = GenerationMode.Final;
+            }
+
             if (generationMode == GenerationMode.Preview)
             {
                 return "_" + guid.RemoveWhitespace().Replace("-", "_");
