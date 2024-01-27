@@ -13,12 +13,13 @@ namespace ZSG
         const int samplerID = 1;
         const int scaleOffsetID = 2;
         Port _scaleOffsetPort;
+        Port _samplerPort;
         public override void AddElements()
         {
             base.AddElements();
 
             AddPort(new(PortDirection.Output, new Texture2DObject(), OUT, "Texture 2D"));
-            AddPort(new(PortDirection.Output, new SamplerState(), samplerID, "Sampler State"));
+            _samplerPort = AddPort(new(PortDirection.Output, new SamplerState(), samplerID, "Sampler State"));
             _scaleOffsetPort = AddPort(new(PortDirection.Output, new Float(4, false), scaleOffsetID, "Scale Offset"));
 
             InitializeTexture(); // TODO: figure out why textures arent set on time
@@ -33,9 +34,11 @@ namespace ZSG
         {
             base.Generate(visitor);
             var generation = visitor.GenerationMode;
+
+            var referenceName = propertyDescriptor.GetReferenceName(generation);
             if (_scaleOffsetPort.connected)
             {
-                var scaleOffsetProperty = new PropertyDescriptor(PropertyType.Float4, "ScaleOffset", propertyDescriptor.GetReferenceName(generation) + "_ST")
+                var scaleOffsetProperty = new PropertyDescriptor(PropertyType.Float4, "ScaleOffset", referenceName + "_ST")
                 {
                     declaration = PropertyDeclaration.Global
                 };
@@ -49,6 +52,10 @@ namespace ZSG
                 {
                     PortData[scaleOffsetID] = new GeneratedPortData(portDescriptors[scaleOffsetID].Type, scaleOffsetProperty.GetReferenceName(GenerationMode.Final));
                 }
+            }
+            if (_samplerPort.connected)
+            {
+                PortData[samplerID] = new GeneratedPortData(new SamplerState(), "sampler" + referenceName);
             }
         }
     }

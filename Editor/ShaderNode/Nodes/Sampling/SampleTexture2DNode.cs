@@ -1,5 +1,7 @@
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.PackageManager.UI;
 using UnityEngine;
+using UnityEngine.Profiling;
 using ZSG.Nodes;
 using ZSG.Nodes.PortType;
 
@@ -10,6 +12,7 @@ namespace ZSG
     {
         const int UV = 0;
         const int TEX = 1;
+        const int SAMPLER = 8;
         const int OUT_RGBA = 3;
 
         const int OUT_RGB = 2;
@@ -23,10 +26,13 @@ namespace ZSG
         public override int PreviewResolution => 156;
 
         Port _texturePort;
+        Port _samplerPort;
         public override void AddElements()
         {
             _texturePort = AddPort(new(PortDirection.Input, new Texture2DObject(), TEX, "Texture 2D"));
+            _samplerPort = AddPort(new(PortDirection.Input, new SamplerState(), SAMPLER, "Sampler State"));
             AddPort(new(PortDirection.Input, new Float(2), UV, "UV"));
+
             AddPort(new(PortDirection.Output, new Float(4), OUT_RGBA, "RGBA"));
 
             AddPort(new(PortDirection.Output, new Float(3), OUT_RGB, "<color=red>R</color><color=green>G</color><color=blue>B</color>"));
@@ -49,7 +55,18 @@ namespace ZSG
             if (_texturePort.connected)
             {
                 var propertyName = PortData[TEX].Name;
-                visitor.AppendLine($"{PrecisionString(4)} {PortData[OUT_RGBA].Name} = {propertyName}.Sample(sampler{propertyName}, {PortData[UV].Name});");
+
+                string samplerName;
+                if (_samplerPort.connected)
+                {
+                    samplerName = PortData[SAMPLER].Name;
+                }
+                else
+                {
+                    samplerName = "sampler" + propertyName;
+                }
+
+                visitor.AppendLine($"{PrecisionString(4)} {PortData[OUT_RGBA].Name} = {propertyName}.Sample({samplerName}, {PortData[UV].Name});");
             }
             else
             {
