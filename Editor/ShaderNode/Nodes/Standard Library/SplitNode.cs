@@ -4,7 +4,7 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [NodeInfo("Split")]
+    [NodeInfo("Utility/Split")]
     public class SplitNode : ShaderNode
     {
         const int R = 0;

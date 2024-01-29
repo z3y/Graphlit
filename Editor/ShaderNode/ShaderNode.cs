@@ -290,7 +290,7 @@ namespace ZSG
             var nodeInfo = Info;
 
             var titleLabel = (Label)titleContainer.Q("title-label");
-            titleLabel.text = nodeInfo.name;
+            titleLabel.text = DisplayName;
             titleLabel.tooltip = nodeInfo.tooltip + "\n" + viewDataKey;
             titleLabel.style.fontSize = 12;
             titleLabel.style.marginRight = StyleKeyword.Auto;
@@ -436,7 +436,8 @@ namespace ZSG
 
             Generate(visitor);
         }
-        public string UniqueVariable => Info.name.Replace(" ", "") + UniqueVariableID++;
+        string DisplayName => Info.name.Split("/")[^1];
+        public string UniqueVariable => DisplayName.Replace(" ", "") + UniqueVariableID++;
         public void SetVariable(int id, string name)
         {
             var data = PortData[id];
@@ -585,7 +586,11 @@ namespace ZSG
 
         public override void OnSelected()
         {
-            DefaultAdditionalElements(GraphView.additionalNodeElements);
+            base.OnSelected();
+            if (GraphView.additionalNodeElements.childCount < 10)
+            {
+                DefaultAdditionalElements(GraphView.additionalNodeElements);
+            }
         }
 
         public override void OnUnselected()
@@ -660,6 +665,12 @@ namespace ZSG
         void SetPreviewState(bool enabled)
         {
             _previewDisabled = !enabled;
+
+            if (previewDrawer is null)
+            {
+                return;
+            }
+
             if (enabled)
             {
                 GeneratePreview();

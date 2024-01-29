@@ -6,7 +6,7 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [@NodeInfo("Swizzle"), Serializable]
+    [@NodeInfo("Utility/Swizzle"), Serializable]
     public sealed class SwizzleNode : ShaderNode
     {
         const int IN = 0;

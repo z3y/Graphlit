@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace ZSG
 {
-    [NodeInfo("Unlit")]
+    [NodeInfo("Targets/Unlit")]
     public class UnlitTemplate : TemplateOutput
     {
         public override string Name { get; } = "Unlit";

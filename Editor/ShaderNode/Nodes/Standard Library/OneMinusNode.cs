@@ -2,7 +2,7 @@ using ZSG.Nodes;
 
 namespace ZSG
 {
-    [NodeInfo("One Minus", "1 - a")]
+    [NodeInfo("Math/One Minus", "1 - a")]
     public class OneMinusNode : PasstroughNode
     {
         protected override void Generate(NodeVisitor visitor)

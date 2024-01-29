@@ -2,7 +2,7 @@ using ZSG.Nodes;
 
 namespace ZSG
 {
-    [NodeInfo("Sin", "sin(A)")]
+    [NodeInfo("Math/Sin", "sin(A)")]
     public class SinNode : PasstroughNode
     {
         protected override void Generate(NodeVisitor visitor)

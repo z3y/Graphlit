@@ -6,7 +6,7 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [NodeInfo("Tangent"), Serializable]
+    [NodeInfo("Input/Tangent"), Serializable]
     public class TangentNode : ShaderNode
     {
         public override PreviewType DefaultPreviewOverride => PreviewType.Preview3D;

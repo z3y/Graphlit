@@ -8,7 +8,7 @@ using UnityEditor.UIElements;
 
 namespace ZSG
 {
-    [NodeInfo("Color"), Serializable]
+    [NodeInfo("Constants/Color"), Serializable]
     public class ColorNode : ShaderNode
     {
         const int OUT = 0;

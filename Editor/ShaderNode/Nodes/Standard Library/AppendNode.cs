@@ -3,7 +3,7 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [NodeInfo("Append")]
+    [NodeInfo("Utility/Append")]
     public class AppendNode : ShaderNode
     {
         const int A = 0;

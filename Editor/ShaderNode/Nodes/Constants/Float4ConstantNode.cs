@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ZSG
 {
-    [NodeInfo("Float4"), Serializable]
+    [NodeInfo("Constants/Float4"), Serializable]
     public class Float4Node : ShaderNode
     {
         const int OUT = 0;

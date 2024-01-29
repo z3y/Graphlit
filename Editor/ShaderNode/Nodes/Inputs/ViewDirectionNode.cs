@@ -6,7 +6,7 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [NodeInfo("View Direction"), Serializable]
+    [NodeInfo("Input/View Direction"), Serializable]
     public class ViewDirectionNode : ShaderNode
     {
         public override PreviewType DefaultPreviewOverride => PreviewType.Preview3D;

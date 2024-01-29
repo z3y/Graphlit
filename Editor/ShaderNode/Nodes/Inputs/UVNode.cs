@@ -6,7 +6,7 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [NodeInfo("UV"), Serializable]
+    [NodeInfo("Input/UV"), Serializable]
     public class UVNode : ShaderNode
     {
         const int OUT = 0;

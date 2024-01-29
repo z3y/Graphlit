@@ -8,7 +8,7 @@ using ZSG.Nodes.PortType;
 namespace ZSG
 {
 
-    [NodeInfo("Function"), Serializable]
+    [NodeInfo("Input/Function"), Serializable]
     public class CustomFunctionNode : ShaderNode
     {
         [SerializeField] string _code;

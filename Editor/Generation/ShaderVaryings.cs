@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Windows;
-using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
@@ -53,6 +51,12 @@ namespace ZSG
         public string RequireUV(int texcoord, int channels = 2)
         {
             return RequireInternal("uv" + texcoord, channels, _attributes.RequireUV(texcoord, channels));
+        }
+
+        public string RequireCullFace()
+        {
+            RequireCustomString("");
+            return "data.frontFace";
         }
 
         internal string RequireInternal(string name, int channels = 4, string passthrough = null)

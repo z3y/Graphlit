@@ -2,7 +2,7 @@ using ZSG.Nodes;
 
 namespace ZSG
 {
-    [NodeInfo("DDY")]
+    [NodeInfo("Math/DDY")]
     public class DDYNode : PasstroughNode
     {
         public override Precision DefaultPrecisionOverride => Precision.Float;

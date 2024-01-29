@@ -11,6 +11,8 @@ struct FragmentData
     float3 viewDirectionWS;
     float3 viewDirectionOS;
     float3 viewDirectionTS;
+    float3x3 tangentSpaceTransform;
+    bool frontFace;
 
     static FragmentData Create(Varyings varyings)
     {
@@ -44,12 +46,13 @@ struct FragmentData
         output.normalWS *= renormFactor;
         output.tangentWS = tangentWS.xyz * renormFactor;
         output.bitangentWS *= renormFactor;
+        output.tangentSpaceTransform = float3x3(output.tangentWS, output.bitangentWS, output.normalWS);
 
         output.viewDirectionWS = normalize(_WorldSpaceCameraPos.xyz - output.positionWS);
         output.viewDirectionOS = TransformWorldToObjectDir(output.viewDirectionWS);
+        output.viewDirectionTS = mul(output.tangentSpaceTransform, output.viewDirectionWS);
 
-        float3x3 tangentSpaceTransform = float3x3(output.tangentWS, output.bitangentWS, output.normalWS);
-        output.viewDirectionTS = mul(tangentSpaceTransform, output.WorldSpaceViewDirection);
+        //output.frontFace = IS_FRONT_VFACE(varyings.cullFace, true, false);
 
         return output;
     }

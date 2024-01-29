@@ -1,13 +1,11 @@
 using UnityEditor.Experimental.GraphView;
-using UnityEditor.PackageManager.UI;
 using UnityEngine;
-using UnityEngine.Profiling;
 using ZSG.Nodes;
 using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [NodeInfo("Sample Texture 2D")]
+    [NodeInfo("Texture/Sample Texture 2D")]
     public class SampleTexture2DNode : ShaderNode
     {
         const int UV = 0;

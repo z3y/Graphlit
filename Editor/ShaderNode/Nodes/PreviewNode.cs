@@ -3,7 +3,7 @@ using ZSG.Nodes;
 
 namespace ZSG
 {
-    [NodeInfo("Preview"), Serializable]
+    [NodeInfo("Utility/Preview"), Serializable]
     public class PreviewNode : PasstroughNode
     {
         protected override void Generate(NodeVisitor visitor)

@@ -3,7 +3,7 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [NodeInfo("Time", "_Time")]
+    [NodeInfo("Built-in Variables/Time", "_Time")]
     public class TimeNode : ShaderNode
     {
         public override Precision DefaultPrecisionOverride => Precision.Float;

@@ -111,8 +111,16 @@ namespace ZSG
             var selectMasterNode = new Button() { text = "Master Node" };
             selectMasterNode.clicked += () =>
             {
+                var masterNode = graphView.graphElements.Where(x => x is TemplateOutput).First();
+                bool contained = graphView.selection.Contains(masterNode);
+
                 graphView.ClearSelection();
-                graphView.AddToSelection(graphView.graphElements.Where(x => x is TemplateOutput).First());
+                graphView.AddToSelection(masterNode);
+
+                if (contained)
+                {
+                    masterNode.Focus();
+                }
             };
             toolbar.Add(selectMasterNode);
 

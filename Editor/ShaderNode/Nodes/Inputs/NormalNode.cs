@@ -6,7 +6,7 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [NodeInfo("Normal"), Serializable]
+    [NodeInfo("Input/Normal"), Serializable]
     public class NormalNode : ShaderNode
     {
         public override PreviewType DefaultPreviewOverride => PreviewType.Preview3D;

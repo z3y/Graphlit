@@ -8,6 +8,7 @@ namespace ZSG
 {
     using System.Linq;
     using System.Reflection;
+    using System.Security.Policy;
     using ZSG.Nodes;
     public class ShaderNodeSearchWindow : ScriptableObject, ISearchWindowProvider
     {
@@ -24,39 +25,82 @@ namespace ZSG
 
         private static Type[] _existingNodeTypes = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(domainAssembly => domainAssembly.GetTypes())
-                .Where(type => typeof(ShaderNode).IsAssignableFrom(type)).ToArray();
+                .Where(type => typeof(ShaderNode).IsAssignableFrom(type))
+                .Where(x =>
+                {
+                    var info = x.GetCustomAttribute<NodeInfo>();
+                    return info is not null && !info.name.StartsWith("_");
+                })
+                .OrderBy(x => x.GetCustomAttribute<NodeInfo>().name)
+                .ToArray();
 
         public List<SearchTreeEntry> CreateSearchTree(SearchWindowContext context)
         {
-            var entries = new List<SearchTreeEntry>();
-            entries.Add(new SearchTreeGroupEntry(new GUIContent("Create Element")));
+            var tree = new List<SearchTreeEntry>
+            {
+                new SearchTreeGroupEntry(new GUIContent("Create Node"), 0)
+            };
 
-            entries.Add(new SearchTreeGroupEntry(new GUIContent("HLSL"), 1));
+            List<string> groups = new();
 
+            // taken from shader graph, why isnt this already included ;w;
             foreach (var node in _existingNodeTypes)
             {
+                // `createIndex` represents from where we should add new group entries from the current entry's group path.
+                var createIndex = int.MaxValue;
                 var nodeInfo = node.GetCustomAttribute<NodeInfo>();
-                if (nodeInfo is null)
+
+                string[] split = nodeInfo.name.Split('/');
+
+                // Compare the group path of the current entry to the current group path.
+                for (var i = 0; i < split.Length - 1; i++)
                 {
-                    continue;
+                    var group = split[i];
+                    if (i >= groups.Count)
+                    {
+                        // The current group path matches a prefix of the current entry's group path, so we add the
+                        // rest of the group path from the currrent entry.
+                        createIndex = i;
+                        break;
+                    }
+                    if (groups[i] != group)
+                    {
+                        // A prefix of the current group path matches a prefix of the current entry's group path,
+                        // so we remove everyfrom from the point where it doesn't match anymore, and then add the rest
+                        // of the group path from the current entry.
+                        groups.RemoveRange(i, groups.Count - i);
+                        createIndex = i;
+                        break;
+                    }
                 }
 
-                entries.Add(new SearchTreeEntry(
-                    new GUIContent(nodeInfo.name == null ? "Default" : nodeInfo.name,
-                    nodeInfo.icon == null ? _nodeIndentationIcon : nodeInfo.icon)
-                    ) { level = 2, userData = node });
+                // Create new group entries as needed.
+                // If we don't need to modify the group path, `createIndex` will be `int.MaxValue` and thus the loop won't run.
+                for (var i = createIndex; i < split.Length - 1; i++)
+                {
+                    var group = split[i];
+                    groups.Add(group);
+                    tree.Add(new SearchTreeGroupEntry(new GUIContent(group)) { level = i + 1 });
+                }
+
+                // Finally, add the actual entry.
+                tree.Add(new SearchTreeEntry(new GUIContent(split.Last(), nodeInfo.icon != null ? nodeInfo.icon : _nodeIndentationIcon))
+                {
+                    level = split.Length,
+                    userData = node
+                });
             }
 
-            entries.Add(new SearchTreeGroupEntry(new GUIContent("Properties"), 1));
+            tree.Add(new SearchTreeGroupEntry(new GUIContent("Properties"), 1));
             for (int i = 0; i < _graphView.graphData.properties.Count; i++)
             {
                 PropertyDescriptor property = _graphView.graphData.properties[i];
-                entries.Add(new SearchTreeEntry(new GUIContent(property.displayName, _nodeIndentationIcon)) { level = 2, userData = i });
+                tree.Add(new SearchTreeEntry(new GUIContent(property.displayName, _nodeIndentationIcon)) { level = 2, userData = i });
             }
 
 
             //entries.Add(new SearchTreeEntry(new GUIContent("Multiply", _nodeIndentationIcon)) { level = 1, userData = typeof(MultiplyNode) });
-            return entries;
+            return tree;
         }
 
         public bool OnSelectEntry(SearchTreeEntry searchTreeEntry, SearchWindowContext context)

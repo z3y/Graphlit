@@ -3,7 +3,7 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [NodeInfo("Multiply Add", "a * b + c")]
+    [NodeInfo("Math/Multiply Add", "a * b + c")]
     public class MadNode : ShaderNode
     {
         const int A = 0;

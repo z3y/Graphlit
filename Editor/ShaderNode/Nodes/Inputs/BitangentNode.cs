@@ -6,7 +6,7 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [NodeInfo("Bitangent"), Serializable]
+    [NodeInfo("Input/Bitangent"), Serializable]
     public class BitangentNode : ShaderNode
     {
         public override PreviewType DefaultPreviewOverride => PreviewType.Preview3D;

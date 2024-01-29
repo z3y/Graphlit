@@ -2,7 +2,7 @@ using ZSG.Nodes;
 
 namespace ZSG
 {
-    [NodeInfo("Saturate")]
+    [NodeInfo("Math/Saturate")]
     public class SaturateNode : PasstroughNode
     {
         protected override void Generate(NodeVisitor visitor)
