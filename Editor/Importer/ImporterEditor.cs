@@ -35,6 +35,11 @@ namespace ZSG
             {
                 ShaderGraphImporter.OpenInGraphView(AssetDatabase.GUIDFromAssetPath(importer.assetPath).ToString());
             }
+            if (GUILayout.Button("Show Generated Shader"))
+            {
+                AssetDatabase.ImportAsset(importer.assetPath);
+                Debug.Log(ShaderGraphImporter._lastImport);
+            }
         }
 
         /*        protected override bool OnApplyRevertGUI()

@@ -2,12 +2,16 @@ using UnityEngine.UIElements;
 using ZSG.Nodes.PortType;
 using ZSG.Nodes;
 using UnityEngine;
+using UnityEditor;
 
 namespace ZSG
 {
     [NodeInfo("Targets/Unlit")]
     public class UnlitTemplate : TemplateOutput
     {
+        [MenuItem("Assets/Create/ZSG/Unlit Graph")]
+        public static void CreateVariantFile() => ShaderGraphImporter.CreateEmptyTemplate<UnlitTemplate>();
+
         public override string Name { get; } = "Unlit";
         public override int[] VertexPorts => new int[] { POSITION, NORMAL, TANGENT };
         public override int[] FragmentPorts => new int[] { COLOR, ALPHA };

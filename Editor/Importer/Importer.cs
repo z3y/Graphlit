@@ -6,6 +6,7 @@ using System.IO;
 using System;
 using UnityEditor.Callbacks;
 using System.Linq;
+using UnityEditor.Experimental.GraphView;
 
 namespace ZSG
 {
@@ -13,8 +14,8 @@ namespace ZSG
     public class ShaderGraphImporter : ScriptedImporter
     {
         public const string EXTENSION = "zsg";
-
-        [NonSerialized] internal static Dictionary<string, ShaderGraphView> _graphViews = new();
+        internal static Dictionary<string, ShaderGraphView> _graphViews = new();
+        internal static string _lastImport;
 
         public static SerializableGraph ReadGraphData(string guid)
         {
@@ -27,6 +28,7 @@ namespace ZSG
             }
             return data;
         }
+
 
         public override void OnImportAsset(AssetImportContext ctx)
         {
@@ -47,6 +49,7 @@ namespace ZSG
 
 
             var result = builder.ToString();
+            _lastImport = result;
             var shader = ShaderUtil.CreateShaderAsset(ctx, result, false);
 
             if (builder._nonModifiableTextures.Count > 0)
@@ -65,18 +68,20 @@ namespace ZSG
             ctx.AddObjectToAsset("Main Asset", shader);
             ctx.AddObjectToAsset("Material", material);
 
-            ctx.AddObjectToAsset("generation", new TextAsset(result));
+            //ctx.AddObjectToAsset("generation", new TextAsset(result));
 
-            var text = File.ReadAllText(assetPath);
-            ctx.AddObjectToAsset("json", new TextAsset(text));
+            //var text = File.ReadAllText(assetPath);
+            //ctx.AddObjectToAsset("json", new TextAsset(text));
         }
 
-        [MenuItem("Assets/Create/z3y/Shader Graph")]
-        public static void CreateVariantFile()
+        public static void CreateEmptyTemplate<T>() where T : TemplateOutput, new()
         {
-            ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.{EXTENSION}", string.Empty);
+            var graphView = new ShaderGraphView(null);
+            graphView.AddElement(new T());
+            var data = SerializableGraph.StoreGraph(graphView);
+            var jsonData = JsonUtility.ToJson(data, true);
+            ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.{EXTENSION}", jsonData);
         }
-
 
         public static void OpenInGraphView(string guid)
         {

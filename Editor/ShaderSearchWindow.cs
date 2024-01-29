@@ -41,6 +41,13 @@ namespace ZSG
                 new SearchTreeGroupEntry(new GUIContent("Create Node"), 0)
             };
 
+            tree.Add(new SearchTreeGroupEntry(new GUIContent("Properties"), 1));
+            for (int i = 0; i < _graphView.graphData.properties.Count; i++)
+            {
+                PropertyDescriptor property = _graphView.graphData.properties[i];
+                tree.Add(new SearchTreeEntry(new GUIContent(property.displayName, _nodeIndentationIcon)) { level = 2, userData = i });
+            }
+
             List<string> groups = new();
 
             // taken from shader graph, why isnt this already included ;w;
@@ -89,13 +96,6 @@ namespace ZSG
                     level = split.Length,
                     userData = node
                 });
-            }
-
-            tree.Add(new SearchTreeGroupEntry(new GUIContent("Properties"), 1));
-            for (int i = 0; i < _graphView.graphData.properties.Count; i++)
-            {
-                PropertyDescriptor property = _graphView.graphData.properties[i];
-                tree.Add(new SearchTreeEntry(new GUIContent(property.displayName, _nodeIndentationIcon)) { level = 2, userData = i });
             }
 
 

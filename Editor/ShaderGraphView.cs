@@ -11,13 +11,6 @@ namespace ZSG
 
     public class ShaderGraphView : GraphView
     {
-        /*[InitializeOnEnterPlayMode]
-        public void RegeneratePreviews(PlayModeStateChange change)
-        {
-            Debug.Log("a");
-            ShaderBuilder.GenerateAllPreviews(this);
-        }*/
-
         private ShaderNodeSearchWindow _searchWindow;
         private ShaderGraphWindow _editorWindow;
 
