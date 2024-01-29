@@ -67,7 +67,7 @@ namespace ZSG
             var builder = new ShaderBuilder(GenerationMode.Final, graphView);
             //var target = new UnlitBuildTarget();
             //target.BuilderPassthourgh(builder);
-            builder.Build<UnlitBuildTarget>();
+            builder.Build<UnlitTemplate>();
 
             //var text = File.ReadAllText(assetPath);
             //ctx.AddObjectToAsset("Main Asset", new TextAsset(text));

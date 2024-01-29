@@ -114,14 +114,15 @@ namespace ZSG
 
         }
 
+        const string VertexPreview = "Packages/com.z3y.myshadergraph/Editor/Targets/Preview/Vertex.hlsl";
+        const string FragmentPreview = "Packages/com.z3y.myshadergraph/Editor/Targets/Preview/Fragment.hlsl";
+
         public static void GeneratePreview(ShaderGraphView graphView, ShaderNode shaderNode, bool log = false)
         {
             var shaderBuilder = new ShaderBuilder(GenerationMode.Preview, graphView);
             shaderBuilder.shaderName = "Hidden/ZSGPreviews/" + shaderNode.viewDataKey;
-            var pass = new PassBuilder("FORWARD", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitVertex.hlsl", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitFragment.hlsl",
-                UnlitBuildTarget.POSITION,
-                UnlitBuildTarget.COLOR
-                );
+            var pass = new PassBuilder("FORWARD", VertexPreview, FragmentPreview);
+
             shaderBuilder.AddPass(pass);
             pass.varyings.RequirePositionCS();
             pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
@@ -129,13 +130,7 @@ namespace ZSG
             pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
             pass.pragmas.Add("#define PREVIEW");
-            pass.varyings.RequireCustom(1, "float(1)");
-
-            pass.pragmas.Add("#include \"UnityShaderVariables.cginc\"");
-            pass.pragmas.Add("#define PREVIEW");
-
-            pass.pragmas.Add("#include \"Packages/com.z3y.myshadergraph/Editor/Targets/Graph.hlsl\"");
-            pass.pragmas.Add("#include \"UnityCG.cginc\"");
+            pass.pragmas.Add("#include \"Packages/com.z3y.myshadergraph/ShaderLibrary/BuiltInLibrary.hlsl\"");
 
             var tags = shaderBuilder.subshaderTags;
             tags.Add("Queue", "Transparent");

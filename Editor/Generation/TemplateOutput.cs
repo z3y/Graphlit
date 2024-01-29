@@ -3,7 +3,6 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using ZSG.Nodes;
 using ZSG.Nodes.PortType;
 
 namespace ZSG
@@ -135,58 +134,5 @@ namespace ZSG
         public override bool DisablePreview => true;
 
         protected sealed override void Generate(NodeVisitor visitor) { }
-    }
-
-    [NodeInfo("Unlit")]
-    public class UnlitBuildTarget : TemplateOutput
-    {
-        public override string Name { get; } = "Unlit";
-        public override int[] VertexPorts => new int[] { POSITION , NORMAL, TANGENT };
-        public override int[] FragmentPorts => new int[] { COLOR };
-
-        public const int POSITION = 0;
-        public const int NORMAL = 1;
-        public const int TANGENT = 2;
-        public const int COLOR = 3;
-        public override void AddElements()
-        {
-            AddPort(new(PortDirection.Input, new Float(3, false), POSITION, "Position"));
-            AddPort(new(PortDirection.Input, new Float(3, false), NORMAL, "Normal"));
-            AddPort(new(PortDirection.Input, new Float(4, false), TANGENT, "Tangent"));
-
-            var separator = new VisualElement();
-            separator.style.height = 2;
-            separator.style.backgroundColor = Color.gray;
-            inputContainer.Add(separator);
-            AddPort(new(PortDirection.Input, new Float(4, false), COLOR, "Color"));
-
-            Bind(POSITION, PortBinding.PositionOS);
-            Bind(NORMAL, PortBinding.NormalOS);
-            Bind(TANGENT, PortBinding.TangentOS);
-        }
-
-        public override void BuilderPassthourgh(ShaderBuilder builder)
-        {
-            var basePass = new PassBuilder("FORWARD", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitVertex.hlsl", "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/UnlitFragment.hlsl",
-                POSITION,
-                NORMAL,
-                TANGENT,
-                COLOR
-                );
-
-            basePass.attributes.RequirePositionOS();
-            basePass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
-
-            basePass.varyings.RequirePositionCS();
-            basePass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
-            basePass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
-
-            basePass.pragmas.Add("#include \"UnityCG.cginc\"");
-
-
-            //basePass.vertexDescription.Add("")
-
-            builder.AddPass(basePass);
-        }
     }
 }

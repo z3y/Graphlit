@@ -31,6 +31,8 @@ namespace ZSG
         public ShaderAttributes attributes;
         public ShaderVaryings varyings;
 
+        public string target = "4.5";
+
         public HashSet<string> generatedBindingsVertex = new();
         public HashSet<string> generatedBindingsFragment = new();
 
@@ -64,6 +66,8 @@ namespace ZSG
         public void AppendPassHLSL(ShaderStringBuilder sb)
         {
             sb.AppendLine("// Pragmas");
+
+            sb.AppendLine("#pragma target " + target);
 
             foreach (var p in pragmas)
             {

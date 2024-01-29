@@ -57,7 +57,7 @@ namespace ZSG.Nodes.PortType
     }
     public struct SamplerState : IPortType
     {
-        public Color GetPortColor() => new Color(0.3f, 0.3f, 0.8f);
+        public Color GetPortColor() => new Color(0.8f, 0.8f, 0.8f);
 
     }
 }

@@ -198,6 +198,10 @@ namespace ZSG
         {
             if (IsTextureType)
             {
+                if (DefaultTextureEnum == DefaultTextureName.none)
+                {
+                    return "\"\" {}";
+                }
                 return '"' + DefaultTextureEnum.ToString() + '"' + " {}";
             }
             return type switch
