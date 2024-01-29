@@ -1,4 +1,5 @@
 using System;
+using UnityEngine.UIElements;
 
 namespace ZSG
 {
@@ -125,7 +126,6 @@ namespace ZSG
         }
 
         #region Position
-        private static string ObjectToWorldPosition(string a) => $"mul(unity_ObjectToWorld, float4({a}, 1))";
 
         private static string RequirePositionWSFragment(PassBuilder pass)
         {
@@ -145,8 +145,8 @@ namespace ZSG
         private static string AppendPositionWSVertex(PassBuilder pass)
         {
             string value = "positionWS";
-            var a = pass.attributes.RequirePositionOS(3);
-            pass.generatedBindingsVertex.Add($"float3 {value} = {ObjectToWorldPosition(a)};");
+            var positionOS = pass.attributes.RequirePositionOS(3);
+            pass.generatedBindingsVertex.Add($"float3 {value} = {SpaceTransform.ObjectToWorld(positionOS)};");
             return value;
         }
         private static string RequirePositionWSVertex(PassBuilder pass)
@@ -156,12 +156,11 @@ namespace ZSG
         #endregion
 
         #region Normal
-        private static string ObjectToWorldNormal(string a) => $"UnityObjectToWorldNormal({a})";
         private static string AppendNormalWSVertex(PassBuilder pass)
         {
             string value = "normalWS";
-            var a = pass.attributes.RequireNormalOS(3);
-            pass.generatedBindingsVertex.Add($"float3 {value} = {ObjectToWorldNormal(a)};");
+            var normalOS = pass.attributes.RequireNormalOS(3);
+            pass.generatedBindingsVertex.Add($"float3 {value} = {SpaceTransform.ObjectToWorldNormal(normalOS)};");
             return value;
         }
         private static string RequireNormalWSFragment(PassBuilder pass)
@@ -187,13 +186,12 @@ namespace ZSG
         #endregion
 
         #region Tangent
-        private static string ObjectToWorldDirection(string a) => $"UnityObjectToWorldDir({a}.xyz)";
         private static string AppendTangentWSVertex(PassBuilder pass)
         {
             string value = "tangentWS";
             RequireNormalWSFragment(pass);
-            var a = pass.attributes.RequireTangentOS();
-            pass.generatedBindingsVertex.Add($"float4 {value} = float4({ObjectToWorldDirection(a)}, {a}.w);");
+            var tangentOS = pass.attributes.RequireTangentOS();
+            pass.generatedBindingsVertex.Add($"float4 {value} = float4({SpaceTransform.ObjectToWorldDirection(tangentOS)}, {tangentOS}.w);");
             return value;
         }
         private static string RequireTangentWSFragment(PassBuilder pass)

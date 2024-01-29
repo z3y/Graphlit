@@ -9,17 +9,19 @@ struct FragmentData
     float3 bitangentWS;
     float3 bitangentOS;
     float3 viewDirectionWS;
+    float3 viewDirectionOS;
+    float3 viewDirectionTS;
 
     static FragmentData Create(Varyings varyings)
     {
-        FragmentData data = (FragmentData)0;
+        FragmentData output = (FragmentData)1;
 
         #ifdef UNPACK_POSITIONWS
-            data.positionWS = UNPACK_POSITIONWS;
+            output.positionWS = UNPACK_POSITIONWS;
         #endif
 
         #ifdef UNPACK_NORMALWS
-            data.normalWS = UNPACK_NORMALWS;
+            output.normalWS = UNPACK_NORMALWS;
         #endif
 
         #ifdef UNPACK_TANGENTWS
@@ -29,22 +31,26 @@ struct FragmentData
         #endif
 
         float crossSign = (tangentWS.w > 0.0 ? 1.0 : -1.0) * unity_WorldTransformParams.w;
-        data.bitangentWS = crossSign * cross(data.normalWS.xyz, tangentWS.xyz);
+        output.bitangentWS = crossSign * cross(output.normalWS.xyz, tangentWS.xyz);
 
-        float3 unnormalizedNormalWS = data.normalWS;
+        float3 unnormalizedNormalWS = output.normalWS;
         float renormFactor = 1.0 / length(unnormalizedNormalWS);
 
-        data.positionOS = mul(unity_WorldToObject, float4(data.positionWS, 1.0)).xyz;
-        data.normalOS = normalize(mul(data.normalWS, (float3x3)UNITY_MATRIX_M));
-        data.tangentOS = normalize(mul(tangentWS.xyz, (float3x3)UNITY_MATRIX_M));
-        data.bitangentOS = normalize(mul(data.bitangentWS, (float3x3)UNITY_MATRIX_M));
+        output.positionOS = mul(unity_WorldToObject, float4(output.positionWS, 1.0)).xyz;
+        output.normalOS = normalize(mul(output.normalWS, (float3x3)UNITY_MATRIX_M));
+        output.tangentOS = TransformWorldToObjectDir(tangentWS.xyz);
+        output.bitangentOS = TransformWorldToObjectDir(output.bitangentWS);
 
-        data.normalWS *= renormFactor;
-        data.tangentWS = tangentWS.xyz * renormFactor;
-        data.bitangentWS *= renormFactor;
+        output.normalWS *= renormFactor;
+        output.tangentWS = tangentWS.xyz * renormFactor;
+        output.bitangentWS *= renormFactor;
 
-        data.viewDirectionWS = normalize(_WorldSpaceCameraPos.xyz - data.positionWS);
+        output.viewDirectionWS = normalize(_WorldSpaceCameraPos.xyz - output.positionWS);
+        output.viewDirectionOS = TransformWorldToObjectDir(output.viewDirectionWS);
 
-        return data;
+        float3x3 tangentSpaceTransform = float3x3(output.tangentWS, output.bitangentWS, output.normalWS);
+        output.viewDirectionTS = mul(tangentSpaceTransform, output.WorldSpaceViewDirection);
+
+        return output;
     }
 };

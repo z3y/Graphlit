@@ -54,7 +54,7 @@ namespace ZSG
 
             if (_texturePort.connected)
             {
-                var propertyName = PortData[TEX].Name;
+                var textureName = PortData[TEX].Name;
 
                 string samplerName;
                 if (_samplerPort.connected)
@@ -63,10 +63,10 @@ namespace ZSG
                 }
                 else
                 {
-                    samplerName = "sampler" + propertyName;
+                    samplerName = "sampler" + textureName;
                 }
 
-                visitor.AppendLine($"{PrecisionString(4)} {PortData[OUT_RGBA].Name} = {propertyName}.Sample({samplerName}, {PortData[UV].Name});");
+                visitor.AppendLine($"{PrecisionString(4)} {PortData[OUT_RGBA].Name} = SAMPLE_TEXTURE2D({textureName}, {samplerName}, {PortData[UV].Name});");
             }
             else
             {

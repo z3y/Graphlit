@@ -73,6 +73,7 @@ namespace ZSG
             {
                 sb.AppendLine(p);
             }
+            sb.AppendLine();
 
             sb.AppendLine("struct Attributes");
             sb.Indent();
@@ -100,17 +101,20 @@ namespace ZSG
             }
             sb.UnIndent("};");
 
-            sb.AppendLine("// CBUFFER");
+            sb.AppendLine("CBUFFER_START(UnityPerMaterial)");
             foreach (var property in properties)
             {
-             /*   if (property.Type == PropertyType.Texture2D || property.Type == PropertyType.TextureCube)
-                {
-                    continue;
-                }
-*/
+                if (property.IsTextureType) continue;
                 sb.AppendLine(property.GetFieldDeclaration(generationMode));
             }
-            sb.AppendLine("// CBUFFER END");
+            sb.AppendLine("CBUFFER_END");
+            sb.AppendLine();
+
+            foreach (var property in properties)
+            {
+                if (!property.IsTextureType) continue;
+                sb.AppendLine(property.GetFieldDeclaration(generationMode));
+            }
             sb.AppendLine();
 
             foreach (var function in functions)

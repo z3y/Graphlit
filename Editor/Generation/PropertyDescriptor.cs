@@ -259,7 +259,7 @@ namespace ZSG
                 PropertyType.Float4 => $"float4 {referenceName};",
                 PropertyType.Color => $"float4 {referenceName};",
                 PropertyType.Intiger => $"int {referenceName};",
-                PropertyType.Texture2D => $"Texture2D {referenceName}; SamplerState sampler{referenceName};",
+                PropertyType.Texture2D => $"TEXTURE2D({referenceName}); SAMPLER(sampler{referenceName});",
                 PropertyType.TextureCube => $"TextureCube {referenceName}; SamplerState sampler{referenceName};",
                 _ => throw new System.NotImplementedException()
             };

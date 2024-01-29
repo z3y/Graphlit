@@ -9,7 +9,9 @@ Varyings vert(Attributes input)
 
     VertexDescription vertexDescription = VertexDescriptionFunction(input, output);
 
-    output.positionCS = UnityObjectToClipPos(input.positionOS);
+    float3 positionWS = TransformObjectToWorld(input.positionOS);
+    output.positionCS = TransformWorldToHClip(positionWS);
+    
     UNITY_TRANSFER_FOG(output, input.positionOS);
     return output;
 }
