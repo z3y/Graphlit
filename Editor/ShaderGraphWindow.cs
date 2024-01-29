@@ -29,7 +29,7 @@ namespace ZSG
             conainer.style.flexDirection = FlexDirection.RowReverse;
             rootVisualElement.Add(conainer);
             AddGraphView(conainer);
-            var data = ShaderGraphImporter.ReadGraphData(false, importerGuid);
+            var data = ShaderGraphImporter.ReadGraphData(importerGuid);
             data.PopulateGraph(graphView);
 
             AddBar(rootVisualElement);

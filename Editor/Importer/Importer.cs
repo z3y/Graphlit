@@ -14,63 +14,37 @@ namespace ZSG
     {
         public const string EXTENSION = "zsg";
 
-        // private string _testShaderPath = "Assets/UnlitTest.shader";
-
-        [NonSerialized] internal static Dictionary <string, SerializableGraph> _cachedGraphData = new();
         [NonSerialized] internal static Dictionary<string, ShaderGraphView> _graphViews = new();
 
-        public static SerializableGraph ReadGraphData(bool useCache, string guid)
+        public static SerializableGraph ReadGraphData(string guid)
         {
             var assetPath = AssetDatabase.GUIDToAssetPath(guid);
-            if (_cachedGraphData.TryGetValue(assetPath, out SerializableGraph graphData) && useCache)
-            {
-                //Debug.Log("using cached data");
-                return graphData;
-            }
             var text = File.ReadAllText(assetPath);
             var data = new SerializableGraph();
             if (!string.IsNullOrEmpty(text))
             {
                 JsonUtility.FromJsonOverwrite(text, data);
             }
-            _cachedGraphData[assetPath] = data;
             return data;
         }
 
-/*        public static ShaderBuilder UpdateGraph(string guid, ShaderGraphView shaderGraphView)
-        {
-            //var serializableGraph = ReadGraphData(false, guid);
-            if (shaderGraphView is null) _graphViews.TryGetValue(guid, out shaderGraphView);
-            var builder = new ShaderBuilder(GenerationMode.Final, shaderGraphView);
-            var target = new UnlitBuildTarget();
-            target.BuilderPassthourgh(builder);
-            builder.Build(target);
-
-            return builder;
-        }*/
-
         public override void OnImportAsset(AssetImportContext ctx)
         {
-            var guid = AssetDatabase.AssetPathToGUID(assetPath);
-/*
+            string guid = AssetDatabase.AssetPathToGUID(assetPath);
+
             if (_graphViews.TryGetValue(guid, out var graphView))
             {
-
             }
-            else
-            {*/
-                var data = ReadGraphData(false, guid);
-                var graphView = new ShaderGraphView(null);
+            else if (graphView is null)
+            {
+                var data = ReadGraphData(guid);
+                graphView = new ShaderGraphView(null);
                 data.PopulateGraph(graphView);
-            //}
+            }
 
             var builder = new ShaderBuilder(GenerationMode.Final, graphView);
-            //var target = new UnlitBuildTarget();
-            //target.BuilderPassthourgh(builder);
             builder.Build<UnlitTemplate>();
 
-            //var text = File.ReadAllText(assetPath);
-            //ctx.AddObjectToAsset("Main Asset", new TextAsset(text));
 
             var result = builder.ToString();
             var shader = ShaderUtil.CreateShaderAsset(ctx, result, false);
@@ -95,8 +69,6 @@ namespace ZSG
 
             var text = File.ReadAllText(assetPath);
             ctx.AddObjectToAsset("json", new TextAsset(text));
-
-            _cachedGraphData.Clear();
         }
 
         [MenuItem("Assets/Create/z3y/Shader Graph")]
@@ -135,7 +107,7 @@ namespace ZSG
             var data = SerializableGraph.StoreGraph(graphView);
             var jsonData = JsonUtility.ToJson(data, true);
 
-            _cachedGraphData[importerPath] = data;
+            _graphViews[importerPath] = graphView;
     
             File.WriteAllText(importerPath, jsonData);
             AssetDatabase.ImportAsset(importerPath, ImportAssetOptions.ForceUpdate);
