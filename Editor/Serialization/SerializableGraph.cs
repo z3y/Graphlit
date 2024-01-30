@@ -69,9 +69,17 @@ namespace ZSG
         {
             graphView.graphData = data;
 
-            foreach (var node in nodes)
+            // try catch node connections arent lost
+            try
             {
-                graphView.AddNode(node);
+                foreach (var node in nodes)
+                {
+                    graphView.AddNode(node);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning(e);
             }
 
             SetupNodeConnections(graphView);

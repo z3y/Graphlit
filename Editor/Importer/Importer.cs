@@ -108,16 +108,23 @@ namespace ZSG
 
         public static void SaveGraphAndReimport(ShaderGraphView graphView, string guid)
         {
-            var importerPath = AssetDatabase.GUIDToAssetPath(guid);
-            var data = SerializableGraph.StoreGraph(graphView);
-            var jsonData = JsonUtility.ToJson(data, true);
+            try
+            {
+                var importerPath = AssetDatabase.GUIDToAssetPath(guid);
+                var data = SerializableGraph.StoreGraph(graphView);
+                var jsonData = JsonUtility.ToJson(data, true);
 
-            _graphViews[importerPath] = graphView;
-    
-            File.WriteAllText(importerPath, jsonData);
-            AssetDatabase.ImportAsset(importerPath, ImportAssetOptions.ForceUpdate);
+                _graphViews[importerPath] = graphView;
 
-            graphView.MarkDirtyRepaint();
+                File.WriteAllText(importerPath, jsonData);
+                AssetDatabase.ImportAsset(importerPath, ImportAssetOptions.ForceUpdate);
+
+                graphView.MarkDirtyRepaint();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError("Serialization failed " + ex);
+            }
         }
 
         [OnOpenAsset]
