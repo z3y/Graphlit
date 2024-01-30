@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace ZSG
 {
@@ -11,6 +12,34 @@ namespace ZSG
     {
         public GraphData data = new GraphData();
         public List<SerializableNode> nodes = new List<SerializableNode>();
+        //public List<GroupInfo> groups = new List<GroupInfo>();
+
+        /*[Serializable]
+        public struct GroupInfo
+        {
+            public GroupInfo(Group groupNode, GraphView graphView)
+            {
+                Vector2 pos = groupNode.GetPosition().position;
+                x = (int)pos.x;
+                y = (int)pos.y;
+                nodes = new List<string>();
+                foreach (var node in )
+                {
+                    Debug.Log(node.GetType());
+
+                    if (node is not ShaderNode shaderNode)
+                    {
+                        continue;
+                    }
+                    Debug.Log(shaderNode.Info.name);
+                    nodes.Add(shaderNode.viewDataKey);
+                }
+
+            }
+            public int x;
+            public int y;
+            public List<string> nodes;
+        }*/
 
         public static SerializableGraph StoreGraph(ShaderGraphView graphView)
         {
@@ -19,6 +48,10 @@ namespace ZSG
                 data = graphView.graphData,
                 nodes = ElementsToSerializableNode(graphView.graphElements).ToList()
             };
+
+     /*       serializableGraph.groups = graphView.graphElements
+                .OfType<Group>()
+                .Select(x => new GroupInfo(x)).ToList();*/
 
             return serializableGraph;
         }

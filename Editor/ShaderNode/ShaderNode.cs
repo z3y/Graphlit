@@ -604,7 +604,7 @@ namespace ZSG
 
             var ve = new VisualElement();
             var nodeInfo = Info;
-            var title = new Label(" " + nodeInfo.name);
+            var title = new Label(" " + DisplayName);
             title.style.backgroundColor = borderColor;
             title.style.fontSize = 18;
             title.style.height = 24;

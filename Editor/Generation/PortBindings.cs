@@ -1,5 +1,4 @@
 using System;
-using UnityEngine.UIElements;
 
 namespace ZSG
 {
@@ -26,6 +25,7 @@ namespace ZSG
 
     public static class PortBindings
     {
+        // not implemented
         public static PortBinding PositionBindingFromSpace(BindingSpace space)
         {
             return space switch
@@ -41,11 +41,8 @@ namespace ZSG
         {
             return space switch
             {
-                BindingSpace.Object => PortBinding.NormalOS,
-                BindingSpace.World => PortBinding.NormalWS,
-                BindingSpace.Tangent => throw new NotImplementedException(),
-                BindingSpace.View => throw new NotImplementedException(),
-                _ => throw new NotImplementedException(),
+                BindingSpace.Object=> PortBinding.NormalOS,
+                BindingSpace.World or BindingSpace.Tangent or BindingSpace.View or _ => PortBinding.NormalWS,
             };
         }
         public static PortBinding TangentBindingFromSpace(BindingSpace space)
