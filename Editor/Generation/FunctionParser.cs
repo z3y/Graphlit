@@ -20,7 +20,7 @@ namespace ZSG
                 "bool" => new Bool(),
                 "int" => new Int(),
                 "uint" => new UInt(),
-                _ => throw new NotImplementedException(),
+                _ => new UnknownType(type),
             }; ;
         }
 
@@ -59,6 +59,10 @@ namespace ZSG
                 {
                     PortDirection direction = PortDirection.Input;
                     string[] arg = args[i].Trim().Split(' ');
+                    for (int j = 0; j < arg.Length; j++)
+                    {
+                        arg[j] = arg[j].Trim();
+                    }
 
                     int typeArgIndex = 0;
                     if (arg[0] == "out")
