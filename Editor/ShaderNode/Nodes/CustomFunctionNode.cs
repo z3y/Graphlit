@@ -4,7 +4,6 @@ using UnityEngine.UIElements;
 using UnityEngine;
 using ZSG.Nodes;
 using System.Linq;
-using System.Collections.ObjectModel;
 
 namespace ZSG
 {
@@ -18,7 +17,11 @@ namespace ZSG
 
         public override void AddElements()
         {
+            inputContainer.Add(new VisualElement());
+            outputContainer.Add(new VisualElement());
+
             if (!_functionParser.TryParse(_code)) return;
+
 
             foreach (var descriptor in _functionParser.descriptors)
             {
