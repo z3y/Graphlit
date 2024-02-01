@@ -7,6 +7,7 @@ using System.Linq;
 using UnityEditor.UIElements;
 using UnityEditor;
 using System.IO;
+using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 
 namespace ZSG
 {
@@ -72,7 +73,6 @@ namespace ZSG
             {
                 value = _useFile
             };
-            useFile.RegisterValueChangedCallback(x => _useFile = x.newValue);
             var file = new ObjectField("File")
             {
                 objectType = typeof(ShaderInclude)
@@ -100,8 +100,18 @@ namespace ZSG
             root.Add(file);
             root.Add(code);
 
+            void RefreshState()
+            {
+                file.style.display = !_useFile ? DisplayStyle.None : DisplayStyle.Flex;
+                code.style.display = _useFile ? DisplayStyle.None : DisplayStyle.Flex;
+            }
 
-
+            useFile.RegisterValueChangedCallback(x =>
+            {
+                _useFile = x.newValue;
+                RefreshState();
+            });
+            RefreshState();
         }
 
         public override void OnUnselected()

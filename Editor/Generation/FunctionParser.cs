@@ -7,8 +7,12 @@ namespace ZSG
 {
     public class FunctionParser
     {
-        public static IPortType StringToPortType(string type)
+        public static IPortType StringToPortType(string type, bool uknown)
         {
+            if (uknown)
+            {
+                return new UnknownType(type);
+            }
             return type switch
             {
                 "float" or "half" => new Float(1),
@@ -73,9 +77,16 @@ namespace ZSG
                     string type = arg[typeArgIndex].Trim();
                     string name = arg[typeArgIndex + 1].Trim();
 
+                    bool isArray = false;
+                    if (name.EndsWith(']'))
+                    {
+                        var splitName = name.Split('[');
+                        isArray = true;
+                    }
+
                     int id = i;
                     if (direction == PortDirection.Output) id += 100;
-                    descriptors.Add(new(direction, StringToPortType(type), id, name));
+                    descriptors.Add(new(direction, StringToPortType(type, isArray), id, name));
                     if (Enum.TryParse(name, true, out PortBinding binding))
                     {
                         bindings[id] = binding;
