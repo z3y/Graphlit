@@ -31,10 +31,24 @@ namespace ZSG
         {
             descriptors.Clear();
             bindings.Clear();
+
+            int entry = 0;
+            string[] lines = code.Split('\n');
+            bool hasMain = false;
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (lines[i].StartsWith("void ")) entry = i;
+                else if (lines[i].StartsWith("[Main] void "))
+                {
+                    entry = i;
+                    hasMain = true;
+                    break;
+                }
+            }
             try
             {
-                string[] split1 = code.Split('(');
-                methodName = split1[0]["void ".Length..];
+                string[] split1 = lines[entry].Split('(');
+                methodName = hasMain ? split1[0]["[Main] void ".Length..] : split1[0]["void ".Length..];
 
                 string allargs = split1[1].Split(')')[0];
                 bool emptyArts = string.IsNullOrEmpty(allargs);

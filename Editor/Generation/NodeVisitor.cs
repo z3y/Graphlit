@@ -34,6 +34,7 @@ namespace ZSG
 
             Pass = passIndex;
             Stage = stage;
+            _pragmas = shaderBuilder.passBuilders[passIndex].pragmas;
         }
 
         internal ShaderBuilder _shaderBuilder;
@@ -45,6 +46,7 @@ namespace ZSG
         private List<string> _expression;
         private HashSet<string> _function;
         private List<PropertyDescriptor> _props;
+        private List<string> _pragmas;
 
         /*public string GetInputVariable(int ID)
         {
@@ -89,6 +91,10 @@ namespace ZSG
         public void AddFunction(string function)
         {
             _function.Add(function);
+        }
+        public void AddPragma(string pragma)
+        {
+            _pragmas.Add(pragma);
         }
         public void AddProperty(PropertyDescriptor property)
         {
