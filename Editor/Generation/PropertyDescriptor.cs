@@ -21,6 +21,7 @@ namespace ZSG
         TextureCube = 9,
         Texture3D = 10,
         TextureCubeArray = 11,
+        Bool = 12,
     }
 
     [Serializable]
@@ -212,6 +213,7 @@ namespace ZSG
                 PropertyType.Float4 => VectorValue.ToString(),
                 PropertyType.Color => VectorValue.ToString(),
                 PropertyType.Intiger => FloatValue.ToString(),
+                PropertyType.Bool => FloatValue.ToString(),
                 _ => throw new System.NotImplementedException(),
             };
         }
@@ -243,6 +245,7 @@ namespace ZSG
                 PropertyType.TextureCube => "Cube",
                 PropertyType.Texture2DArray => "2DArray",
                 PropertyType.TextureCubeArray => "CubeArray",
+                PropertyType.Bool => "Float",
                 _ => throw new System.NotImplementedException()
             };
         }
@@ -259,6 +262,7 @@ namespace ZSG
                 PropertyType.Float4 => $"float4 {referenceName};",
                 PropertyType.Color => $"float4 {referenceName};",
                 PropertyType.Intiger => $"int {referenceName};",
+                PropertyType.Bool => $"float {referenceName};",
                 PropertyType.Texture2D => $"TEXTURE2D({referenceName}); SAMPLER(sampler{referenceName});",
                 PropertyType.TextureCube => $"TextureCube {referenceName}; SamplerState sampler{referenceName};",
                 _ => throw new System.NotImplementedException()
@@ -284,6 +288,11 @@ namespace ZSG
                 sb.Append("[");
                 sb.Append(attribute);
                 sb.Append("] ");
+            }
+
+            if (type == PropertyType.Bool)
+            {
+                sb.Append("[ToggleUI]");
             }
             return sb.ToString();
         }
@@ -360,6 +369,16 @@ namespace ZSG
                 UpdatePreviewMaterial();
             }
         }
+        void OnGUIBool()
+        {
+            EditorGUI.BeginChangeCheck();
+            bool newValue = GUILayout.Toggle(FloatValue == 1, "Toggle");
+            if (EditorGUI.EndChangeCheck())
+            {
+                FloatValue = newValue ? 1 : 0;
+                UpdatePreviewMaterial();
+            }
+        }
         void OnGUIVector()
         {
             EditorGUI.BeginChangeCheck();
@@ -417,7 +436,7 @@ namespace ZSG
         {
             Material m = graphView.PreviewMaterial;
             string name = GetReferenceName(GenerationMode.Preview);
-            if (type == PropertyType.Float) m.SetFloat(name, FloatValue);
+            if (type == PropertyType.Float || type == PropertyType.Bool) m.SetFloat(name, FloatValue);
             else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) m.SetVector(name, VectorValue);
             else if (type == PropertyType.Color) m.SetColor(name, VectorValue);
             else if (IsTextureType) m.SetTexture(name, DefaultTextureValue);
@@ -431,7 +450,7 @@ namespace ZSG
             if (type == PropertyType.Float) imgui.onGUIHandler += OnGUIFloat;
             else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) imgui.onGUIHandler += OnGUIVector;
             else if (type == PropertyType.Color) imgui.onGUIHandler += OnGUIColor;
-
+            else if (type == PropertyType.Bool) imgui.onGUIHandler += OnGUIBool;
             else if (type == PropertyType.Texture2D) imgui.onGUIHandler += OnGUITexture;
 
             var s = imgui.style;
@@ -454,6 +473,7 @@ namespace ZSG
                 PropertyType.Float4 => typeof(Float4PropertyNode),
                 PropertyType.Color => typeof(ColorPropertyNode),
                 PropertyType.Intiger => throw new NotImplementedException(),
+                PropertyType.Bool => typeof(BooleanPropertyNode),
                 PropertyType.Texture2D => typeof(Texture2DPropertyNode),
                 PropertyType.TextureCube => throw new NotImplementedException(),
                 _ => throw new NotImplementedException(),

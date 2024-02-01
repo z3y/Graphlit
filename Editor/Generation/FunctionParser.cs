@@ -7,11 +7,11 @@ namespace ZSG
 {
     public class FunctionParser
     {
-        public static IPortType StringToPortType(string type, bool uknown)
+        public static IPortType StringToPortType(string type, bool unknown)
         {
-            if (uknown)
+            if (unknown)
             {
-                return new UnknownType(type);
+                return new CustomType(type);
             }
             return type switch
             {
@@ -24,7 +24,7 @@ namespace ZSG
                 "bool" => new Bool(),
                 "int" => new Int(),
                 "uint" => new UInt(),
-                _ => new UnknownType(type),
+                _ => new CustomType(type),
             }; ;
         }
 

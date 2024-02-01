@@ -76,14 +76,12 @@ namespace ZSG.Nodes.PortType
         public Color GetPortColor() => new Color(0.1f, 0.8f, 0.8f);
         public override readonly string ToString() => "uint";
     }
-    public struct UnknownType : IPortType
+    public struct CustomType : IPortType
     {
         string _type;
-        public string array;
-        public UnknownType(string type, string array = "")
+        public CustomType(string type)
         {
             _type = type;
-            this.array = array;
         }
         public Color GetPortColor() => new Color(0.4f, 0.3f, 0.3f);
         public override readonly string ToString() => _type;
