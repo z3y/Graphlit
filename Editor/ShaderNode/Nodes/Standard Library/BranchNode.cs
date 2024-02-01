@@ -1,11 +1,15 @@
+using System;
+using UnityEngine;
+using UnityEngine.UIElements;
 using ZSG.Nodes;
 using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [NodeInfo("Utility/Branch")]
+    [NodeInfo("Utility/Branch"), Serializable]
     public class BranchNode : ShaderNode
     {
+        [SerializeField] bool _dynamicBranch = false; 
         const int BOOL = 0;
         const int TRUE = 1;
         const int FALSE = 2;
@@ -19,10 +23,39 @@ namespace ZSG
             AddPort(new(PortDirection.Output, new Float(1, true), OUT));
         }
 
+        public override void AdditionalElements(VisualElement root)
+        {
+            var f = new Toggle("Dynamic Branch") { value = _dynamicBranch };
+            f.RegisterValueChangedCallback((evt) =>
+            {
+                _dynamicBranch = evt.newValue;
+                UpdatePreviewMaterial();
+            });
+            root.Add(f);
+        }
+
         protected override void Generate(NodeVisitor visitor)
         {
             ChangeComponents(OUT, ImplicitTruncation(TRUE, FALSE).components);
-            Output(visitor, OUT, $"{PortData[BOOL].Name} ? {PortData[TRUE].Name} : {PortData[FALSE].Name}");
+
+            if (_dynamicBranch)
+            {
+                SetVariable(OUT, UniqueVariable);
+
+                var data = PortData[OUT];
+                var type = (Float)data.Type;
+                visitor.AppendLine($"{PrecisionString(type.components)} {data.Name};");
+                visitor.AppendLine($"UNITY_BRANCH if ({PortData[BOOL].Name})");
+                visitor.AppendLine("{");
+                visitor.AppendLine($"   {data.Name} = {PortData[TRUE].Name};");
+                visitor.AppendLine("} else {");
+                visitor.AppendLine($"   {data.Name} = {PortData[FALSE].Name};");
+                visitor.AppendLine("}");
+            }
+            else
+            {
+                Output(visitor, OUT, $"{PortData[BOOL].Name} ? {PortData[TRUE].Name} : {PortData[FALSE].Name}");
+            }
         }
     }
 }
