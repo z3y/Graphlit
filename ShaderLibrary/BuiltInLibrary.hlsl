@@ -35,3 +35,6 @@ half4 _SpecColor;
 
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl"
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
+
+Texture2D nullTexture;
+SamplerState null_LinearRepeat;

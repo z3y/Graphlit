@@ -15,6 +15,8 @@ namespace ZSG
         private FunctionParser _functionParser = new ();
         public override bool DisablePreview => true;
 
+        public override Color Accent => new Color(0.2f, 0.4f, 0.8f);
+
         public override void AddElements()
         {
             inputContainer.Add(new VisualElement());
@@ -23,18 +25,20 @@ namespace ZSG
             if (!_functionParser.TryParse(_code)) return;
 
 
+
             foreach (var descriptor in _functionParser.descriptors)
             {
                 AddPort(descriptor);
             }
-            BindAll();
+            Update();
         }
-        void BindAll()
+        void Update()
         {
             foreach (var item in _functionParser.bindings)
             {
                 Bind(item.Key, item.Value);
             }
+            TitleLabel.text = _functionParser.methodName;
         }
 
         public override void AdditionalElements(VisualElement root)
@@ -61,7 +65,7 @@ namespace ZSG
                 portDescriptors.Add(descriptor.ID, descriptor);
             }
             ResetPorts();
-            BindAll();
+            Update();
 
             GeneratePreviewForAffectedNodes();
         }

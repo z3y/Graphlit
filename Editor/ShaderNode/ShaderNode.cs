@@ -341,6 +341,7 @@ namespace ZSG
             }
             titleContainer.Add(accentLine);
         }
+        public Label TitleLabel;
         void AddTitleElement()
         {
             /*if (LowProfile)
@@ -359,6 +360,7 @@ namespace ZSG
             titleLabel.style.paddingLeft = 6;
             titleLabel.style.paddingRight = 6;
             titleContainer.Insert(0, titleLabel);
+            TitleLabel = titleLabel;
 
             var titleButton = titleContainer.Q("title-button-container");
             titleButton.parent.Remove(titleButton);
@@ -440,6 +442,26 @@ namespace ZSG
                     3 => PrecisionString(3) + "(0, 0, 0)",
                     4 or _ => PrecisionString(4) + "(0, 0, 0, 0)",
                 };
+            }
+            else if (portDescriptor.Type is Texture2DObject)
+            {
+                return "nullTexture";
+            }
+            else if (portDescriptor.Type is SamplerState)
+            {
+                return "null_LinearRepeat"; 
+            }
+            else if (portDescriptor.Type is Bool)
+            {
+                return "false";
+            }
+            else if (portDescriptor.Type is Int)
+            {
+                return "int(0)";
+            }
+            else if (portDescriptor.Type is UInt)
+            {
+                return "uint(0)";
             }
 
             return PrecisionString(4) + "(0,0,0,0)";

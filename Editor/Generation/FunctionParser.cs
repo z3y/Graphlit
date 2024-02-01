@@ -17,8 +17,11 @@ namespace ZSG
                 "float4" or "half4" => new Float(4),
                 "Texture2D" => new Texture2DObject(),
                 "SamplerState" => new SamplerState(),
+                "bool" => new Bool(),
+                "int" => new Int(),
+                "uint" => new UInt(),
                 _ => throw new NotImplementedException(),
-            };
+            }; ;
         }
 
         public List<PortDescriptor> descriptors = new List<PortDescriptor>();
