@@ -84,9 +84,12 @@ namespace ZSG
         protected abstract void Generate(NodeVisitor visitor);
 
         public Dictionary<int, PortDescriptor> portDescriptors = new();
-        public Port AddPort(PortDescriptor portDescriptor)
+        public Port AddPort(PortDescriptor portDescriptor, bool addDescriptors = true)
         {
-            portDescriptors.Add(portDescriptor.ID, portDescriptor);
+            if (addDescriptors)
+            {
+                portDescriptors.Add(portDescriptor.ID, portDescriptor);
+            }
 
             var container = portDescriptor.Direction == PortDirection.Input ? inputContainer : outputContainer;
 
@@ -112,6 +115,52 @@ namespace ZSG
             container.Add(port);
 
             return port;
+        }
+
+        public void ResetPorts()
+        {
+            foreach ( var port in PortElements.ToArray())
+            {
+                var descriptors = portDescriptors.Where(x => x.Key == port.GetPortID()).ToArray();
+                if (descriptors.Count() > 0)
+                {
+                    var descriptor = descriptors.First().Value;
+                    port.portType = descriptor.Type.GetType();
+                    if (descriptor.Type is Float @float)
+                    {
+                        var color = @float.GetPortColor();
+                        port.portColor = color;
+                    }
+                    else
+                    {
+                        port.portColor = descriptor.Type.GetPortColor();
+                    }
+                    continue;
+                }
+
+                if (port.connected)
+                {
+                    foreach (var edge in port.connections.ToArray())
+                    {
+                        var input = edge.input;
+                        var output = edge.output;
+
+                        input.Disconnect(edge);
+                        output.Disconnect(edge);
+                        edge.parent.Clear();
+                    }
+                }
+                port.parent.Remove(port);
+            }
+
+            foreach (var desc in portDescriptors)
+            {
+                if (PortElements.Any(x => x.GetPortID() == desc.Key))
+                {
+                    continue;
+                }
+                AddPort(desc.Value, false);
+            }
         }
 
         public void GeneratePreviewForAffectedNodes()
@@ -563,7 +612,12 @@ namespace ZSG
         {
             foreach (var data in PortData)
             {
-                var port = PortElements.Where(x => x.GetPortID() == data.Key).First();
+                var ports = PortElements.Where(x => x.GetPortID() == data.Key).ToArray();
+                if (ports.Length < 1)
+                {
+                    continue;
+                }
+                var port = ports.First();
                 int portID = port.GetPortID();
                 var generatedData = data.Value;
                 if (generatedData.Type is Float @float)

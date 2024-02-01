@@ -26,7 +26,7 @@ namespace ZSG
         {
             _editorWindow = editorWindow;
             // manipulators
-            SetupZoom(0.15f, 4.0f);
+            SetupZoom(0.1f, 10.0f);
             this.AddManipulator(new ContentDragger());
             this.AddManipulator(new SelectionDragger());
             this.AddManipulator(new RectangleSelector());

@@ -61,4 +61,9 @@ namespace ZSG.Nodes.PortType
         public Color GetPortColor() => new Color(0.8f, 0.8f, 0.8f);
         public override readonly string ToString() => "SamplerState";
     }
+    public struct Boolean : IPortType
+    {
+        public Color GetPortColor() => new Color(0.8f, 0.1f, 0.8f);
+        public override readonly string ToString() => "bool";
+    }
 }
