@@ -412,7 +412,7 @@ namespace ZSG
             return new GeneratedPortData(descriptor.Type, value);
         }
 
-        Dictionary<int, PortBinding> _portBindings = new();
+        internal protected Dictionary<int, PortBinding> _portBindings = new();
 
         protected void Bind(int id, PortBinding binding)
         {

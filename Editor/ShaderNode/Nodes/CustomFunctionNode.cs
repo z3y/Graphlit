@@ -58,6 +58,7 @@ namespace ZSG
         }
         void Update()
         {
+            _portBindings.Clear();
             foreach (var item in _functionParser.bindings)
             {
                 Bind(item.Key, item.Value);
@@ -67,7 +68,10 @@ namespace ZSG
 
         public override void AdditionalElements(VisualElement root)
         {
-            var useFile = new Toggle("Use External File");
+            var useFile = new Toggle("Use External File")
+            {
+                value = _useFile
+            };
             useFile.RegisterValueChangedCallback(x => _useFile = x.newValue);
             var file = new ObjectField("File")
             {

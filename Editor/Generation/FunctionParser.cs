@@ -76,6 +76,10 @@ namespace ZSG
                     {
                         bindings[id] = binding;
                     }
+                    else if (name.Equals("uv", StringComparison.OrdinalIgnoreCase))
+                    {
+                        bindings[id] = PortBinding.UV0;
+                    }
 
                     //Debug.Log($"PortDirection = '{direction}', Type = '{type}', PortName = '{name}'");
                 }
