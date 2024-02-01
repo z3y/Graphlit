@@ -273,6 +273,7 @@ namespace ZSG
                 case KeyCode.S: CreateNode(typeof(SubtractNode), position, false); break;
                 case KeyCode.T: CreateNode(typeof(SampleTexture2DNode), position, false); break;
                 case KeyCode.U: CreateNode(typeof(UVNode), position, false); break;
+                case KeyCode.P: CreateNode(typeof(PreviewNode), position, false); break;
             }
 
             //e.StopPropagation();

@@ -59,11 +59,11 @@ namespace ZSG
         public override void AddElements()
         {
             _ports.Clear();
-            _ports.Add(new SerializablePort(PortDirection.Input, PortType.Float3, 0, "Yes"));
-            _ports.Add(new SerializablePort(PortDirection.Input, PortType.Float, 1, "No"));
+            _ports.Add(new SerializablePort(PortDirection.Input, PortType.Float3, 0, "In1"));
+            _ports.Add(new SerializablePort(PortDirection.Input, PortType.Float, 1, "In2"));
             _ports.Add(new SerializablePort(PortDirection.Input, PortType.Float2, 2, "UV"));
             //_ports.Add(new SerializablePort(PortDirection.Input, PortType.Texture2D, 3, "tex"));
-            _ports.Add(new SerializablePort(PortDirection.Output, PortType.Float3, 4, "Out"));
+            _ports.Add(new SerializablePort(PortDirection.Output, PortType.Float3, 4, "Out1"));
             _ports.Add(new SerializablePort(PortDirection.Output, PortType.Float, 5, "Out2"));
 
 

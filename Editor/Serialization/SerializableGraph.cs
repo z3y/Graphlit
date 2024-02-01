@@ -79,7 +79,7 @@ namespace ZSG
             }
             catch (Exception e)
             {
-                Debug.LogWarning(e);
+                Debug.LogError(e);
             }
 
             SetupNodeConnections(graphView);

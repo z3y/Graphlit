@@ -12,6 +12,8 @@ namespace ZSG
         TangentWS,
         TangentOS,
         ViewDirectionWS,
+        ViewDirectionTS,
+        ViewDirectionOS,
         BitangentWS
     }
 
@@ -33,7 +35,7 @@ namespace ZSG
                 BindingSpace.World => PortBinding.PositionWS,
                 BindingSpace.Tangent => throw new NotImplementedException(),
                 BindingSpace.View => throw new NotImplementedException(),
-                _ => PortBinding.PositionWS,
+                _ => throw new NotImplementedException()
             };
         }
         public static PortBinding NormalBindingFromSpace(BindingSpace space)
@@ -42,9 +44,9 @@ namespace ZSG
             {
                 BindingSpace.Object => PortBinding.NormalOS,
                 BindingSpace.World => PortBinding.NormalWS,
-                //BindingSpace.Tangent => throw new NotImplementedException(),
-                //BindingSpace.View => throw new NotImplementedException(),
-                _ => PortBinding.NormalWS,
+                BindingSpace.Tangent => throw new NotImplementedException(),
+                BindingSpace.View => throw new NotImplementedException(),
+                _ => throw new NotImplementedException()
             };
         }
         public static PortBinding TangentBindingFromSpace(BindingSpace space)
@@ -53,31 +55,31 @@ namespace ZSG
             {
                 BindingSpace.Object => PortBinding.TangentOS,
                 BindingSpace.World => PortBinding.TangentWS,
-                //BindingSpace.Tangent => throw new NotImplementedException(),
-                //BindingSpace.View => throw new NotImplementedException(),
-                _ => PortBinding.TangentWS,
+                BindingSpace.Tangent => throw new NotImplementedException(),
+                BindingSpace.View => throw new NotImplementedException(),
+                _ => throw new NotImplementedException()
             };
         }
         public static PortBinding BitangentBindingFromSpace(BindingSpace space)
         {
             return space switch
             {
-                //BindingSpace.Object => throw new NotImplementedException(),
+                BindingSpace.Object => throw new NotImplementedException(),
                 BindingSpace.World => PortBinding.BitangentWS,
-                //BindingSpace.Tangent => throw new NotImplementedException(),
-                //BindingSpace.View => throw new NotImplementedException(),
-                _ => PortBinding.BitangentWS,
+                BindingSpace.Tangent => throw new NotImplementedException(),
+                BindingSpace.View => throw new NotImplementedException(),
+                _ => throw new NotImplementedException()
             };
         }
         public static PortBinding ViewBindingFromSpace(BindingSpace space)
         {
             return space switch
             {
-                //BindingSpace.Object => throw new NotImplementedException(),
+                BindingSpace.Object => PortBinding.ViewDirectionOS,
                 BindingSpace.World => PortBinding.ViewDirectionWS,
-                //BindingSpace.Tangent => throw new NotImplementedException(),
-                //BindingSpace.View => throw new NotImplementedException(),
-                _ => PortBinding.ViewDirectionWS,
+                BindingSpace.Tangent => PortBinding.ViewDirectionTS,
+                BindingSpace.View => throw new NotImplementedException(),
+                _ => throw new NotImplementedException()
             };
         }
 
@@ -98,7 +100,7 @@ namespace ZSG
                     PortBinding.NormalWS => RequireNormalWSVertex(pass),
                     PortBinding.TangentOS => RequireTangentOSVertex(pass),
                     PortBinding.TangentWS => RequireTangentWSVertex(pass),
-                    _ => attributes.RequireUV(0, components),
+                    _ => throw new NotImplementedException(),
                 };
             }
             else
@@ -117,8 +119,10 @@ namespace ZSG
                     PortBinding.TangentOS => RequireTangentOSFragment(pass),
                     PortBinding.TangentWS => RequireTangentWSFragment(pass),
                     PortBinding.ViewDirectionWS => RequireViewDirectionWSFragment(pass),
+                    PortBinding.ViewDirectionTS => RequireViewDirectionTSFragment(pass),
+                    PortBinding.ViewDirectionOS => RequireViewDirectionOSFragment(pass),
                     PortBinding.BitangentWS => RequireBitangentWSFragment(pass),
-                    _ => varyings.RequireUV(0, components),
+                    _ => throw new NotImplementedException(),
                 };
             }
         }
@@ -217,6 +221,23 @@ namespace ZSG
         {
             RequirePositionWSFragment(pass);
             return "data.viewDirectionWS";
+        }
+        private static void RequireBTNFragment(PassBuilder pass)
+        {
+            RequireBitangentWSFragment(pass);
+            RequireTangentWSFragment(pass);
+            RequireNormalWSFragment(pass);
+        }
+        private static string RequireViewDirectionTSFragment(PassBuilder pass)
+        {
+            RequireBTNFragment(pass);
+            RequireViewDirectionWSFragment(pass);
+            return "data.viewDirectionTS";
+        }
+        private static string RequireViewDirectionOSFragment(PassBuilder pass)
+        {
+            RequireViewDirectionWSFragment(pass);
+            return "data.viewDirectionOS";
         }
         private static string RequireBitangentWSFragment(PassBuilder pass)
         {
