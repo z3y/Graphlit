@@ -4,6 +4,7 @@ using UnityEngine.UIElements;
 using UnityEngine;
 using ZSG.Nodes;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace ZSG
 {
@@ -22,6 +23,14 @@ namespace ZSG
             foreach (var descriptor in _functionParser.descriptors)
             {
                 AddPort(descriptor);
+            }
+            BindAll();
+        }
+        void BindAll()
+        {
+            foreach (var item in _functionParser.bindings)
+            {
+                Bind(item.Key, item.Value);
             }
         }
 
@@ -49,6 +58,8 @@ namespace ZSG
                 portDescriptors.Add(descriptor.ID, descriptor);
             }
             ResetPorts();
+            BindAll();
+
             GeneratePreviewForAffectedNodes();
         }
 

@@ -116,7 +116,20 @@ namespace ZSG
 
             return port;
         }
+        void Disconnect(Port port)
+        {
+            if (port.connected)
+            {
+                foreach (var edge in port.connections.ToArray())
+                {
+                    var input = edge.input;
+                    var output = edge.output;
 
+                    input.Disconnect(edge);
+                    output.Disconnect(edge);
+                }
+            }
+        }
         public void ResetPorts()
         {
             foreach ( var port in PortElements.ToArray())
@@ -125,7 +138,14 @@ namespace ZSG
                 if (descriptors.Count() > 0)
                 {
                     var descriptor = descriptors.First().Value;
-                    port.portType = descriptor.Type.GetType();
+                    var newType = descriptor.Type.GetType();
+                    if (port.portType != newType)
+                    {
+                        port.portType = newType;
+                        Disconnect(port);
+                    }
+                    port.portName = descriptor.Name;
+
                     if (descriptor.Type is Float @float)
                     {
                         var color = @float.GetPortColor();
@@ -138,18 +158,7 @@ namespace ZSG
                     continue;
                 }
 
-                if (port.connected)
-                {
-                    foreach (var edge in port.connections.ToArray())
-                    {
-                        var input = edge.input;
-                        var output = edge.output;
-
-                        input.Disconnect(edge);
-                        output.Disconnect(edge);
-                        edge.parent.Clear();
-                    }
-                }
+                Disconnect(port);
                 port.parent.Remove(port);
             }
 
@@ -161,6 +170,9 @@ namespace ZSG
                 }
                 AddPort(desc.Value, false);
             }
+
+            //UpdateGraphView();
+            //RefreshPorts();
         }
 
         public void GeneratePreviewForAffectedNodes()

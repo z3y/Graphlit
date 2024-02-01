@@ -23,9 +23,11 @@ namespace ZSG
 
         public List<PortDescriptor> descriptors = new List<PortDescriptor>();
         public string methodName;
+        public Dictionary<int, PortBinding> bindings = new Dictionary<int, PortBinding>();
         public bool TryParse(string code)
         {
             descriptors.Clear();
+            bindings.Clear();
             try
             {
                 string[] split1 = code.Split('(');
@@ -40,18 +42,24 @@ namespace ZSG
                 {
                     PortDirection direction = PortDirection.Input;
                     string[] arg = args[i].Trim().Split(' ');
+
                     int typeArgIndex = 0;
                     if (arg[0] == "out")
                     {
                         direction = PortDirection.Output;
-                        typeArgIndex = 1;
+                        typeArgIndex++;
                     }
                     string type = arg[typeArgIndex].Trim();
                     string name = arg[typeArgIndex + 1].Trim();
 
                     int id = i;
-                    if (direction == PortDirection.Output) id = id + 100;
+                    if (direction == PortDirection.Output) id += 100;
                     descriptors.Add(new(direction, StringToPortType(type), id, name));
+                    if (Enum.TryParse(name, true, out PortBinding binding))
+                    {
+                        bindings[id] = binding;
+                    }
+
                     //Debug.Log($"PortDirection = '{direction}', Type = '{type}', PortName = '{name}'");
                 }
 
