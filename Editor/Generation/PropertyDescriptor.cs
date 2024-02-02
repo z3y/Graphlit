@@ -270,7 +270,7 @@ namespace ZSG
         {
             var referenceName = GetReferenceName(generationMode);
 
-            if (type == PropertyType.KeywordToggle)
+            if (type == PropertyType.KeywordToggle && generationMode == GenerationMode.Preview)
             {
                 if (FloatValue > 0)
                 {
@@ -290,7 +290,10 @@ namespace ZSG
                 PropertyType.Bool => $"float {referenceName};",
                 PropertyType.KeywordToggle => $"#pragma {referenceName}",
                 PropertyType.Texture2D => $"TEXTURE2D({referenceName}); SAMPLER(sampler{referenceName});",
-                PropertyType.TextureCube => $"TextureCube {referenceName}; SamplerState sampler{referenceName};",
+                PropertyType.TextureCube => $"TEXTURECUBE({referenceName}); SAMPLER(sampler{referenceName});",
+                PropertyType.TextureCubeArray => $"TEXTURECUBE_ARRAY({referenceName}); SAMPLER(sampler{referenceName});",
+                PropertyType.Texture2DArray => $"TEXTURE2D_ARRAY({referenceName}); SAMPLER(sampler{referenceName});",
+                PropertyType.Texture3D => $"TEXTURE3D({referenceName}); SAMPLER(sampler{referenceName});",
                 _ => throw new System.NotImplementedException()
             };
         }
@@ -426,13 +429,26 @@ namespace ZSG
             }
         }
 
+        Type TextureType(PropertyType type)
+        {
+            return type switch
+            {
+                PropertyType.Texture2D => typeof(Texture2D),
+                PropertyType.Texture2DArray => typeof(Texture2DArray),
+                PropertyType.TextureCube => typeof(Cubemap),
+                PropertyType.Texture3D => typeof(Texture3D),
+                PropertyType.TextureCubeArray => typeof(CubemapArray),
+                _ => throw new NotImplementedException(),
+            };
+        }
+
         void OnGUITexture()
         {
             EditorGUI.BeginChangeCheck();
 
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Default Texture", GUILayout.Width(149));
-            Texture newValue = (Texture)EditorGUILayout.ObjectField(DefaultTextureValue, typeof(Texture2D), false);
+            Texture newValue = (Texture)EditorGUILayout.ObjectField(DefaultTextureValue, TextureType(type), false);
             GUILayout.EndHorizontal();
 
             bool modifable = EditorGUILayout.Toggle("Non Modifiable", PropertyAttributes.Get(attributes, NonModifiableTextureAttribute));
@@ -481,7 +497,7 @@ namespace ZSG
             {
                 foreach (var element in graphView.graphElements)
                 {
-                    if (element is KeywordPropertyNode keywordProperyNode)
+                    if (element is KeywordPropertyNode keywordProperyNode && keywordProperyNode.propertyDescriptor == this)
                     {
                         keywordProperyNode.GeneratePreviewForAffectedNodes();
                     }
@@ -498,7 +514,7 @@ namespace ZSG
             else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) imgui.onGUIHandler += OnGUIVector;
             else if (type == PropertyType.Color) imgui.onGUIHandler += OnGUIColor;
             else if (type == PropertyType.Bool || type == PropertyType.KeywordToggle) imgui.onGUIHandler += OnGUIBool;
-            else if (type == PropertyType.Texture2D) imgui.onGUIHandler += OnGUITexture;
+            else if (IsTextureType) imgui.onGUIHandler += OnGUITexture;
 
             var s = imgui.style;
             s.marginLeft = 6;
@@ -519,12 +535,14 @@ namespace ZSG
                 PropertyType.Float3 => typeof(Float3PropertyNode),
                 PropertyType.Float4 => typeof(Float4PropertyNode),
                 PropertyType.Color => typeof(ColorPropertyNode),
-                PropertyType.Intiger => throw new NotImplementedException(),
+                PropertyType.Intiger => typeof(IntigerPropertyNode),
                 PropertyType.Bool => typeof(BooleanPropertyNode),
                 PropertyType.Texture2D => typeof(Texture2DPropertyNode),
-                PropertyType.TextureCube => throw new NotImplementedException(),
                 PropertyType.KeywordToggle => typeof(KeywordPropertyNode),
-
+                PropertyType.Texture2DArray => typeof(Texture2DArrayPropertyNode),
+                PropertyType.Texture3D => throw new NotImplementedException(),
+                PropertyType.TextureCube => throw new NotImplementedException(),
+                PropertyType.TextureCubeArray => throw new NotImplementedException(),
                 _ => throw new NotImplementedException(),
             };
         }

@@ -55,7 +55,26 @@ namespace ZSG.Nodes.PortType
         public Color GetPortColor() => new Color(0.8f, 0.3f, 0.3f);
         public override readonly string ToString() => "Texture2D";
     }
-
+    public struct Texture3DObject : IPortType
+    {
+        public Color GetPortColor() => new Color(0.8f, 0.3f, 0.3f);
+        public override readonly string ToString() => "Texture3D";
+    }
+    public struct Texture2DArrayObject : IPortType
+    {
+        public Color GetPortColor() => new Color(0.8f, 0.3f, 0.3f);
+        public override readonly string ToString() => "Texture2DArray";
+    }
+    public struct TextureCubeObject : IPortType
+    {
+        public Color GetPortColor() => new Color(0.8f, 0.3f, 0.3f);
+        public override readonly string ToString() => "TextureCube";
+    }
+    public struct TextureCubeArrayObject : IPortType
+    {
+        public Color GetPortColor() => new Color(0.8f, 0.3f, 0.3f);
+        public override readonly string ToString() => "TextureCubeArray";
+    }
     public struct SamplerState : IPortType
     {
         public Color GetPortColor() => new Color(0.8f, 0.8f, 0.8f);

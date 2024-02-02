@@ -1,0 +1,35 @@
+using UnityEditor.Experimental.GraphView;
+using UnityEngine;
+using ZSG.Nodes;
+using ZSG.Nodes.PortType;
+
+namespace ZSG
+{
+    [NodeInfo("Texture/Sample Texture 2D Array")]
+    public class SampleTexture2DArrayNode : SampleTextureNode
+    {
+        const int INDEX = 10;
+        public override IPortType TextureType => new Texture2DArrayObject();
+        public override string SampleMethod => $"SAMPLE_TEXTURE2D_ARRAY({PortData[TEX].Name}, {GetSamplerName(PortData[TEX].Name)}, {PortData[UV].Name}, {PortData[INDEX].Name})";
+
+        public override void AddElements()
+        {
+            base.AddElements();
+            AddPort(new(PortDirection.Input, new Float(1), INDEX, "Index"));
+        }
+    }
+    [NodeInfo("Texture/Sample Texture 2D Array LOD")]
+    public class SampleTexture2DArrayLodNode : SampleTextureNode
+    {
+        const int INDEX = 10;
+        public override IPortType TextureType => new Texture2DArrayObject();
+        public override bool HasLod => true;
+        public override string SampleMethod => $"SAMPLE_TEXTURE2D_ARRAY_LOD({PortData[TEX].Name}, {GetSamplerName(PortData[TEX].Name)}, {PortData[UV].Name}, {PortData[INDEX].Name}, {PortData[LOD].Name})";
+
+        public override void AddElements()
+        {
+            base.AddElements();
+            AddPort(new(PortDirection.Input, new Float(1), INDEX, "Index"));
+        }
+    }
+}
