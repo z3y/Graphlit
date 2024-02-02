@@ -39,22 +39,22 @@ namespace ZSG
         {
             descriptors.Clear();
             bindings.Clear();
-
-            int entry = 0;
-            string[] lines = code.Split('\n');
-            bool hasMain = false;
-            for (int i = 0; i < lines.Length; i++)
-            {
-                if (lines[i].StartsWith("void ")) entry = i;
-                else if (lines[i].StartsWith("[Main] void "))
-                {
-                    entry = i;
-                    hasMain = true;
-                    break;
-                }
-            }
             try
             {
+                int entry = 0;
+                string[] lines = code.Split('\n');
+                bool hasMain = false;
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    if (lines[i].StartsWith("void ")) entry = i;
+                    else if (lines[i].StartsWith("[Main] void "))
+                    {
+                        entry = i;
+                        hasMain = true;
+                        break;
+                    }
+                }
+
                 string[] split1 = lines[entry].Split('(');
                 methodName = hasMain ? split1[0]["[Main] void ".Length..] : split1[0]["void ".Length..];
 
