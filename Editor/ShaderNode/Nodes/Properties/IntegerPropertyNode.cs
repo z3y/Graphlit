@@ -4,10 +4,10 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [NodeInfo("_/Intiger Property"), Serializable]
-    public class IntigerPropertyNode : PropertyNode
+    [NodeInfo("_/Integer Property"), Serializable]
+    public class IntegerPropertyNode : PropertyNode
     {
-        protected override PropertyType propertyType => PropertyType.Intiger;
+        protected override PropertyType propertyType => PropertyType.Integer;
         public override void AddElements()
         {
             base.AddElements();
