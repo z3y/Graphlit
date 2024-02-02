@@ -73,6 +73,11 @@ namespace ZSG
             {
                 sb.AppendLine(p);
             }
+            foreach (var property in properties)
+            {
+                if (property.type != PropertyType.KeywordToggle) continue;
+                sb.AppendLine(property.GetFieldDeclaration(generationMode));
+            }
             sb.AppendLine();
 
             sb.AppendLine("struct Attributes");
@@ -104,7 +109,7 @@ namespace ZSG
             sb.AppendLine("CBUFFER_START(UnityPerMaterial)");
             foreach (var property in properties)
             {
-                if (property.IsTextureType) continue;
+                if (property.IsTextureType || property.type == PropertyType.KeywordToggle) continue;
                 sb.AppendLine(property.GetFieldDeclaration(generationMode));
             }
             sb.AppendLine("CBUFFER_END");

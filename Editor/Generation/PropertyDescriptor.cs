@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -22,6 +23,7 @@ namespace ZSG
         Texture3D = 10,
         TextureCubeArray = 11,
         Bool = 12,
+        KeywordToggle = 13
     }
 
     [Serializable]
@@ -173,6 +175,20 @@ namespace ZSG
             }
         }
 
+        public string KeywordName
+        {
+            get
+            {
+                string[] split = referenceName.Split(' ');
+                if (split.Length < 2)
+                {
+                    Debug.LogError("Wrong keyword declaration");
+                    return "_KEYWORD";
+                }
+                return split[1];
+            }
+        }
+
         public bool IsTextureType => type == PropertyType.Texture2D || type == PropertyType.Texture2DArray || type == PropertyType.TextureCube || type == PropertyType.Texture3D;
 
         public bool HasRange => rangeX != rangeY;
@@ -186,6 +202,10 @@ namespace ZSG
             if (type == PropertyType.Color)
             {
                 VectorValue = Vector4.one;
+            }
+            if (type == PropertyType.KeywordToggle)
+            {
+                this.referenceName = "shader_feature_local _KEYWORD";
             }
         }
 
@@ -214,15 +234,10 @@ namespace ZSG
                 PropertyType.Color => VectorValue.ToString(),
                 PropertyType.Intiger => FloatValue.ToString(),
                 PropertyType.Bool => FloatValue.ToString(),
+                PropertyType.KeywordToggle => FloatValue.ToString(),
                 _ => throw new System.NotImplementedException(),
             };
         }
-
-/*
-        public void SetPreviewName(SerializableNode serializableNode)
-        {
-            referenceName = "_" + serializableNode.guid;
-        }*/
 
         public string TypeToString()
         {
@@ -246,6 +261,7 @@ namespace ZSG
                 PropertyType.Texture2DArray => "2DArray",
                 PropertyType.TextureCubeArray => "CubeArray",
                 PropertyType.Bool => "Float",
+                PropertyType.KeywordToggle => "Float",
                 _ => throw new System.NotImplementedException()
             };
         }
@@ -253,6 +269,15 @@ namespace ZSG
         public string GetFieldDeclaration(GenerationMode generationMode)
         {
             var referenceName = GetReferenceName(generationMode);
+
+            if (type == PropertyType.KeywordToggle)
+            {
+                if (FloatValue > 0)
+                {
+                    return "#define " + KeywordName;
+                }
+                return string.Empty;
+            }
 
             return type switch
             {
@@ -263,6 +288,7 @@ namespace ZSG
                 PropertyType.Color => $"float4 {referenceName};",
                 PropertyType.Intiger => $"int {referenceName};",
                 PropertyType.Bool => $"float {referenceName};",
+                PropertyType.KeywordToggle => $"#pragma {referenceName}",
                 PropertyType.Texture2D => $"TEXTURE2D({referenceName}); SAMPLER(sampler{referenceName});",
                 PropertyType.TextureCube => $"TextureCube {referenceName}; SamplerState sampler{referenceName};",
                 _ => throw new System.NotImplementedException()
@@ -294,6 +320,11 @@ namespace ZSG
             {
                 sb.Append("[ToggleUI]");
             }
+            else if (type == PropertyType.KeywordToggle)
+            {
+                sb.Append($"[Toggle({KeywordName})]");
+            }
+
             return sb.ToString();
         }
 
@@ -322,6 +353,11 @@ namespace ZSG
             var type = TypeToString();
             var attributes = AttributesToString();
             var defaultValue = GetDefaultValue();
+
+            if (this.type == PropertyType.KeywordToggle)
+            {
+                referenceName = KeywordName;
+            }
 
             return $"{attributes} {referenceName} (\"{displayName}\", {type}) = {defaultValue}";
         }
@@ -440,6 +476,17 @@ namespace ZSG
             else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) m.SetVector(name, VectorValue);
             else if (type == PropertyType.Color) m.SetColor(name, VectorValue);
             else if (IsTextureType) m.SetTexture(name, DefaultTextureValue);
+
+            if (type == PropertyType.KeywordToggle)
+            {
+                foreach (var element in graphView.graphElements)
+                {
+                    if (element is KeywordPropertyNode keywordProperyNode)
+                    {
+                        keywordProperyNode.GeneratePreviewForAffectedNodes();
+                    }
+                }
+            }
         }
 
         [NonSerialized] public ShaderGraphView graphView;
@@ -450,7 +497,7 @@ namespace ZSG
             if (type == PropertyType.Float) imgui.onGUIHandler += OnGUIFloat;
             else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) imgui.onGUIHandler += OnGUIVector;
             else if (type == PropertyType.Color) imgui.onGUIHandler += OnGUIColor;
-            else if (type == PropertyType.Bool) imgui.onGUIHandler += OnGUIBool;
+            else if (type == PropertyType.Bool || type == PropertyType.KeywordToggle) imgui.onGUIHandler += OnGUIBool;
             else if (type == PropertyType.Texture2D) imgui.onGUIHandler += OnGUITexture;
 
             var s = imgui.style;
@@ -476,6 +523,8 @@ namespace ZSG
                 PropertyType.Bool => typeof(BooleanPropertyNode),
                 PropertyType.Texture2D => typeof(Texture2DPropertyNode),
                 PropertyType.TextureCube => throw new NotImplementedException(),
+                PropertyType.KeywordToggle => typeof(KeywordPropertyNode),
+
                 _ => throw new NotImplementedException(),
             };
         }
