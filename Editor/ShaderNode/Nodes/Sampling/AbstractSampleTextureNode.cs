@@ -26,6 +26,8 @@ namespace ZSG
 
         public virtual IPortType TextureType => new Texture2DObject();
         public virtual bool HasLod => false;
+        public virtual int Coords => 2;
+        public virtual PortBinding UVBinding => PortBinding.UV0;
         public virtual string SampleMethod => $"SAMPLE_TEXTURE2D({PortData[TEX].Name}, {GetSamplerName(PortData[TEX].Name)}, {PortData[UV].Name})";
 
         Port _texturePort;
@@ -34,7 +36,7 @@ namespace ZSG
         {
             _texturePort = AddPort(new(PortDirection.Input, TextureType, TEX, "Texture"));
             _samplerPort = AddPort(new(PortDirection.Input, new SamplerState(), SAMPLER, "Sampler"));
-            AddPort(new(PortDirection.Input, new Float(2), UV, "UV"));
+            AddPort(new(PortDirection.Input, new Float(Coords), UV, "UV"));
 
             AddPort(new(PortDirection.Output, new Float(4), OUT_RGBA, "RGBA"));
 
@@ -50,7 +52,7 @@ namespace ZSG
                 AddPort(new(PortDirection.Input, new Float(1), LOD, "LOD"));
             }
 
-            Bind(UV, PortBinding.UV0);
+            Bind(UV, UVBinding);
         }
 
         protected override void Generate(NodeVisitor visitor)

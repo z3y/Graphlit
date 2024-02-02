@@ -540,9 +540,9 @@ namespace ZSG
                 PropertyType.Texture2D => typeof(Texture2DPropertyNode),
                 PropertyType.KeywordToggle => typeof(KeywordPropertyNode),
                 PropertyType.Texture2DArray => typeof(Texture2DArrayPropertyNode),
-                PropertyType.Texture3D => throw new NotImplementedException(),
-                PropertyType.TextureCube => throw new NotImplementedException(),
-                PropertyType.TextureCubeArray => throw new NotImplementedException(),
+                PropertyType.Texture3D => typeof(Texture3DPropertyNode),
+                PropertyType.TextureCube => typeof(TextureCubePropertyNode),
+                PropertyType.TextureCubeArray => typeof(TextureCubeArrayPropertyNode),
                 _ => throw new NotImplementedException(),
             };
         }
