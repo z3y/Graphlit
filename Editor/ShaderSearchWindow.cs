@@ -64,14 +64,7 @@ namespace ZSG
                     continue;
                 }
 
-                var parser = new FunctionParser();
-                if (!parser.TryParse(File.ReadAllText(path)))
-                {
-                    continue;
-                }
-
-
-                tree.Add(new SearchTreeEntry(new GUIContent(parser.methodName, _nodeIndentationIcon)) { level = 2, userData = shaderInclude });
+                tree.Add(new SearchTreeEntry(new GUIContent(shaderInclude.name, _nodeIndentationIcon)) { level = 2, userData = shaderInclude });
             }
 
 

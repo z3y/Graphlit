@@ -23,6 +23,7 @@ namespace ZSG
         }
         const string DefaultFunction = "void CustomFunction(float3 In, out float3 Out)\n{\n    Out = In;\n}";
         [SerializeField] string _code = DefaultFunction;
+        private string _fileName;
         string _path;
         string Code
         {
@@ -37,6 +38,7 @@ namespace ZSG
                 {
                     return _code;
                 }
+                _fileName = include.name;
                 _path = AssetDatabase.GetAssetPath(include);
                 return File.ReadAllText(_path);
             }
@@ -76,7 +78,7 @@ namespace ZSG
             {
                 Bind(item.Key, item.Value);
             }
-            TitleLabel.text = _functionParser.methodName;
+            TitleLabel.text = _useFile ? _fileName : _functionParser.methodName;
         }
 
         public override void AdditionalElements(VisualElement root)
