@@ -12,6 +12,33 @@ using static UnityEditor.Experimental.GraphView.Port;
 
 namespace ZSG
 {
+   /* class DefaultValueElement : GraphElement
+    {
+        public DefaultValueElement()
+        {
+            var s = style;
+            name = "default-value";
+            s.height = 15;
+            const float C = 1.0f / 10f;
+            s.backgroundColor = new Color(C, C, C);
+            pickingMode = PickingMode.Ignore;
+            s.borderTopRightRadius = 0;
+            s.borderBottomRightRadius = 0;
+            s.position = Position.Absolute;
+            s.fontSize = 10;
+            s.right = 86;
+            //s.flexGrow = 1;
+            //s.flexDirection = FlexDirection.RowReverse;
+           // s.alignContent = Align.FlexEnd;
+
+            var text = new Label("Value");
+            text.style.fontSize = 8;
+            //text.StretchToParentSize();
+
+            //text.style.position = Position.Relative;
+            Add(text);
+        }
+    }*/
     public struct GeneratedPortData
     {
         public GeneratedPortData(IPortType type, string name)
@@ -98,6 +125,12 @@ namespace ZSG
 
             var port = Port.Create<Edge>(Orientation.Horizontal, (Direction)portDescriptor.Direction, capacity, type);
 
+/*            if (port.direction == Direction.Input)
+            {
+                var defaultValueElement = new DefaultValueElement();
+                port.Insert(0, defaultValueElement);
+            }
+*/
 
             port.AddManipulator(new EdgeConnector<Edge>(new EdgeConnectorListener()));
             port.portName = portDescriptor.Name;
@@ -340,6 +373,14 @@ namespace ZSG
                 s.top = 22;
             }
             titleContainer.Add(accentLine);
+
+            /*var border = this.Q("node-border");
+            border.style.overflow = Overflow.Visible;
+            {
+                var s = titleContainer.style;
+                s.borderTopLeftRadius = 6;
+                s.borderTopRightRadius = 6;
+            }*/
         }
         public Label TitleLabel;
         void AddTitleElement()
