@@ -731,7 +731,7 @@ namespace ZSG
         {
             var borderColor = new Color(0.1f, 0.1f, 0.1f, 1.0f);
 
-            var ve = new VisualElement();
+            var ve = new ScrollView();
             var nodeInfo = Info;
             var title = new Label(" " + DisplayName);
             title.style.backgroundColor = borderColor;
