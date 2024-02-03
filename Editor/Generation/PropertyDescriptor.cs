@@ -77,6 +77,7 @@ namespace ZSG
         Normal = 1 << 6,
         PerRendererData = 1 << 7,
         NonModifiableTextureData = 1 << 8,
+        SingleLineTexture = 1 << 9,
     }
 
     [Serializable]
@@ -343,7 +344,7 @@ namespace ZSG
 
             if (this.type == PropertyType.KeywordToggle)
             {
-                referenceName = KeywordName;
+                referenceName = "_Toggle" + KeywordName;
             }
 
             return $"{attributes} {referenceName} (\"{displayName}\", {type}) = {defaultValue}";
@@ -389,7 +390,7 @@ namespace ZSG
         void OnGUIBool()
         {
             EditorGUI.BeginChangeCheck();
-            bool newValue = GUILayout.Toggle(FloatValue == 1, "Toggle");
+            bool newValue = EditorGUILayout.Toggle("Toggle", FloatValue == 1);
             if (EditorGUI.EndChangeCheck())
             {
                 FloatValue = newValue ? 1 : 0;
