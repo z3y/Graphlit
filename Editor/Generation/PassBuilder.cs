@@ -109,10 +109,23 @@ namespace ZSG
             sb.AppendLine("CBUFFER_START(UnityPerMaterial)");
             foreach (var property in properties)
             {
-                if (property.IsTextureType || property.type == PropertyType.KeywordToggle) continue;
+                if (property.IsTextureType || property.type == PropertyType.KeywordToggle || property.gpuInstanced) continue;
                 sb.AppendLine(property.GetFieldDeclaration(generationMode));
             }
             sb.AppendLine("CBUFFER_END");
+            sb.AppendLine();
+            sb.AppendLine("UNITY_INSTANCING_BUFFER_START(UnityPerInstance)");
+            foreach (var property in properties)
+            {
+                if (!property.gpuInstanced) continue;
+                var decl = property.GetFieldDeclaration(generationMode);
+                var declSplit = decl.Split(' ');
+                string type = declSplit[0];
+                string referenceName = declSplit[1].TrimEnd(';');
+                sb.AppendLine($"UNITY_DEFINE_INSTANCED_PROP({type}, {referenceName})");
+                sb.AppendLine($"#define {referenceName} UNITY_ACCESS_INSTANCED_PROP(UnityPerInstance, {referenceName})");
+            }
+            sb.AppendLine("UNITY_INSTANCING_BUFFER_END(UnityPerInstance)");
             sb.AppendLine();
 
             foreach (var property in properties)

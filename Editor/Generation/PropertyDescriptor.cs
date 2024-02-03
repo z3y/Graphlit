@@ -98,6 +98,7 @@ namespace ZSG
         [SerializeField] public float rangeY;
         [SerializeField] string _value;
         [SerializeField] string _defaultTexture;
+        [SerializeField] public bool gpuInstanced = false;
         [SerializeField] public PropertyDeclaration declaration = PropertyDeclaration.Local;
 
         [NonSerialized] public bool useReferenceName = false;
@@ -190,7 +191,7 @@ namespace ZSG
         }
 
         public bool IsTextureType => type == PropertyType.Texture2D || type == PropertyType.Texture2DArray || type == PropertyType.TextureCube || type == PropertyType.Texture3D;
-
+        public bool SupportsGPUInstancing => type == PropertyType.Float || type == PropertyType.Float2 || type == PropertyType.Float4 || type == PropertyType.Float3 || type == PropertyType.Integer || type == PropertyType.Color || type == PropertyType.Bool;
         public bool HasRange => rangeX != rangeY;
 
         public PropertyDescriptor(PropertyType type, string displayName = null, string referenceName = "")
@@ -386,6 +387,11 @@ namespace ZSG
             }
         }
 
+        void OnGPUInstancingToggle()
+        {
+            gpuInstanced = EditorGUILayout.Toggle("GPU Instancing", gpuInstanced);
+        }
+
         void OnGUIFloat()
         {
             EditorGUI.BeginChangeCheck();
@@ -515,6 +521,7 @@ namespace ZSG
             else if (type == PropertyType.Color) imgui.onGUIHandler += OnGUIColor;
             else if (type == PropertyType.Bool || type == PropertyType.KeywordToggle) imgui.onGUIHandler += OnGUIBool;
             else if (IsTextureType) imgui.onGUIHandler += OnGUITexture;
+            if (SupportsGPUInstancing) imgui.onGUIHandler += OnGPUInstancingToggle;
 
             var s = imgui.style;
             s.marginLeft = 6;
