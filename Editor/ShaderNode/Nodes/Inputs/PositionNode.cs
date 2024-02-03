@@ -10,7 +10,7 @@ namespace ZSG
     public class PositionNode : ShaderNode
     {
         public override PreviewType DefaultPreviewOverride => PreviewType.Preview3D;
-        [SerializeField] BindingSpace _space = BindingSpace.World;
+        [SerializeField] BindingSpaceObjectWorld _space = BindingSpaceObjectWorld.World;
 
         public override void AddElements()
         {
@@ -21,7 +21,7 @@ namespace ZSG
 
             dropdown.RegisterValueChangedCallback((evt) =>
             {
-                _space = (BindingSpace)evt.newValue;
+                _space = (BindingSpaceObjectWorld)evt.newValue;
                 Bind(0, PortBindings.PositionBindingFromSpace(_space));
                 GeneratePreviewForAffectedNodes();
             });

@@ -46,6 +46,7 @@ struct FragmentData
         output.normalWS *= renormFactor;
         output.tangentWS = tangentWS.xyz * renormFactor;
         output.bitangentWS *= renormFactor;
+
         output.tangentSpaceTransform = float3x3(output.tangentWS, output.bitangentWS, output.normalWS);
 
         output.viewDirectionWS = normalize(_WorldSpaceCameraPos.xyz - output.positionWS);

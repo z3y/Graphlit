@@ -1,4 +1,6 @@
+using Microsoft.SqlServer.Server;
 using System;
+using UnityEngine.UIElements;
 
 namespace ZSG
 {
@@ -18,7 +20,8 @@ namespace ZSG
         ViewDirectionTS = 11,
         ViewDirectionOS = 12,
         BitangentWS = 13,
-        VertexColor = 14
+        BitangentOS = 14,
+        VertexColor = 15
     }
 
     public enum BindingSpace
@@ -28,50 +31,47 @@ namespace ZSG
         Tangent = 2,
         View = 3
     }
+    public enum BindingSpaceObjectWorld
+    {
+        Object = 0,
+        World = 1,
+    }
 
     public static class PortBindings
     {
-        public static PortBinding PositionBindingFromSpace(BindingSpace space)
+        public static PortBinding PositionBindingFromSpace(BindingSpaceObjectWorld space)
         {
             return space switch
             {
-                BindingSpace.Object => PortBinding.PositionOS,
-                BindingSpace.World => PortBinding.PositionWS,
-                BindingSpace.Tangent => throw new NotImplementedException(),
-                BindingSpace.View => throw new NotImplementedException(),
+                BindingSpaceObjectWorld.Object => PortBinding.PositionOS,
+                BindingSpaceObjectWorld.World => PortBinding.PositionWS,
                 _ => throw new NotImplementedException()
             };
         }
-        public static PortBinding NormalBindingFromSpace(BindingSpace space)
+        public static PortBinding NormalBindingFromSpace(BindingSpaceObjectWorld space)
         {
             return space switch
             {
-                BindingSpace.Object => PortBinding.NormalOS,
-                BindingSpace.World => PortBinding.NormalWS,
-                BindingSpace.Tangent => throw new NotImplementedException(),
-                BindingSpace.View => throw new NotImplementedException(),
+                BindingSpaceObjectWorld.Object => PortBinding.NormalOS,
+                BindingSpaceObjectWorld.World => PortBinding.NormalWS,
                 _ => throw new NotImplementedException()
             };
         }
-        public static PortBinding TangentBindingFromSpace(BindingSpace space)
+        public static PortBinding TangentBindingFromSpace(BindingSpaceObjectWorld space)
         {
             return space switch
             {
-                BindingSpace.Object => PortBinding.TangentOS,
-                BindingSpace.World => PortBinding.TangentWS,
-                BindingSpace.Tangent => throw new NotImplementedException(),
-                BindingSpace.View => throw new NotImplementedException(),
+                BindingSpaceObjectWorld.Object => PortBinding.TangentOS,
+                BindingSpaceObjectWorld.World => PortBinding.TangentWS,
                 _ => throw new NotImplementedException()
             };
         }
-        public static PortBinding BitangentBindingFromSpace(BindingSpace space)
+        public static PortBinding BitangentBindingFromSpace(BindingSpaceObjectWorld space)
         {
             return space switch
             {
-                BindingSpace.Object => throw new NotImplementedException(),
-                BindingSpace.World => PortBinding.BitangentWS,
-                BindingSpace.Tangent => throw new NotImplementedException(),
-                BindingSpace.View => throw new NotImplementedException(),
+                BindingSpaceObjectWorld.Object => PortBinding.BitangentOS,
+                BindingSpaceObjectWorld.World => PortBinding.BitangentWS,
                 _ => throw new NotImplementedException()
             };
         }
@@ -82,7 +82,7 @@ namespace ZSG
                 BindingSpace.Object => PortBinding.ViewDirectionOS,
                 BindingSpace.World => PortBinding.ViewDirectionWS,
                 BindingSpace.Tangent => PortBinding.ViewDirectionTS,
-                BindingSpace.View => throw new NotImplementedException(),
+                BindingSpace.View => PortBinding.ViewDirectionWS,
                 _ => throw new NotImplementedException()
             };
         }
@@ -105,6 +105,11 @@ namespace ZSG
                     PortBinding.TangentOS => RequireTangentOSVertex(pass),
                     PortBinding.TangentWS => RequireTangentWSVertex(pass),
                     PortBinding.VertexColor => attributes.RequireColor(),
+                    PortBinding.ViewDirectionWS => RequireViewDirectionWSVertex(pass),
+                    PortBinding.ViewDirectionTS => RequireViewDirectionTSVertex(pass),
+                    PortBinding.ViewDirectionOS => RequireViewDirectionOSVertex(pass),
+                    PortBinding.BitangentWS => RequireBitangentWSVertex(pass),
+                    PortBinding.BitangentOS => RequireBitangentOSVertex(pass),
                     _ => throw new NotImplementedException(),
                 };
             }
@@ -127,9 +132,10 @@ namespace ZSG
                     PortBinding.ViewDirectionTS => RequireViewDirectionTSFragment(pass),
                     PortBinding.ViewDirectionOS => RequireViewDirectionOSFragment(pass),
                     PortBinding.BitangentWS => RequireBitangentWSFragment(pass),
+                    PortBinding.BitangentOS => RequireBitangentOSFragment(pass),
                     PortBinding.VertexColor => varyings.RequireColor(),
                     _ => throw new NotImplementedException(),
-                };
+                }; ;
             }
         }
 
@@ -154,7 +160,7 @@ namespace ZSG
         {
             string value = "positionWS";
             var positionOS = pass.attributes.RequirePositionOS(3);
-            pass.generatedBindingsVertex.Add($"float3 {value} = {SpaceTransform.ObjectToWorld(positionOS)};");
+            pass.AddVertexBinding($"float3 {value} = {SpaceTransform.ObjectToWorld(positionOS)};");
             return value;
         }
         private static string RequirePositionWSVertex(PassBuilder pass)
@@ -168,7 +174,7 @@ namespace ZSG
         {
             string value = "normalWS";
             var normalOS = pass.attributes.RequireNormalOS(3);
-            pass.generatedBindingsVertex.Add($"float3 {value} = {SpaceTransform.ObjectToWorldNormal(normalOS)};");
+            pass.AddVertexBinding($"float3 {value} = {SpaceTransform.ObjectToWorldNormal(normalOS)};");
             return value;
         }
         private static string RequireNormalWSFragment(PassBuilder pass)
@@ -199,7 +205,7 @@ namespace ZSG
             string value = "tangentWS";
             RequireNormalWSFragment(pass);
             var tangentOS = pass.attributes.RequireTangentOS();
-            pass.generatedBindingsVertex.Add($"float4 {value} = float4({SpaceTransform.ObjectToWorldDirection(tangentOS)}, {tangentOS}.w);");
+            pass.AddVertexBinding($"float4 {value} = float4({SpaceTransform.ObjectToWorldDirection(tangentOS)}, {tangentOS}.w);");
             return value;
         }
         private static string RequireTangentWSFragment(PassBuilder pass)
@@ -249,6 +255,56 @@ namespace ZSG
         {
             RequireTangentWSFragment(pass);
             return "data.bitangentWS";
+        }
+        private static string RequireBitangentOSFragment(PassBuilder pass)
+        {
+            RequireTangentWSFragment(pass);
+            return "data.bitangentOS";
+        }
+
+        private static string RequireViewDirectionWSVertex(PassBuilder pass)
+        {
+            var positionWS = RequirePositionWSVertex(pass);
+            string value = "viewDirectionWS";
+            pass.AddVertexBinding($"float3 {value} = normalize(_WorldSpaceCameraPos.xyz - {positionWS});");
+            return value;
+        }
+        private static string RequireViewDirectionOSVertex(PassBuilder pass)
+        {
+            var viewDirWS = RequireViewDirectionWSVertex(pass);
+            string value = "viewDirectionOS";
+            pass.AddVertexBinding($"float3 {value} = TransformWorldToObjectDir({viewDirWS});");
+            return value;
+        }
+        private static string RequireViewDirectionTSVertex(PassBuilder pass)
+        {
+            string value = "viewDirectionTS";
+            var viewDirWS = RequireViewDirectionWSVertex(pass);
+            var tangentWS = RequireTangentWSVertex(pass);
+            var normalWS = RequireNormalWSVertex(pass);
+            var bitangentWS = RequireBitangentWSVertex(pass);
+
+            pass.AddVertexBinding($"float3x3 tangentSpaceTransform = float3x3({tangentWS}.xyz, {bitangentWS}, {normalWS});");
+            pass.AddVertexBinding($"float {value} = mul(tangentSpaceTransform, {viewDirWS});");
+
+            return value;
+        }
+
+        private static string RequireBitangentWSVertex(PassBuilder pass)
+        {
+            var normal = RequireNormalWSVertex(pass);
+            var tangent = RequireTangentWSVertex(pass);
+            string value = "bitangentWS";
+            pass.AddVertexBinding($"float crossSign = (attributes.tangentOS.w > 0.0 ? 1.0 : -1.0) * unity_WorldTransformParams.w;");
+            pass.AddVertexBinding($"float3 {value} = crossSign * cross({normal}, {tangent});");
+            return value;
+        }
+        private static string RequireBitangentOSVertex(PassBuilder pass)
+        {
+            var bitangentWS = RequireBitangentWSVertex(pass);
+            string value = "bitangentOS";
+            pass.AddVertexBinding($"float3 {value} = TransformWorldToObjectDir({bitangentWS});");
+            return value;
         }
     }
 }

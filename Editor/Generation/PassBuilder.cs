@@ -33,8 +33,22 @@ namespace ZSG
 
         public string target = "4.5";
 
-        public HashSet<string> generatedBindingsVertex = new();
-        public HashSet<string> generatedBindingsFragment = new();
+        List<string> _generatedBindingsVertex = new();
+        List<string> _generatedBindingsFragment = new();
+        public void AddVertexBinding(string value)
+        {
+            if (!_generatedBindingsVertex.Contains(value))
+            {
+                _generatedBindingsVertex.Add(value);
+            }
+        }
+        public void AddFragmentBinding(string value)
+        {
+            if (!_generatedBindingsFragment.Contains(value))
+            {
+                _generatedBindingsFragment.Add(value);
+            }
+        }
 
         const string FragmentDataPath = "Packages/com.z3y.myshadergraph/Editor/Targets/FragmentData.hlsl";
 
@@ -168,7 +182,7 @@ namespace ZSG
             sb.AppendLine("VertexDescription VertexDescriptionFunction(Attributes attributes, inout Varyings varyings)");
             sb.Indent();
             sb.AppendLine("VertexDescription output = (VertexDescription)0;");
-            foreach (var line in generatedBindingsVertex)
+            foreach (var line in _generatedBindingsVertex)
             {
                 sb.AppendLine(line);
             }
@@ -186,7 +200,7 @@ namespace ZSG
             sb.AppendLine("SurfaceDescription SurfaceDescriptionFunction(Varyings varyings)");
             sb.Indent();
             varyings.AppendVaryingUnpacking(sb);
-            foreach (var line in generatedBindingsFragment)
+            foreach (var line in _generatedBindingsFragment)
             {
                 sb.AppendLine(line);
             }
