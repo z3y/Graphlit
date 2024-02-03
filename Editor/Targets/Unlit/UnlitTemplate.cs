@@ -60,6 +60,7 @@ namespace ZSG
                 pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
 
                 pass.varyings.RequirePositionCS();
+                //pass.varyings.RequireCustomString("#ifdef LIGHTMAP_ON\ncentroid float2 lightmapUV : LIGHTMAPUV\n#endif");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 

@@ -4,25 +4,29 @@ namespace ZSG
 {
     public enum PortBinding
     {
-        UV0, UV1, UV2, UV3,
-        PositionWS,
-        PositionOS,
-        NormalWS,
-        NormalOS,
-        TangentWS,
-        TangentOS,
-        ViewDirectionWS,
-        ViewDirectionTS,
-        ViewDirectionOS,
-        BitangentWS
+        UV0 = 0,
+        UV1 = 1,
+        UV2 = 2,
+        UV3 = 3,
+        PositionWS = 4,
+        PositionOS = 5,
+        NormalWS = 6,
+        NormalOS = 7,
+        TangentWS = 8,
+        TangentOS = 9,
+        ViewDirectionWS = 10,
+        ViewDirectionTS = 11,
+        ViewDirectionOS = 12,
+        BitangentWS = 13,
+        VertexColor = 14
     }
 
     public enum BindingSpace
     {
-        Object,
-        World,
-        Tangent,
-        View
+        Object = 0,
+        World = 1,
+        Tangent = 2,
+        View = 3
     }
 
     public static class PortBindings
@@ -100,6 +104,7 @@ namespace ZSG
                     PortBinding.NormalWS => RequireNormalWSVertex(pass),
                     PortBinding.TangentOS => RequireTangentOSVertex(pass),
                     PortBinding.TangentWS => RequireTangentWSVertex(pass),
+                    PortBinding.VertexColor => attributes.RequireColor(),
                     _ => throw new NotImplementedException(),
                 };
             }
@@ -122,6 +127,7 @@ namespace ZSG
                     PortBinding.ViewDirectionTS => RequireViewDirectionTSFragment(pass),
                     PortBinding.ViewDirectionOS => RequireViewDirectionOSFragment(pass),
                     PortBinding.BitangentWS => RequireBitangentWSFragment(pass),
+                    PortBinding.VertexColor => varyings.RequireColor(),
                     _ => throw new NotImplementedException(),
                 };
             }

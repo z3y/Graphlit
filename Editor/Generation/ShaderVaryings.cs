@@ -32,7 +32,10 @@ namespace ZSG
 
         public void RequireCustomString(string varying)
         {
-            customVaryingsStrings.Add(varying);
+            if (!customVaryingsStrings.Contains(varying))
+            {
+                customVaryingsStrings.Add(varying);
+            }
         }
         private int _interpCounter = 0;
         public string RequireCustom(int channels, string value)
@@ -41,7 +44,7 @@ namespace ZSG
             {
                 name = "interp" + _interpCounter++,
                 channels = channels,
-                passthrough = value
+                passthrough = value,
             };
             varyings.Add(desc);
 
@@ -57,6 +60,11 @@ namespace ZSG
         {
             RequireCustomString("");
             return "data.frontFace";
+        }
+        public string RequireColor()
+        {
+            RequireInternal("color", 4, _attributes.RequireColor());
+            return "UNPACK_COLOR";
         }
 
         internal string RequireInternal(string name, int channels = 4, string passthrough = null)
@@ -93,7 +101,10 @@ namespace ZSG
             }
             foreach (var var in customVaryingsStrings)
             {
-                sb.AppendLine(var);
+                foreach (var split in var.Split('\n'))
+                {
+                    sb.AppendLine(split);
+                }
             }
         }
 

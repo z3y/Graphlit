@@ -21,7 +21,7 @@ namespace ZSG
         public List<string> pragmas = new();
         public List<string> cbuffer = new();
         public List<string> objectDecleration = new();
-        public HashSet<string> functions = new();
+        public List<string> functions = new();
         public List<string> vertexDescription = new();
         public List<string> vertexDescriptionStruct = new();
         public List<string> surfaceDescription = new();
@@ -80,6 +80,7 @@ namespace ZSG
             }
             sb.AppendLine();
 
+            attributes.AppendAttributeDefines(sb);
             sb.AppendLine("struct Attributes");
             sb.Indent();
             attributes.AppendAttributes(sb);

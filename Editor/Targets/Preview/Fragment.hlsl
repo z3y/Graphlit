@@ -69,6 +69,10 @@ half4 frag(Varyings varyings) : SV_Target
         UNPACK_UV3.xy = generatedUV;
     #endif
     #endif
+    
+    #ifdef UNPACK_COLOR
+        UNPACK_COLOR = 1.0;
+    #endif
 
 
     SurfaceDescription surfaceDescription = SurfaceDescriptionFunction(varyings);

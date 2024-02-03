@@ -44,7 +44,7 @@ namespace ZSG
         public int Pass {  get; }
 
         private List<string> _expression;
-        private HashSet<string> _function;
+        private List<string> _function;
         private List<PropertyDescriptor> _props;
         private List<string> _pragmas;
 
@@ -90,6 +90,11 @@ namespace ZSG
         }
         public void AddFunction(string function)
         {
+            if (_function.Contains(function))
+            {
+                return;
+            }
+
             _function.Add(function);
         }
         public void AddPragma(string pragma)

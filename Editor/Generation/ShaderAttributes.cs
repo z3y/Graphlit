@@ -44,6 +44,7 @@ namespace ZSG
         public List<AttributeDescriptor> attributes = new();
 
         public HashSet<string> customAttributes = new();
+        public HashSet<string> attributeDefines = new();
 
         public string RequirePositionOS(int channels = 3) => RequireInternal(AttributeType.PositionOS, "positionOS", "POSITION", channels);
         public string RequireNormalOS(int channels = 3) => RequireInternal(AttributeType.NormalOS, "normalOS", "NORMAL", channels);
@@ -82,6 +83,7 @@ namespace ZSG
                     channels = channels
                 };
                 attributes.Add(desc);
+                attributeDefines.Add("#define ATTRIBUTES_NEED_" + type.ToString().ToUpper());
             }
             else
             {
@@ -107,6 +109,14 @@ namespace ZSG
             foreach (var attr in customAttributes)
             {
                 sb.AppendLine(attr);
+            }
+        }
+
+        public void AppendAttributeDefines(ShaderStringBuilder sb)
+        {
+            foreach(var def in attributeDefines)
+            {
+                sb.AppendLine(def);
             }
         }
     }
