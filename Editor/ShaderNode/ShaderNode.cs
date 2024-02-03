@@ -116,7 +116,7 @@ namespace ZSG
 
             return port;
         }
-        void Disconnect(Port port)
+        internal void Disconnect(Port port)
         {
             if (port.connected)
             {

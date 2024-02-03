@@ -91,6 +91,9 @@ namespace ZSG
                 menu.ShowAsContext();
             });
 
+            var removeButton = properties.Q<Button>("unity-list-view__remove-button");
+            removeButton.clickable.clicked += OnRemovePropertyItem;
+
             root.Add(properties);
             var propertyEditor = new VisualElement();
             root.Add(propertyEditor);
@@ -103,6 +106,26 @@ namespace ZSG
                     propertyEditor.Add(obj.PropertyEditorGUI());
                 }
             };
+        }
+
+        void OnRemovePropertyItem()
+        {
+            var propertyNodes = GraphView.graphElements.OfType<PropertyNode>();
+            var properties = GraphView.graphData.properties;
+            foreach (var node in propertyNodes)
+            {
+                if (properties.Any(x => x.guid == node.propertyDescriptor.guid))
+                {
+                    continue;
+                }
+
+                // remove for now, convert later when avaliable
+                foreach (var port in node.PortElements)
+                {
+                    node.Disconnect(port);
+                }
+                GraphView.RemoveElement(node);
+            }
         }
 
         public void VisitTemplate(NodeVisitor visitor, int[] ports)
