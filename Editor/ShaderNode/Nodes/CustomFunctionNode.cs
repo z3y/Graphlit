@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System;
 using UnityEngine.UIElements;
 using UnityEngine;
@@ -7,7 +6,6 @@ using System.Linq;
 using UnityEditor.UIElements;
 using UnityEditor;
 using System.IO;
-using Palmmedia.ReportGenerator.Core.Parser.Analysis;
 
 namespace ZSG
 {
@@ -15,7 +13,16 @@ namespace ZSG
     [NodeInfo("Input/Custom Function"), Serializable]
     public class CustomFunctionNode : ShaderNode
     {
-        [SerializeField] string _code = "void CustomFunction(float3 In, out float3 Out)\n{\n    Out = In;\n}";
+        public const string Tag = "ZSGFunction";
+        [MenuItem("Assets/Create/ZSG/Custom Function")]
+        public static void CreateVariantFile()
+        {
+            ProjectWindowUtil.CreateAssetWithContent("CustomFunction.hlsl", DefaultFunction);
+            var include = new ShaderInclude();
+            AssetDatabase.SetLabels(include, new [] { Tag });
+        }
+        const string DefaultFunction = "void CustomFunction(float3 In, out float3 Out)\n{\n    Out = In;\n}";
+        [SerializeField] string _code = DefaultFunction;
         string _path;
         string Code
         {
@@ -37,6 +44,11 @@ namespace ZSG
 
         [SerializeField] string _file;
         [SerializeField] bool _useFile = false;
+        public void UseFile(ShaderInclude include)
+        {
+            _file = Helpers.AssetSerializableReference(include);
+            _useFile = true;
+        }
         private FunctionParser _functionParser = new ();
         public override bool DisablePreview => true;
 

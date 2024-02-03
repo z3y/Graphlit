@@ -164,20 +164,21 @@ namespace ZSG
             return group;
         }
 
-        public void CreateNode(Type type, Vector2 position, bool transform = true, string propertyGuid = "")
+        public void CreateNode(ShaderNode node, Vector2 position, bool transform = true)
         {
-            //RecordUndo();
             _editorWindow.SetDirty();
             if (transform) TransformMousePositionToLocalSpace(ref position, true);
-            var node = (ShaderNode)Activator.CreateInstance(type);
-            if (!string.IsNullOrEmpty(propertyGuid) && node is PropertyNode propertyNode)
-            {
-                propertyNode._ref = propertyGuid;
-            }
+
             node._previewDisabled = graphData.defaultPreviewState == GraphData.DefaultPreviewState.Disabled;
             node.Initialize(this, position);
             AddElement(node);
             node.GeneratePreview();
+        }
+
+        public void CreateNode(Type type, Vector2 position, bool transform = true)
+        {
+            var node = (ShaderNode)Activator.CreateInstance(type);
+            CreateNode(node, position, transform);
         }
 
         public ShaderNode AddNode(SerializableNode serializableNode)

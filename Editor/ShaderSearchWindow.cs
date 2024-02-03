@@ -6,9 +6,11 @@ using UnityEngine;
 
 namespace ZSG
 {
+    using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Security.Policy;
+    using UnityEditor;
     using ZSG.Nodes;
     public class ShaderNodeSearchWindow : ScriptableObject, ISearchWindowProvider
     {
@@ -41,12 +43,37 @@ namespace ZSG
                 new SearchTreeGroupEntry(new GUIContent("Create Node"), 0)
             };
 
+
             tree.Add(new SearchTreeGroupEntry(new GUIContent("Properties"), 1));
             for (int i = 0; i < _graphView.graphData.properties.Count; i++)
             {
                 PropertyDescriptor property = _graphView.graphData.properties[i];
                 tree.Add(new SearchTreeEntry(new GUIContent(property.displayName, _nodeIndentationIcon)) { level = 2, userData = i });
             }
+
+            tree.Add(new SearchTreeGroupEntry(new GUIContent("Functions"), 1));
+
+            var functionIncludes = AssetDatabase.FindAssets("l:" + CustomFunctionNode.Tag);
+            foreach (var guid in functionIncludes)
+            {
+                var path = AssetDatabase.GUIDToAssetPath(guid);
+                var shaderInclude = AssetDatabase.LoadAssetAtPath<ShaderInclude>(path);
+
+                if (shaderInclude == null)
+                {
+                    continue;
+                }
+
+                var parser = new FunctionParser();
+                if (!parser.TryParse(File.ReadAllText(path)))
+                {
+                    continue;
+                }
+
+
+                tree.Add(new SearchTreeEntry(new GUIContent(parser.methodName, _nodeIndentationIcon)) { level = 2, userData = shaderInclude });
+            }
+
 
             List<string> groups = new();
 
@@ -109,7 +136,16 @@ namespace ZSG
             if (userData is int value)
             {
                 var property = _graphView.graphData.properties[value];
-                _graphView.CreateNode(property.GetNodeType(), context.screenMousePosition, true, property.guid);
+                var node = (PropertyNode)Activator.CreateInstance(property.GetNodeType());
+                node._ref = property.guid;
+                _graphView.CreateNode(node, context.screenMousePosition);
+                return true;
+            }
+            else if (userData is ShaderInclude shaderInclude)
+            {
+                var node = Activator.CreateInstance<CustomFunctionNode>();
+                node.UseFile(shaderInclude);
+                _graphView.CreateNode(node, context.screenMousePosition);
                 return true;
             }
             _graphView.CreateNode(searchTreeEntry.userData as Type, context.screenMousePosition);

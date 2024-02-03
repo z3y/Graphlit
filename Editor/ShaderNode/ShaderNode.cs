@@ -375,19 +375,19 @@ namespace ZSG
             titleContainer.Insert(0, precisionLabel);*/
         }
 
-       /* void OnTitleContainerGUI()
-        {
-            EditorGUILayout.BeginHorizontal();
-            switch (DefaultPrecision)
-            {
-                case Precision.Inherit: EditorGUILayout.LabelField("I", GUILayout.Width(15)); break;
-                case Precision.Half: EditorGUILayout.LabelField("H", GUILayout.Width(15)); break;
-                case Precision.Float: EditorGUILayout.LabelField("F", GUILayout.Width(15)); break;
-            }
-            EditorGUILayout.EndHorizontal();
-        }*/
+        /* void OnTitleContainerGUI()
+         {
+             EditorGUILayout.BeginHorizontal();
+             switch (DefaultPrecision)
+             {
+                 case Precision.Inherit: EditorGUILayout.LabelField("I", GUILayout.Width(15)); break;
+                 case Precision.Half: EditorGUILayout.LabelField("H", GUILayout.Width(15)); break;
+                 case Precision.Float: EditorGUILayout.LabelField("F", GUILayout.Width(15)); break;
+             }
+             EditorGUILayout.EndHorizontal();
+         }*/
 
-        public static int UniqueVariableID = 0;
+        public static int UniqueVariableID { get; protected set; } = 0;
         public Dictionary<int, GeneratedPortData> PortData { get; set; } = new();
         GeneratedPortData GetInputPortData(int portID, NodeVisitor visitor)
         {

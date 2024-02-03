@@ -46,7 +46,7 @@ namespace ZSG
 
         public void Build<T>() where T : TemplateOutput
         {
-            ShaderNode.UniqueVariableID = 0;
+            //ShaderNode.UniqueVariableID = 0; parallel import might not work with this
 
             var shaderNodes = ShaderGraphView.graphElements.Where(x => x is ShaderNode).Cast<ShaderNode>().ToList();
             var target = (TemplateOutput)ShaderGraphView.graphElements.First(x => x is T);
@@ -81,7 +81,7 @@ namespace ZSG
 
         public void Build(ShaderNode shaderNode)
         {
-            ShaderNode.UniqueVariableID = 0;
+            //ShaderNode.UniqueVariableID = 0;
             //var vertexVisitor = new NodeVisitor(this, ShaderStage.Vertex, passIndex);
             var fragmentVisitor = new NodeVisitor(this, ShaderStage.Fragment, 0);
             TraverseGraph(shaderNode, fragmentVisitor);
