@@ -45,7 +45,7 @@ namespace ZSG
             }
 
             var builder = new ShaderBuilder(GenerationMode.Final, graphView);
-            builder.Build<UnlitTemplate>();
+            builder.BuildTemplate();
 
 
             var result = builder.ToString();

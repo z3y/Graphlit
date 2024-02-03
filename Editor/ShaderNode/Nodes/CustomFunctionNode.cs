@@ -100,6 +100,12 @@ namespace ZSG
                 _file = Helpers.AssetSerializableReference(x.newValue);
             });
 
+            var updateButton = new Button
+            {
+                text = "Update"
+            };
+            updateButton.clicked += ParseAndUpdate;
+
             var code = new TextField()
             {
                 value = _code,
@@ -112,6 +118,7 @@ namespace ZSG
 
             root.Add(useFile);
             root.Add(file);
+            root.Add(updateButton);
             root.Add(code);
 
             void RefreshState()
@@ -128,9 +135,8 @@ namespace ZSG
             RefreshState();
         }
 
-        public override void OnUnselected()
+        public void ParseAndUpdate()
         {
-            base.OnUnselected();
             if (!_functionParser.TryParse(Code)) return;
             portDescriptors.Clear();
             foreach(var descriptor in _functionParser.descriptors)

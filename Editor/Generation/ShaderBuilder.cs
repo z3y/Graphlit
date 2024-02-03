@@ -44,12 +44,12 @@ namespace ZSG
             passBuilders.Add(passBuilder);
         }
 
-        public void Build<T>() where T : TemplateOutput
+        public void BuildTemplate()
         {
             //ShaderNode.UniqueVariableID = 0; parallel import might not work with this
 
             var shaderNodes = ShaderGraphView.graphElements.Where(x => x is ShaderNode).Cast<ShaderNode>().ToList();
-            var target = (TemplateOutput)ShaderGraphView.graphElements.First(x => x is T);
+            var target = (TemplateOutput)ShaderGraphView.graphElements.First(x => x is TemplateOutput);
 
             target.BuilderPassthourgh(this);
 
