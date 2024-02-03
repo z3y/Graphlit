@@ -51,6 +51,11 @@ namespace ZSG
             var shaderNodes = ShaderGraphView.graphElements.Where(x => x is ShaderNode).Cast<ShaderNode>().ToList();
             var target = (TemplateOutput)ShaderGraphView.graphElements.First(x => x is TemplateOutput);
 
+            var graphData = ShaderGraphView.graphData;
+            customEditor = graphData.customEditor;
+            fallback = graphData.fallback;
+
+
             target.BuilderPassthourgh(this);
 
             for (int i = 0; i < passBuilders.Count; i++)

@@ -19,13 +19,21 @@ namespace ZSG
         public override void AdditionalElements(VisualElement root)
         {
             var graphData = GraphView.graphData;
-            var shaderName = new TextField("Shader Name") { value = GraphView.graphData.shaderName };
+            var shaderName = new TextField("Shader Name") { value = graphData.shaderName };
             shaderName.RegisterValueChangedCallback((evt) =>
             {
                 graphData.shaderName = evt.newValue;
                 GraphView.SetDirty();
             });
             root.Add(shaderName);
+
+            var customEditor = new TextField("Custom Editor") { value = graphData.customEditor };
+            customEditor.RegisterValueChangedCallback(x => graphData.customEditor = x.newValue);
+            root.Add(customEditor);
+
+            var fallback = new TextField("Fallback") { value = graphData.fallback };
+            fallback.RegisterValueChangedCallback(x => graphData.fallback = x.newValue);
+            root.Add(fallback);
 
             var graphPrecisionSelection = new EnumField("Graph Precision", graphData.precision);
             graphPrecisionSelection.RegisterValueChangedCallback(x => graphData.precision = (GraphData.GraphPrecision)x.newValue);
