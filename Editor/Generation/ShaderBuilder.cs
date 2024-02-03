@@ -303,7 +303,7 @@ namespace ZSG
                     if (property.IsTextureType && property.DefaultTextureValue is Texture texture)
                     {
                         var referenceName = property.GetReferenceName(GenerationMode.Final);
-                        if (property.attributes.Contains("NonModifiableTextureData"))
+                        if (property.defaultAttributes.HasFlag(MaterialPropertyAttribute.NonModifiableTextureData))
                         {
                             _nonModifiableTextures.Add(referenceName, texture);
                         }

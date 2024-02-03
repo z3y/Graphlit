@@ -124,7 +124,7 @@ namespace ZSG
             sb.AppendLine("CBUFFER_START(UnityPerMaterial)");
             foreach (var property in properties)
             {
-                if (property.IsTextureType || property.type == PropertyType.KeywordToggle || property.gpuInstanced) continue;
+                if (property.IsTextureType || property.type == PropertyType.KeywordToggle || property.declaration == PropertyDeclaration.Instance) continue;
                 sb.AppendLine(property.GetFieldDeclaration(generationMode));
             }
             sb.AppendLine("CBUFFER_END");
@@ -132,7 +132,7 @@ namespace ZSG
             sb.AppendLine("UNITY_INSTANCING_BUFFER_START(UnityPerInstance)");
             foreach (var property in properties)
             {
-                if (!property.gpuInstanced) continue;
+                if (property.declaration != PropertyDeclaration.Instance) continue;
                 var decl = property.GetFieldDeclaration(generationMode);
                 var declSplit = decl.Split(' ');
                 string type = declSplit[0];

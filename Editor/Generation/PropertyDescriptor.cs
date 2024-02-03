@@ -34,27 +34,6 @@ namespace ZSG
         Instance = 2,
     }
 
-    static class PropertyAttributes
-    {
-        public static bool Get(List<string> attributes, string name)
-        {
-            return attributes.Contains(name);
-        }
-
-        public static void Set(List<string> attributes, bool value, string name)
-        {
-            bool contains = attributes.Contains(name);
-            if (value && !contains)
-            {
-                attributes.Add(name);
-            }
-            else if (!value && contains)
-            {
-                attributes.Remove(name);
-            }
-        }
-    }
-
     // thanks pema
     public enum DefaultTextureName
     {
@@ -86,6 +65,20 @@ namespace ZSG
         none
     }
 
+    [Serializable, Flags]
+    public enum MaterialPropertyAttribute
+    {
+        Gamma = 1 << 0,
+        HDR = 1 << 1,
+        HideInInspector = 1 << 2,
+        MainTexture = 1 << 3,
+        MainColor = 1 << 4,
+        NoScaleOffset = 1 << 5,
+        Normal = 1 << 6,
+        PerRendererData = 1 << 7,
+        NonModifiableTextureData = 1 << 8,
+    }
+
     [Serializable]
     public class PropertyDescriptor
     {
@@ -93,12 +86,12 @@ namespace ZSG
         [SerializeField] public string referenceName;
         [SerializeField] public string displayName;
         [SerializeField] public PropertyType type;
-        [SerializeField] public List<string> attributes = new();
+        [SerializeField] public string customAttributes;
+        [SerializeField] public MaterialPropertyAttribute defaultAttributes;
         [SerializeField] public float rangeX;
         [SerializeField] public float rangeY;
         [SerializeField] string _value;
         [SerializeField] string _defaultTexture;
-        [SerializeField] public bool gpuInstanced = false;
         [SerializeField] public PropertyDeclaration declaration = PropertyDeclaration.Local;
 
         [NonSerialized] public bool useReferenceName = false;
@@ -210,12 +203,6 @@ namespace ZSG
             }
         }
 
-        const string NormalAttribute = "Normal";
-        const string HdrAttribute = "HDR";
-        const string HideInInspectorAttribute = "HideInInspector";
-        const string NoScaleOffsetAttribute = "NoScaleOffset";
-        const string NonModifiableTextureAttribute = "NonModifiableTextureData";
-
         public string GetDefaultValue()
         {
             if (IsTextureType)
@@ -302,22 +289,18 @@ namespace ZSG
 
         public string AttributesToString()
         {
-            if (attributes is null)
-            {
-                return string.Empty;
-            }
-
             var sb = new StringBuilder();
-            foreach (var attribute in attributes)
-            {
-                if (string.IsNullOrEmpty(attribute))
-                {
-                    continue;
-                }
+            sb.Append(customAttributes);
 
-                sb.Append("[");
-                sb.Append(attribute);
-                sb.Append("] ");
+
+            foreach (MaterialPropertyAttribute attribute in Enum.GetValues(typeof(MaterialPropertyAttribute)))
+            {
+                if (defaultAttributes.HasFlag(attribute))
+                {
+                    sb.Append('[');
+                    sb.Append(Enum.GetName(typeof(MaterialPropertyAttribute), attribute));
+                    sb.Append(']');
+                }
             }
 
             if (type == PropertyType.Bool)
@@ -370,8 +353,6 @@ namespace ZSG
         {
             // EditorGUILayout.LabelField(guid);
 
-            EditorGUI.BeginChangeCheck();
-
             displayName = EditorGUILayout.TextField(new GUIContent("Display Name"), displayName);
             referenceName = EditorGUILayout.TextField(new GUIContent("Reference Name"), referenceName);
             if (type != PropertyType.Texture2D && type != PropertyType.TextureCube)
@@ -379,17 +360,8 @@ namespace ZSG
                 declaration = (PropertyDeclaration)EditorGUILayout.EnumPopup("Declaration", declaration);
             }
 
-            bool hideInInspector = EditorGUILayout.Toggle("Hide In Inspector", PropertyAttributes.Get(attributes, HideInInspectorAttribute));
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                PropertyAttributes.Set(attributes, hideInInspector, HideInInspectorAttribute);
-            }
-        }
-
-        void OnGPUInstancingToggle()
-        {
-            gpuInstanced = EditorGUILayout.Toggle("GPU Instancing", gpuInstanced);
+            defaultAttributes = (MaterialPropertyAttribute)EditorGUILayout.EnumFlagsField("Attributes", defaultAttributes);
+            customAttributes = EditorGUILayout.TextField("Custom Attributes", customAttributes);
         }
 
         void OnGUIFloat()
@@ -427,7 +399,14 @@ namespace ZSG
         void OnGUIVector()
         {
             EditorGUI.BeginChangeCheck();
-            Vector4 newValue = EditorGUILayout.Vector4Field("", VectorValue);
+            Vector4 newValue;
+            newValue = type switch
+            {
+                PropertyType.Float2 => EditorGUILayout.Vector2Field("", VectorValue),
+                PropertyType.Float3 => EditorGUILayout.Vector3Field("", VectorValue),
+                PropertyType.Float4 => EditorGUILayout.Vector4Field("", VectorValue),
+                _ => throw new NotImplementedException(),
+            };
             if (EditorGUI.EndChangeCheck())
             {
                 VectorValue = newValue;
@@ -457,17 +436,10 @@ namespace ZSG
             Texture newValue = (Texture)EditorGUILayout.ObjectField(DefaultTextureValue, TextureType(type), false);
             GUILayout.EndHorizontal();
 
-            bool modifable = EditorGUILayout.Toggle("Non Modifiable", PropertyAttributes.Get(attributes, NonModifiableTextureAttribute));
-            bool scaleOffset = EditorGUILayout.Toggle("No Scale Offset", PropertyAttributes.Get(attributes, NoScaleOffsetAttribute));
-            bool normal = EditorGUILayout.Toggle("Normal", PropertyAttributes.Get(attributes, NormalAttribute));
             var defaultTex = EditorGUILayout.EnumPopup("Default Texture", DefaultTextureEnum);
 
             if (EditorGUI.EndChangeCheck())
             {
-                PropertyAttributes.Set(attributes, modifable, NonModifiableTextureAttribute);
-                PropertyAttributes.Set(attributes, scaleOffset, NoScaleOffsetAttribute);
-                PropertyAttributes.Set(attributes, normal, NormalAttribute);
-
                 DefaultTextureValue = newValue;
                 DefaultTextureEnum = (DefaultTextureName)defaultTex;
                 UpdatePreviewMaterial();
@@ -479,11 +451,8 @@ namespace ZSG
             EditorGUI.BeginChangeCheck();
             Color newValue = EditorGUILayout.ColorField("Color", VectorValue);
 
-            bool hdr = EditorGUILayout.Toggle("HDR", PropertyAttributes.Get(attributes, "HDR"));
-
             if (EditorGUI.EndChangeCheck())
             {
-                PropertyAttributes.Set(attributes, hdr, "HDR");
 
                 VectorValue = newValue;
                 UpdatePreviewMaterial();
@@ -521,7 +490,6 @@ namespace ZSG
             else if (type == PropertyType.Color) imgui.onGUIHandler += OnGUIColor;
             else if (type == PropertyType.Bool || type == PropertyType.KeywordToggle) imgui.onGUIHandler += OnGUIBool;
             else if (IsTextureType) imgui.onGUIHandler += OnGUITexture;
-            if (SupportsGPUInstancing) imgui.onGUIHandler += OnGPUInstancingToggle;
 
             var s = imgui.style;
             s.marginLeft = 6;

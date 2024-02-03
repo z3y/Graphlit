@@ -277,6 +277,7 @@ namespace ZSG
                 case KeyCode.P: CreateNode(typeof(PreviewNode), position, false); break;
                 case KeyCode.C: CreateNode(typeof(CustomFunctionNode), position, false); break;
                 case KeyCode.B: CreateNode(typeof(BranchNode), position, false); break;
+                case KeyCode.V: CreateNode(typeof(AppendNode), position, false); break;
             }
 
             //e.StopPropagation();
