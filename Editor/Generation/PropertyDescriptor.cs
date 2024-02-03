@@ -437,7 +437,7 @@ namespace ZSG
             Texture newValue = (Texture)EditorGUILayout.ObjectField(DefaultTextureValue, TextureType(type), false);
             GUILayout.EndHorizontal();
 
-            var defaultTex = EditorGUILayout.EnumPopup("Default Texture", DefaultTextureEnum);
+            var defaultTex = EditorGUILayout.EnumPopup("Default Value", DefaultTextureEnum);
 
             if (EditorGUI.EndChangeCheck())
             {
