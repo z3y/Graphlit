@@ -1,5 +1,7 @@
 #pragma fragment frag
 
+#include "Packages/com.z3y.myshadergraph/ShaderLibrary/GraphFunctions.hlsl"
+
 void frag(Varyings varyings)
 {
     UNITY_SETUP_INSTANCE_ID(varyings);
@@ -9,5 +11,10 @@ void frag(Varyings varyings)
 
     #if defined(_ALPHATEST_ON)
         if (surfaceDescription.Alpha < surfaceDescription.Cutoff) discard;
+    #endif
+
+    #if defined(_ALPHAPREMULTIPLY_ON) || defined(_ALPHAMODULATE_ON) || defined(_ALPHAFADE_ON)
+        half dither = Unity_Dither(surfaceDescription.Alpha, varyings.positionCS.xy);
+        if (dither < 0.0) discard;
     #endif
 }

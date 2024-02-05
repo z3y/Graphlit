@@ -53,7 +53,9 @@ struct FragmentData
         output.viewDirectionOS = TransformWorldToObjectDir(output.viewDirectionWS);
         output.viewDirectionTS = mul(output.tangentSpaceTransform, output.viewDirectionWS);
 
-        //output.frontFace = IS_FRONT_VFACE(varyings.cullFace, true, false);
+        #if defined(VARYINGS_NEED_FACE) && defined(SHADER_STAGE_FRAGMENT)
+        output.frontFace = IS_FRONT_VFACE(varyings.cullFace, true, false);
+        #endif
 
         return output;
     }

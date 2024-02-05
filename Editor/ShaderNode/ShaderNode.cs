@@ -477,6 +477,10 @@ namespace ZSG
                 {
                     return PortBindings.GetBindingString(pass, visitor.Stage, @float.dimensions, binding);
                 }
+                else
+                {
+                    return PortBindings.GetBindingString(pass, visitor.Stage, 1, binding);
+                }
             }
             else if (portDescriptor.Type is Float @float)
             {

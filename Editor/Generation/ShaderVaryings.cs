@@ -58,8 +58,8 @@ namespace ZSG
 
         public string RequireCullFace()
         {
-            RequireCustomString("");
-            return "data.frontFace";
+            RequireCustomString("#ifdef SHADER_STAGE_FRAGMENT\nFRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;\n#endif");
+            return "varyings.cullFace";
         }
         public string RequireColor()
         {

@@ -1,6 +1,4 @@
-using Microsoft.SqlServer.Server;
 using System;
-using UnityEngine.UIElements;
 
 namespace ZSG
 {
@@ -21,7 +19,8 @@ namespace ZSG
         ViewDirectionOS = 12,
         BitangentWS = 13,
         BitangentOS = 14,
-        VertexColor = 15
+        VertexColor = 15,
+        FrontFace = 16
     }
 
     public enum BindingSpace
@@ -110,6 +109,7 @@ namespace ZSG
                     PortBinding.ViewDirectionOS => RequireViewDirectionOSVertex(pass),
                     PortBinding.BitangentWS => RequireBitangentWSVertex(pass),
                     PortBinding.BitangentOS => RequireBitangentOSVertex(pass),
+                    PortBinding.FrontFace => throw new NotImplementedException(),
                     _ => throw new NotImplementedException(),
                 };
             }
@@ -134,11 +134,18 @@ namespace ZSG
                     PortBinding.BitangentWS => RequireBitangentWSFragment(pass),
                     PortBinding.BitangentOS => RequireBitangentOSFragment(pass),
                     PortBinding.VertexColor => varyings.RequireColor(),
+                    PortBinding.FrontFace => RequireFrontFace(pass),
                     _ => throw new NotImplementedException(),
                 }; ;
             }
         }
-
+        private static string RequireFrontFace(PassBuilder pass)
+        {
+            string face = pass.varyings.RequireCullFace();
+            pass.pragmas.Add("#define VARYINGS_NEED_FACE");
+            string value = "data.frontFace";
+            return value;
+        }
         #region Position
 
         private static string RequirePositionWSFragment(PassBuilder pass)
