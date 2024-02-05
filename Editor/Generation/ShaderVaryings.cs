@@ -99,9 +99,14 @@ namespace ZSG
                 b.name = "interp" + semanticCounter;
                 sb.AppendLine($"float{b.capacity} {b.name} : TEXCOORD{semanticCounter++};");
             }
-            foreach (var var in customVaryingsStrings)
+            foreach (string var in customVaryingsStrings)
             {
-                foreach (var split in var.Split('\n'))
+                string value = var;
+                if (value.Contains('*'))
+                {
+                    value = value.Replace("*", semanticCounter++.ToString());
+                }
+                foreach (var split in value.Split('\n'))
                 {
                     sb.AppendLine(split);
                 }

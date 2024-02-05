@@ -11,7 +11,7 @@ half4 frag(Varyings varyings) : SV_Target
     col.rgb = surfaceDescription.Color;
     col.a = surfaceDescription.Alpha;
 
-    UNITY_APPLY_FOG(i.fogCoord, col);
+    UNITY_APPLY_FOG(varyings.fogCoord, col);
 
     return col;
 }

@@ -12,6 +12,6 @@ Varyings vert(Attributes input)
     float3 positionWS = TransformObjectToWorld(vertexDescription.Position);
     output.positionCS = TransformWorldToHClip(positionWS);
     
-    UNITY_TRANSFER_FOG(output, input.positionOS);
+    UNITY_TRANSFER_FOG(output, output.positionCS);
     return output;
 }

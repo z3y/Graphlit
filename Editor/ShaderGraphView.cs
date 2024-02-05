@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
+using ZSG.Nodes;
 
 namespace ZSG
 {
@@ -278,9 +280,35 @@ namespace ZSG
                 case KeyCode.C: CreateNode(typeof(CustomFunctionNode), position, false); break;
                 case KeyCode.B: CreateNode(typeof(BranchNode), position, false); break;
                 case KeyCode.V: CreateNode(typeof(AppendNode), position, false); break;
+                case KeyCode.Insert: CreateAll(); break;
             }
 
             //e.StopPropagation();
+        }
+        void CreateAll()
+        {
+            Vector2 p = new Vector2(0,0);
+            Type[] _existingNodeTypes = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(domainAssembly => domainAssembly.GetTypes())
+                .Where(type => typeof(ShaderNode).IsAssignableFrom(type))
+                .Where(x =>
+                {
+                    var info = x.GetCustomAttribute<NodeInfo>();
+                    return info is not null && !info.name.StartsWith("_");
+                })
+                .OrderBy(x => x.GetCustomAttribute<NodeInfo>().name)
+                .ToArray();
+
+            foreach (var type in _existingNodeTypes)
+            {
+                p = new Vector2(p.x + 200, p.y);
+                if (p.x > 2000)
+                {
+                    p.x = 0;
+                    p.y += 400;
+                }
+                CreateNode(type, p, false);
+            }
         }
     }
 }

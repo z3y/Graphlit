@@ -63,7 +63,6 @@ namespace ZSG
             builder.properties.Add(_zwrite);
             builder.properties.Add(_cull);
 
-
             builder.subshaderTags.Add("RenderType", "Opaque");
             {
                 var pass = new PassBuilder("FORWARD", Vertex, FragmentForward, POSITION, NORMAL, TANGENT, COLOR, ALPHA, CUTOFF);
@@ -71,6 +70,8 @@ namespace ZSG
 
                 pass.renderStates["Cull"] = "[_Cull]";
                 pass.renderStates["ZWrite"] = "[_ZWrite]";
+
+                //pass.pragmas.Add("#pragma shader_feature_local_fragment ");
 
                 pass.pragmas.Add("#pragma multi_compile_fwdbase");
                 pass.pragmas.Add("#pragma multi_compile_fog");
@@ -80,6 +81,7 @@ namespace ZSG
                 pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
 
                 pass.varyings.RequirePositionCS();
+                pass.varyings.RequireCustomString("UNITY_FOG_COORDS(*)");
                 //pass.varyings.RequireCustomString("#ifdef LIGHTMAP_ON\ncentroid float2 lightmapUV : LIGHTMAPUV\n#endif");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
