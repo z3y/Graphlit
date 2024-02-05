@@ -39,8 +39,9 @@ namespace ZSG
 
         public override void AssignNewShaderToMaterial(Material material, Shader oldShader, Shader newShader)
         {
-            material.shaderKeywords = null;
             base.AssignNewShaderToMaterial(material, oldShader, newShader);
+            material.shaderKeywords = null;
+            SetupRenderingMode(material);
         }
 
         void Initialize(MaterialEditor editor, MaterialProperty[] properties)
@@ -60,6 +61,7 @@ namespace ZSG
 
                 var p = new PropertyElement(i);
                 var attributes = _shader.GetPropertyAttributes(i).ToHashSet();
+                string referenceName = materialProperty.name;
 
                 string tooltip = null;
                 foreach (string a in attributes)
@@ -86,10 +88,19 @@ namespace ZSG
                     current = p;
                     continue;
                 }
-
-                if (materialProperty.type == MaterialProperty.PropType.Texture)
+                if (attributes.Contains("FoldoutEnd"))
                 {
-                    p.onGui = (e, m, i) => TextureProperty(e, m[i], m[i].displayName);
+                    current = _propertyTree;
+                    continue;
+                }
+
+                if (referenceName == "_Mode")
+                {
+                    p.onGui = (e, m, i) => RenderingModeProperty(e, m[i], guiContent);
+                }
+                else if (materialProperty.type == MaterialProperty.PropType.Texture)
+                {
+                    p.onGui = (e, m, i) => TextureProperty(e, m[i], guiContent);
                     if (attributes.Contains("Linear"))
                     {
                         p.onGui += (e, m, i) => LinearWarning(m[i]);
@@ -167,6 +178,76 @@ namespace ZSG
                     }
                 }
             }
+        }
+
+        public virtual void SetupRenderingMode(Material material)
+        {
+            const string Mode = "_Mode";
+            if (!material.HasFloat(Mode))
+            {
+                return;
+            }
+            int mode = (int)material.GetFloat(Mode);
+            ToggleKeyword(material, "_ALPHATEST_ON", mode == 1);
+            ToggleKeyword(material, "_ALPHAFADE_ON", mode == 2);
+            ToggleKeyword(material, "_ALPHAPREMULTIPLY_ON", mode == 3);
+            ToggleKeyword(material, "_ALPHAMODULATE_ON", mode == 5);
+
+            switch (mode)
+            {
+                case 0:
+                    material.SetOverrideTag("RenderType", "");
+                    material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                    material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                    material.SetInt("_ZWrite", 1);
+                    material.SetInt("_AlphaToMask", 0);
+                    material.renderQueue = -1;
+                    break;
+                case 1: // cutout a2c
+                    material.SetOverrideTag("RenderType", "TransparentCutout");
+                    material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                    material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                    material.SetInt("_ZWrite", 1);
+                    material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
+                    material.SetInt("_AlphaToMask", 1);
+                    break;
+                case 2: // alpha fade
+                    SetupTransparentMaterial(material);
+                    material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                    material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                    break;
+                case 3: // premultiply
+                    SetupTransparentMaterial(material);
+                    material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                    material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                    break;
+                case 4: // additive
+                    SetupTransparentMaterial(material);
+                    material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                    material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                    break;
+                case 5: // multiply
+                    SetupTransparentMaterial(material);
+                    material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.DstColor);
+                    material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                    break;
+            }
+        }
+
+        public static void SetupTransparentMaterial(Material material)
+        {
+            material.SetOverrideTag("RenderType", "Transparent");
+            material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+            material.SetInt("_ZWrite", 0);
+            material.SetInt("_AlphaToMask", 0);
+        }
+
+        public static void ToggleKeyword(Material material, string keyword, bool value)
+        {
+            if (value)
+                material.EnableKeyword(keyword);
+            else
+                material.DisableKeyword(keyword);
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Linq;
 using UnityEditor.UIElements;
 using UnityEditor;
 using System.IO;
+using UnityEditor.Experimental.GraphView;
 
 namespace ZSG
 {
@@ -158,8 +159,15 @@ namespace ZSG
             {
                 PortDescriptor port = array[i];
                 var data = PortData[port.ID];
+                if (port.Direction == PortDirection.Input && _functionParser.defaultValues.ContainsKey(port.ID))
+                {
+                    var portElement = PortElements.Where(x => x.GetPortID() == port.ID).First();
+                    if (!portElement.connected)
+                    {
+                        data.Name = _functionParser.defaultValues[port.ID];
+                    }
+                }
 
-                //if (port.Direction == PortDirection.Output) param += "out ";
                 param += data.Name;
 
                 if (i != array.Length - 1) param += ", ";

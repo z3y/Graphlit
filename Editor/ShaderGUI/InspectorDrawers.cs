@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEditor.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ZSG
 {
@@ -37,12 +38,13 @@ namespace ZSG
             importer.SaveAndReimport();
         }
 
-        public static void TextureProperty(MaterialEditor editor, MaterialProperty property, string name)
+        public static void TextureProperty(MaterialEditor editor, MaterialProperty property, GUIContent label)
         {
             float fieldWidth = EditorGUIUtility.fieldWidth;
             float labelWidth = EditorGUIUtility.labelWidth;
             editor.SetDefaultGUIWidths();
-            editor.TextureProperty(property, name);
+            var rect = GetControlRect(property);
+            editor.TextureProperty(rect, property, label);
             EditorGUIUtility.fieldWidth = fieldWidth;
             EditorGUIUtility.labelWidth = labelWidth;
         }
@@ -93,6 +95,18 @@ namespace ZSG
             onGui.Invoke(rect);
             EditorGUIUtility.labelWidth = labelWidth;
             MaterialEditor.EndProperty();
+        }
+        public void RenderingModeProperty(MaterialEditor editor, MaterialProperty property, GUIContent label)
+        {
+            EditorGUI.BeginChangeCheck();
+            editor.ShaderProperty(property, label);
+            if (EditorGUI.EndChangeCheck())
+            {
+                foreach (Material target in editor.targets.Cast<Material>())
+                {
+                    SetupRenderingMode(target);
+                }
+            }
         }
 
 

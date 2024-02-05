@@ -35,10 +35,12 @@ namespace ZSG
         public List<PortDescriptor> descriptors = new List<PortDescriptor>();
         public string methodName;
         public Dictionary<int, PortBinding> bindings = new Dictionary<int, PortBinding>();
+        public Dictionary<int, string> defaultValues = new Dictionary<int, string>();
         public bool TryParse(string code)
         {
             descriptors.Clear();
             bindings.Clear();
+            defaultValues.Clear();
             try
             {
                 int entry = 0;
@@ -98,6 +100,12 @@ namespace ZSG
                     else if (name.Equals("uv", StringComparison.OrdinalIgnoreCase))
                     {
                         bindings[id] = PortBinding.UV0;
+                    }
+
+                    if (arg.Length > 3 && arg[2].Trim() == "=")
+                    {
+                        defaultValues[id] = arg[3].Trim();
+                        //Debug.Log($"Default Value = {defaultValues[id]}");
                     }
 
                     //Debug.Log($"PortDirection = '{direction}', Type = '{type}', PortName = '{name}'");
