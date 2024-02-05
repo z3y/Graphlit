@@ -14,13 +14,14 @@ namespace ZSG
 
         public override string Name { get; } = "Unlit";
         public override int[] VertexPorts => new int[] { POSITION, NORMAL, TANGENT };
-        public override int[] FragmentPorts => new int[] { COLOR, ALPHA };
+        public override int[] FragmentPorts => new int[] { COLOR, ALPHA, CUTOFF };
 
         const int POSITION = 0;
         const int NORMAL = 1;
         const int TANGENT = 2;
         const int COLOR = 3;
         const int ALPHA = 4;
+        const int CUTOFF = 5;
         public override void AddElements()
         {
             AddPort(new(PortDirection.Input, new Float(3, false), POSITION, "Position"));
@@ -33,13 +34,16 @@ namespace ZSG
             inputContainer.Add(separator);
             AddPort(new(PortDirection.Input, new Float(3, false), COLOR, "Color"));
             AddPort(new(PortDirection.Input, new Float(1, false), ALPHA, "Alpha"));
+            AddPort(new(PortDirection.Input, new Float(1, false), CUTOFF, "Cutoff"));
 
             Bind(POSITION, PortBinding.PositionOS);
             Bind(NORMAL, PortBinding.NormalOS);
             Bind(TANGENT, PortBinding.TangentOS);
+            DefaultValues[ALPHA] = "1.0";
+            DefaultValues[CUTOFF] = "0.5";
         }
 
-        static readonly PropertyDescriptor _mode = new (PropertyType.Float, "Mode", "_Mode") { customAttributes = "[Enum(Opaque, 0, Cutout, 1, Fade, 2, Transparent, 3, Additive, 4, Multiply, 5)]" };
+        static readonly PropertyDescriptor _mode = new (PropertyType.Float, "Rendering Mode", "_Mode") { customAttributes = "[Enum(Opaque, 0, Cutout, 1, Fade, 2, Transparent, 3, Additive, 4, Multiply, 5)]" };
         static readonly PropertyDescriptor _srcBlend = new (PropertyType.Float, "Source Blend", "_SrcBlend") { FloatValue = 1, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         static readonly PropertyDescriptor _dstBlend = new(PropertyType.Float, "Destination Blend", "_DstBlend") { FloatValue = 0, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         static readonly PropertyDescriptor _zwrite = new(PropertyType.Float, "ZWrite", "_ZWrite") { FloatValue = 1, customAttributes = "[Enum(Off, 0, On, 1)]" };
@@ -61,7 +65,7 @@ namespace ZSG
 
             builder.subshaderTags.Add("RenderType", "Opaque");
             {
-                var pass = new PassBuilder("FORWARD", Vertex, FragmentForward, POSITION, NORMAL, TANGENT, COLOR, ALPHA);
+                var pass = new PassBuilder("FORWARD", Vertex, FragmentForward, POSITION, NORMAL, TANGENT, COLOR, ALPHA, CUTOFF);
                 pass.tags["LightMode"] = "ForwardBase";
 
                 pass.renderStates["Cull"] = "[_Cull]";
@@ -84,7 +88,7 @@ namespace ZSG
             }
 
             {
-                var pass = new PassBuilder("SHADOWCASTER", Vertex, FragmentShadow, POSITION, ALPHA);
+                var pass = new PassBuilder("SHADOWCASTER", Vertex, FragmentShadow, POSITION, ALPHA, CUTOFF);
                 pass.tags["LightMode"] = "ShadowCaster";
                 pass.renderStates["ZWrite"] = "On";
                 pass.renderStates["ZTest"] = "LEqual";

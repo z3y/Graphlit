@@ -104,8 +104,10 @@ namespace ZSG
 
                     if (arg.Length > 3 && arg[2].Trim() == "=")
                     {
-                        defaultValues[id] = arg[3].Trim();
-                        //Debug.Log($"Default Value = {defaultValues[id]}");
+                        defaultValues[id] = args[i].Split('=')[1].Trim();
+                        //Debug.Log($"args = '{args[i]}'");
+
+                        //Debug.Log($"Default Value = '{defaultValues[id]}'");
                     }
 
                     //Debug.Log($"PortDirection = '{direction}', Type = '{type}', PortName = '{name}'");

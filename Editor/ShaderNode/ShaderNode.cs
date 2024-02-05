@@ -463,6 +463,11 @@ namespace ZSG
         string SetDefaultBinding(PortDescriptor portDescriptor, NodeVisitor visitor)
         {
             int id = portDescriptor.ID;
+            if (DefaultValues.ContainsKey(id))
+            {
+                return DefaultValues[id];
+            }
+
             if (_portBindings.ContainsKey(id))
             {
                 var binding = _portBindings[id];
@@ -507,6 +512,8 @@ namespace ZSG
 
             return PrecisionString(4) + "(0,0,0,0)";
         }
+
+        public Dictionary<int, string> DefaultValues {  get; set; } = new Dictionary<int, string>();
 
         internal void BuilderVisit(NodeVisitor visitor, int[] portsMask = null)
         {

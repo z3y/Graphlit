@@ -1,4 +1,5 @@
-void UnpackNormalScale(float4 Normal, out float3 Out, float Scale = 1)
+
+void UnpackNormalScale(out float3 Out, float4 Normal, float Scale = 1)
 {
     Out = UnpackNormalScale(Normal, Scale);
 }
