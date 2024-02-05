@@ -26,7 +26,7 @@ namespace ZSG
         {
             AddPort(new(PortDirection.Input, new Float(3, false), POSITION, "Position"));
             AddPort(new(PortDirection.Input, new Float(3, false), NORMAL, "Normal"));
-            AddPort(new(PortDirection.Input, new Float(4, false), TANGENT, "Tangent"));
+            AddPort(new(PortDirection.Input, new Float(3, false), TANGENT, "Tangent"));
 
             var separator = new VisualElement();
             separator.style.height = 16;

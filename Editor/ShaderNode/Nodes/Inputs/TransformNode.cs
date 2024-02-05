@@ -61,7 +61,12 @@ namespace ZSG
             {
                 value = _normalize
             };
-            toggle.RegisterValueChangedCallback(x => _normalize = x.newValue);
+            toggle.RegisterValueChangedCallback(x =>
+            {
+                _normalize = x.newValue;
+                EvaluateBindings();
+                GeneratePreviewForAffectedNodes();
+            });
             root.Add(toggle);
         }
 
@@ -77,7 +82,7 @@ namespace ZSG
             {
                 Output(visitor, OUT, $"{PortData[IN].Name}");
             }
-            else if (_type == SpaceTransform.Type.Direction)
+            else if (_type == SpaceTransform.Type.Direction || _type == SpaceTransform.Type.Normal)
             {
                 Output(visitor, OUT, $"{methodName}({PortData[IN].Name}, {_normalize.ToString().ToLower()})");
             }
