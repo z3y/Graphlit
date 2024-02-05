@@ -32,6 +32,15 @@ namespace ZSG
             }; ;
         }
 
+        readonly string[] EntryKeywords = new []
+        {
+            "void ",
+            "float ",
+            "half ",
+            "int ",
+            "uint "
+        };
+
         public List<PortDescriptor> descriptors = new List<PortDescriptor>();
         public string methodName;
         public Dictionary<int, PortBinding> bindings = new Dictionary<int, PortBinding>();
@@ -48,8 +57,12 @@ namespace ZSG
                 bool hasMain = false;
                 for (int i = 0; i < lines.Length; i++)
                 {
-                    if (lines[i].StartsWith("void ")) entry = i;
-                    else if (lines[i].StartsWith("[Main] void "))
+                    if (Array.Exists(EntryKeywords, x => lines[i].StartsWith(x)))
+                    {
+                        entry = i;
+                        break;
+                    }
+                    else if (lines[i].StartsWith("[Main] "))
                     {
                         entry = i;
                         hasMain = true;
@@ -58,60 +71,75 @@ namespace ZSG
                 }
 
                 string[] split1 = lines[entry].Split('(');
-                methodName = hasMain ? split1[0]["[Main] void ".Length..] : split1[0]["void ".Length..];
+                string[] whitespaceSplit = lines[entry].Split(" ");
+                string entryKeyword = hasMain ? whitespaceSplit[1] : whitespaceSplit[0];
+                methodName = hasMain ? split1[0][$"[Main] {entryKeyword} ".Length..] : split1[0][$"{entryKeyword} ".Length..];
 
                 string allargs = split1[1].Split(')')[0];
                 bool emptyArts = string.IsNullOrEmpty(allargs);
-                if (emptyArts) return false;
+                bool isVoid = entryKeyword.StartsWith("void");
 
-                string[] args = allargs.Split(',');
-                for (int i = 0; i < args.Length; i++)
+                if (emptyArts && isVoid)
                 {
-                    PortDirection direction = PortDirection.Input;
-                    string[] arg = args[i].Trim().Split(' ');
-                    for (int j = 0; j < arg.Length; j++)
-                    {
-                        arg[j] = arg[j].Trim();
-                    }
-
-                    int typeArgIndex = 0;
-                    if (arg[0] == "out")
-                    {
-                        direction = PortDirection.Output;
-                        typeArgIndex++;
-                    }
-                    string type = arg[typeArgIndex].Trim();
-                    string name = arg[typeArgIndex + 1].Trim();
-
-                    bool isArray = false;
-                    if (name.EndsWith(']'))
-                    {
-                        var splitName = name.Split('[');
-                        isArray = true;
-                    }
-
-                    int id = i;
-                    if (direction == PortDirection.Output) id += 100;
-                    descriptors.Add(new(direction, StringToPortType(type, isArray), id, name));
-                    if (Enum.TryParse(name, true, out PortBinding binding))
-                    {
-                        bindings[id] = binding;
-                    }
-                    else if (name.Equals("uv", StringComparison.OrdinalIgnoreCase))
-                    {
-                        bindings[id] = PortBinding.UV0;
-                    }
-
-                    if (arg.Length > 3 && arg[2].Trim() == "=")
-                    {
-                        defaultValues[id] = args[i].Split('=')[1].Trim();
-                        //Debug.Log($"args = '{args[i]}'");
-
-                        //Debug.Log($"Default Value = '{defaultValues[id]}'");
-                    }
-
-                    //Debug.Log($"PortDirection = '{direction}', Type = '{type}', PortName = '{name}'");
+                    return false;
                 }
+
+                if (!emptyArts)
+                {
+                    string[] args = allargs.Split(',');
+                    for (int i = 0; i < args.Length; i++)
+                    {
+                        PortDirection direction = PortDirection.Input;
+                        string[] arg = args[i].Trim().Split(' ');
+                        for (int j = 0; j < arg.Length; j++)
+                        {
+                            arg[j] = arg[j].Trim();
+                        }
+
+                        int typeArgIndex = 0;
+                        if (arg[0] == "out")
+                        {
+                            direction = PortDirection.Output;
+                            typeArgIndex++;
+                        }
+                        string type = arg[typeArgIndex].Trim();
+                        string name = arg[typeArgIndex + 1].Trim();
+
+                        bool isArray = false;
+                        if (name.EndsWith(']'))
+                        {
+                            var splitName = name.Split('[');
+                            isArray = true;
+                        }
+
+                        int id = i;
+                        if (direction == PortDirection.Output) id += 100;
+                        descriptors.Add(new(direction, StringToPortType(type, isArray), id, name));
+                        if (Enum.TryParse(name, true, out PortBinding binding))
+                        {
+                            bindings[id] = binding;
+                        }
+                        else if (name.Equals("uv", StringComparison.OrdinalIgnoreCase))
+                        {
+                            bindings[id] = PortBinding.UV0;
+                        }
+
+                        if (arg.Length > 3 && arg[2].Trim() == "=")
+                        {
+                            defaultValues[id] = args[i].Split('=')[1].Trim();
+                            //Debug.Log($"args = '{args[i]}'");
+
+                            //Debug.Log($"Default Value = '{defaultValues[id]}'");
+                        }
+                        //Debug.Log($"PortDirection = '{direction}', Type = '{type}', PortName = '{name}'");
+                    }
+                }
+
+                if (!isVoid)
+                {
+                    descriptors.Add(new(PortDirection.Output, StringToPortType(entryKeyword.Trim(), false), 99, methodName));
+                }
+
 
                 return true;
             }

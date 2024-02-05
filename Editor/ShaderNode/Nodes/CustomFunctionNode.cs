@@ -150,14 +150,29 @@ namespace ZSG
             GeneratePreviewForAffectedNodes();
         }
 
+        bool IsVoidType()
+        {
+            return !portDescriptors.Values.Any(x => x.ID == 99);
+        }
+
         string MethodParams()
         {
             string param = "";
 
             PortDescriptor[] array = portDescriptors.Values.ToArray();
+            int lastParam = array.Length - 1;
+            if (!IsVoidType())
+            {
+                lastParam--;
+            }
             for (int i = 0; i < array.Length; i++)
             {
                 PortDescriptor port = array[i];
+                if (port.ID == 99)
+                {
+                    continue;
+                }
+
                 var data = PortData[port.ID];
                 if (port.Direction == PortDirection.Input && _functionParser.defaultValues.ContainsKey(port.ID))
                 {
@@ -170,7 +185,7 @@ namespace ZSG
 
                 param += data.Name;
 
-                if (i != array.Length - 1) param += ", ";
+                if (i != lastParam) param += ", ";
             }
 
             return param;
@@ -191,9 +206,16 @@ namespace ZSG
                 SetVariable(port.ID, outName);
             }
 
-            visitor.AppendLine($"{methodName}({MethodParams()});");
+            if (IsVoidType())
+            {
+                visitor.AppendLine($"{methodName}({MethodParams()});");
+            }
+            else
+            {
+                visitor.AppendLine($"{PortData[99].Name} = {methodName}({MethodParams()});");
+            }
+            visitor.AddFunction(_useFile ? "#include \"" + _path + "\"" : Code);
 
-            visitor.AddFunction(_useFile ? "#include \"" + _path + "\"": Code);
         }
     }
 }

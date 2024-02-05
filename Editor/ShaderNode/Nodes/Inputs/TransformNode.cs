@@ -57,7 +57,7 @@ namespace ZSG
 
         public override void AdditionalElements(VisualElement root)
         {
-            var toggle = new Toggle("Normalize Direction")
+            var toggle = new Toggle("Normalize")
             {
                 value = _normalize
             };
