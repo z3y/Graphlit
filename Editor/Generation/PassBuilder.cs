@@ -67,7 +67,7 @@ namespace ZSG
             sb.AppendLine("Name \"" + name + "\"");
             ShaderBuilder.AppendTags(sb, tags);
 
-            sb.AppendLine("// Render States");
+            sb.AppendLine();
             foreach (var state in renderStates)
             {
                 sb.AppendLine(state.Key + " " + state.Value);
@@ -79,7 +79,7 @@ namespace ZSG
         }
         public void AppendPassHLSL(ShaderStringBuilder sb)
         {
-            sb.AppendLine("// Pragmas");
+            sb.AppendLine();
 
             sb.AppendLine("#pragma target " + target);
 

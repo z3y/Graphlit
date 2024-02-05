@@ -1,7 +1,9 @@
 {
     "name": "com.z3y.myshadergraph",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:3eae0364be2026648bf74846acb8a731"
+    ],
     "includePlatforms": [
         "Editor"
     ],

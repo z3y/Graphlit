@@ -39,6 +39,12 @@ namespace ZSG
             Bind(TANGENT, PortBinding.TangentOS);
         }
 
+        static readonly PropertyDescriptor _mode = new (PropertyType.Float, "Mode", "_Mode") { customAttributes = "[Enum(Opaque, 0, Cutout, 1, Fade, 2, Transparent, 3, Additive, 4, Multiply, 5)]" };
+        static readonly PropertyDescriptor _srcBlend = new (PropertyType.Float, "Source Blend", "_SrcBlend") { FloatValue = 1, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
+        static readonly PropertyDescriptor _dstBlend = new(PropertyType.Float, "Destination Blend", "_DstBlend") { FloatValue = 0, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
+        static readonly PropertyDescriptor _zwrite = new(PropertyType.Float, "ZWrite", "_ZWrite") { FloatValue = 1, customAttributes = "[Enum(Off, 0, On, 1)]" };
+        static readonly PropertyDescriptor _cull = new(PropertyType.Float, "Cull", "_Cull ") { FloatValue = 2, customAttributes = "[Enum(UnityEngine.Rendering.CullMode)]" };
+
 
         const string Vertex = "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/Vertex.hlsl";
         const string FragmentForward = "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/FragmentForward.hlsl";
@@ -46,11 +52,20 @@ namespace ZSG
 
         public override void BuilderPassthourgh(ShaderBuilder builder)
         {
-            builder.subshaderTags.Add("RenderType", "Opaque");
+            builder.properties.Add(_mode);
+            builder.properties.Add(_srcBlend);
+            builder.properties.Add(_dstBlend);
+            builder.properties.Add(_zwrite);
+            builder.properties.Add(_cull);
 
+
+            builder.subshaderTags.Add("RenderType", "Opaque");
             {
                 var pass = new PassBuilder("FORWARD", Vertex, FragmentForward, POSITION, NORMAL, TANGENT, COLOR, ALPHA);
                 pass.tags["LightMode"] = "ForwardBase";
+
+                pass.renderStates["Cull"] = "[_Cull]";
+                pass.renderStates["ZWrite"] = "[_ZWrite]";
 
                 pass.pragmas.Add("#pragma multi_compile_fwdbase");
                 pass.pragmas.Add("#pragma multi_compile_fog");

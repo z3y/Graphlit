@@ -78,6 +78,8 @@ namespace ZSG
         PerRendererData = 1 << 7,
         NonModifiableTextureData = 1 << 8,
         SingleLineTexture = 1 << 9,
+        IntRange = 1 << 10,
+        Linear = 1 << 11,
     }
 
     [Serializable]
@@ -184,7 +186,7 @@ namespace ZSG
             }
         }
 
-        public bool IsTextureType => type == PropertyType.Texture2D || type == PropertyType.Texture2DArray || type == PropertyType.TextureCube || type == PropertyType.Texture3D;
+        public bool IsTextureType => type == PropertyType.Texture2D || type == PropertyType.Texture2DArray || type == PropertyType.TextureCube || type == PropertyType.TextureCubeArray || type == PropertyType.Texture3D;
         public bool SupportsGPUInstancing => type == PropertyType.Float || type == PropertyType.Float2 || type == PropertyType.Float4 || type == PropertyType.Float3 || type == PropertyType.Integer || type == PropertyType.Color || type == PropertyType.Bool;
         public bool HasRange => rangeX != rangeY;
 
@@ -192,7 +194,7 @@ namespace ZSG
         {
             guid = Guid.NewGuid().ToString();
             this.type = type;
-            this.displayName = string.IsNullOrEmpty(displayName) ? guid : displayName;
+            this.displayName = string.IsNullOrEmpty(displayName) ? type.ToString() : displayName;
             this.referenceName = referenceName;
             if (type == PropertyType.Color)
             {
@@ -291,7 +293,10 @@ namespace ZSG
         public string AttributesToString()
         {
             var sb = new StringBuilder();
-            sb.Append(customAttributes);
+            if (!string.IsNullOrEmpty(customAttributes))
+            {
+                sb.Append(customAttributes.Replace("\n", ""));
+            }
 
 
             foreach (MaterialPropertyAttribute attribute in Enum.GetValues(typeof(MaterialPropertyAttribute)))
@@ -304,13 +309,20 @@ namespace ZSG
                 }
             }
 
-            if (type == PropertyType.Bool)
+            switch (type)
             {
-                sb.Append("[ToggleUI]");
-            }
-            else if (type == PropertyType.KeywordToggle)
-            {
-                sb.Append($"[Toggle({KeywordName})]");
+                case PropertyType.Bool:
+                    sb.Append("[ToggleUI]");
+                    break;
+                case PropertyType.KeywordToggle:
+                    sb.Append($"[Toggle({KeywordName})]");
+                    break;
+                case PropertyType.Float2:
+                    sb.Append($"[Vector2]");
+                    break;
+                case PropertyType.Float3:
+                    sb.Append($"[Vector3]");
+                    break;
             }
 
             return sb.ToString();
@@ -332,7 +344,7 @@ namespace ZSG
                 return referenceName;
             }
 
-            return "_" + displayName.RemoveWhitespace().Replace("-", "_");
+            return "_" + guid.RemoveWhitespace().Replace("-", "_");
         }
         public bool ShouldDeclare() => declaration == PropertyDeclaration.Local;
         public string GetPropertyDeclaration(GenerationMode generationMode)
@@ -352,17 +364,20 @@ namespace ZSG
 
         void OnDefaultGUI()
         {
-            // EditorGUILayout.LabelField(guid);
-
             displayName = EditorGUILayout.TextField(new GUIContent("Display Name"), displayName);
-            referenceName = EditorGUILayout.TextField(new GUIContent("Reference Name"), referenceName);
+            referenceName = EditorGUILayout.TextField(new GUIContent("Reference Name", guid), referenceName);
             if (type != PropertyType.Texture2D && type != PropertyType.TextureCube)
             {
                 declaration = (PropertyDeclaration)EditorGUILayout.EnumPopup("Declaration", declaration);
             }
 
             defaultAttributes = (MaterialPropertyAttribute)EditorGUILayout.EnumFlagsField("Attributes", defaultAttributes);
-            customAttributes = EditorGUILayout.TextField("Custom Attributes", customAttributes);
+
+
+            GUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Custom Attributes", GUILayout.Width(149));
+            customAttributes = EditorGUILayout.TextArea(customAttributes);
+            GUILayout.EndHorizontal();
         }
 
         void OnGUIFloat()

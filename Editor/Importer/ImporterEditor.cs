@@ -1,6 +1,8 @@
 using UnityEditor.AssetImporters;
 using UnityEditor;
 using UnityEngine;
+using System.IO;
+using UnityEditorInternal;
 namespace ZSG
 {
 
@@ -37,8 +39,15 @@ namespace ZSG
             }
             if (GUILayout.Button("Show Generated Shader"))
             {
-                AssetDatabase.ImportAsset(importer.assetPath);
-                Debug.Log(ShaderGraphImporter._lastImport);
+                AssetDatabase.ImportAsset(importer.assetPath, ImportAssetOptions.ForceUpdate);
+                string path = "Temp/ZSG.shader";
+                File.WriteAllText(path, ShaderGraphImporter._lastImport);
+                InternalEditorUtility.OpenFileAtLineExternal(Path.GetFullPath(path), 0);
+            }
+            if (GUILayout.Button("Copy Shader"))
+            {
+                AssetDatabase.ImportAsset(importer.assetPath, ImportAssetOptions.ForceUpdate);
+                GUIUtility.systemCopyBuffer = ShaderGraphImporter._lastImport;
             }
         }
 

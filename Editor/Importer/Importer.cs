@@ -72,6 +72,7 @@ namespace ZSG
 
             //var text = File.ReadAllText(assetPath);
             //ctx.AddObjectToAsset("json", new TextAsset(text));
+            DefaultInspector.Reinitialize();
         }
 
         public static void CreateEmptyTemplate<T>() where T : TemplateOutput, new()

@@ -30,6 +30,7 @@ namespace ZSG
         public List<PassBuilder> passBuilders = new();
 
         private HashSet<string> visitedNodes = new HashSet<string>();
+        public List<PropertyDescriptor> properties = new();
 
         public GenerationMode GenerationMode { get; }
         public SerializableGraph SerializableGraph { get; }
@@ -276,7 +277,7 @@ namespace ZSG
             }
 
             _sb.AppendLine(string.IsNullOrEmpty(fallback) ? "// Fallback None" : "Fallback \"" + fallback + "\"");
-            _sb.AppendLine(string.IsNullOrEmpty(customEditor) ? "// CustomEditor None" : "CustomEditor \"" + customEditor + "\"");
+            _sb.AppendLine(string.IsNullOrEmpty(customEditor) ? "CustomEditor \"ZSG.DefaultInspector\"" : "CustomEditor \"" + customEditor + "\"");
 
             _sb.UnIndent();
 
@@ -300,7 +301,7 @@ namespace ZSG
             }
             else
             {
-                foreach (var property in ShaderGraphView.graphData.properties)
+                foreach (var property in properties.Union(ShaderGraphView.graphData.properties))
                 {
                     if (property.ShouldDeclare())
                         _sb.AppendLine(property.GetPropertyDeclaration(GenerationMode.Final));
