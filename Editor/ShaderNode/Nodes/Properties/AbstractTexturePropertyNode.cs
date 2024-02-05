@@ -19,9 +19,9 @@ namespace ZSG
         public override Precision DefaultPrecisionOverride => Precision.Float;
 
         public virtual IPortType TextureType => new Texture2DObject();
-        public override void AddElements()
+        public override void Initialize()
         {
-            base.AddElements();
+            base.Initialize();
 
             AddPort(new(PortDirection.Output, TextureType, OUT, "Texture"));
             _samplerPort = AddPort(new(PortDirection.Output, new SamplerState(), samplerID, "Sampler State"));

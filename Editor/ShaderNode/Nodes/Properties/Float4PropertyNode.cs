@@ -8,9 +8,9 @@ namespace ZSG
     public class Float4PropertyNode : PropertyNode
     {
         protected override PropertyType propertyType => PropertyType.Float4;
-        public override void AddElements()
+        public override void Initialize()
         {
-            base.AddElements();
+            base.Initialize();
 
             AddPort(new(PortDirection.Output, new Float(4), OUT));
         }

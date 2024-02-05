@@ -13,7 +13,7 @@ namespace ZSG
         const int OUT = 1;
         [SerializeField] string swizzle = "x";
 
-        public override void AddElements()
+        public override void Initialize()
         {
             AddPort(new(PortDirection.Input, new Float(1, true), IN));
             AddPort(new(PortDirection.Output, new Float(1, true), OUT));

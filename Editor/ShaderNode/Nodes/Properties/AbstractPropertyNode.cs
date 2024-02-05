@@ -20,7 +20,7 @@ namespace ZSG
         [NonSerialized] public PropertyDescriptor propertyDescriptor;
 
         public override bool DisablePreview => true;
-        public override void AddElements()
+        public override void Initialize()
         {
             var graphData = GraphView.graphData;
             propertyDescriptor = graphData.properties.Find(x => x.guid == _ref);

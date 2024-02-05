@@ -13,9 +13,9 @@ namespace ZSG
         const int TRUE = 1;
         const int FALSE = 2;
 
-        public override void AddElements()
+        public override void Initialize()
         {
-            base.AddElements();
+            base.Initialize();
             AddPort(new(PortDirection.Input, new Float(1, true), TRUE, "True"));
             AddPort(new(PortDirection.Input, new Float(1, true), FALSE, "False"));
             AddPort(new(PortDirection.Output, new Float(1, true), OUT));

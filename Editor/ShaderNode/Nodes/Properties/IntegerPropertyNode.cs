@@ -8,9 +8,9 @@ namespace ZSG
     public class IntegerPropertyNode : PropertyNode
     {
         protected override PropertyType propertyType => PropertyType.Integer;
-        public override void AddElements()
+        public override void Initialize()
         {
-            base.AddElements();
+            base.Initialize();
             AddPort(new(PortDirection.Output, new Int(), OUT));
         }
     }

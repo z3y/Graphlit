@@ -16,7 +16,7 @@ namespace ZSG
         public virtual string AName => "A";
         public virtual string BName => "B";
 
-        public override void AddElements()
+        public override void Initialize()
         {
             AddPort(new(PortDirection.Input, new Float(1, true), A, AName));
             AddPort(new(PortDirection.Input, new Float(1, true), B, BName));

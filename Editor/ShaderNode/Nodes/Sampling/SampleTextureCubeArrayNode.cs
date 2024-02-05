@@ -15,9 +15,9 @@ namespace ZSG
         public override int Coords => 3;
         public override PortBinding UVBinding => PortBinding.PositionWS;
 
-        public override void AddElements()
+        public override void Initialize()
         {
-            base.AddElements();
+            base.Initialize();
             AddPort(new(PortDirection.Input, new Float(1), INDEX, "Index"));
         }
 
@@ -34,9 +34,9 @@ namespace ZSG
 
         public override string SampleMethod => $"SAMPLE_TEXTURECUBE_ARRAY_LOD({PortData[TEX].Name}, {GetSamplerName(PortData[TEX].Name)}, {PortData[UV].Name}, {PortData[INDEX].Name}, {PortData[LOD].Name})";
         const int INDEX = 10;
-        public override void AddElements()
+        public override void Initialize()
         {
-            base.AddElements();
+            base.Initialize();
             AddPort(new(PortDirection.Input, new Float(1), INDEX, "Index"));
         }
     }

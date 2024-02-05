@@ -15,7 +15,7 @@ namespace ZSG
         const int FALSE = 2;
         const int OUT = 3;
         public override bool DisablePreview => true;
-        public override void AddElements()
+        public override void Initialize()
         {
             AddPort(new(PortDirection.Input, new Bool(), BOOL, "Bool"));
             AddPort(new(PortDirection.Input, new Float(1, true), TRUE, "True"));

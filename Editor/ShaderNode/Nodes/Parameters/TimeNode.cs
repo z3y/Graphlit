@@ -8,7 +8,7 @@ namespace ZSG
     {
         public override Precision DefaultPrecisionOverride => Precision.Float;
         public override bool DisablePreview => true;
-        public sealed override void AddElements()
+        public sealed override void Initialize()
         {
             AddPort(new(PortDirection.Output, new Float(1), 0, "t/20"));
             AddPort(new(PortDirection.Output, new Float(1), 1, "t"));

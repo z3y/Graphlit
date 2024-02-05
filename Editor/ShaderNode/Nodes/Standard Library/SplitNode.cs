@@ -20,7 +20,7 @@ namespace ZSG
 
         public override bool DisablePreview => true;
 
-        public override void AddElements()
+        public override void Initialize()
         {
             AddPort(new(PortDirection.Input, new Float(4, true), IN));
 

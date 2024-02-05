@@ -11,7 +11,7 @@ namespace ZSG
         const int C = 2;
         const int OUT = 3;
 
-        public override void AddElements()
+        public override void Initialize()
         {
             AddPort(new(PortDirection.Input, new Float(1, true), A, "A"));
             AddPort(new(PortDirection.Input, new Float(1, true), B, "B"));

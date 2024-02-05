@@ -22,7 +22,7 @@ namespace ZSG
         const int COLOR = 3;
         const int ALPHA = 4;
         const int CUTOFF = 5;
-        public override void AddElements()
+        public override void Initialize()
         {
             AddPort(new(PortDirection.Input, new Float(3, false), POSITION, "Position"));
             AddPort(new(PortDirection.Input, new Float(3, false), NORMAL, "Normal"));

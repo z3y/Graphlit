@@ -12,7 +12,7 @@ namespace ZSG
         public override PreviewType DefaultPreviewOverride => PreviewType.Preview3D;
         [SerializeField] BindingSpace _space = BindingSpace.World;
 
-        public override void AddElements()
+        public override void Initialize()
         {
             AddPort(new(PortDirection.Output, new Float(3), 0));
             Bind(0, PortBindings.ViewBindingFromSpace(_space));

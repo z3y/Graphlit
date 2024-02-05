@@ -16,7 +16,7 @@ namespace ZSG
         PropertyDescriptor _descriptor = new(PropertyType.Float2);
 
         public override bool DisablePreview => true;
-        public override void AddElements()
+        public override void Initialize()
         {
             AddPort(new(PortDirection.Output, new Float(2), OUT));
 

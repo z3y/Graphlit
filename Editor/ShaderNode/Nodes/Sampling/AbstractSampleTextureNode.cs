@@ -32,7 +32,7 @@ namespace ZSG
 
         Port _texturePort;
         Port _samplerPort;
-        public override void AddElements()
+        public override void Initialize()
         {
             _texturePort = AddPort(new(PortDirection.Input, TextureType, TEX, "Texture"));
             _samplerPort = AddPort(new(PortDirection.Input, new SamplerState(), SAMPLER, "Sampler"));

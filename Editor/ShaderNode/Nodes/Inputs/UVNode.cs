@@ -19,7 +19,7 @@ namespace ZSG
             UV0, UV1, UV2, UV3
         }
 
-        public override void AddElements()
+        public override void Initialize()
         {
             AddPort(new(PortDirection.Output, new Float(2, true), OUT));
             Bind(OUT, ChannelToBinding());

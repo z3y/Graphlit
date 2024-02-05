@@ -12,9 +12,9 @@ namespace ZSG
         public override IPortType TextureType => new Texture2DArrayObject();
         public override string SampleMethod => $"SAMPLE_TEXTURE2D_ARRAY({PortData[TEX].Name}, {GetSamplerName(PortData[TEX].Name)}, {PortData[UV].Name}, {PortData[INDEX].Name})";
 
-        public override void AddElements()
+        public override void Initialize()
         {
-            base.AddElements();
+            base.Initialize();
             AddPort(new(PortDirection.Input, new Float(1), INDEX, "Index"));
         }
     }
@@ -26,9 +26,9 @@ namespace ZSG
         public override bool HasLod => true;
         public override string SampleMethod => $"SAMPLE_TEXTURE2D_ARRAY_LOD({PortData[TEX].Name}, {GetSamplerName(PortData[TEX].Name)}, {PortData[UV].Name}, {PortData[INDEX].Name}, {PortData[LOD].Name})";
 
-        public override void AddElements()
+        public override void Initialize()
         {
-            base.AddElements();
+            base.Initialize();
             AddPort(new(PortDirection.Input, new Float(1), INDEX, "Index"));
         }
     }

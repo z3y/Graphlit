@@ -60,7 +60,7 @@ namespace ZSG
 
     public abstract class ShaderNode : Node
     {
-        public void Initialize(ShaderGraphView graphView, Vector2 position, string guid = null)
+        public void InitializeInternal(ShaderGraphView graphView, Vector2 position, string guid = null)
         {
             base.SetPosition(new Rect(position, Vector3.one));
             if (guid is not null) viewDataKey = guid;
@@ -224,7 +224,7 @@ namespace ZSG
             }
         }
 
-        public abstract void AddElements();
+        public abstract void Initialize();
         public virtual int PreviewResolution => 96;
         protected internal PreviewType? _defaultPreview = null;
         public PreviewType DefaultPreview
@@ -346,7 +346,7 @@ namespace ZSG
 
             AddStyles();
             AddTitleElement();
-            AddElements();
+            Initialize();
             if (!DisablePreview)
             {
                 AddPreview();

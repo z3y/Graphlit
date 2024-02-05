@@ -57,7 +57,7 @@ namespace ZSG
 
         public override Color Accent => new Color(0.2f, 0.4f, 0.8f);
 
-        public override void AddElements()
+        public override void Initialize()
         {
             inputContainer.Add(new VisualElement());
             outputContainer.Add(new VisualElement());

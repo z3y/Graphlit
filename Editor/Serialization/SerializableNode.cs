@@ -69,7 +69,7 @@ namespace ZSG
             shaderNode._defaultPreview = this.preview;
             shaderNode._previewDisabled = this.previewDisabled;
 
-            shaderNode.Initialize(graphView, Position, guid);
+            shaderNode.InitializeInternal(graphView, Position, guid);
 
             return true;
         }

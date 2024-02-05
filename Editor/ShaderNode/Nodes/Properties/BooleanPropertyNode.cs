@@ -8,9 +8,9 @@ namespace ZSG
     public class BooleanPropertyNode : PropertyNode
     {
         protected override PropertyType propertyType => PropertyType.Bool;
-        public override void AddElements()
+        public override void Initialize()
         {
-            base.AddElements();
+            base.Initialize();
             AddPort(new(PortDirection.Output, new Bool(), OUT));
         }
     }
