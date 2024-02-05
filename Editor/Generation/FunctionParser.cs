@@ -117,7 +117,7 @@ namespace ZSG
             }
             catch(Exception e)
             {
-                Debug.LogError(e);
+                Debug.LogError("Failed to parse " + code + e);
             }
 
             return false;

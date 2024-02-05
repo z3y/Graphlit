@@ -63,15 +63,19 @@ namespace ZSG
             builder.properties.Add(_zwrite);
             builder.properties.Add(_cull);
 
-            builder.subshaderTags.Add("RenderType", "Opaque");
+            builder.subshaderTags["RenderType"] = "Opaque";
+            builder.subshaderTags["Queue"] = "Geometry";
+
             {
                 var pass = new PassBuilder("FORWARD", Vertex, FragmentForward, POSITION, NORMAL, TANGENT, COLOR, ALPHA, CUTOFF);
                 pass.tags["LightMode"] = "ForwardBase";
 
                 pass.renderStates["Cull"] = "[_Cull]";
                 pass.renderStates["ZWrite"] = "[_ZWrite]";
+                pass.renderStates["Blend"] = "[_SrcBlend] [_DstBlend]";
 
-                //pass.pragmas.Add("#pragma shader_feature_local_fragment ");
+
+                pass.pragmas.Add("#pragma shader_feature_local _ _ALPHAFADE_ON _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
 
                 pass.pragmas.Add("#pragma multi_compile_fwdbase");
                 pass.pragmas.Add("#pragma multi_compile_fog");
@@ -95,9 +99,12 @@ namespace ZSG
                 pass.tags["LightMode"] = "ShadowCaster";
                 pass.renderStates["ZWrite"] = "On";
                 pass.renderStates["ZTest"] = "LEqual";
+                pass.renderStates["Cull"] = "[_Cull]";
 
                 pass.pragmas.Add("#pragma multi_compile_shadowcaster");
                 pass.pragmas.Add("#pragma multi_compile_instancing");
+                pass.pragmas.Add("#pragma shader_feature_local _ _ALPHAFADE_ON _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
+
 
                 pass.attributes.RequirePositionOS();
                 pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
