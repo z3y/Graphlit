@@ -160,7 +160,7 @@ namespace ZSG
         {
             string value = "positionWS";
             var positionOS = pass.attributes.RequirePositionOS(3);
-            pass.AddVertexBinding($"float3 {value} = {SpaceTransform.ObjectToWorld(positionOS)};");
+            pass.AddVertexBinding($"float3 {value} = {SpaceTransform.ObjectToWorldPosition(positionOS)};");
             return value;
         }
         private static string RequirePositionWSVertex(PassBuilder pass)

@@ -29,9 +29,10 @@ namespace ZSG
             AddPort(new(PortDirection.Input, new Float(4, false), TANGENT, "Tangent"));
 
             var separator = new VisualElement();
-            separator.style.height = 2;
-            separator.style.backgroundColor = Color.gray;
+            separator.style.height = 16;
+            separator.style.backgroundColor = Color.clear;
             inputContainer.Add(separator);
+
             AddPort(new(PortDirection.Input, new Float(3, false), COLOR, "Color"));
             AddPort(new(PortDirection.Input, new Float(1, false), ALPHA, "Alpha"));
             AddPort(new(PortDirection.Input, new Float(1, false), CUTOFF, "Cutoff"));
@@ -44,12 +45,13 @@ namespace ZSG
             DefaultValues[CUTOFF] = "0.5";
         }
 
+        static readonly PropertyDescriptor _surfaceOptionsStart = new(PropertyType.Float, "SurfaceOptions", "_SurfaceOptions") { customAttributes = "[Foldout]" };
         static readonly PropertyDescriptor _mode = new (PropertyType.Float, "Rendering Mode", "_Mode") { customAttributes = "[Enum(Opaque, 0, Cutout, 1, Fade, 2, Transparent, 3, Additive, 4, Multiply, 5)]" };
         static readonly PropertyDescriptor _srcBlend = new (PropertyType.Float, "Source Blend", "_SrcBlend") { FloatValue = 1, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         static readonly PropertyDescriptor _dstBlend = new(PropertyType.Float, "Destination Blend", "_DstBlend") { FloatValue = 0, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         static readonly PropertyDescriptor _zwrite = new(PropertyType.Float, "ZWrite", "_ZWrite") { FloatValue = 1, customAttributes = "[Enum(Off, 0, On, 1)]" };
         static readonly PropertyDescriptor _cull = new(PropertyType.Float, "Cull", "_Cull") { FloatValue = 2, customAttributes = "[Enum(UnityEngine.Rendering.CullMode)]" };
-
+        static readonly PropertyDescriptor _properties = new(PropertyType.Float, "Properties", "_Properties") { customAttributes = "[Foldout]" };
 
         const string Vertex = "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/Vertex.hlsl";
         const string FragmentForward = "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/FragmentForward.hlsl";
@@ -57,11 +59,14 @@ namespace ZSG
 
         public override void BuilderPassthourgh(ShaderBuilder builder)
         {
+            builder.properties.Add(_surfaceOptionsStart);
             builder.properties.Add(_mode);
             builder.properties.Add(_srcBlend);
             builder.properties.Add(_dstBlend);
             builder.properties.Add(_zwrite);
             builder.properties.Add(_cull);
+            builder.properties.Add(_properties);
+
 
             builder.subshaderTags["RenderType"] = "Opaque";
             builder.subshaderTags["Queue"] = "Geometry";
