@@ -36,7 +36,7 @@ namespace ZSG
 
         protected override void Generate(NodeVisitor visitor)
         {
-            ChangeComponents(OUT, ImplicitTruncation(TRUE, FALSE).components);
+            ChangeDimensions(OUT, ImplicitTruncation(TRUE, FALSE).dimensions);
 
             if (_dynamicBranch)
             {
@@ -44,7 +44,7 @@ namespace ZSG
 
                 var data = PortData[OUT];
                 var type = (Float)data.Type;
-                visitor.AppendLine($"{PrecisionString(type.components)} {data.Name};");
+                visitor.AppendLine($"{PrecisionString(type.dimensions)} {data.Name};");
                 visitor.AppendLine($"UNITY_BRANCH if ({PortData[BOOL].Name})");
                 visitor.AppendLine("{");
                 visitor.AppendLine($"   {data.Name} = {PortData[TRUE].Name};");

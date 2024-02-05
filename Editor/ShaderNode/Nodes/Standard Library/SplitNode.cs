@@ -32,7 +32,7 @@ namespace ZSG
 
         protected override void Generate(NodeVisitor visitor)
         {
-            int c = GetComponents(IN);
+            int c = GetDimensions(IN);
             string name = PortData[IN].Name;
 
             _r.visible = c >= 1;

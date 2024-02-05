@@ -475,12 +475,12 @@ namespace ZSG
 
                 if (portDescriptor.Type is Float @float)
                 {
-                    return PortBindings.GetBindingString(pass, visitor.Stage, @float.components, binding);
+                    return PortBindings.GetBindingString(pass, visitor.Stage, @float.dimensions, binding);
                 }
             }
             else if (portDescriptor.Type is Float @float)
             {
-                int c = @float.components;
+                int c = @float.dimensions;
                 return c switch
                 {
                     1 => PrecisionString(1) + "(0)",
@@ -541,15 +541,15 @@ namespace ZSG
                     if (newData.Type is Float incomingFloat && descriptor.Type is Float resultFloat)
                     {
                         // automatic cast
-                        if (!resultFloat.dynamic && resultFloat.components != incomingFloat.components)
+                        if (!resultFloat.dynamic && resultFloat.dimensions != incomingFloat.dimensions)
                         {
                             PortData[id] = newData;
-                            newData = Cast(id, resultFloat.components, false);
+                            newData = Cast(id, resultFloat.dimensions, false);
                         }
 
                         if (resultFloat.dynamic)
                         {
-                            resultFloat.components = incomingFloat.components;
+                            resultFloat.dimensions = incomingFloat.dimensions;
                         }
 
                         newData.Type = resultFloat;
@@ -575,20 +575,20 @@ namespace ZSG
             data.Name = name;
             PortData[id] = data;
         }
-        public string PrecisionString(int component)
+        public string PrecisionString(int dimensions)
         {
             string precisionString = _inheritedPrecision ? "float" : "half";
-            if (component == 1) return precisionString;
-            if (component > 4 || component < 0) return "error" + component;
-            return precisionString + component;
+            if (dimensions == 1) return precisionString;
+            if (dimensions > 4 || dimensions < 0) return "error" + dimensions;
+            return precisionString + dimensions;
         }
 
-        public void ChangeComponents(int id, int components)
+        public void ChangeDimensions(int id, int dimensions)
         {
             var data = PortData[id];
             if (data.Type is Float @float)
             {
-                @float.components = components;
+                @float.dimensions = dimensions;
                 data.Type = @float;
             }
             PortData[id] = data;
@@ -599,7 +599,7 @@ namespace ZSG
 
             var data = PortData[outID];
             var type = (Float)data.Type;
-            visitor.AppendLine($"{PrecisionString(type.components)} {data.Name} = {line};");
+            visitor.AppendLine($"{PrecisionString(type.dimensions)} {data.Name} = {line};");
         }
 
         public Float ImplicitTruncation(params int[] IDs)
@@ -611,13 +611,13 @@ namespace ZSG
             {
                 var ID = IDs[i];
                 var type = (Float)PortData[ID].Type;
-                var components = type.components;
-                if (components == 1)
+                var dimensions = type.dimensions;
+                if (dimensions == 1)
                 {
                     continue;
                 }
-                max = Mathf.Max(max, components);
-                trunc = Mathf.Min(trunc, components);
+                max = Mathf.Max(max, dimensions);
+                trunc = Mathf.Min(trunc, dimensions);
             }
             trunc = Mathf.Min(trunc, max);
 
@@ -630,60 +630,60 @@ namespace ZSG
 
             return new Float(trunc);
         }
-        public int GetComponents(int id)
+        public int GetDimensions(int id)
         {
             var type = (Float)PortData[id].Type;
-            return type.components;
+            return type.dimensions;
         }
 
-        public GeneratedPortData Cast(int portID, int targetComponent, bool updatePort = true)
+        public GeneratedPortData Cast(int portID, int targetDimensions, bool updatePort = true)
         {
             var data = PortData[portID];
             var name = data.Name;
             var type = (Float)PortData[portID].Type;
-            var components = type.components;
+            var dimensions = type.dimensions;
             string typeName = _inheritedPrecision ? "float" : "half";
 
-            if (components == targetComponent)
+            if (dimensions == targetDimensions)
             {
                 return data;
             }
 
             // downcast
-            if (components > targetComponent)
+            if (dimensions > targetDimensions)
             {
-                name = name + ".xyz"[..(targetComponent + 1)];
+                name = name + ".xyz"[..(targetDimensions + 1)];
             }
             else
             {
                 // upcast
-                if (components == 1)
+                if (dimensions == 1)
                 {
                     // no need to upcast
                     // name = "(" + name + ").xxxx"[..(targetComponent + 2)];
                     return data;
                 }
-                else if (components == 2)
+                else if (dimensions == 2)
                 {
-                    if (targetComponent == 3)
+                    if (targetDimensions == 3)
                     {
                         name = typeName + "3(" + name + ", 0)";
                     }
-                    if (targetComponent == 4)
+                    if (targetDimensions == 4)
                     {
                         name = typeName + "4(" + name + ", 0, 0)";
                     }
                 }
-                else if (components == 3)
+                else if (dimensions == 3)
                 {
-                    if (targetComponent == 4)
+                    if (targetDimensions == 4)
                     {
                         name = typeName + "4(" + name + ", 0)";
                     }
                 }
             }
 
-            type.components = targetComponent;
+            type.dimensions = targetDimensions;
             var newData = new GeneratedPortData(type, name);
             if (updatePort) PortData[portID] = newData;
 

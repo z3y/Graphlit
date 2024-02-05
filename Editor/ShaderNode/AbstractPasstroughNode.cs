@@ -15,7 +15,7 @@ namespace ZSG
 
         protected override void Generate(NodeVisitor visitor)
         {
-            ChangeComponents(OUT, GetComponents(IN));
+            ChangeDimensions(OUT, GetDimensions(IN));
         }
     }
 }

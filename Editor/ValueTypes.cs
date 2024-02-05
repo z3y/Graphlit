@@ -9,21 +9,21 @@ namespace ZSG.Nodes.PortType
 
     public struct Float : IPortType
     {
-        public int components;
+        public int dimensions;
         public bool dynamic;
-        public Float(int components, bool dynamic = false)
+        public Float(int dimensions, bool dynamic = false)
         {
-            if (components < 1 || components > 4)
+            if (dimensions < 1 || dimensions > 4)
             {
-                Debug.LogError("Invalid component count");
+                Debug.LogError("Invalid dimension count");
             }
-            this.components = components;
+            this.dimensions = dimensions;
             this.dynamic = dynamic;
         }
 
         public override string ToString()
         {
-            return components switch
+            return dimensions switch
             {
                 1 => "float",
                 2 => "float2",
@@ -39,7 +39,7 @@ namespace ZSG.Nodes.PortType
         public static Color Float4Color = new Color(226 / 255.0f, 160 / 255.0f, 255 / 255.0f); // magenta
         public Color GetPortColor()
         {
-            return components switch
+            return dimensions switch
             {
                 1 => Float1Color,
                 2 => Float2Color,

@@ -194,8 +194,8 @@ namespace ZSG
         {
             guid = Guid.NewGuid().ToString();
             this.type = type;
-            this.displayName = string.IsNullOrEmpty(displayName) ? type.ToString() : displayName;
-            this.referenceName = referenceName;
+            this.displayName = string.IsNullOrEmpty(displayName) ? type.ToString() : displayName.Trim();
+            this.referenceName = referenceName.Trim();
             if (type == PropertyType.Color)
             {
                 VectorValue = Vector4.one;

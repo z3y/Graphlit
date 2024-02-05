@@ -25,13 +25,13 @@ namespace ZSG
         {
             base.Generate(visitor);
 
-            ChangeComponents(OUT, ImplicitTruncation(TRUE, FALSE).components);
+            ChangeDimensions(OUT, ImplicitTruncation(TRUE, FALSE).dimensions);
 
             SetVariable(OUT, UniqueVariable);
 
             var data = PortData[OUT];
             var type = (Float)data.Type;
-            visitor.AppendLine($"{PrecisionString(type.components)} {data.Name};");
+            visitor.AppendLine($"{PrecisionString(type.dimensions)} {data.Name};");
             visitor.AppendLine($"#ifdef {propertyDescriptor.KeywordName}");
             visitor.AppendLine($"{data.Name} = {PortData[TRUE].Name};");
             visitor.AppendLine("#else");

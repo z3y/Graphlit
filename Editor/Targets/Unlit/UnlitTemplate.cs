@@ -6,7 +6,7 @@ using UnityEditor;
 
 namespace ZSG
 {
-    [NodeInfo("Targets/Unlit")]
+    [NodeInfo("Targets/Unlit Target")]
     public class UnlitTemplate : TemplateOutput
     {
         [MenuItem("Assets/Create/ZSG/Unlit Graph")]
@@ -39,6 +39,7 @@ namespace ZSG
             Bind(POSITION, PortBinding.PositionOS);
             Bind(NORMAL, PortBinding.NormalOS);
             Bind(TANGENT, PortBinding.TangentOS);
+            DefaultValues[COLOR] = "float3(1.0, 1.0, 1.0)";
             DefaultValues[ALPHA] = "1.0";
             DefaultValues[CUTOFF] = "0.5";
         }
@@ -47,7 +48,7 @@ namespace ZSG
         static readonly PropertyDescriptor _srcBlend = new (PropertyType.Float, "Source Blend", "_SrcBlend") { FloatValue = 1, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         static readonly PropertyDescriptor _dstBlend = new(PropertyType.Float, "Destination Blend", "_DstBlend") { FloatValue = 0, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         static readonly PropertyDescriptor _zwrite = new(PropertyType.Float, "ZWrite", "_ZWrite") { FloatValue = 1, customAttributes = "[Enum(Off, 0, On, 1)]" };
-        static readonly PropertyDescriptor _cull = new(PropertyType.Float, "Cull", "_Cull ") { FloatValue = 2, customAttributes = "[Enum(UnityEngine.Rendering.CullMode)]" };
+        static readonly PropertyDescriptor _cull = new(PropertyType.Float, "Cull", "_Cull") { FloatValue = 2, customAttributes = "[Enum(UnityEngine.Rendering.CullMode)]" };
 
 
         const string Vertex = "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/Vertex.hlsl";
