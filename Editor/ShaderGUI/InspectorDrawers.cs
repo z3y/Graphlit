@@ -1,8 +1,6 @@
 using UnityEditor;
 using UnityEngine;
-using UnityEditor.Rendering;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace ZSG
@@ -75,6 +73,20 @@ namespace ZSG
                 EditorGUI.BeginChangeCheck();
                 Vector2 vectorValue = EditorGUI.Vector2Field(rect, label, property.vectorValue);
                 if (EditorGUI.EndChangeCheck()) property.vectorValue = vectorValue;
+            });
+        }
+        public static void Vector2MinMaxProperty(MaterialEditor editor, MaterialProperty property, GUIContent label, float min, float max)
+        {
+            MaterialPropertyInternal(property, (rect) =>
+            {
+                EditorGUI.BeginChangeCheck();
+                float x = property.vectorValue.x;
+                float y = property.vectorValue.y;
+                EditorGUI.MinMaxSlider(rect, label, ref x, ref y, min, max);
+                if (EditorGUI.EndChangeCheck())
+                {
+                    property.vectorValue = new Vector2(x, y);
+                }
             });
         }
         public static Rect GetControlRect(MaterialProperty property)

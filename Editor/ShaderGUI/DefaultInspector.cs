@@ -25,6 +25,14 @@ namespace ZSG
         public static void Reinitialize() => _reinitialize = true;
         public override void OnGUI(MaterialEditor editor, MaterialProperty[] properties)
         {
+            var style = GUI.skin.customStyles;
+            bool[] richTextState = new bool[style.Length];
+            for (int i = 0; i < style.Length; i++)
+            {
+                richTextState[i] = style[i].richText;
+                style[i].richText = true;
+            }
+
             if (_start || _reinitialize)
             {
                 OnGUIStart(editor, properties);
@@ -35,6 +43,11 @@ namespace ZSG
 
             UserProperties(editor, properties);
             Footer(editor);
+
+            for (int i = 0; i < style.Length; i++)
+            {
+                style[i].richText = richTextState[i];
+            }
         }
 
         public override void AssignNewShaderToMaterial(Material material, Shader oldShader, Shader newShader)
@@ -94,7 +107,22 @@ namespace ZSG
                     continue;
                 }
 
-                if (referenceName == "_Mode")
+
+                var minMax = attributes.Where(x => x.StartsWith("MinMax("));
+                if (minMax.Count() > 0)
+                {
+                    string[] split = minMax.First().Substring("MinMax(".Length).TrimEnd(')').Split(',');
+                    if (split.Length != 2)
+                    {
+                        Debug.LogError("Invalid Min Max");
+                        continue;
+                    }
+                    float.TryParse(split[0], out float min);
+                    float.TryParse(split[1], out float max);
+
+                    p.onGui = (e, m, i) => Vector2MinMaxProperty(e, m[i], guiContent, min, max);
+                }
+                else if (referenceName == "_Mode")
                 {
                     p.onGui = (e, m, i) => RenderingModeProperty(e, m[i], guiContent);
                 }
