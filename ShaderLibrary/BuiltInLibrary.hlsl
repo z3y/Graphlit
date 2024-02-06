@@ -19,10 +19,10 @@
 #undef UNITY_MATRIX_IT_MV
 
 #include "UnityShaderVariables.cginc"
-
-// global built in variables
 half4 _LightColor0;
 half4 _SpecColor;
+#include "UnityShaderUtilities.cginc"
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl"
 
 #ifdef PREVIEW
     #include "Packages/com.z3y.myshadergraph/Editor/Targets/Graph.hlsl"
@@ -31,10 +31,8 @@ half4 _SpecColor;
 #include "UnityCG/UnityCG.hlsl"
 #include "AutoLight.cginc"
 
-#include "UnityShaderUtilities.cginc"
-
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl"
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
+
 
 Texture2D nullTexture;
 SamplerState null_LinearRepeat;

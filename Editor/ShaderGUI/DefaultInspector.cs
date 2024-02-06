@@ -4,6 +4,8 @@ using UnityEditor.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 namespace ZSG
 {
@@ -39,7 +41,6 @@ namespace ZSG
                 _start = false;
                 _reinitialize = false;
             }
-
 
             UserProperties(editor, properties);
             Footer(editor);
@@ -85,16 +86,15 @@ namespace ZSG
                     }
                 }
 
-
-                var guiContent = new GUIContent(materialProperty.displayName, tooltip);
+                p.guiContent = new GUIContent(materialProperty.displayName, tooltip);
 
                 if (attributes.Contains("Foldout"))
                 {
-                    p.onGui = (e, m, i) =>
+                    p.onGui = (e, prop, g) =>
                     {
                         CoreEditorUtils.DrawSplitter();
-                        p.hideChildren = CoreEditorUtils.DrawHeaderFoldout(materialProperty.displayName, m[i].floatValue == 0);
-                        m[i].floatValue = p.hideChildren ? 0 : 1;
+                        p.hideChildren = CoreEditorUtils.DrawHeaderFoldout(g.text, prop.floatValue == 0);
+                        prop.floatValue = p.hideChildren ? 0 : 1;
                     };
 
                     _propertyTree.Add(p);
@@ -120,43 +120,50 @@ namespace ZSG
                     float.TryParse(split[0], out float min);
                     float.TryParse(split[1], out float max);
 
-                    p.onGui = (e, m, i) => Vector2MinMaxProperty(e, m[i], guiContent, min, max);
+                    p.onGui = (e, p, g) => Vector2MinMaxProperty(e, p, g, min, max);
                 }
                 else if (referenceName == "_Mode")
                 {
-                    p.onGui = (e, m, i) => RenderingModeProperty(e, m[i], guiContent);
+                    p.onGui = (e, p, g) => RenderingModeProperty(e, p, g);
                 }
                 else if (materialProperty.type == MaterialProperty.PropType.Texture)
                 {
-                    p.onGui = (e, m, i) => TextureProperty(e, m[i], guiContent);
+                    p.onGui = (e, p, g) => TextureProperty(e, p, g);
                     if (attributes.Contains("Linear"))
                     {
-                        p.onGui += (e, m, i) => LinearWarning(m[i]);
+                        p.onGui += (e, p, g) => LinearWarning(p);
                     }
                 }
                 else if (materialProperty.type == MaterialProperty.PropType.Vector)
                 {
                     if (attributes.Contains("Vector2"))
                     {
-                        p.onGui = (e, m, i) => Vector2Property(e, m[i], guiContent);
+                        p.onGui = Vector2PropertyAction;
                     }
                     else if (attributes.Contains("Vector3"))
                     {
-                        p.onGui = (e, m, i) => Vector3Property(e, m[i], guiContent);
+                        p.onGui = Vector3PropertyAction;
                     }
                     else
                     {
-                        p.onGui = (e, m, i) => Vector4Property(e, m[i], guiContent);
+                        p.onGui = Vector4PropertyAction;
                     }
                 }
                 else
                 {
-                    p.onGui = (e, m, i) => e.ShaderProperty(m[i], guiContent);
+                    p.onGui = ShaderPropertyAction;
                 }
 
                 current.Add(p);
             }
         }
+
+        static void ShaderPropertyAction(MaterialEditor e, MaterialProperty p, GUIContent g) => e.ShaderProperty(p, g);
+        static void Vector2PropertyAction(MaterialEditor e, MaterialProperty p, GUIContent g) => Vector2Property(e, p, g);
+        static void Vector3PropertyAction(MaterialEditor e, MaterialProperty p, GUIContent g) => Vector3Property(e, p, g);
+        static void Vector4PropertyAction(MaterialEditor e, MaterialProperty p, GUIContent g) => Vector4Property(e, p, g);
+
+
 
         void UserProperties(MaterialEditor editor, MaterialProperty[] properties)
         {
@@ -184,9 +191,10 @@ namespace ZSG
             }
             int _index;
             public bool hideChildren = false;
-            public Action<MaterialEditor, MaterialProperty[], int> onGui;
+            public Action<MaterialEditor, MaterialProperty, GUIContent> onGui;
             public List<PropertyElement> Children { get; private set; }
             public PropertyElement Parent { get; private set; }
+            public GUIContent guiContent;
             public void Add(PropertyElement p)
             {
                 Children ??= new List<PropertyElement>();
@@ -196,7 +204,7 @@ namespace ZSG
 
             public void OnGUI(MaterialEditor editor, MaterialProperty[] properties)
             {
-                onGui.Invoke(editor, properties, _index);
+                onGui.Invoke(editor, properties[_index], guiContent);
 
                 if (hideChildren && Children is not null)
                 {
@@ -208,7 +216,7 @@ namespace ZSG
             }
         }
 
-        public virtual void SetupRenderingMode(Material material)
+        public static void SetupRenderingMode(Material material)
         {
             const string Mode = "_Mode";
             if (!material.HasFloat(Mode))
