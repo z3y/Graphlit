@@ -3,7 +3,7 @@ using ZSG.Nodes;
 namespace ZSG
 {
     [NodeInfo("Math/FWidth")]
-    public class FWidthNode : PasstroughNode
+    public class FWidthNode : PassthroughNode
     {
         protected override void Generate(NodeVisitor visitor)
         {

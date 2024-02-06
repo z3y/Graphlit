@@ -3,7 +3,7 @@ using ZSG.Nodes;
 namespace ZSG
 {
     [NodeInfo("Math/Square Root")]
-    public class SqrtNode : PasstroughNode
+    public class SqrtNode : PassthroughNode
     {
         protected override void Generate(NodeVisitor visitor)
         {

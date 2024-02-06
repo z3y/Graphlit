@@ -3,7 +3,7 @@ using ZSG.Nodes;
 namespace ZSG
 {
     [NodeInfo("Math/ATan")]
-    public class ATanNode : PasstroughNode
+    public class ATanNode : PassthroughNode
     {
         protected override void Generate(NodeVisitor visitor)
         {

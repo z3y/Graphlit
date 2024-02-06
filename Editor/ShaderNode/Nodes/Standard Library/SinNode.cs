@@ -3,7 +3,7 @@ using ZSG.Nodes;
 namespace ZSG
 {
     [NodeInfo("Math/Sin", "sin(A)")]
-    public class SinNode : PasstroughNode
+    public class SinNode : PassthroughNode
     {
         protected override void Generate(NodeVisitor visitor)
         {

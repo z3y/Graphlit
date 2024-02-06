@@ -3,7 +3,7 @@ using ZSG.Nodes;
 namespace ZSG
 {
     [NodeInfo("Math/Normalize", "normalize(a)")]
-    public class NormalizeNode : PasstroughNode
+    public class NormalizeNode : PassthroughNode
     {
         protected override void Generate(NodeVisitor visitor)
         {

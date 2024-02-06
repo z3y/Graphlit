@@ -3,7 +3,7 @@ using ZSG.Nodes;
 namespace ZSG
 {
     [NodeInfo("Math/Ceil")]
-    public class CeilNode : PasstroughNode
+    public class CeilNode : PassthroughNode
     {
         protected override void Generate(NodeVisitor visitor)
         {

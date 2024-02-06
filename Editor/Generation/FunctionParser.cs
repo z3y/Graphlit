@@ -60,7 +60,6 @@ namespace ZSG
                     if (Array.Exists(EntryKeywords, x => lines[i].StartsWith(x)))
                     {
                         entry = i;
-                        break;
                     }
                     else if (lines[i].StartsWith("[Main] "))
                     {

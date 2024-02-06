@@ -3,7 +3,7 @@ using ZSG.Nodes;
 namespace ZSG
 {
     [NodeInfo("Math/Saturate")]
-    public class SaturateNode : PasstroughNode
+    public class SaturateNode : PassthroughNode
     {
         protected override void Generate(NodeVisitor visitor)
         {

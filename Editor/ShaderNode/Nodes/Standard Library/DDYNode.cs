@@ -3,7 +3,7 @@ using ZSG.Nodes;
 namespace ZSG
 {
     [NodeInfo("Math/DDY")]
-    public class DDYNode : PasstroughNode
+    public class DDYNode : PassthroughNode
     {
         public override Precision DefaultPrecisionOverride => Precision.Float;
 

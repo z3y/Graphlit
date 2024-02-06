@@ -3,7 +3,7 @@ using ZSG.Nodes;
 namespace ZSG
 {
     [NodeInfo("Math/Length")]
-    public class LengthhNode : PasstroughNode
+    public class LengthhNode : PassthroughNode
     {
         protected override void Generate(NodeVisitor visitor)
         {

@@ -3,7 +3,7 @@ using ZSG.Nodes;
 namespace ZSG
 {
     [NodeInfo("Math/ACos")]
-    public class ACosNode : PasstroughNode
+    public class ACosNode : PassthroughNode
     {
         protected override void Generate(NodeVisitor visitor)
         {

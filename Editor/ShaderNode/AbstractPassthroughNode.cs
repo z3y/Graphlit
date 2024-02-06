@@ -2,7 +2,7 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    public abstract class PasstroughNode : ShaderNode
+    public abstract class PassthroughNode : ShaderNode
     {
         protected const int IN = 0;
         protected const int OUT = 1;

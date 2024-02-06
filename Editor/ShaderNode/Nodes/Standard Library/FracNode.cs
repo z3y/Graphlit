@@ -3,7 +3,7 @@ using ZSG.Nodes;
 namespace ZSG
 {
     [NodeInfo("Math/Frac")]
-    public class FracNode : PasstroughNode
+    public class FracNode : PassthroughNode
     {
         protected override void Generate(NodeVisitor visitor)
         {
