@@ -100,7 +100,7 @@ namespace ZSG
             }
 
             {
-                var pass = new PassBuilder("SHADOWCASTER", Vertex, FragmentShadow, POSITION, ALPHA, CUTOFF);
+                var pass = new PassBuilder("SHADOWCASTER", Vertex, FragmentShadow, POSITION, NORMAL, ALPHA, CUTOFF);
                 pass.tags["LightMode"] = "ShadowCaster";
                 pass.renderStates["ZWrite"] = "On";
                 pass.renderStates["ZTest"] = "LEqual";

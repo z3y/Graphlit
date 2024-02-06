@@ -5,11 +5,9 @@
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonMaterial.hlsl"
     
 #include "UnityCG/ShaderVariablesMatrixDefsLegacyUnity.hlsl"
-    
-#undef GLOBAL_CBUFFER_START // dont need reg
-#define GLOBAL_CBUFFER_START(name) CBUFFER_START(name)
 
 // fix macro redefinition warnings
+#undef GLOBAL_CBUFFER_START
 #undef SAMPLE_DEPTH_TEXTURE
 #undef SAMPLE_DEPTH_TEXTURE_LOD
 #undef UNITY_MATRIX_P
