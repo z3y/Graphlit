@@ -116,15 +116,47 @@ namespace ZSG
                 _code = evt.newValue;
             });
 
+            var saveToFile = new Button()
+            {
+                text = "Save To File"
+            };
+            saveToFile.clicked += () =>
+            {
+                if (!_functionParser.TryParse(Code))
+                {
+                    return;
+                }
+                var path = EditorUtility.SaveFilePanel(
+                    "Save text as hlsl",
+                    "Assets/",
+                    _functionParser.methodName + ".hlsl",
+                    "hlsl");
+
+                if (path.Length != 0)
+                {
+                    File.WriteAllText(path, _code);
+                    string unityPath = "Assets" + path.Substring(Application.dataPath.Length);
+                    AssetDatabase.ImportAsset(unityPath);
+                    var asset = AssetDatabase.LoadAssetAtPath<ShaderInclude>(unityPath);
+                    AssetDatabase.SetLabels(asset, new[] { Tag });
+                    UseFile(asset);
+                    file.value = asset;
+                    RefreshState();
+                    ParseAndUpdate();
+                }
+            };
+
             root.Add(useFile);
             root.Add(file);
             root.Add(updateButton);
             root.Add(code);
+            root.Add(saveToFile);
 
             void RefreshState()
             {
                 file.style.display = !_useFile ? DisplayStyle.None : DisplayStyle.Flex;
                 code.style.display = _useFile ? DisplayStyle.None : DisplayStyle.Flex;
+                saveToFile.style.display = code.style.display;
             }
 
             useFile.RegisterValueChangedCallback(x =>

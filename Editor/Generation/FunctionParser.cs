@@ -35,10 +35,13 @@ namespace ZSG
         readonly string[] EntryKeywords = new []
         {
             "void ",
-            "float ",
-            "half ",
-            "int ",
-            "uint "
+            "float",
+            "half",
+            "Texture",
+            "SamplerState",
+            "bool",
+            "int",
+            "uint"
         };
 
         public List<PortDescriptor> descriptors = new List<PortDescriptor>();
@@ -55,11 +58,12 @@ namespace ZSG
                 int entry = 0;
                 string[] lines = code.Split('\n');
                 bool hasMain = false;
-                for (int i = 0; i < lines.Length; i++)
+                for (int i = lines.Length - 1; i >= 0; i--)
                 {
                     if (Array.Exists(EntryKeywords, x => lines[i].StartsWith(x)))
                     {
                         entry = i;
+                        break;
                     }
                     else if (lines[i].StartsWith("[Main] "))
                     {
