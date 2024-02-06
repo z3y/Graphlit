@@ -1,5 +1,8 @@
 #pragma once
 
+Texture2D nullTexture;
+SamplerState null_LinearRepeat;
+
 float Unity_Dither(float In, float2 ScreenPosition)
 {
     float2 uv = ScreenPosition * _ScreenParams.xy;

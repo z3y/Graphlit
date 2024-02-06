@@ -1,3 +1,4 @@
+
 struct FragmentData
 {
     float3 positionWS;

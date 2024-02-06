@@ -16,6 +16,10 @@
 #undef UNITY_MATRIX_T_MV
 #undef UNITY_MATRIX_IT_MV
 
+#define pos positionCS
+#define vertex positionOS
+#define normal normalOS
+
 #include "UnityShaderVariables.cginc"
 half4 _LightColor0;
 half4 _SpecColor;
@@ -31,6 +35,4 @@ half4 _SpecColor;
 
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
 
-
-Texture2D nullTexture;
-SamplerState null_LinearRepeat;
+#include "Packages/com.z3y.myshadergraph/ShaderLibrary/GraphFunctions.hlsl"

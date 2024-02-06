@@ -85,7 +85,7 @@ namespace ZSG
                 _ => throw new NotImplementedException()
             };
         }
-
+        public static void Require(PassBuilder pass, ShaderStage stage, PortBinding binding) => GetBindingString(pass, stage, 2, binding);
         public static string GetBindingString(PassBuilder pass, ShaderStage stage, int components, PortBinding binding)
         {
             if (stage == ShaderStage.Vertex)

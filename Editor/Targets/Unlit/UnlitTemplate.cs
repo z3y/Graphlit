@@ -57,7 +57,7 @@ namespace ZSG
         const string FragmentForward = "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/FragmentForward.hlsl";
         const string FragmentShadow = "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/FragmentShadow.hlsl";
 
-        public override void BuilderPassthourgh(ShaderBuilder builder)
+        public override void BuilderPassthrough(ShaderBuilder builder)
         {
             builder.properties.Add(_surfaceOptionsStart);
             builder.properties.Add(_mode);
@@ -71,6 +71,7 @@ namespace ZSG
             builder.subshaderTags["RenderType"] = "Opaque";
             builder.subshaderTags["Queue"] = "Geometry";
 
+
             {
                 var pass = new PassBuilder("FORWARD", Vertex, FragmentForward, POSITION, NORMAL, TANGENT, COLOR, ALPHA, CUTOFF);
                 pass.tags["LightMode"] = "ForwardBase";
@@ -82,7 +83,7 @@ namespace ZSG
 
                 pass.pragmas.Add("#pragma shader_feature_local _ _ALPHAFADE_ON _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
 
-                pass.pragmas.Add("#pragma multi_compile_fwdbase");
+                //pass.pragmas.Add("#pragma multi_compile_fwdbase");
                 pass.pragmas.Add("#pragma multi_compile_fog");
                 pass.pragmas.Add("#pragma multi_compile_instancing");
 

@@ -57,7 +57,7 @@ namespace ZSG
             fallback = graphData.fallback;
 
 
-            target.BuilderPassthourgh(this);
+            target.BuilderPassthrough(this);
 
             for (int i = 0; i < passBuilders.Count; i++)
             {
@@ -315,7 +315,7 @@ namespace ZSG
                         }
                         else
                         {
-                            _defaultTextures.Add(referenceName, texture);
+                            _defaultTextures[referenceName] = texture;
                         }
                     }
                 }
