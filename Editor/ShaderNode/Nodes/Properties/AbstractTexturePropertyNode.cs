@@ -24,7 +24,7 @@ namespace ZSG
             base.Initialize();
 
             AddPort(new(PortDirection.Output, TextureType, OUT, "Texture"));
-            _samplerPort = AddPort(new(PortDirection.Output, new SamplerState(), samplerID, "Sampler State"));
+            _samplerPort = AddPort(new(PortDirection.Output, new SamplerState(), samplerID, "Sampler"));
             _scaleOffsetPort = AddPort(new(PortDirection.Output, new Float(4), scaleOffsetID, "Scale Offset"));
             _texelSizePort = AddPort(new(PortDirection.Output, new Float(4), TexelSizeID, "Texel Size"));
 

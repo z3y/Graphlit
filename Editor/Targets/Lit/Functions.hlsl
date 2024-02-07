@@ -64,7 +64,7 @@ struct Light
         light.attenuation = attenuation;
 
         #if defined(LIGHTMAP_SHADOW_MIXING) && defined(LIGHTMAP_ON)
-            light.color *= UnityComputeForwardShadows(varyings.lightmapUV.xy, positionWS, varyings._shadowCoord);
+            light.color *= UnityComputeForwardShadows(varyings.lightmapUV.xy, positionWS, varyings._ShadowCoord);
         #endif
 
         return light;

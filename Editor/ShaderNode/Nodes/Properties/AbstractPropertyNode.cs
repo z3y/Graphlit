@@ -22,6 +22,8 @@ namespace ZSG
         public override bool DisablePreview => true;
         public override void Initialize()
         {
+
+
             var graphData = GraphView.graphData;
             propertyDescriptor = graphData.properties.Find(x => x.guid == _ref);
             if (string.IsNullOrEmpty(_ref) || propertyDescriptor is null)
@@ -36,22 +38,17 @@ namespace ZSG
             }
 
             propertyDescriptor.graphView = GraphView;
-
-            var imguiContainer = new IMGUIContainer(OnGUI);
-            {
-                var s = imguiContainer.style;
-                s.width = 75;
-                s.marginLeft = 6;
-            }
-            inputContainer.Add(imguiContainer);
-
             propertyDescriptor.UpdatePreviewMaterial();
-        }
 
-        // imagine dealing with binding
-        void OnGUI()
-        {
-            EditorGUILayout.LabelField(propertyDescriptor.displayName);
+            propertyDescriptor.onValueChange += () =>
+            {
+                if (TitleLabel is null || propertyDescriptor is null)
+                {
+                    return;
+                }
+                TitleLabel.text = propertyDescriptor.displayName;
+            };
+            TitleLabel.text = propertyDescriptor.displayName;
         }
 
         public override void AdditionalElements(VisualElement root)

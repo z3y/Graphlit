@@ -125,7 +125,7 @@ namespace ZSG
                 float.TryParse(split[1], out float y);
                 float.TryParse(split[2], out float z);
                 float.TryParse(split[3], out float w);
-                return new Vector4(x, y, z , w);
+                return new Vector4(x, y, z, w);
             }
             set
             {
@@ -364,11 +364,16 @@ namespace ZSG
 
         void OnDefaultGUI()
         {
+            EditorGUI.BeginChangeCheck();
             displayName = EditorGUILayout.TextField(new GUIContent("Display Name"), displayName);
             referenceName = EditorGUILayout.TextField(new GUIContent("Reference Name", guid), referenceName);
             if (type != PropertyType.Texture2D && type != PropertyType.TextureCube)
             {
                 declaration = (PropertyDeclaration)EditorGUILayout.EnumPopup("Declaration", declaration);
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                onValueChange?.Invoke();
             }
 
             defaultAttributes = (MaterialPropertyAttribute)EditorGUILayout.EnumFlagsField("Attributes", defaultAttributes);
@@ -537,6 +542,8 @@ namespace ZSG
                 _ => throw new NotImplementedException(),
             };
         }
+
+        public Action onValueChange = delegate { };
     }
 
 }

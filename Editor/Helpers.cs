@@ -2,11 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEditor;
 using UnityEditor.Build.Content;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace ZSG
 {
@@ -86,6 +88,31 @@ namespace ZSG
                 }).First();
 
             return asset;
+        }
+    }
+
+    public static class VisualElementExtensions
+    {
+        public static void SetBorderColor(this IStyle style, Color color)
+        {
+            style.borderRightColor = color;
+            style.borderTopColor = color;
+            style.borderLeftColor = color;
+            style.borderBottomColor = color;
+        }
+        public static void SetBorderWidth(this IStyle style, float width)
+        {
+            style.borderRightWidth = width;
+            style.borderLeftWidth = width;
+            style.borderTopWidth = width;
+            style.borderBottomWidth = width;
+        }
+        public static void SetPadding(this IStyle style, float width)
+        {
+            style.paddingRight = width;
+            style.paddingLeft = width;
+            style.paddingTop = width;
+            style.paddingBottom = width;
         }
     }
 

@@ -32,7 +32,7 @@ Varyings vert(Attributes input)
     #endif
 
     #if defined(LIGHTMAP_ON)
-        varyings.lightmapUV.xy = mad(attributes.uv1.xy, unity_LightmapST.xy, unity_LightmapST.zw);
+        varyings.lightmapUV.xy = mad(input.uv1.xy, unity_LightmapST.xy, unity_LightmapST.zw);
     #endif
 
     #if !UNITY_SAMPLE_FULL_SH_PER_PIXEL && defined(UNITY_PASS_FORWARDBASE)

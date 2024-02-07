@@ -65,6 +65,7 @@ namespace ZSG
                 nameField.RegisterValueChangedCallback((evt) =>
                 {
                     graphData.properties[i].displayName = evt.newValue;
+                    graphData.properties[i].onValueChange();
                 });
 
                 typeLabel.text = graphData.properties[i].type.ToString();

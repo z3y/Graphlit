@@ -6,11 +6,10 @@ using System.IO;
 using System;
 using UnityEditor.Callbacks;
 using System.Linq;
-using UnityEditor.Experimental.GraphView;
 
 namespace ZSG
 {
-    [ScriptedImporter(1, EXTENSION, 0)]
+    [ScriptedImporter(2, EXTENSION, 0)]
     public class ShaderGraphImporter : ScriptedImporter
     {
         public const string EXTENSION = "zsg";
@@ -61,12 +60,12 @@ namespace ZSG
                 EditorMaterialUtility.SetShaderNonModifiableDefaults(shader, builder._defaultTextures.Keys.ToArray(), builder._defaultTextures.Values.ToArray());
             }
 
-            var material = new Material(shader)
+            ctx.AddObjectToAsset("Main Asset", shader);
+            /*var material = new Material(shader)
             {
                 name = "Material"
-            };
-            ctx.AddObjectToAsset("Main Asset", shader);
-            ctx.AddObjectToAsset("Material", material);
+            };*/
+            //ctx.AddObjectToAsset("Material", material);
 
             //ctx.AddObjectToAsset("generation", new TextAsset(result));
 

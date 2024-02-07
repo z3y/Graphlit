@@ -46,6 +46,7 @@ half4 frag(Varyings varyings) : SV_Target
     half3 indirectDiffuse = 0;
     half3 indirectOcclusion = 1;
     #if defined(LIGHTMAP_ON)
+        float2 lightmapUV = varyings.lightmapUV;
         #if defined(_BICUBIC_LIGHTMAP) && !defined(QUALITY_LOW)
             float4 texelSize = TexelSizeFromTexture2D(unity_Lightmap);
             half3 illuminance = SampleTexture2DBicubic(unity_Lightmap, custom_bilinear_clamp_sampler, lightmapUV, texelSize, 1.0).rgb;

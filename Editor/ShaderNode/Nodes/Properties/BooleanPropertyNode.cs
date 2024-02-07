@@ -11,7 +11,7 @@ namespace ZSG
         public override void Initialize()
         {
             base.Initialize();
-            AddPort(new(PortDirection.Output, new Bool(), OUT));
+            AddPort(new(PortDirection.Output, new Bool(), OUT, "Bool"));
         }
     }
 }
