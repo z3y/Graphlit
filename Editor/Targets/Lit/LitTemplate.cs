@@ -198,7 +198,6 @@ namespace ZSG
 
                 pass.pragmas.Add("#pragma shader_feature EDITOR_VISUALIZATION");
                 pass.pragmas.Add("#pragma shader_feature_local _ _ALPHAFADE_ON _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
-                pass.pragmas.Add("#include \"UnityMetaPass.cginc\"");
 
                 pass.attributes.RequireUV(1, 2);
                 pass.attributes.RequireUV(2, 2);
@@ -207,6 +206,8 @@ namespace ZSG
                 pass.varyings.RequirePositionCS();
 
                 pass.pragmas.Add("#include \"Packages/com.z3y.myshadergraph/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"UnityMetaPass.cginc\"");
+
                 builder.AddPass(pass);
             }
         }

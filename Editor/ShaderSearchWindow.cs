@@ -1,15 +1,12 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace ZSG
 {
-    using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Security.Policy;
     using UnityEditor;
     using ZSG.Nodes;
     public class ShaderNodeSearchWindow : ScriptableObject, ISearchWindowProvider
@@ -48,7 +45,7 @@ namespace ZSG
             for (int i = 0; i < _graphView.graphData.properties.Count; i++)
             {
                 PropertyDescriptor property = _graphView.graphData.properties[i];
-                tree.Add(new SearchTreeEntry(new GUIContent(property.displayName, _nodeIndentationIcon)) { level = 2, userData = i });
+                tree.Add(new SearchTreeEntry(new GUIContent(property.type.ToString() + ": " + property.displayName, _nodeIndentationIcon)) { level = 2, userData = i });
             }
 
             tree.Add(new SearchTreeGroupEntry(new GUIContent("Functions"), 1));
