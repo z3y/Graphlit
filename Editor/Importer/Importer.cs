@@ -31,6 +31,8 @@ namespace ZSG
 
         public override void OnImportAsset(AssetImportContext ctx)
         {
+            var target = ctx.selectedBuildTarget;
+
             string guid = AssetDatabase.AssetPathToGUID(assetPath);
 
             if (_graphViews.TryGetValue(guid, out var graphView))
@@ -45,6 +47,21 @@ namespace ZSG
 
             var builder = new ShaderBuilder(GenerationMode.Final, graphView);
             builder.BuildTemplate();
+
+            var scriptingDefines = PlayerSettings.GetScriptingDefineSymbols(UnityEditor.Build.NamedBuildTarget.Standalone);
+            foreach (var pass in builder.passBuilders)
+            {
+                pass.pragmas.Add("#define TARGET_" + target.ToString().ToUpper());
+
+                if (!string.IsNullOrEmpty(scriptingDefines))
+                {
+                    foreach (var define in scriptingDefines.Split(';'))
+                    {
+                        pass.pragmas.Add("#define SCRIPTING_DEFINE_" + define);
+                    }
+                }
+
+            }
 
 
             var result = builder.ToString();

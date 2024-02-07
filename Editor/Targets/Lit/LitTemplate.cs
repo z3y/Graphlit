@@ -227,7 +227,10 @@ namespace ZSG
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
                 pass.pragmas.Add("#include \"Packages/com.z3y.myshadergraph/ShaderLibrary/BuiltInLibrary.hlsl\"");
-                builder.AddPass(pass);
+                if (!(_cbirpExists && _cbirp))
+                {
+                    builder.AddPass(pass);
+                }
             }
 
             {
