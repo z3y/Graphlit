@@ -6,6 +6,9 @@ void frag(Varyings varyings)
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(varyings);
     
     SurfaceDescription surfaceDescription = SurfaceDescriptionFunction(varyings);
+    #if !defined(_ALPHATEST_ON) && !defined(_ALPHAPREMULTIPLY_ON) && !defined(_ALPHAMODULATE_ON) && !defined(_ALPHAFADE_ON)
+        surfaceDescription.Alpha = 1.0;
+    #endif
 
     #if defined(_ALPHATEST_ON)
         if (surfaceDescription.Alpha < surfaceDescription.Cutoff) discard;

@@ -109,6 +109,8 @@ namespace ZSG
         const string Vertex = "Packages/com.z3y.myshadergraph/Editor/Targets/Lit/Vertex.hlsl";
         const string FragmentForward = "Packages/com.z3y.myshadergraph/Editor/Targets/Lit/FragmentForward.hlsl";
         const string FragmentShadow = "Packages/com.z3y.myshadergraph/Editor/Targets/Lit/FragmentShadow.hlsl";
+        const string FragmentMeta = "Packages/com.z3y.myshadergraph/Editor/Targets/Lit/FragmentMeta.hlsl";
+
 
         Texture2D _dfg = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.z3y.myshadergraph/Editor/Targets/Lit/dfg-multiscatter.exr");
         static readonly PropertyDescriptor _dfgProperty = new(PropertyType.Texture2D, "", "_DFG")
@@ -131,7 +133,7 @@ namespace ZSG
             builder.properties.Add(_bicubicLightmap);
             builder.properties.Add(_lmSpec);
 
-            if (_ltcgiExists)
+            if (_ltcgiExists && builder.BuildTarget != BuildTarget.Android)
             {
                 builder.properties.Add(_ltcgi);
                 builder.subshaderTags["LTCGI"] = "_LTCGI";
@@ -172,7 +174,7 @@ namespace ZSG
                 {
                     pass.pragmas.Add("#define _CBIRP");
                 }
-                if (_ltcgiExists) pass.pragmas.Add("#pragma shader_feature_local_fragment _LTCGI");
+                if (_ltcgiExists && builder.BuildTarget != BuildTarget.Android) pass.pragmas.Add("#pragma shader_feature_local_fragment _LTCGI");
 
                 pass.attributes.RequirePositionOS();
                 pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
@@ -256,20 +258,26 @@ namespace ZSG
                 builder.AddPass(pass);
             }
             {
-                var pass = new PassBuilder("META", Vertex, FragmentShadow, POSITION, NORMAL_VERTEX, ALPHA, CUTOFF, ALBEDO, METALLIC, ROUGHNESS);
+                var pass = new PassBuilder("META", Vertex, FragmentMeta, ALPHA, CUTOFF, ALBEDO, METALLIC, ROUGHNESS, EMISSION);
                 pass.tags["LightMode"] = "Meta";
                 pass.renderStates["Cull"] = "Off";
-
 
 
                 pass.pragmas.Add("#pragma shader_feature EDITOR_VISUALIZATION");
                 pass.pragmas.Add("#pragma shader_feature_local _ _ALPHAFADE_ON _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
 
+                pass.attributes.RequireUV(0, 2);
                 pass.attributes.RequireUV(1, 2);
                 pass.attributes.RequireUV(2, 2);
 
                 pass.attributes.RequirePositionOS();
                 pass.varyings.RequirePositionCS();
+
+                pass.varyings.RequireCustomString("#ifdef EDITOR_VISUALIZATION\nfloat2 vizUV : TEXCOORD*;\n#endif");
+                pass.varyings.RequireCustomString("#ifdef EDITOR_VISUALIZATION\nfloat4 lightCoord : TEXCOORD*;\n#endif");
+
+                pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
+                pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
                 pass.pragmas.Add("#include \"Packages/com.z3y.myshadergraph/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 pass.pragmas.Add("#include \"UnityMetaPass.cginc\"");

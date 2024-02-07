@@ -45,7 +45,7 @@ namespace ZSG
                 data.PopulateGraph(graphView);
             }
 
-            var builder = new ShaderBuilder(GenerationMode.Final, graphView);
+            var builder = new ShaderBuilder(GenerationMode.Final, graphView, target);
             builder.BuildTemplate();
 
             var scriptingDefines = PlayerSettings.GetScriptingDefineSymbols(UnityEditor.Build.NamedBuildTarget.Standalone);

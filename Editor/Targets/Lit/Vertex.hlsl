@@ -8,9 +8,10 @@ Varyings vert(Attributes input)
     UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(varyings);
 
     VertexDescription vertexDescription = VertexDescriptionFunction(input, varyings);
+    #ifndef UNITY_PASS_META
     float3 positionWS = TransformObjectToWorld(vertexDescription.Position);
-    
     float3 normalWS = TransformObjectToWorldNormal(vertexDescription.Normal);
+    #endif
 
     #ifdef UNPACK_POSITIONWS
         UNPACK_POSITIONWS = positionWS;
@@ -26,7 +27,7 @@ Varyings vert(Attributes input)
         varyings.positionCS = TransformWorldToHClip(ApplyShadowBiasNormal(positionWS, normalWS));
         varyings.positionCS = UnityApplyLinearShadowBias(varyings.positionCS);
     #elif defined(UNITY_PASS_META)
-        varyings.positionCS = UnityMetaVertexPosition(float4(TransformWorldToObject(positionWS), 0), input.uv1, input.uv2, unity_LightmapST, unity_DynamicLightmapST);
+        varyings.positionCS = UnityMetaVertexPosition(float4(input.positionOS, 1.0), input.uv1.xy, input.uv2.xy, unity_LightmapST, unity_DynamicLightmapST);
     #else
         varyings.positionCS = TransformWorldToHClip(positionWS);
     #endif
@@ -39,7 +40,20 @@ Varyings vert(Attributes input)
         varyings.sh = ShadeSHPerVertex(normalWS, 0);
     #endif
 
-    UNITY_TRANSFER_SHADOW(varyings, attributes.uv1.xy);
+    UNITY_TRANSFER_SHADOW(varyings, input.uv1.xy);
     UNITY_TRANSFER_FOG(varyings, varyings.positionCS);
+
+    #ifdef EDITOR_VISUALIZATION
+        varyings.vizUV = 0;
+        varyings.lightCoord = 0;
+        if (unity_VisualizationMode == EDITORVIZ_TEXTURE)
+            varyings.vizUV = UnityMetaVizUV(unity_EditorViz_UVIndex, input.uv0.xy, input.uv1.xy, input.uv2.xy, unity_EditorViz_Texture_ST);
+        else if (unity_VisualizationMode == EDITORVIZ_SHOWLIGHTMASK)
+        {
+            varyings.vizUV = input.uv1.xy * unity_LightmapST.xy + unity_LightmapST.zw;
+            varyings.lightCoord = mul(unity_EditorViz_WorldToLight, mul(unity_ObjectToWorld, float4(input.positionOS, 1)));
+        }
+    #endif
+
     return varyings;
 }

@@ -12,17 +12,19 @@ namespace ZSG
     {
 
 
-        public ShaderBuilder(GenerationMode generationMode, ShaderGraphView shaderGraphView)
+        public ShaderBuilder(GenerationMode generationMode, ShaderGraphView shaderGraphView, BuildTarget target = BuildTarget.StandaloneWindows64)
         {
             GenerationMode = generationMode;
             ShaderGraphView = shaderGraphView;
 
             var data = shaderGraphView.graphData;
             shaderName = data.shaderName;
+            BuildTarget = target;
         }
 
         private ShaderStringBuilder _sb;
 
+        public BuildTarget BuildTarget { get; private set; }
         public string shaderName;
         public string fallback;
         public string customEditor;
