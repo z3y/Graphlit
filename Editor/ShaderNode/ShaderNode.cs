@@ -385,11 +385,6 @@ namespace ZSG
         public Label TitleLabel;
         void AddTitleElement()
         {
-            /*if (LowProfile)
-            {
-                titleContainer.parent.Remove(titleContainer);
-                return;
-            }*/
             var nodeInfo = Info;
 
             var titleLabel = (Label)titleContainer.Q("title-label");
@@ -409,24 +404,7 @@ namespace ZSG
             var titleStyle = titleContainer.style;
             titleStyle.height = 24;
             titleStyle.backgroundColor = Color.black;
-
-            /*var precisionLabel = new IMGUIContainer(OnTitleContainerGUI);
-            precisionLabel.style.opacity = 0.2f;
-            precisionLabel.style.marginLeft = 6;
-            titleContainer.Insert(0, precisionLabel);*/
         }
-
-        /* void OnTitleContainerGUI()
-         {
-             EditorGUILayout.BeginHorizontal();
-             switch (DefaultPrecision)
-             {
-                 case Precision.Inherit: EditorGUILayout.LabelField("I", GUILayout.Width(15)); break;
-                 case Precision.Half: EditorGUILayout.LabelField("H", GUILayout.Width(15)); break;
-                 case Precision.Float: EditorGUILayout.LabelField("F", GUILayout.Width(15)); break;
-             }
-             EditorGUILayout.EndHorizontal();
-         }*/
 
         public static int UniqueVariableID { get; protected set; } = 0;
         public Dictionary<int, GeneratedPortData> PortData { get; set; } = new();

@@ -57,7 +57,7 @@ namespace ZSG
         const string FragmentForward = "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/FragmentForward.hlsl";
         const string FragmentShadow = "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/FragmentShadow.hlsl";
 
-        public override void BuilderPassthrough(ShaderBuilder builder)
+        public override void OnBeforeBuild(ShaderBuilder builder)
         {
             builder.properties.Add(_surfaceOptionsStart);
             builder.properties.Add(_mode);

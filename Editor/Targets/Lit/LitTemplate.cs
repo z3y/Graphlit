@@ -3,10 +3,11 @@ using ZSG.Nodes.PortType;
 using ZSG.Nodes;
 using UnityEngine;
 using UnityEditor;
+using System;
 
 namespace ZSG
 {
-    [NodeInfo("Targets/Lit Target")]
+    [NodeInfo("Targets/Lit Target"), Serializable]
     public class LitTemplate : TemplateOutput
     {
         [MenuItem("Assets/Create/ZSG/Lit Graph")]
@@ -64,13 +65,46 @@ namespace ZSG
             DefaultValues[NORMAL_TS] = "float3(0.0, 0.0, 1.0)";
         }
 
-        static readonly PropertyDescriptor _surfaceOptionsStart = new(PropertyType.Float, "SurfaceOptions", "_SurfaceOptions") { customAttributes = "[Foldout]" };
+        enum Shading
+        {
+            PBR,
+            Flat
+        }
+        [SerializeField] Shading _shading = Shading.PBR;
+        [SerializeField] bool _cbirp = false;
+
+        public override void AdditionalElements(VisualElement root)
+        {
+            base.AdditionalElements(root);
+
+            var shading = new EnumField("Shading", _shading);
+            shading.RegisterValueChangedCallback(x => _shading = (Shading)x.newValue);
+            root.Add(shading);
+
+            if (_cbirpExists)
+            {
+                var cbirp = new Toggle("CBIRP") { value = _cbirp };
+                cbirp.RegisterValueChangedCallback(x => _cbirp = x.newValue);
+                root.Add(cbirp);
+            }
+        }
+
+        static readonly PropertyDescriptor _surfaceOptionsStart = new(PropertyType.Float, "Surface Options", "_SurfaceOptions") { customAttributes = "[Foldout]" };
         static readonly PropertyDescriptor _mode = new (PropertyType.Float, "Rendering Mode", "_Mode") { customAttributes = "[Enum(Opaque, 0, Cutout, 1, Fade, 2, Transparent, 3, Additive, 4, Multiply, 5)]" };
         static readonly PropertyDescriptor _srcBlend = new (PropertyType.Float, "Source Blend", "_SrcBlend") { FloatValue = 1, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         static readonly PropertyDescriptor _dstBlend = new(PropertyType.Float, "Destination Blend", "_DstBlend") { FloatValue = 0, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         static readonly PropertyDescriptor _zwrite = new(PropertyType.Float, "ZWrite", "_ZWrite") { FloatValue = 1, customAttributes = "[Enum(Off, 0, On, 1)]" };
         static readonly PropertyDescriptor _cull = new(PropertyType.Float, "Cull", "_Cull") { FloatValue = 2, customAttributes = "[Enum(UnityEngine.Rendering.CullMode)]" };
         static readonly PropertyDescriptor _properties = new(PropertyType.Float, "Properties", "_Properties") { customAttributes = "[Foldout]" };
+        static readonly PropertyDescriptor _monosh = new(PropertyType.Float, "Mono SH", "_MonoSH") { customAttributes = "[Toggle(_BAKERY_MONOSH)]" };
+        static readonly PropertyDescriptor _bicubicLightmap = new(PropertyType.Float, "Bicubic Lightmap", "_BicubicLightmap") { customAttributes = "[Toggle(_BICUBIC_LIGHTMAP)]" };
+        static readonly PropertyDescriptor _lmSpec = new(PropertyType.Float, "Lightmapped Specular", "_LightmappedSpecular") { customAttributes = "[Toggle(_LIGHTMAPPED_SPECULAR)]" };
+        static readonly PropertyDescriptor _ltcgi = new(PropertyType.Float, "LTCGI", "_LTCGI") { customAttributes = "[Toggle(_LTCGI)]" };
+
+        const string _ltcgiPath = "Packages/at.pimaker.ltcgi/Shaders/LTCGI.cginc";
+        const string _cbirpPath = "Packages/z3y.clusteredbirp/Shaders/cbirp.hlsl";
+        static bool _ltcgiExists = System.IO.File.Exists(_ltcgiPath);
+        static bool _cbirpExists = System.IO.File.Exists(_cbirpPath);
 
         const string Vertex = "Packages/com.z3y.myshadergraph/Editor/Targets/Lit/Vertex.hlsl";
         const string FragmentForward = "Packages/com.z3y.myshadergraph/Editor/Targets/Lit/FragmentForward.hlsl";
@@ -79,18 +113,32 @@ namespace ZSG
         Texture2D _dfg = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.z3y.myshadergraph/Editor/Targets/Lit/dfg-multiscatter.exr");
         static readonly PropertyDescriptor _dfgProperty = new(PropertyType.Texture2D, "", "_DFG")
             { defaultAttributes = MaterialPropertyAttribute.HideInInspector | MaterialPropertyAttribute.NonModifiableTextureData };
-        public override void BuilderPassthrough(ShaderBuilder builder)
+
+        public override void OnBeforeBuild(ShaderBuilder builder)
         {
+            builder.dependencies.Add(_ltcgiPath);
+            builder.dependencies.Add(_cbirpPath);
+
             builder.properties.Add(_surfaceOptionsStart);
             builder.properties.Add(_mode);
             builder.properties.Add(_srcBlend);
             builder.properties.Add(_dstBlend);
             builder.properties.Add(_zwrite);
             builder.properties.Add(_cull);
-            builder.properties.Add(_properties);
             builder.properties.Add(_dfgProperty);
 
+            builder.properties.Add(_monosh);
+            builder.properties.Add(_bicubicLightmap);
+            builder.properties.Add(_lmSpec);
+
+            if (_ltcgiExists)
+            {
+                builder.properties.Add(_ltcgi);
+                builder.subshaderTags["LTCGI"] = "_LTCGI";
+            }
+
             builder._defaultTextures["_DFG"] = _dfg;
+            builder.properties.Add(_properties);
 
             builder.subshaderTags["RenderType"] = "Opaque";
             builder.subshaderTags["Queue"] = "Geometry";
@@ -110,6 +158,21 @@ namespace ZSG
                 pass.pragmas.Add("#pragma skip_variants LIGHTPROBE_SH");
                 pass.pragmas.Add("#pragma multi_compile_fog");
                 pass.pragmas.Add("#pragma multi_compile_instancing");
+
+                pass.pragmas.Add("#pragma shader_feature_local _BAKERY_MONOSH");
+                pass.pragmas.Add("#pragma shader_feature_local _BICUBIC_LIGHTMAP");
+                pass.pragmas.Add("#pragma shader_feature_local _LIGHTMAPPED_SPECULAR");
+
+                if (_shading == Shading.Flat)
+                {
+                    pass.pragmas.Add("#define _FLATSHADING");
+                    pass.pragmas.Add("#pragma skip_variants SHADOWS_SCREEN");
+                }
+                if (_cbirpExists && _cbirp)
+                {
+                    pass.pragmas.Add("#define _CBIRP");
+                }
+                if (_ltcgiExists) pass.pragmas.Add("#pragma shader_feature_local_fragment _LTCGI");
 
                 pass.attributes.RequirePositionOS();
                 pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");

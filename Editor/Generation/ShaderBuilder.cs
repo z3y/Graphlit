@@ -38,6 +38,7 @@ namespace ZSG
 
         public Dictionary<string, Texture> _nonModifiableTextures = new();
         public Dictionary<string, Texture> _defaultTextures = new();
+        public HashSet<string> dependencies = new();
 
         public void AddPass(PassBuilder passBuilder)
         {
@@ -57,7 +58,7 @@ namespace ZSG
             fallback = graphData.fallback;
 
 
-            target.BuilderPassthrough(this);
+            target.OnBeforeBuild(this);
 
             for (int i = 0; i < passBuilders.Count; i++)
             {
@@ -83,6 +84,7 @@ namespace ZSG
                 target.VisitTemplate(fragmentVisitor, fragmentPorts);
             }
 
+            target.OnAfterBuild(this);
         }
 
         public void Build(ShaderNode shaderNode)
@@ -339,6 +341,7 @@ namespace ZSG
         {
             foreach (var pass in passBuilders)
             {
+                pass.pragmas.AddRange(ShaderGraphView.graphData.include.Split('\n'));
                 _sb.AppendLine("Pass");
                 _sb.Indent();
                 {

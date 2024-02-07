@@ -11,6 +11,7 @@ namespace ZSG
         public DefaultPreviewState defaultPreviewState = DefaultPreviewState.Enabled;
         public string customEditor;
         public string fallback;
+        public string include;
 
         public enum GraphPrecision
         {

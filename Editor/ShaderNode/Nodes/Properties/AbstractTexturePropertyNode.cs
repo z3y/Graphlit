@@ -33,7 +33,7 @@ namespace ZSG
         }
         async void InitializeTexture()
         {
-            await Task.Delay(1000);
+            await Task.Delay(2000);
             propertyDescriptor.UpdatePreviewMaterial();
         }
 

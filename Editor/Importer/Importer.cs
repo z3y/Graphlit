@@ -60,7 +60,14 @@ namespace ZSG
                 EditorMaterialUtility.SetShaderNonModifiableDefaults(shader, builder._defaultTextures.Keys.ToArray(), builder._defaultTextures.Values.ToArray());
             }
 
+            foreach (var dependency in builder.dependencies)
+            {
+                ctx.DependsOnSourceAsset(dependency);
+            }
+
             ctx.AddObjectToAsset("Main Asset", shader);
+
+
             /*var material = new Material(shader)
             {
                 name = "Material"

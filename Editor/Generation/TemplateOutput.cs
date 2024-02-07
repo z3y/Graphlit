@@ -10,7 +10,8 @@ namespace ZSG
     public abstract class TemplateOutput : ShaderNode
     {
         public abstract string Name { get; }
-        public abstract void BuilderPassthrough(ShaderBuilder builder);
+        public abstract void OnBeforeBuild(ShaderBuilder builder);
+        public virtual void OnAfterBuild(ShaderBuilder builder) { }
         public abstract int[] VertexPorts { get; }
         public abstract int[] FragmentPorts { get; }
 
@@ -42,6 +43,10 @@ namespace ZSG
             var defaultPreviewState = new EnumField("Default Preview", graphData.defaultPreviewState);
             defaultPreviewState.RegisterValueChangedCallback(x => graphData.defaultPreviewState = (GraphData.DefaultPreviewState)x.newValue);
             root.Add(defaultPreviewState);
+
+            var include = new TextField("Include") { value = graphData.include, multiline = true };
+            include.RegisterValueChangedCallback(x => graphData.include = x.newValue);
+            root.Add(include);
 
             var properties = new ListView()
             {
@@ -115,6 +120,7 @@ namespace ZSG
                     propertyEditor.Add(obj.PropertyEditorGUI());
                 }
             };
+
         }
 
         void OnRemovePropertyItem()

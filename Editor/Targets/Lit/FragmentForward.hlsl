@@ -2,6 +2,13 @@
 
 #include "Functions.hlsl"
 
+#ifdef _CBIRP
+    #include "Packages/z3y.clusteredbirp/Shaders/CBIRP.hlsl"
+#endif
+#ifdef _LTCGI
+    #include "Assets/_pi_/_LTCGI/Shaders/LTCGI.cginc"
+#endif
+
 half4 frag(Varyings varyings) : SV_Target
 {
     UNITY_SETUP_INSTANCE_ID(varyings);
