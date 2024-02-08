@@ -48,6 +48,8 @@ namespace ZSG
         private List<PropertyDescriptor> _props;
         private List<string> _pragmas;
 
+        public void RequireGrabpass() => _shaderBuilder.grabpass = true;
+
         /*public string GetInputVariable(int ID)
         {
             if (visitInfo.Name.TryGetValue(ID, out var name))

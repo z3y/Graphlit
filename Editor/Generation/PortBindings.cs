@@ -20,7 +20,8 @@ namespace ZSG
         BitangentWS = 13,
         BitangentOS = 14,
         VertexColor = 15,
-        FrontFace = 16
+        FrontFace = 16,
+        PositionNDC = 17,
     }
 
     public enum BindingSpace
@@ -135,9 +136,15 @@ namespace ZSG
                     PortBinding.BitangentOS => RequireBitangentOSFragment(pass),
                     PortBinding.VertexColor => varyings.RequireColor(),
                     PortBinding.FrontFace => RequireFrontFace(pass),
+                    PortBinding.PositionNDC => RequirePositionNDC(pass),
                     _ => throw new NotImplementedException(),
                 }; ;
             }
+        }
+        static string RequirePositionNDC(PassBuilder pass)
+        {
+            pass.varyings.RequirePositionCS();
+            return "data.positionNDC";
         }
         private static string RequireFrontFace(PassBuilder pass)
         {

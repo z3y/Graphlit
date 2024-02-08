@@ -13,6 +13,17 @@ namespace ZSG
         [MenuItem("Assets/Create/ZSG/Lit Graph")]
         public static void CreateVariantFile() => ShaderGraphImporter.CreateEmptyTemplate<LitTemplate>();
 
+        [MenuItem("Assets/Create/ZSG/Flat Lit Graph")]
+        public static void CreateVariantFileFlatLit()
+        {
+            var template = new LitTemplate
+            {
+                _specular = false,
+                _shading = Shading.Flat
+            };
+            ShaderGraphImporter.CreateEmptyTemplate(template);
+        }
+
         public override string Name { get; } = "Lit";
         public override int[] VertexPorts => new int[] { POSITION, NORMAL_VERTEX, TANGENT };
         public override int[] FragmentPorts => new int[] { ALBEDO, ALPHA, METALLIC, OCCLUSION, EMISSION, ROUGHNESS, NORMAL_TS, CUTOFF };
@@ -72,6 +83,7 @@ namespace ZSG
         }
         [SerializeField] Shading _shading = Shading.PBR;
         [SerializeField] bool _cbirp = false;
+        [SerializeField] bool _specular = true;
 
         public override void AdditionalElements(VisualElement root)
         {
@@ -87,6 +99,9 @@ namespace ZSG
                 cbirp.RegisterValueChangedCallback(x => _cbirp = x.newValue);
                 root.Add(cbirp);
             }
+            var spec = new Toggle("Specular") { value = _specular };
+            spec.RegisterValueChangedCallback(x => _specular = x.newValue);
+            root.Add(spec);
         }
 
         static readonly PropertyDescriptor _surfaceOptionsStart = new(PropertyType.Float, "Surface Options", "_SurfaceOptions") { customAttributes = "[Foldout]" };
@@ -170,6 +185,11 @@ namespace ZSG
                     pass.pragmas.Add("#define _FLATSHADING");
                     pass.pragmas.Add("#pragma skip_variants SHADOWS_SCREEN");
                 }
+                if (!_specular)
+                {
+                    pass.pragmas.Add("#define _SPECULARHIGHLIGHTS_OFF");
+                    pass.pragmas.Add("#define _GLOSSYREFLECTIONS_OFF");
+                }
                 if (_cbirpExists && _cbirp)
                 {
                     pass.pragmas.Add("#define _CBIRP");
@@ -213,6 +233,11 @@ namespace ZSG
                 pass.pragmas.Add("#pragma multi_compile_fwdadd_fullshadows");
                 pass.pragmas.Add("#pragma multi_compile_fog");
                 pass.pragmas.Add("#pragma multi_compile_instancing");
+
+                if (!_specular)
+                {
+                    pass.pragmas.Add("#define _SPECULARHIGHLIGHTS_OFF");
+                }
 
                 pass.attributes.RequirePositionOS();
                 pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");

@@ -42,6 +42,9 @@ namespace ZSG
         public Dictionary<string, Texture> _defaultTextures = new();
         public HashSet<string> dependencies = new();
 
+        bool SupportsGrabpas => BuildTarget != BuildTarget.Android;
+        public bool grabpass = false;
+
         public void AddPass(PassBuilder passBuilder)
         {
             passBuilder.generationMode = GenerationMode;
@@ -258,6 +261,11 @@ namespace ZSG
 
         public override string ToString()
         {
+            if (grabpass && SupportsGrabpas)
+            {
+                subshaderTags["Queue"] = "Transparent";
+            }
+
             _sb = new ShaderStringBuilder();
             _sb.AppendLine("Shader \"" + shaderName + '"');
 
@@ -341,6 +349,10 @@ namespace ZSG
 
         private void AppendPasses()
         {
+            if (grabpass && SupportsGrabpas)
+            {
+                _sb.AppendLine("GrabPass { \"_CameraOpaqueTexture\" }");
+            }
             foreach (var pass in passBuilders)
             {
                 pass.pragmas.AddRange(ShaderGraphView.graphData.include.Split('\n'));

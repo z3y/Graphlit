@@ -98,13 +98,18 @@ namespace ZSG
             DefaultInspector.Reinitialize();
         }
 
-        public static void CreateEmptyTemplate<T>() where T : TemplateOutput, new()
+        public static void CreateEmptyTemplate(TemplateOutput template)
         {
             var graphView = new ShaderGraphView(null);
-            graphView.AddElement(new T());
+            graphView.AddElement(template);
             var data = SerializableGraph.StoreGraph(graphView);
             var jsonData = JsonUtility.ToJson(data, true);
             ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.{EXTENSION}", jsonData);
+        }
+        public static void CreateEmptyTemplate<T>() where T : TemplateOutput, new()
+        {
+            var instance = new T();
+            CreateEmptyTemplate(instance);
         }
 
         public static void OpenInGraphView(string guid)
