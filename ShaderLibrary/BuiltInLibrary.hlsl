@@ -36,3 +36,4 @@ half4 _SpecColor;
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
 
 #include "Packages/com.z3y.myshadergraph/ShaderLibrary/GraphFunctions.hlsl"
+#include "BlendModes.hlsl"
