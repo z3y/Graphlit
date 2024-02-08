@@ -48,6 +48,10 @@ namespace ZSG
             include.RegisterValueChangedCallback(x => graphData.include = x.newValue);
             root.Add(include);
 
+            var outline = new EnumField("Outline Pass", graphData.outlinePass);
+            outline.RegisterValueChangedCallback(x => graphData.outlinePass = (GraphData.OutlinePassMode)x.newValue);
+            root.Add(outline);
+
             var properties = new ListView()
             {
                 headerTitle = "Properties",

@@ -9,14 +9,21 @@ namespace ZSG
         public List<PropertyDescriptor> properties = new List<PropertyDescriptor>();
         public GraphPrecision precision = GraphPrecision.Half;
         public DefaultPreviewState defaultPreviewState = DefaultPreviewState.Enabled;
-        public string customEditor;
-        public string fallback;
-        public string include;
+        public string customEditor = string.Empty;
+        public string fallback = string.Empty;
+        public string include = string.Empty;
+        public OutlinePassMode outlinePass = OutlinePassMode.Disabled;
 
         public enum GraphPrecision
         {
             Half = 0,
             Float = 1
+        }
+        public enum OutlinePassMode
+        {
+            Disabled = 0,
+            Enabled = 1,
+            EnabledEarly = 2,
         }
         public enum DefaultPreviewState
         {

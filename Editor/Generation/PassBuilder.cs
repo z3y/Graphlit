@@ -27,6 +27,7 @@ namespace ZSG
         public List<string> surfaceDescription = new();
         public List<string> surfaceDescriptionStruct = new();
         public List<PropertyDescriptor> properties = new();
+        public bool appendOutlineDefine = false;
 
         public ShaderAttributes attributes;
         public ShaderVaryings varyings;
@@ -87,6 +88,7 @@ namespace ZSG
             {
                 sb.AppendLine(p);
             }
+            if (appendOutlineDefine) sb.AppendLine("#define OUTLINE_PASS");
             foreach (var property in properties)
             {
                 if (property.type != PropertyType.KeywordToggle) continue;

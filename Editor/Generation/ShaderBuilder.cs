@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using ZSG.Nodes.PortType;
+using static UnityEditor.ShaderData;
 
 namespace ZSG
 {
@@ -353,17 +354,40 @@ namespace ZSG
             {
                 _sb.AppendLine("GrabPass { \"_CameraOpaqueTexture\" }");
             }
-            foreach (var pass in passBuilders)
+            var outline = ShaderGraphView.graphData.outlinePass;
+            for (int i = 0; i < passBuilders.Count; i++)
             {
+                PassBuilder pass = passBuilders[i];
                 pass.pragmas.AddRange(ShaderGraphView.graphData.include.Split('\n'));
-                _sb.AppendLine("Pass");
-                _sb.Indent();
+                if (outline == GraphData.OutlinePassMode.EnabledEarly && i == 0)
                 {
-                    pass.AppendPass(_sb);
+                    string cull = pass.renderStates["Cull"];
+                    pass.appendOutlineDefine = true;
+                    pass.renderStates["Cull"] = "Front";
+                    AppendPass(pass);
+                    pass.appendOutlineDefine = false;
+                    pass.renderStates["Cull"] = cull;
                 }
-                _sb.UnIndent();
+
+                AppendPass(pass);
+
+                if (outline == GraphData.OutlinePassMode.Enabled && i == 0)
+                {
+                    pass.appendOutlineDefine = true;
+                    pass.renderStates["Cull"] = "Front";
+                    AppendPass(pass);
+                }
             }
         }
 
+        private void AppendPass(PassBuilder pass)
+        {
+            _sb.AppendLine("Pass");
+            _sb.Indent();
+            {
+                pass.AppendPass(_sb);
+            }
+            _sb.UnIndent();
+        }
     }
 }
