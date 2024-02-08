@@ -61,6 +61,9 @@ namespace ZSG
 
         public int[] Ports { get; }
 
+        const string AudioLinkPath = "Packages/com.llealloo.audiolink/Runtime/Shaders/AudioLink.cginc";
+        static bool AudioLinkExists = System.IO.File.Exists(AudioLinkPath);
+
         public void AppendPass(ShaderStringBuilder sb)
         {
             varyings.PackVaryings();
@@ -93,6 +96,10 @@ namespace ZSG
             {
                 if (property.type != PropertyType.KeywordToggle) continue;
                 sb.AppendLine(property.GetFieldDeclaration(generationMode));
+            }
+            if (AudioLinkExists)
+            {
+                sb.AppendInclude(AudioLinkPath);
             }
             sb.AppendLine();
 

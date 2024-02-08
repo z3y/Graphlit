@@ -10,7 +10,7 @@ namespace ZSG
     public abstract class TemplateOutput : ShaderNode
     {
         public abstract string Name { get; }
-        public abstract void OnBeforeBuild(ShaderBuilder builder);
+        public virtual void OnBeforeBuild(ShaderBuilder builder) { }
         public virtual void OnAfterBuild(ShaderBuilder builder) { }
         public abstract int[] VertexPorts { get; }
         public abstract int[] FragmentPorts { get; }
