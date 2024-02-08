@@ -8,9 +8,8 @@ Varyings vert(Attributes input)
     UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(varyings);
 
     VertexDescription vertexDescription = VertexDescriptionFunction(input, varyings);
-    float3 positionWS = TransformObjectToWorld(vertexDescription.Position);
-    
-    float3 normalWS = TransformObjectToWorldNormal(vertexDescription.Normal);
+    float3 positionWS = vertexDescription.Position;
+    float3 normalWS = vertexDescription.Normal;
 
     #ifdef UNPACK_POSITIONWS
         UNPACK_POSITIONWS = positionWS;
@@ -19,7 +18,7 @@ Varyings vert(Attributes input)
         UNPACK_NORMALWS = normalWS;
     #endif
     #ifdef UNPACK_TANGENTWS
-        UNPACK_TANGENTWS = float4(TransformObjectToWorldDir(vertexDescription.Tangent), input.tangentOS.w);
+        UNPACK_TANGENTWS = float4(vertexDescription.Tangent, input.tangentOS.w);
     #endif
 
     #if defined(UNITY_PASS_SHADOWCASTER)
