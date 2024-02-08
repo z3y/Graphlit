@@ -5,7 +5,6 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using ZSG.Nodes.PortType;
-using static UnityEditor.ShaderData;
 
 namespace ZSG
 {
