@@ -61,7 +61,7 @@ float4 _CameraOpaqueTexture_TexelSize;
 
 float4 SampleSceneColor(float2 uv)
 {
-    #ifdef PREVIEW
+    #if defined(PREVIEW) || defined(SHADER_API_MOBILE)
     return 0;
     #endif
     return SAMPLE_TEXTURE2D_X(_CameraOpaqueTexture, sampler_CameraOpaqueTexture, uv);
@@ -71,7 +71,7 @@ TEXTURE2D_X_FLOAT(_CameraDepthTexture);
 SAMPLER(sampler_CameraDepthTexture);
 float SampleSceneDepth(float2 uv)
 {
-    #ifdef PREVIEW
+    #if defined(PREVIEW) || defined(SHADER_API_MOBILE)
     return 0;
     #endif
     return SAMPLE_TEXTURE2D_X(_CameraDepthTexture, sampler_CameraDepthTexture, uv).r;

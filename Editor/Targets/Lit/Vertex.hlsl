@@ -9,8 +9,8 @@ Varyings vert(Attributes input)
 
     VertexDescription vertexDescription = VertexDescriptionFunction(input, varyings);
     #ifndef UNITY_PASS_META
-    float3 positionWS = TransformObjectToWorld(vertexDescription.Position);
-    float3 normalWS = TransformObjectToWorldNormal(vertexDescription.Normal);
+    float3 positionWS = vertexDescription.Position;
+    float3 normalWS = vertexDescription.Normal;
     #endif
 
     #ifdef UNPACK_POSITIONWS
@@ -20,7 +20,7 @@ Varyings vert(Attributes input)
         UNPACK_NORMALWS = normalWS;
     #endif
     #ifdef UNPACK_TANGENTWS
-        UNPACK_TANGENTWS = float4(TransformObjectToWorldDir(vertexDescription.Tangent), input.tangentOS.w);
+        UNPACK_TANGENTWS = float4(vertexDescription.Tangent, input.tangentOS.w);
     #endif
 
     #if defined(UNITY_PASS_SHADOWCASTER)

@@ -37,9 +37,9 @@ namespace ZSG
             AddPort(new(PortDirection.Input, new Float(1, false), ALPHA, "Alpha"));
             AddPort(new(PortDirection.Input, new Float(1, false), CUTOFF, "Cutoff"));
 
-            Bind(POSITION, PortBinding.PositionOS);
-            Bind(NORMAL, PortBinding.NormalOS);
-            Bind(TANGENT, PortBinding.TangentOS);
+            Bind(POSITION, PortBinding.PositionWS);
+            Bind(NORMAL, PortBinding.NormalWS);
+            Bind(TANGENT, PortBinding.TangentWS);
             DefaultValues[COLOR] = "float3(1.0, 1.0, 1.0)";
             DefaultValues[ALPHA] = "1.0";
             DefaultValues[CUTOFF] = "0.5";
