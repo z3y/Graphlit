@@ -1,6 +1,6 @@
 #pragma fragment frag
 
-#include "Packages/com.z3y.myshadergraph/ShaderLibrary/GraphFunctions.hlsl"
+#include "Packages/com.z3y.zsg/ShaderLibrary/GraphFunctions.hlsl"
 
 half3 LightmappingAlbedo(half3 diffuse, half3 specular, half roughness)
 {

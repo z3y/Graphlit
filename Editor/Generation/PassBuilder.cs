@@ -34,8 +34,8 @@ namespace ZSG
 
         public string target = "4.5";
 
-        public string fragmentDataPath = "Packages/com.z3y.myshadergraph/Editor/Targets/FragmentData.hlsl";
-        public string vertexDataPath = "Packages/com.z3y.myshadergraph/Editor/Targets/VertexData.hlsl";
+        public string fragmentDataPath = "Packages/com.z3y.zsg/Editor/Targets/FragmentData.hlsl";
+        public string vertexDataPath = "Packages/com.z3y.zsg/Editor/Targets/VertexData.hlsl";
 
         public GenerationMode generationMode;
 

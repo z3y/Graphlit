@@ -121,13 +121,13 @@ namespace ZSG
         static bool _ltcgiExists = System.IO.File.Exists(_ltcgiPath);
         static bool _cbirpExists = System.IO.File.Exists(_cbirpPath);
 
-        const string Vertex = "Packages/com.z3y.myshadergraph/Editor/Targets/Lit/Vertex.hlsl";
-        const string FragmentForward = "Packages/com.z3y.myshadergraph/Editor/Targets/Lit/FragmentForward.hlsl";
-        const string FragmentShadow = "Packages/com.z3y.myshadergraph/Editor/Targets/Lit/FragmentShadow.hlsl";
-        const string FragmentMeta = "Packages/com.z3y.myshadergraph/Editor/Targets/Lit/FragmentMeta.hlsl";
+        const string Vertex = "Packages/com.z3y.zsg/Editor/Targets/Lit/Vertex.hlsl";
+        const string FragmentForward = "Packages/com.z3y.zsg/Editor/Targets/Lit/FragmentForward.hlsl";
+        const string FragmentShadow = "Packages/com.z3y.zsg/Editor/Targets/Lit/FragmentShadow.hlsl";
+        const string FragmentMeta = "Packages/com.z3y.zsg/Editor/Targets/Lit/FragmentMeta.hlsl";
 
 
-        Texture2D _dfg = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.z3y.myshadergraph/Editor/Targets/Lit/dfg-multiscatter.exr");
+        Texture2D _dfg = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.z3y.zsg/Editor/Targets/Lit/dfg-multiscatter.exr");
         static readonly PropertyDescriptor _dfgProperty = new(PropertyType.Texture2D, "", "_DFG")
             { defaultAttributes = MaterialPropertyAttribute.HideInInspector | MaterialPropertyAttribute.NonModifiableTextureData };
 
@@ -213,7 +213,7 @@ namespace ZSG
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.pragmas.Add("#include \"Packages/com.z3y.myshadergraph/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.z3y.zsg/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 builder.AddPass(pass);
             }
             {
@@ -253,7 +253,7 @@ namespace ZSG
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.pragmas.Add("#include \"Packages/com.z3y.myshadergraph/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.z3y.zsg/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 if (!(_cbirpExists && _cbirp))
                 {
                     builder.AddPass(pass);
@@ -279,7 +279,7 @@ namespace ZSG
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.pragmas.Add("#include \"Packages/com.z3y.myshadergraph/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.z3y.zsg/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 builder.AddPass(pass);
             }
             {
@@ -304,7 +304,7 @@ namespace ZSG
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.pragmas.Add("#include \"Packages/com.z3y.myshadergraph/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.z3y.zsg/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 pass.pragmas.Add("#include \"UnityMetaPass.cginc\"");
 
                 builder.AddPass(pass);

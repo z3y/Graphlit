@@ -53,9 +53,9 @@ namespace ZSG
         static readonly PropertyDescriptor _cull = new(PropertyType.Float, "Cull", "_Cull") { FloatValue = 2, customAttributes = "[Enum(UnityEngine.Rendering.CullMode)]" };
         static readonly PropertyDescriptor _properties = new(PropertyType.Float, "Properties", "_Properties") { customAttributes = "[Foldout]" };
 
-        const string Vertex = "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/Vertex.hlsl";
-        const string FragmentForward = "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/FragmentForward.hlsl";
-        const string FragmentShadow = "Packages/com.z3y.myshadergraph/Editor/Targets/Unlit/FragmentShadow.hlsl";
+        const string Vertex = "Packages/com.z3y.zsg/Editor/Targets/Unlit/Vertex.hlsl";
+        const string FragmentForward = "Packages/com.z3y.zsg/Editor/Targets/Unlit/FragmentForward.hlsl";
+        const string FragmentShadow = "Packages/com.z3y.zsg/Editor/Targets/Unlit/FragmentShadow.hlsl";
 
         public override void OnBeforeBuild(ShaderBuilder builder)
         {
@@ -96,7 +96,7 @@ namespace ZSG
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.pragmas.Add("#include \"Packages/com.z3y.myshadergraph/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.z3y.zsg/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 builder.AddPass(pass);
             }
 
@@ -119,7 +119,7 @@ namespace ZSG
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.pragmas.Add("#include \"Packages/com.z3y.myshadergraph/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.z3y.zsg/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 builder.AddPass(pass);
             }
         }

@@ -136,8 +136,8 @@ namespace ZSG
 
         }
 
-        const string VertexPreview = "Packages/com.z3y.myshadergraph/Editor/Targets/Preview/Vertex.hlsl";
-        const string FragmentPreview = "Packages/com.z3y.myshadergraph/Editor/Targets/Preview/Fragment.hlsl";
+        const string VertexPreview = "Packages/com.z3y.zsg/Editor/Targets/Preview/Vertex.hlsl";
+        const string FragmentPreview = "Packages/com.z3y.zsg/Editor/Targets/Preview/Fragment.hlsl";
 
         public static void GeneratePreview(ShaderGraphView graphView, ShaderNode shaderNode, bool log = false)
         {
@@ -149,7 +149,7 @@ namespace ZSG
             pass.varyings.RequirePositionCS();
 
             pass.pragmas.Add("#define PREVIEW");
-            pass.pragmas.Add("#include \"Packages/com.z3y.myshadergraph/ShaderLibrary/BuiltInLibrary.hlsl\"");
+            pass.pragmas.Add("#include \"Packages/com.z3y.zsg/ShaderLibrary/BuiltInLibrary.hlsl\"");
 
             var tags = shaderBuilder.subshaderTags;
             tags.Add("Queue", "Transparent");

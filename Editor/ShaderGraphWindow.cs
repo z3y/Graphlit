@@ -9,7 +9,7 @@ namespace ZSG
 {
     public class ShaderGraphWindow : EditorWindow
     {
-        [NonSerialized] public const string ROOT = "Packages/com.z3y.myshadergraph/Editor/";
+        [NonSerialized] public const string ROOT = "Packages/com.z3y.zsg/Editor/";
         [NonSerialized] public ShaderGraphView graphView;
         [NonSerialized] public static Dictionary<string, ShaderGraphWindow> editorInstances = new();
 
