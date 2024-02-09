@@ -14,6 +14,11 @@ A node shader editor with primary focus on the built-in pipeline and VRChat. Ear
 - Grabpass
 - Outline
 
+
+![Screenshot 2024-02-09 231826](https://github.com/z3y/MyShaderGraph/assets/33181641/f94a7774-2273-48e5-835c-8ddad39d4983)
+
+https://github.com/z3y/MyShaderGraph/assets/33181641/ae523917-56ee-420d-90ac-a3f3afdecf82
+
 # Currently not implemented
 - Groups are not saved
 - Might lack some basic nodes
