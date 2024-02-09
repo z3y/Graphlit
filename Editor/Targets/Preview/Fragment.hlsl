@@ -15,7 +15,7 @@ float sphIntersect_Preview(float3 ro, float3 rd, float4 sph)
 half4 frag(Varyings varyings) : SV_Target
 {
     // create data for preview
-
+    float2 rawUV = UNPACK_UV0.xy;
     // https://bgolus.medium.com/rendering-a-sphere-on-a-quad-13c92025570c
     float2 uv = UNPACK_UV0.xy;
     uv -= 0.5;
@@ -77,7 +77,14 @@ half4 frag(Varyings varyings) : SV_Target
 
     SurfaceDescription surfaceDescription = SurfaceDescriptionFunction(varyings);
 
+    float2 checkerUV = rawUV * 8;
+    float checkerboard = floor(checkerUV.x) + floor(checkerUV.y);
+    checkerboard = frac(checkerboard * 0.5);
+    checkerboard = checkerboard ? 0.3 : 0.4;
+    // checkerboard = 1;
+
     half4 col = surfaceDescription.Color;
+    half alpha = surfaceDescription.Color.a;
 
     #ifdef PREVIEW3D
         col.a = alpha3D;
@@ -88,6 +95,7 @@ half4 frag(Varyings varyings) : SV_Target
     col.r = LinearToGammaSpaceExact(col.r);
     col.g = LinearToGammaSpaceExact(col.g);
     col.b = LinearToGammaSpaceExact(col.b);
+    col.rgb = lerp(checkerboard, col.rgb, alpha);
     col = saturate(col);
 
     return col;

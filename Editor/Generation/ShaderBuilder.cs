@@ -110,15 +110,18 @@ namespace ZSG
                 foreach (var port in shaderNode.Outputs)
                 {
                     int id = port.GetPortID();
-                    bool previewCapable = shaderNode.PortData[id].Type is Float;
-                    if (previewCapable)
+                    if (shaderNode.PortData[id].Type is Float @float)
                     {
                         var cast = shaderNode.Cast(id, 4, false);
                         sb.Add("output.Color = " + cast.Name + ";");
+                        if (@float.dimensions != 4)
+                        {
+                            sb.Add("output.Color.a = 1;");
+                        }
                     }
                     else
                     {
-                        sb.Add("output.Color = 0;");
+                        sb.Add("output.Color = float4(0,0,0,1);");
                     }
 
                     break; // only first port for preview

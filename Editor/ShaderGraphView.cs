@@ -171,7 +171,10 @@ namespace ZSG
             _editorWindow.SetDirty();
             if (transform) TransformMousePositionToLocalSpace(ref position, true);
 
-            node._previewDisabled = graphData.defaultPreviewState == GraphData.DefaultPreviewState.Disabled;
+            if (node is not PreviewNode)
+            {
+                node._previewDisabled = graphData.defaultPreviewState == GraphData.DefaultPreviewState.Disabled;
+            }
             node.InitializeInternal(this, position);
             AddElement(node);
             node.GeneratePreview();
