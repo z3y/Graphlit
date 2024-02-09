@@ -1,9 +1,9 @@
 {
-  "name": "com.z3y.myshadergraph",
+  "name": "com.z3y.zsg",
   "description": "",
   "version": "0.0.1",
   "unity": "2022.3",
-  "displayName": "z3y - myshadergraph",
+  "displayName": "ZShaderGraph",
   "hideInEditor": false,
   "gitDependencies": {},
   "vpmDependencies": {},

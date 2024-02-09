@@ -24,6 +24,7 @@ https://github.com/z3y/MyShaderGraph/assets/33181641/ae523917-56ee-420d-90ac-a3f
 - Inputs and outputs are automatically created by parsing the text. The last declared function is used.
 - You can add custom function nodes to the graph search tree menu by creating an .hlsl file with a ProjectNameNode tag.
 - You can bind inputs (example "float2 UV" would automatically pass in the uv0 texture coordinate to the function when nothing is connected)
+- You can use any variable type, even if its not supported by the graph, to pass values between custom functions
 
 ## Currently not implemented
 - Groups are not saved
@@ -33,6 +34,7 @@ https://github.com/z3y/MyShaderGraph/assets/33181641/ae523917-56ee-420d-90ac-a3f
 - Might have small breaking changes
 - Default textures sometimes dont apply in the preview
 - Not all inputs available in all transform spaces
+- It doesn't really have a good name
 - Custom varyings
 - Custom function parser is not very advanced
 - Changing inputs or outputs on custom function nodes can leave some edges disconnected
