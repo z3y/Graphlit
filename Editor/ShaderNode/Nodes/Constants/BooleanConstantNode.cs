@@ -47,7 +47,7 @@ namespace ZSG
             }
             else
             {
-                SetVariable(OUT, $"bool{_value}");
+                SetVariable(OUT, $"{_value.ToString().ToLower()}");
             }
         }
     }
