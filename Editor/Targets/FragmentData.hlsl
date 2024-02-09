@@ -14,9 +14,9 @@ struct FragmentData
     float3 viewDirectionTS;
     float3x3 tangentSpaceTransform;
     bool frontFace;
-    float2 pixelPosition;
-    float2 positionNDC;
+    float4 positionCSR;
     float2 grabScreenPosition;
+    float2 screenPosition;
 
     static FragmentData Create(Varyings varyings)
     {
@@ -61,14 +61,13 @@ struct FragmentData
         output.frontFace = IS_FRONT_VFACE(varyings.cullFace, true, false);
         #endif
 
-        #if UNITY_UV_STARTS_AT_TOP
-            output.pixelPosition = float2(varyings.positionCS.x, (_ProjectionParams.x < 0) ? (_ScreenParams.y - varyings.positionCS.y) : varyings.positionCS.y);
-        #else
-            output.pixelPosition = float2(varyings.positionCS.x, (_ProjectionParams.x > 0) ? (_ScreenParams.y - varyings.positionCS.y) : varyings.positionCS.y);
+        #ifdef UNPACK_POSITIONCSR
+            output.positionCSR = UNPACK_POSITIONCSR;
+            float4 grabPos = ComputeGrabScreenPos(output.positionCSR);
+            float4 screenPos = ComputeScreenPos(output.positionCSR);
+            output.grabScreenPosition = grabPos.xy / grabPos.w;
+            output.screenPosition = screenPos.xy / screenPos.w;
         #endif
-
-        output.positionNDC = output.pixelPosition.xy / _ScreenParams.xy;
-        output.positionNDC.y = 1.0f - output.positionNDC.y;
 
         return output;
     }

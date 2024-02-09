@@ -21,7 +21,10 @@ namespace ZSG
         BitangentOS = 14,
         VertexColor = 15,
         FrontFace = 16,
-        PositionNDC = 17,
+        PositionCSRaw = 17,
+        GrabScreenPosition = 18,
+        ScreenPosition = 19,
+        TangentSpaceTransform = 20,
     }
 
     public enum BindingSpace
@@ -110,7 +113,11 @@ namespace ZSG
                     PortBinding.ViewDirectionOS => RequireViewDirectionOSVertex(pass),
                     PortBinding.BitangentWS => RequireBitangentWSVertex(pass),
                     PortBinding.BitangentOS => RequireBitangentOSVertex(pass),
-                    PortBinding.FrontFace => throw new NotImplementedException(),
+                    PortBinding.FrontFace => "data.frontFace",
+                    PortBinding.PositionCSRaw => RequirePositionCSRawVertex(pass),
+                    PortBinding.GrabScreenPosition => throw new NotImplementedException(),
+                    PortBinding.ScreenPosition => throw new NotImplementedException(),
+                    PortBinding.TangentSpaceTransform => RequireTangentSpaceTransformVertex(pass),
                     _ => throw new NotImplementedException(),
                 };
             }
@@ -136,15 +143,44 @@ namespace ZSG
                     PortBinding.BitangentOS => RequireBitangentOSFragment(pass),
                     PortBinding.VertexColor => varyings.RequireColor(),
                     PortBinding.FrontFace => RequireFrontFace(pass),
-                    PortBinding.PositionNDC => RequirePositionNDC(pass),
+                    PortBinding.PositionCSRaw => RequirePositionCSRawFragment(pass),
+                    PortBinding.GrabScreenPosition => RequireGrabScrenPositionFragment(pass),
+                    PortBinding.ScreenPosition => RequireScrenPositionFragment(pass),
+                    PortBinding.TangentSpaceTransform => RequireTangentSpaceTransformFragment(pass),
                     _ => throw new NotImplementedException(),
                 }; ;
             }
         }
-        static string RequirePositionNDC(PassBuilder pass)
+        static string RequireTangentSpaceTransformFragment(PassBuilder pass)
         {
-            pass.varyings.RequirePositionCS();
-            return "data.positionNDC";
+            RequireBTNFragment(pass);
+            return "data.tangentSpaceTransform";
+        }
+        static string RequireTangentSpaceTransformVertex(PassBuilder pass)
+        {
+            RequireBTNVertex(pass);
+            return "data.tangentSpaceTransform";
+        }
+        static string RequireScrenPositionFragment(PassBuilder pass)
+        {
+            RequirePositionCSRawFragment(pass);
+            return "data.screenPosition";
+        }
+        static string RequireGrabScrenPositionFragment(PassBuilder pass)
+        {
+            RequirePositionCSRawFragment(pass);
+            return "data.grabScreenPosition";
+        }
+        static string RequirePositionCSRawFragment(PassBuilder pass)
+        {
+            RequirePositionWSVertex(pass);
+            pass.varyings.RequireInternal("positionCSR", 4, "data.positionCSR");
+            return "data.positionCSR";
+        }
+        static string RequirePositionCSRawVertex(PassBuilder pass)
+        {
+            pass.attributes.RequirePositionOS();
+            return "attributes.positionCS";
         }
         private static string RequireFrontFace(PassBuilder pass)
         {
@@ -220,7 +256,7 @@ namespace ZSG
         {
             string value = AppendTangentWSVertex(pass);
             pass.varyings.RequireInternal("normalWS", 3, value);
-            pass.varyings.RequireInternal("tangentWS", 4, value);
+            pass.varyings.RequireInternal("tangentWS", 4, $"float4({value}.xyz, attributes.tangentOS.w)");
             return "data.tangentWS";
         }
         private static string RequireTangentOSFragment(PassBuilder pass)
@@ -247,6 +283,12 @@ namespace ZSG
             RequireBitangentWSFragment(pass);
             RequireTangentWSFragment(pass);
             RequireNormalWSFragment(pass);
+        }
+        private static void RequireBTNVertex(PassBuilder pass)
+        {
+            RequireBitangentWSVertex(pass);
+            RequireTangentWSVertex(pass);
+            RequireNormalWSVertex(pass);
         }
         private static string RequireViewDirectionTSFragment(PassBuilder pass)
         {

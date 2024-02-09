@@ -30,7 +30,9 @@ Varyings vert(Attributes input)
         varyings.positionCS = TransformWorldToHClip(positionWS);
     #endif
 
-
+    #ifdef UNPACK_POSITIONCSR
+        UNPACK_POSITIONCSR = varyings.positionCS;
+    #endif
     
     UNITY_TRANSFER_FOG(varyings, varyings.positionCS);
     return varyings;

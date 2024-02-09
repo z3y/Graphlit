@@ -14,7 +14,7 @@ namespace ZSG
             AddPort(new(PortDirection.Input, new Float(2), UV, "UV"));
             AddPort(new(PortDirection.Output, new Float(4), OUT));
 
-            Bind(UV, PortBinding.PositionNDC);
+            Bind(UV, PortBinding.GrabScreenPosition);
         }
 
         protected override void Generate(NodeVisitor visitor)

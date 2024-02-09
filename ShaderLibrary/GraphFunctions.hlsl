@@ -64,9 +64,6 @@ float4 SampleSceneColor(float2 uv)
     #if defined(PREVIEW) || defined(SHADER_API_MOBILE)
     return 0;
     #endif
-    #if UNITY_SINGLE_PASS_STEREO
-        uv = TransformStereoScreenSpaceTex(uv, 1.0);
-    #endif
     return SAMPLE_TEXTURE2D_X(_CameraOpaqueTexture, sampler_CameraOpaqueTexture, uv);
 }
 
@@ -76,9 +73,6 @@ float SampleSceneDepth(float2 uv)
 {
     #if defined(PREVIEW) || defined(SHADER_API_MOBILE)
     return 0;
-    #endif
-    #if UNITY_SINGLE_PASS_STEREO
-        uv = TransformStereoScreenSpaceTex(uv, 1.0);
     #endif
     return SAMPLE_TEXTURE2D_X(_CameraDepthTexture, sampler_CameraDepthTexture, uv).r;
 }

@@ -14,6 +14,7 @@ struct VertexData
     float3 viewDirectionTS;
     float3x3 tangentSpaceTransform;
     bool frontFace;
+    float4 positionCSR;
 
     static VertexData Create(Attributes attributes)
     {
@@ -49,6 +50,14 @@ struct VertexData
 
         output.frontFace = true;
 
+        #if defined(UNITY_PASS_SHADOWCASTER)
+            output.positionCSR = TransformWorldToHClip(ApplyShadowBiasNormal(output.positionWS, output.normalWS));
+            output.positionCSR = UnityApplyLinearShadowBias(output.positionCSR);
+        #elif defined(UNITY_PASS_META)
+            output.positionCSR = UnityMetaVertexPosition(float4(TransformWorldToObject(output.positionWS), 0), input.uv1, input.uv2, unity_LightmapST, unity_DynamicLightmapST);
+        #else
+            output.positionCSR = TransformWorldToHClip(output.positionWS);
+        #endif
 
         return output;
     }

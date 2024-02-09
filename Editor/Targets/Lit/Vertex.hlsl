@@ -55,5 +55,9 @@ Varyings vert(Attributes input)
         }
     #endif
 
+    #ifdef UNPACK_POSITIONCSR
+        UNPACK_POSITIONCSR = varyings.positionCS;
+    #endif
+
     return varyings;
 }

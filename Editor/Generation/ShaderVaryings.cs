@@ -130,8 +130,11 @@ namespace ZSG
                 int offset = 0;
                 foreach (var v in b.varyings)
                 {
-                    string vMasked = Mask(b.name, v.channels, offset);
-                    sb.AppendLine("varyings." + vMasked + " = " + Mask(v.passthrough, v.channels) + ";");
+                    if (!string.IsNullOrEmpty(v.passthrough))
+                    {
+                        string vMasked = Mask(b.name, v.channels, offset);
+                        sb.AppendLine("varyings." + vMasked + " = " + Mask(v.passthrough, v.channels) + ";");
+                    }
 
                     string input = Mask("varyings." + b.name, v.channels, offset);
                     _unpackDefines.Add($"#define UNPACK_{v.name.ToUpper()} {input}");
