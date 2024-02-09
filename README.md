@@ -26,3 +26,4 @@ https://github.com/z3y/MyShaderGraph/assets/33181641/ae523917-56ee-420d-90ac-a3f
 - Undo not fully implemented
 - Default textures sometimes dont apply in the preview
 - Not all inputs available in all transform spaces
+- Custom varyings
