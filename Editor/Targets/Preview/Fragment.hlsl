@@ -103,7 +103,7 @@ half4 frag(Varyings varyings) : SV_Target
     float2 checkerUV = rawUV * 8;
     float checkerboard = floor(checkerUV.x) + floor(checkerUV.y);
     checkerboard = frac(checkerboard * 0.5);
-    checkerboard = checkerboard ? 0.3 : 0.4;
+    checkerboard = checkerboard ? 0.35 : 0.4;
     // checkerboard = 1;
 
     half4 col = surfaceDescription.Color;

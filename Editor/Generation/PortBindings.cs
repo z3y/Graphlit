@@ -172,10 +172,8 @@ namespace ZSG
         }
         private static string AppendPositionWSVertex(PassBuilder pass)
         {
-            string value = "positionWS";
             var positionOS = pass.attributes.RequirePositionOS(3);
-            pass.AddVertexBinding($"float3 {value} = {SpaceTransform.ObjectToWorldPosition(positionOS)};");
-            return value;
+            return "data.positionWS";
         }
         private static string RequirePositionWSVertex(PassBuilder pass)
         {
@@ -186,10 +184,8 @@ namespace ZSG
         #region Normal
         private static string AppendNormalWSVertex(PassBuilder pass)
         {
-            string value = "normalWS";
             var normalOS = pass.attributes.RequireNormalOS(3);
-            pass.AddVertexBinding($"float3 {value} = {SpaceTransform.ObjectToWorldNormal(normalOS)};");
-            return value;
+            return "data.normalWS";
         }
         private static string RequireNormalWSFragment(PassBuilder pass)
         {
@@ -216,11 +212,9 @@ namespace ZSG
         #region Tangent
         private static string AppendTangentWSVertex(PassBuilder pass)
         {
-            string value = "tangentWS";
-            RequireNormalWSFragment(pass);
+            RequireNormalWSVertex(pass);
             var tangentOS = pass.attributes.RequireTangentOS();
-            pass.AddVertexBinding($"float4 {value} = float4({SpaceTransform.ObjectToWorldDirection(tangentOS)}, {tangentOS}.w);");
-            return value;
+            return "data.tangentWS";
         }
         private static string RequireTangentWSFragment(PassBuilder pass)
         {
@@ -279,46 +273,32 @@ namespace ZSG
         private static string RequireViewDirectionWSVertex(PassBuilder pass)
         {
             var positionWS = RequirePositionWSVertex(pass);
-            string value = "viewDirectionWS";
-            pass.AddVertexBinding($"float3 {value} = normalize(_WorldSpaceCameraPos.xyz - {positionWS});");
-            return value;
+            return "data.viewDirectionWS";
         }
         private static string RequireViewDirectionOSVertex(PassBuilder pass)
         {
             var viewDirWS = RequireViewDirectionWSVertex(pass);
-            string value = "viewDirectionOS";
-            pass.AddVertexBinding($"float3 {value} = TransformWorldToObjectDir({viewDirWS});");
-            return value;
+            return "data.viewDirectionOS";
         }
         private static string RequireViewDirectionTSVertex(PassBuilder pass)
         {
-            string value = "viewDirectionTS";
             var viewDirWS = RequireViewDirectionWSVertex(pass);
             var tangentWS = RequireTangentWSVertex(pass);
             var normalWS = RequireNormalWSVertex(pass);
             var bitangentWS = RequireBitangentWSVertex(pass);
-
-            pass.AddVertexBinding($"float3x3 tangentSpaceTransform = float3x3({tangentWS}.xyz, {bitangentWS}, {normalWS});");
-            pass.AddVertexBinding($"float {value} = mul(tangentSpaceTransform, {viewDirWS});");
-
-            return value;
+            return "data.viewDirectionTS";
         }
 
         private static string RequireBitangentWSVertex(PassBuilder pass)
         {
             var normal = RequireNormalWSVertex(pass);
             var tangent = RequireTangentWSVertex(pass);
-            string value = "bitangentWS";
-            pass.AddVertexBinding($"float crossSign = (attributes.tangentOS.w > 0.0 ? 1.0 : -1.0) * unity_WorldTransformParams.w;");
-            pass.AddVertexBinding($"float3 {value} = crossSign * cross({normal}, {tangent});");
-            return value;
+            return "data.bitangentWS";
         }
         private static string RequireBitangentOSVertex(PassBuilder pass)
         {
             var bitangentWS = RequireBitangentWSVertex(pass);
-            string value = "bitangentOS";
-            pass.AddVertexBinding($"float3 {value} = TransformWorldToObjectDir({bitangentWS});");
-            return value;
+            return "data.bitangentOS";
         }
     }
 }

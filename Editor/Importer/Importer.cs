@@ -46,6 +46,10 @@ namespace ZSG
             }
 
             var builder = new ShaderBuilder(GenerationMode.Final, graphView, target);
+            if (string.IsNullOrEmpty(builder.shaderName) || builder.shaderName == "Default Shader")
+            {
+                builder.shaderName = Path.GetFileNameWithoutExtension(ctx.assetPath);
+            }
             builder.BuildTemplate();
 
             var scriptingDefines = PlayerSettings.GetScriptingDefineSymbols(UnityEditor.Build.NamedBuildTarget.Standalone);

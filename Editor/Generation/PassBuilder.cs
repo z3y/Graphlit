@@ -34,24 +34,8 @@ namespace ZSG
 
         public string target = "4.5";
 
-        List<string> _generatedBindingsVertex = new();
-        List<string> _generatedBindingsFragment = new();
-        public void AddVertexBinding(string value)
-        {
-            if (!_generatedBindingsVertex.Contains(value))
-            {
-                _generatedBindingsVertex.Add(value);
-            }
-        }
-        public void AddFragmentBinding(string value)
-        {
-            if (!_generatedBindingsFragment.Contains(value))
-            {
-                _generatedBindingsFragment.Add(value);
-            }
-        }
-
-        const string FragmentDataPath = "Packages/com.z3y.myshadergraph/Editor/Targets/FragmentData.hlsl";
+        public string fragmentDataPath = "Packages/com.z3y.myshadergraph/Editor/Targets/FragmentData.hlsl";
+        public string vertexDataPath = "Packages/com.z3y.myshadergraph/Editor/Targets/VertexData.hlsl";
 
         public GenerationMode generationMode;
 
@@ -172,13 +156,14 @@ namespace ZSG
                 }
             }
 
+            sb.AppendInclude(vertexDataPath);
+            sb.Space();
             AppendVertexDescription(sb);
 
             varyings.AppendUnpackDefinesForTarget(sb);
 
-            sb.AppendInclude(FragmentDataPath);
+            sb.AppendInclude(fragmentDataPath);
             sb.Space();
-
             AppendSurfaceDescription(sb);
 
 
@@ -190,11 +175,8 @@ namespace ZSG
         {
             sb.AppendLine("VertexDescription VertexDescriptionFunction(Attributes attributes, inout Varyings varyings)");
             sb.Indent();
+            sb.AppendLine("VertexData data = VertexData::Create(attributes);");
             sb.AppendLine("VertexDescription output = (VertexDescription)0;");
-            foreach (var line in _generatedBindingsVertex)
-            {
-                sb.AppendLine(line);
-            }
             foreach (var line in vertexDescription)
             {
                 sb.AppendLine(line);
@@ -209,10 +191,7 @@ namespace ZSG
             sb.AppendLine("SurfaceDescription SurfaceDescriptionFunction(Varyings varyings)");
             sb.Indent();
             varyings.AppendVaryingUnpacking(sb);
-            foreach (var line in _generatedBindingsFragment)
-            {
-                sb.AppendLine(line);
-            }
+
             sb.AppendLine("FragmentData data = FragmentData::Create(varyings);");
             sb.AppendLine($"SurfaceDescription output = (SurfaceDescription)0;");
             foreach (var line in surfaceDescription)
