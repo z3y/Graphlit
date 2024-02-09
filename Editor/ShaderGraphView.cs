@@ -60,8 +60,7 @@ namespace ZSG
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange change)
         {
-            _editorWindow.SetDirty();
-
+            LoopDetection(change);
             if (change.elementsToRemove is not null)
             {
                 foreach (var graphElement in change.elementsToRemove)
@@ -73,7 +72,55 @@ namespace ZSG
                 }
             }
 
+            _editorWindow.SetDirty();
             return change;
+        }
+
+        void LoopDetection(GraphViewChange change)
+        {
+            if (change.edgesToCreate is null)
+            {
+                return;
+            }
+
+
+            foreach (var edge in change.edgesToCreate.ToArray())
+            {
+                string startGUID = edge.output.node.viewDataKey;
+
+                if (LoopDetection(startGUID, edge))
+                {
+                    change.edgesToCreate.Remove(edge);
+                    Debug.LogError("Infinite loop detected");
+                    break;
+                }
+            }
+        }
+
+        bool LoopDetection(string startGUID, Edge edge)
+        {
+            var connectedNode = (ShaderNode)edge.input.node;
+            if (connectedNode.viewDataKey == startGUID)
+            {
+                return true;
+            }
+            foreach (var port in connectedNode.Outputs)
+            {
+                if (!port.connected)
+                {
+                    continue;
+                }
+
+                foreach (var edges in port.connections)
+                {
+                    if (LoopDetection(startGUID, edges))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         public void SetDirty() => _editorWindow.SetDirty();
