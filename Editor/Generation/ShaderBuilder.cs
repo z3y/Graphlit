@@ -62,6 +62,12 @@ namespace ZSG
             customEditor = graphData.customEditor;
             fallback = graphData.fallback;
 
+            var vrcTags = graphData.vrcFallbackTags.ToString();
+            if (!string.IsNullOrEmpty(vrcTags))
+            {
+                subshaderTags["VRCFallback"] = vrcTags;
+            }
+
 
             target.OnBeforeBuild(this);
 

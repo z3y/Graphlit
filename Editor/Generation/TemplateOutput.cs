@@ -52,6 +52,8 @@ namespace ZSG
             outline.RegisterValueChangedCallback(x => graphData.outlinePass = (GraphData.OutlinePassMode)x.newValue);
             root.Add(outline);
 
+            AddVRCTagsElements(root, graphData);
+
             var properties = new ListView()
             {
                 headerTitle = "Properties",
@@ -125,6 +127,27 @@ namespace ZSG
                 }
             };
 
+        }
+        void AddVRCTagsElements(VisualElement root, GraphData graphData)
+        {
+            var foldout = new Foldout
+            {
+                text = "VRChat Fallback",
+                value = false
+            };
+            root.Add(foldout);
+
+            var mode = new EnumField("Mode", graphData.vrcFallbackTags.mode);
+            mode.RegisterValueChangedCallback(x => graphData.vrcFallbackTags.mode = (VRCFallbackTags.ShaderMode)x.newValue);
+            foldout.Add(mode);
+
+            var type = new EnumField("Type", graphData.vrcFallbackTags.type);
+            type.RegisterValueChangedCallback(x => graphData.vrcFallbackTags.type = (VRCFallbackTags.ShaderType)x.newValue);
+            foldout.Add(type);
+
+            var doubleSided = new Toggle("Double-Sided") { value = graphData.vrcFallbackTags.doubleSided };
+            doubleSided.RegisterValueChangedCallback(x => graphData.vrcFallbackTags.doubleSided = x.newValue);
+            foldout.Add(doubleSided);
         }
 
         void OnRemovePropertyItem()

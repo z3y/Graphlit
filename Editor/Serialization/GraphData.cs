@@ -13,6 +13,7 @@ namespace ZSG
         public string fallback = string.Empty;
         public string include = string.Empty;
         public OutlinePassMode outlinePass = OutlinePassMode.Disabled;
+        public VRCFallbackTags vrcFallbackTags = new VRCFallbackTags();
 
         public enum GraphPrecision
         {
