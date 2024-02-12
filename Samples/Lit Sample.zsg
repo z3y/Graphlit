@@ -1,0 +1,510 @@
+{
+    "data": {
+        "shaderName": "ShaderGraphZ/Samples/Lit",
+        "properties": [
+            {
+                "guid": "680d1962-c4ab-4a7e-8776-a104698eba52",
+                "referenceName": "_Color",
+                "displayName": "Color",
+                "type": 5,
+                "customAttributes": "",
+                "defaultAttributes": 16,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "(1.00, 1.00, 1.00, 1.00)",
+                "_defaultTexture": "",
+                "declaration": 0
+            },
+            {
+                "guid": "6205ee3b-263e-4447-9b13-3e0619fbda1f",
+                "referenceName": "_MainTex",
+                "displayName": "Albedo",
+                "type": 7,
+                "customAttributes": "",
+                "defaultAttributes": 8,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "",
+                "_defaultTexture": "",
+                "declaration": 0
+            },
+            {
+                "guid": "9777dfe1-c006-4b0a-86bb-e80c8a92be53",
+                "referenceName": "_MaskMap",
+                "displayName": "Mask Map",
+                "type": 7,
+                "customAttributes": "",
+                "defaultAttributes": 2080,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "white",
+                "_defaultTexture": "",
+                "declaration": 0
+            },
+            {
+                "guid": "7f0163b5-00d2-4f7f-8c55-a86d293c70bd",
+                "referenceName": "_Metallic",
+                "displayName": "Metallic",
+                "type": 1,
+                "customAttributes": "",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 1.0,
+                "_value": "0",
+                "_defaultTexture": "",
+                "declaration": 0
+            },
+            {
+                "guid": "7e82e68b-1cc8-4fe2-bf56-4aa32315ff12",
+                "referenceName": "_Roughness",
+                "displayName": "Roughness",
+                "type": 1,
+                "customAttributes": "",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 1.0,
+                "_value": "0.5",
+                "_defaultTexture": "",
+                "declaration": 0
+            },
+            {
+                "guid": "567f003e-5f3f-4185-9672-81ed1ceef482",
+                "referenceName": "_OcclusionStrength",
+                "displayName": "Occlusion",
+                "type": 1,
+                "customAttributes": "",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 1.0,
+                "_value": "1",
+                "_defaultTexture": "",
+                "declaration": 0
+            },
+            {
+                "guid": "e68b53ec-d1bb-4cf4-b8b1-76a34ae625ba",
+                "referenceName": "_BumpMap",
+                "displayName": "Normal Map",
+                "type": 7,
+                "customAttributes": "",
+                "defaultAttributes": 96,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "bump",
+                "_defaultTexture": "",
+                "declaration": 0
+            },
+            {
+                "guid": "297341ee-cfd4-44cb-86a1-103f79528965",
+                "referenceName": "_BumpScale",
+                "displayName": "Normal Scale",
+                "type": 1,
+                "customAttributes": "",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "1",
+                "_defaultTexture": "",
+                "declaration": 0
+            },
+            {
+                "guid": "adf3efa8-25dc-471f-a1bf-2b22231e5a7f",
+                "referenceName": "_EmissionColor",
+                "displayName": "Emission Color",
+                "type": 5,
+                "customAttributes": "",
+                "defaultAttributes": 2,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "(0.00, 0.00, 0.00, 1.00)",
+                "_defaultTexture": "",
+                "declaration": 0
+            }
+        ],
+        "precision": 0,
+        "defaultPreviewState": 1,
+        "customEditor": "",
+        "fallback": "",
+        "include": "",
+        "outlinePass": 0,
+        "stencil": false,
+        "vrcFallbackTags": {
+            "type": 0,
+            "mode": 0,
+            "doubleSided": false
+        }
+    },
+    "nodes": [
+        {
+            "type": "ZSG.LitTemplate",
+            "guid": "a829ca21-17ba-4d50-b65d-d5c65e50b728",
+            "x": 569,
+            "y": 16,
+            "connections": [
+                {
+                    "a": 2,
+                    "b": 3,
+                    "node": "ce59d953-7136-481f-83bb-cd85811068b7"
+                },
+                {
+                    "a": 1,
+                    "b": 4,
+                    "node": "829ab759-191f-44f6-af55-12b13bfb07ec"
+                },
+                {
+                    "a": 2,
+                    "b": 6,
+                    "node": "a4d29d7e-6076-4cd8-9c83-8b45242c5778"
+                },
+                {
+                    "a": 2,
+                    "b": 7,
+                    "node": "f722ba12-f2ba-4311-9aaf-d6e7ab7b8965"
+                },
+                {
+                    "a": 3,
+                    "b": 8,
+                    "node": "46a61731-5656-428a-b3aa-9ed30199b8ab"
+                },
+                {
+                    "a": 100,
+                    "b": 10,
+                    "node": "349d5075-09b2-4746-b508-086f7f1c39d3"
+                },
+                {
+                    "a": 0,
+                    "b": 9,
+                    "node": "01892653-e808-4f9c-8954-f1f669a7c37b"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": false,
+            "data": "{\"_shading\":0,\"_cbirp\":true,\"_specular\":true}"
+        },
+        {
+            "type": "ZSG.ColorPropertyNode",
+            "guid": "e2bd02b6-b290-423a-935f-368f544848ad",
+            "x": -424,
+            "y": -140,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"680d1962-c4ab-4a7e-8776-a104698eba52\"}"
+        },
+        {
+            "type": "ZSG.SwizzleNode",
+            "guid": "829ab759-191f-44f6-af55-12b13bfb07ec",
+            "x": -139,
+            "y": 48,
+            "connections": [
+                {
+                    "a": 2,
+                    "b": 0,
+                    "node": "ce59d953-7136-481f-83bb-cd85811068b7"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"swizzle\":\"a\"}"
+        },
+        {
+            "type": "ZSG.CustomFunctionNode",
+            "guid": "e686028a-e740-402e-a4c8-75e871049210",
+            "x": -1483,
+            "y": 82,
+            "connections": [
+                {
+                    "a": 2,
+                    "b": 1,
+                    "node": "87d282ae-7274-45d4-8dc1-d6bdf29e9d42"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n    Out = In;\\n}\",\"_file\":\"10900000|66a03437d6d37e44c9d754713b85ddf1\",\"_useFile\":true}"
+        },
+        {
+            "type": "ZSG.FloatPropertyNode",
+            "guid": "9834c9ad-f7b8-44be-af3e-cae23d068406",
+            "x": -863,
+            "y": 116,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"7e82e68b-1cc8-4fe2-bf56-4aa32315ff12\"}"
+        },
+        {
+            "type": "ZSG.CustomFunctionNode",
+            "guid": "349d5075-09b2-4746-b508-086f7f1c39d3",
+            "x": -391,
+            "y": 496,
+            "connections": [
+                {
+                    "a": 3,
+                    "b": 1,
+                    "node": "eeed48fa-e6d8-4e3b-8b63-ae43a0d7a7a0"
+                },
+                {
+                    "a": 0,
+                    "b": 2,
+                    "node": "793a46a4-7797-4c6a-9060-5d43665314f5"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n    Out = In;\\n}\",\"_file\":\"10900000|85a00f5fef33e1449bd1f3c09192fcfd\",\"_useFile\":true}"
+        },
+        {
+            "type": "ZSG.Texture2DPropertyNode",
+            "guid": "1a1ae703-2913-42c5-a306-32c4c43175b5",
+            "x": -987,
+            "y": 571,
+            "connections": [],
+            "precision": 1,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"e68b53ec-d1bb-4cf4-b8b1-76a34ae625ba\"}"
+        },
+        {
+            "type": "ZSG.SampleTexture2DNode",
+            "guid": "a9063074-ec30-4bf2-884f-cf79d4b03465",
+            "x": -1113,
+            "y": 133,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 1,
+                    "node": "66d9ce50-e153-404e-a1ea-5e96ae44ad91"
+                },
+                {
+                    "a": 102,
+                    "b": 0,
+                    "node": "e686028a-e740-402e-a4c8-75e871049210"
+                }
+            ],
+            "precision": 2,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
+        },
+        {
+            "type": "ZSG.SampleTexture2DNode",
+            "guid": "eeed48fa-e6d8-4e3b-8b63-ae43a0d7a7a0",
+            "x": -688,
+            "y": 496,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 1,
+                    "node": "1a1ae703-2913-42c5-a306-32c4c43175b5"
+                },
+                {
+                    "a": 102,
+                    "b": 0,
+                    "node": "e686028a-e740-402e-a4c8-75e871049210"
+                }
+            ],
+            "precision": 1,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
+        },
+        {
+            "type": "ZSG.Texture2DPropertyNode",
+            "guid": "87d282ae-7274-45d4-8dc1-d6bdf29e9d42",
+            "x": -1718,
+            "y": -4,
+            "connections": [],
+            "precision": 1,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"6205ee3b-263e-4447-9b13-3e0619fbda1f\"}"
+        },
+        {
+            "type": "ZSG.SampleTexture2DNode",
+            "guid": "2597f835-fe72-42b9-92c2-c07f6273c28e",
+            "x": -447,
+            "y": -53,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 1,
+                    "node": "87d282ae-7274-45d4-8dc1-d6bdf29e9d42"
+                },
+                {
+                    "a": 102,
+                    "b": 0,
+                    "node": "e686028a-e740-402e-a4c8-75e871049210"
+                }
+            ],
+            "precision": 2,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
+        },
+        {
+            "type": "ZSG.MultiplyNode",
+            "guid": "ce59d953-7136-481f-83bb-cd85811068b7",
+            "x": -221,
+            "y": -98,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 0,
+                    "node": "e2bd02b6-b290-423a-935f-368f544848ad"
+                },
+                {
+                    "a": 3,
+                    "b": 1,
+                    "node": "2597f835-fe72-42b9-92c2-c07f6273c28e"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
+        },
+        {
+            "type": "ZSG.MultiplyNode",
+            "guid": "a4d29d7e-6076-4cd8-9c83-8b45242c5778",
+            "x": -672,
+            "y": 82,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 0,
+                    "node": "9834c9ad-f7b8-44be-af3e-cae23d068406"
+                },
+                {
+                    "a": 5,
+                    "b": 1,
+                    "node": "a9063074-ec30-4bf2-884f-cf79d4b03465"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
+        },
+        {
+            "type": "ZSG.MultiplyNode",
+            "guid": "f722ba12-f2ba-4311-9aaf-d6e7ab7b8965",
+            "x": -568,
+            "y": 244,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 0,
+                    "node": "f74110a7-c855-4a18-9d62-ca311a53c48c"
+                },
+                {
+                    "a": 6,
+                    "b": 1,
+                    "node": "a9063074-ec30-4bf2-884f-cf79d4b03465"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
+        },
+        {
+            "type": "ZSG.LerpNode",
+            "guid": "46a61731-5656-428a-b3aa-9ed30199b8ab",
+            "x": -776,
+            "y": 305,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 0,
+                    "node": "51384c92-b6db-443f-966e-a4715e45cb2b"
+                },
+                {
+                    "a": 4,
+                    "b": 1,
+                    "node": "a9063074-ec30-4bf2-884f-cf79d4b03465"
+                },
+                {
+                    "a": 0,
+                    "b": 2,
+                    "node": "80c8e3ee-d183-465a-b217-6be3147bcdeb"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
+        },
+        {
+            "type": "ZSG.FloatNode",
+            "guid": "51384c92-b6db-443f-966e-a4715e45cb2b",
+            "x": -918,
+            "y": 306,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_value\":1.0}"
+        },
+        {
+            "type": "ZSG.FloatPropertyNode",
+            "guid": "80c8e3ee-d183-465a-b217-6be3147bcdeb",
+            "x": -1113,
+            "y": 515,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"567f003e-5f3f-4185-9672-81ed1ceef482\"}"
+        },
+        {
+            "type": "ZSG.ColorPropertyNode",
+            "guid": "01892653-e808-4f9c-8954-f1f669a7c37b",
+            "x": 195,
+            "y": 289,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"adf3efa8-25dc-471f-a1bf-2b22231e5a7f\"}"
+        },
+        {
+            "type": "ZSG.FloatPropertyNode",
+            "guid": "f74110a7-c855-4a18-9d62-ca311a53c48c",
+            "x": -780,
+            "y": 193,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"7f0163b5-00d2-4f7f-8c55-a86d293c70bd\"}"
+        },
+        {
+            "type": "ZSG.Texture2DPropertyNode",
+            "guid": "66d9ce50-e153-404e-a1ea-5e96ae44ad91",
+            "x": -1587,
+            "y": 293,
+            "connections": [],
+            "precision": 1,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"9777dfe1-c006-4b0a-86bb-e80c8a92be53\"}"
+        },
+        {
+            "type": "ZSG.FloatPropertyNode",
+            "guid": "793a46a4-7797-4c6a-9060-5d43665314f5",
+            "x": -512,
+            "y": 564,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"297341ee-cfd4-44cb-86a1-103f79528965\"}"
+        }
+    ]
+}
