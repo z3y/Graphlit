@@ -3,7 +3,9 @@
 Varyings vert(Attributes input)
 {
     Varyings varyings = (Varyings)0;
+#if !defined(UNITY_PASS_META)
     UNITY_SETUP_INSTANCE_ID(input);
+#endif
     UNITY_INITIALIZE_OUTPUT(Varyings, varyings);
     UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(varyings);
 

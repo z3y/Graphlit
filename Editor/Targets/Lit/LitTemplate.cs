@@ -293,7 +293,6 @@ namespace ZSG
                 pass.tags["LightMode"] = "Meta";
                 pass.renderStates["Cull"] = "Off";
 
-                pass.pragmas.Add("#pragma multi_compile_instancing");
                 pass.pragmas.Add("#pragma shader_feature EDITOR_VISUALIZATION");
                 pass.pragmas.Add("#pragma shader_feature_local _ _ALPHAFADE_ON _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
 
