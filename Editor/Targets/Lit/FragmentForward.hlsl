@@ -9,6 +9,10 @@
     #include "Assets/_pi_/_LTCGI/Shaders/LTCGI.cginc"
 #endif
 
+#ifndef QUALITY_LOW
+    #define BAKERY_SHNONLINEAR
+#endif 
+
 half4 frag(Varyings varyings) : SV_Target
 {
     UNITY_SETUP_INSTANCE_ID(varyings);
@@ -73,7 +77,20 @@ half4 frag(Varyings varyings) : SV_Target
                 half3 L1x = nL1.x * L0 * 2.0;
                 half3 L1y = nL1.y * L0 * 2.0;
                 half3 L1z = nL1.z * L0 * 2.0;
-                half3 sh = L0 + normalWS.x * L1x + normalWS.y * L1y + normalWS.z * L1z;
+                #ifdef BAKERY_SHNONLINEAR
+                    float lumaL0 = dot(L0, 1);
+                    float lumaL1x = dot(L1x, 1);
+                    float lumaL1y = dot(L1y, 1);
+                    float lumaL1z = dot(L1z, 1);
+                    float lumaSH = shEvaluateDiffuseL1Geomerics(lumaL0, float3(lumaL1x, lumaL1y, lumaL1z), normalWS);
+
+                    half3 sh = L0 + normalWS.x * L1x + normalWS.y * L1y + normalWS.z * L1z;
+                    float regularLumaSH = dot(sh, 1);
+                    sh *= lerp(1, lumaSH / regularLumaSH, saturate(regularLumaSH * 16));
+                #else
+                    half3 sh = L0 + normalWS.x * L1x + normalWS.y * L1y + normalWS.z * L1z;
+                #endif
+
                 illuminance = sh;
                 #ifdef _LIGHTMAPPED_SPECULAR
                 {
