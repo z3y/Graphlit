@@ -54,7 +54,7 @@ struct VertexData
             output.positionCSR = TransformWorldToHClip(ApplyShadowBiasNormal(output.positionWS, output.normalWS));
             output.positionCSR = UnityApplyLinearShadowBias(output.positionCSR);
         #elif defined(UNITY_PASS_META)
-            output.positionCSR = UnityMetaVertexPosition(float4(TransformWorldToObject(output.positionWS), 0), input.uv1, input.uv2, unity_LightmapST, unity_DynamicLightmapST);
+            output.positionCSR = UnityMetaVertexPosition(float4(TransformWorldToObject(output.positionWS), 0), attributes.uv1, attributes.uv2, unity_LightmapST, unity_DynamicLightmapST);
         #else
             output.positionCSR = TransformWorldToHClip(output.positionWS);
         #endif

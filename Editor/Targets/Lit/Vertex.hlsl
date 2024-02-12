@@ -13,6 +13,7 @@ Varyings vert(Attributes input)
     float3 normalWS = vertexDescription.Normal;
     #endif
 
+#if !defined(UNITY_PASS_META) 
     #ifdef UNPACK_POSITIONWS
         UNPACK_POSITIONWS = positionWS;
     #endif
@@ -22,6 +23,7 @@ Varyings vert(Attributes input)
     #ifdef UNPACK_TANGENTWS
         UNPACK_TANGENTWS = float4(vertexDescription.Tangent, input.tangentOS.w);
     #endif
+#endif
 
     #if defined(UNITY_PASS_SHADOWCASTER)
         varyings.positionCS = TransformWorldToHClip(ApplyShadowBiasNormal(positionWS, normalWS));

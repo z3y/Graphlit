@@ -238,6 +238,12 @@ namespace ZSG
                 {
                     pass.pragmas.Add("#define _SPECULARHIGHLIGHTS_OFF");
                 }
+                if (_shading == Shading.Flat)
+                {
+                    pass.pragmas.Add("#define _FLATSHADING");
+                    pass.pragmas.Add("#pragma skip_variants SHADOWS_CUBE");
+                    pass.pragmas.Add("#pragma skip_variants SHADOWS_SOFT");
+                }
 
                 pass.attributes.RequirePositionOS();
                 pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
@@ -287,7 +293,7 @@ namespace ZSG
                 pass.tags["LightMode"] = "Meta";
                 pass.renderStates["Cull"] = "Off";
 
-
+                pass.pragmas.Add("#pragma multi_compile_instancing");
                 pass.pragmas.Add("#pragma shader_feature EDITOR_VISUALIZATION");
                 pass.pragmas.Add("#pragma shader_feature_local _ _ALPHAFADE_ON _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
 
