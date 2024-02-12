@@ -234,7 +234,7 @@ half4 frag(Varyings varyings) : SV_Target
         color.a = 1.0;
     #endif
 
-    UNITY_APPLY_FOG(varyings.fogCoord, col);
+    UNITY_APPLY_FOG(varyings.fogCoord, color);
 
     return color;
 }

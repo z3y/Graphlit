@@ -45,6 +45,34 @@ namespace ZSG
         bool SupportsGrabpas => BuildTarget != BuildTarget.Android;
         public bool grabpass = false;
 
+        const string StencilProperties = @"
+        [Foldout]_StencilProperties(""Stencil"", Float) = 0
+        [IntRange]_StencilRef(""Reference"", Range(0, 255)) = 0
+        [IntRange]_StencilReadMask(""Read Mask"", Range(0, 255)) = 255
+        [IntRange]_StencilWriteMask(""Write Mask"", Range(0, 255)) = 255
+        [Enum(UnityEngine.Rendering.CompareFunction)]_StencilCompBack(""Compare Function Back"", Float) = 8
+        [Enum(UnityEngine.Rendering.StencilOp)]_StencilPassBack(""Pass Back"", Float) = 0
+        [Enum(UnityEngine.Rendering.StencilOp)]_StencilFailBack(""Fail Back"", Float) = 0
+        [Enum(UnityEngine.Rendering.StencilOp)]_StencilZFailBack(""ZFail Back"", Float) = 0
+        [Enum(UnityEngine.Rendering.CompareFunction)]_StencilCompFront(""Compare Function Front"", Float) = 8
+        [Enum(UnityEngine.Rendering.StencilOp)]_StencilPassFront(""Pass Front"", Float) = 0
+        [Enum(UnityEngine.Rendering.StencilOp)]_StencilFailFront(""Fail Front"", Float) = 0
+        [Enum(UnityEngine.Rendering.StencilOp)]_StencilZFailFront(""ZFail Front"", Float) = 0";
+
+        const string StencilPropertiesOutline = @"
+        [Foldout]_OutlineStencilProperties(""Outline Stencil"", Float) = 0
+        [IntRange]_OutlineStencilRef(""Reference"", Range(0, 255)) = 0
+        [IntRange]_OutlineStencilReadMask(""Read Mask"", Range(0, 255)) = 255
+        [IntRange]_OutlineStencilWriteMask(""Write Mask"", Range(0, 255)) = 255
+        [Enum(UnityEngine.Rendering.CompareFunction)]_OutlineStencilCompBack(""Compare Function Back"", Float) = 8
+        [Enum(UnityEngine.Rendering.StencilOp)]_OutlineStencilPassBack(""Pass Back"", Float) = 0
+        [Enum(UnityEngine.Rendering.StencilOp)]_OutlineStencilFailBack(""Fail Back"", Float) = 0
+        [Enum(UnityEngine.Rendering.StencilOp)]_OutlineStencilZFailBack(""ZFail Back"", Float) = 0
+        [Enum(UnityEngine.Rendering.CompareFunction)]_OutlineStencilCompFront(""Compare Function Front"", Float) = 8
+        [Enum(UnityEngine.Rendering.StencilOp)]_OutlineStencilPassFront(""Pass Front"", Float) = 0
+        [Enum(UnityEngine.Rendering.StencilOp)]_OutlineStencilFailFront(""Fail Front"", Float) = 0
+        [Enum(UnityEngine.Rendering.StencilOp)]_OutlineStencilZFailFront(""ZFail Front"", Float) = 0";
+
         public void AddPass(PassBuilder passBuilder)
         {
             passBuilder.generationMode = GenerationMode;
@@ -284,6 +312,14 @@ namespace ZSG
                 _sb.Indent();
                 {
                     AppendProperties();
+                    if (ShaderGraphView.graphData.stencil)
+                    {
+                        _sb.AppendLine(StencilProperties);
+                        if (ShaderGraphView.graphData.outlinePass != GraphData.OutlinePassMode.Disabled)
+                        {
+                            _sb.AppendLine(StencilPropertiesOutline);
+                        }
+                    }
                 }
                 _sb.UnIndent();
 
@@ -370,10 +406,10 @@ namespace ZSG
                 if (outline == GraphData.OutlinePassMode.EnabledEarly && i == 0)
                 {
                     string cull = pass.renderStates["Cull"];
-                    pass.appendOutlineDefine = true;
+                    pass.outlinePass = true;
                     pass.renderStates["Cull"] = "Front";
                     AppendPass(pass);
-                    pass.appendOutlineDefine = false;
+                    pass.outlinePass = false;
                     pass.renderStates["Cull"] = cull;
                 }
 
@@ -381,7 +417,7 @@ namespace ZSG
 
                 if (outline == GraphData.OutlinePassMode.Enabled && i == 0)
                 {
-                    pass.appendOutlineDefine = true;
+                    pass.outlinePass = true;
                     pass.renderStates["Cull"] = "Front";
                     AppendPass(pass);
                 }
@@ -393,7 +429,7 @@ namespace ZSG
             _sb.AppendLine("Pass");
             _sb.Indent();
             {
-                pass.AppendPass(_sb);
+                pass.AppendPass(_sb, ShaderGraphView.graphData.stencil);
             }
             _sb.UnIndent();
         }

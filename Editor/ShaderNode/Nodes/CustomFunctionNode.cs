@@ -14,7 +14,7 @@ namespace ZSG
     public class CustomFunctionNode : ShaderNode
     {
         public const string Tag = "ZSGFunction";
-        [MenuItem("Assets/Create/ZSG/Custom Function")]
+        [MenuItem("Assets/Create/Shader Graph Z/Shader Include")]
         public static void CreateVariantFile()
         {
             ProjectWindowUtil.CreateAssetWithContent("CustomFunction.hlsl", DefaultFunction);

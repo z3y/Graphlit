@@ -9,7 +9,7 @@ namespace ZSG
     [NodeInfo("Targets/Unlit Target")]
     public class UnlitTemplate : TemplateOutput
     {
-        [MenuItem("Assets/Create/ZSG/Unlit Graph")]
+        [MenuItem("Assets/Create/Shader Graph Z/Unlit Graph")]
         public static void CreateVariantFile() => ShaderGraphImporter.CreateEmptyTemplate<UnlitTemplate>();
 
         public override string Name { get; } = "Unlit";

@@ -115,11 +115,11 @@ half4 frag(Varyings varyings) : SV_Target
     #else
         col.a = 1;
     #endif
+    col = saturate(col);
     col.r = LinearToGammaSpaceExact(col.r);
     col.g = LinearToGammaSpaceExact(col.g);
     col.b = LinearToGammaSpaceExact(col.b);
     col.rgb = lerp(checkerboard, col.rgb, alpha);
-    col = saturate(col);
 
     return col;
 }

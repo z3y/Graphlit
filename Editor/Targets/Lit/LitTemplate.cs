@@ -10,10 +10,10 @@ namespace ZSG
     [NodeInfo("Targets/Lit Target"), Serializable]
     public class LitTemplate : TemplateOutput
     {
-        [MenuItem("Assets/Create/ZSG/Lit Graph")]
+        [MenuItem("Assets/Create/Shader Graph Z/Lit Graph")]
         public static void CreateVariantFile() => ShaderGraphImporter.CreateEmptyTemplate<LitTemplate>();
 
-        [MenuItem("Assets/Create/ZSG/Flat Lit Graph")]
+        [MenuItem("Assets/Create/Shader Graph Z/Flat Lit Graph")]
         public static void CreateVariantFileFlatLit()
         {
             var template = new LitTemplate

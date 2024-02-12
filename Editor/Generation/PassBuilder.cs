@@ -27,7 +27,7 @@ namespace ZSG
         public List<string> surfaceDescription = new();
         public List<string> surfaceDescriptionStruct = new();
         public List<PropertyDescriptor> properties = new();
-        public bool appendOutlineDefine = false;
+        public bool outlinePass = false;
 
         public ShaderAttributes attributes;
         public ShaderVaryings varyings;
@@ -48,7 +48,7 @@ namespace ZSG
         const string AudioLinkPath = "Packages/com.llealloo.audiolink/Runtime/Shaders/AudioLink.cginc";
         static bool AudioLinkExists = System.IO.File.Exists(AudioLinkPath);
 
-        public void AppendPass(ShaderStringBuilder sb)
+        public void AppendPass(ShaderStringBuilder sb, bool stencil = false)
         {
             varyings.PackVaryings();
 
@@ -60,10 +60,57 @@ namespace ZSG
             {
                 sb.AppendLine(state.Key + " " + state.Value);
             }
+            if (stencil)
+            {
+                AppendStencil(sb);
+            }
 
             sb.AppendLine("HLSLPROGRAM");
             AppendPassHLSL(sb);
             sb.AppendLine("ENDHLSL");
+        }
+        static string StencilStates = @"
+            Stencil
+            {
+                Ref [_StencilRef]
+                ReadMask [_StencilReadMask]
+                WriteMask [_StencilWriteMask]
+        
+                CompBack[_StencilCompBack]
+                PassBack[_StencilPassBack]
+                FailBack[_StencilFailBack]
+                ZFailBack[_StencilZFailBack]
+                CompFront[_StencilCompFront]
+                PassFront[_StencilPassFront]
+                FailFront[_StencilFailFront]
+                ZFailFront[_StencilZFailFront]
+            }";
+        static string StencilStatesOutline = @"
+            Stencil
+            {
+                Ref [_OutlineStencilRef]
+                ReadMask [_OutlineStencilReadMask]
+                WriteMask [_OutlineStencilWriteMask]
+        
+                CompBack[_OutlineStencilCompBack]
+                PassBack[_OutlineStencilPassBack]
+                FailBack[_OutlineStencilFailBack]
+                ZFailBack[_OutlineStencilZFailBack]
+                CompFront[_OutlineStencilCompFront]
+                PassFront[_OutlineStencilPassFront]
+                FailFront[_OutlineStencilFailFront]
+                ZFailFront[_OutlineStencilZFailFront]
+            }";
+        void AppendStencil(ShaderStringBuilder sb)
+        {
+            if (outlinePass)
+            {
+                sb.AppendLine(StencilStatesOutline);
+            }
+            else
+            {
+                sb.AppendLine(StencilStates);
+            }
         }
         public void AppendPassHLSL(ShaderStringBuilder sb)
         {
@@ -75,7 +122,7 @@ namespace ZSG
             {
                 sb.AppendLine(p);
             }
-            if (appendOutlineDefine) sb.AppendLine("#define OUTLINE_PASS");
+            if (outlinePass) sb.AppendLine("#define OUTLINE_PASS");
             foreach (var property in properties)
             {
                 if (property.type != PropertyType.KeywordToggle) continue;

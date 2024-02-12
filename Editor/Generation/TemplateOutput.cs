@@ -52,6 +52,10 @@ namespace ZSG
             outline.RegisterValueChangedCallback(x => graphData.outlinePass = (GraphData.OutlinePassMode)x.newValue);
             root.Add(outline);
 
+            var stencil = new Toggle("Stencil") { value = graphData.stencil };
+            stencil.RegisterValueChangedCallback(x => graphData.stencil = x.newValue);
+            root.Add(stencil);
+
             AddVRCTagsElements(root, graphData);
 
             var properties = new ListView()

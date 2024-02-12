@@ -3,13 +3,12 @@
   "description": "",
   "version": "0.0.1",
   "unity": "2022.3",
-  "displayName": "ZShaderGraph",
+  "displayName": "ShaderGraphZ",
   "hideInEditor": false,
   "gitDependencies": {},
   "vpmDependencies": {},
   "legacyFolders": {},
   "legacyFiles": {},
-  "type": "tool",
   "author": {
     "name": "z3y",
     "url": "https://github.com/z3y"
