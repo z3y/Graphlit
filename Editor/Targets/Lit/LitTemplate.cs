@@ -225,7 +225,10 @@ namespace ZSG
                 pass.renderStates["Blend"] = "[_SrcBlend] One";
                 pass.renderStates["ZWrite"] = "Off";
                 pass.renderStates["ZTest"] = "LEqual";
-
+                if (_shading == Shading.Flat)
+                {
+                    pass.renderStates["BlendOp"] = "Max";
+                }
 
 
                 pass.pragmas.Add("#pragma shader_feature_local _ _ALPHAFADE_ON _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
