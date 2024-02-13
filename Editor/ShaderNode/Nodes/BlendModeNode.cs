@@ -43,11 +43,13 @@ namespace ZSG
         const int BASE = 0;
         const int BLEND = 1;
         const int OUT = 2;
+        const int ALPHA = 3;
 
         public override void Initialize()
         {
             AddPort(new(PortDirection.Input, new Float(3), BASE, "Base"));
             AddPort(new(PortDirection.Input, new Float(3), BLEND, "Blend"));
+            AddPort(new(PortDirection.Input, new Float(3), ALPHA, "Alpha"));
             AddPort(new(PortDirection.Output, new Float(3), OUT, "Out"));
 
             var blend = new EnumField("Mode", _mode);
@@ -57,13 +59,15 @@ namespace ZSG
                 GeneratePreviewForAffectedNodes();
             });
             extensionContainer.Add(blend);
+
+            DefaultValues[ALPHA] = "1.0";
         }
 
         protected override void Generate(NodeVisitor visitor)
         {
             string methodName = "BlendMode_" + _mode.ToString();
 
-            Output(visitor, OUT, $"{methodName}({PortData[BASE].Name}, {PortData[BLEND].Name})");
+            Output(visitor, OUT, $"lerp({PortData[BASE].Name}, {methodName}({PortData[BASE].Name}, {PortData[BLEND].Name}), {PortData[ALPHA].Name})");
         }
     }
 }
