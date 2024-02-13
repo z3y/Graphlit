@@ -4,7 +4,7 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [NodeInfo("_/Texture 2D Array Property"), Serializable]
+    [NodeInfo("Input/Texture 2D Array Property"), Serializable]
     public class Texture2DArrayPropertyNode : TexturePropertyNode
     {
         protected override PropertyType propertyType => PropertyType.Texture2DArray;

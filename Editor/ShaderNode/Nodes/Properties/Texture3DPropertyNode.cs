@@ -6,7 +6,7 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [NodeInfo("_/Texture 3D Property"), Serializable]
+    [NodeInfo("Input/Texture 3D Property"), Serializable]
     public class Texture3DPropertyNode : TexturePropertyNode
     {
         protected override PropertyType propertyType => PropertyType.Texture3D;

@@ -4,7 +4,7 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [NodeInfo("_/Color Property"), Serializable]
+    [NodeInfo("Input/Color Property"), Serializable]
     public class ColorPropertyNode : PropertyNode
     {
         protected override PropertyType propertyType => PropertyType.Color;

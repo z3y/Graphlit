@@ -4,7 +4,7 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [NodeInfo("_/Texture Cube Property"), Serializable]
+    [NodeInfo("Input/Texture Cube Property"), Serializable]
     public class TextureCubePropertyNode : TexturePropertyNode
     {
         protected override PropertyType propertyType => PropertyType.TextureCube;

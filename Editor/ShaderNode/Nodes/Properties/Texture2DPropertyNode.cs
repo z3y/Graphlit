@@ -3,7 +3,7 @@ using ZSG.Nodes;
 
 namespace ZSG
 {
-    [NodeInfo("_/Texture 2D Property"), Serializable]
+    [NodeInfo("Input/Texture 2D Property"), Serializable]
     public class Texture2DPropertyNode : TexturePropertyNode
     {
     }

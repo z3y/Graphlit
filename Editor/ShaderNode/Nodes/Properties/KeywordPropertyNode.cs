@@ -5,7 +5,7 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [NodeInfo("_/Keyword Property"), Serializable]
+    [NodeInfo("Input/Keyword Property"), Serializable]
     public class KeywordPropertyNode : PropertyNode
     {
         protected override PropertyType propertyType => PropertyType.KeywordToggle;

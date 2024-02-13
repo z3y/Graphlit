@@ -4,7 +4,7 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [NodeInfo("_/Integer Property"), Serializable]
+    [NodeInfo("Input/Integer Property"), Serializable]
     public class IntegerPropertyNode : PropertyNode
     {
         protected override PropertyType propertyType => PropertyType.Integer;

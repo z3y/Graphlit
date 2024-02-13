@@ -4,7 +4,7 @@ using ZSG.Nodes.PortType;
 
 namespace ZSG
 {
-    [NodeInfo("_/Float Property"), Serializable]
+    [NodeInfo("Input/Float Property"), Serializable]
     public class FloatPropertyNode : PropertyNode
     {
         protected override PropertyType propertyType => PropertyType.Float;
