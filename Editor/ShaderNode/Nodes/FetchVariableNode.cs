@@ -15,6 +15,8 @@ namespace ZSG
         const int IN = 0;
         const int OUT = 1;
 
+        public override Color Accent => Color.red;
+
         public override void Initialize()
         {
             AddPort(new(PortDirection.Output, new Float(1, true), OUT));
@@ -33,12 +35,10 @@ namespace ZSG
                 TitleLabel.text = x.newValue;
             });
             root.Add(text);
-        }
 
-        public override void OnUnselected()
-        {
-            base.OnUnselected();
-            GeneratePreviewForAffectedNodes();
+            var update = new Button() { text = "Update Preview" };
+            update.clicked += GeneratePreviewForAffectedNodes;
+            root.Add(update);
         }
 
         protected override void Generate(NodeVisitor visitor)

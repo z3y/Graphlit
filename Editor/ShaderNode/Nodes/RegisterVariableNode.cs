@@ -13,6 +13,9 @@ namespace ZSG
         public override bool DisablePreview => true;
         const int IN = 0;
         const int OUT = 1;
+
+        public override Color Accent => Color.red;
+
         public override void Initialize()
         {
             AddPort(new(PortDirection.Input, new Float(1, true), IN));
@@ -31,6 +34,10 @@ namespace ZSG
                 TitleLabel.text = x.newValue;
             });
             root.Add(text);
+
+            var update = new Button() { text = "Update Preview" };
+            update.clicked += GeneratePreviewForAffectedNodes;
+            root.Add(update);
         }
 
         protected override void Generate(NodeVisitor visitor)
