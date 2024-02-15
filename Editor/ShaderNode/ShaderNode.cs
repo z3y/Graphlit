@@ -104,9 +104,38 @@ namespace ZSG
             }
         }
 
-        public IEnumerable<Port> PortElements => inputContainer.Children().Concat(outputContainer.Children()).Where(x => x is Port).Cast<Port>();
-        public IEnumerable<Port> Inputs => inputContainer.Children().Where(x => x is Port).Cast<Port>().Where(x => x.direction == Direction.Input);
-        public IEnumerable<Port> Outputs => outputContainer.Children().Where(x => x is Port).Cast<Port>().Where(x => x.direction == Direction.Output);
+        public IEnumerable<Port> PortElements => Inputs.Union(Outputs);
+        public IEnumerable<Port> Inputs
+        {
+            get
+            {
+                if (this is FetchVariableNode fetch)
+                {
+                    var reg = GraphView.graphElements.OfType<RegisterVariableNode>().Where(x => x._name == fetch._name).FirstOrDefault();
+                    if (reg is not null)
+                    {
+                        return reg.Inputs;
+                    }
+                }
+                return inputContainer.Children().Where(x => x is Port).Cast<Port>().Where(x => x.direction == Direction.Input);
+            }
+        }
+
+        public IEnumerable<Port> Outputs
+        {
+            get
+            {
+                if (this is RegisterVariableNode reg)
+                {
+                    var fetch = GraphView.graphElements.OfType<FetchVariableNode>().Where(x => x._name == reg._name).FirstOrDefault();
+                    if (fetch is not null)
+                    {
+                        return fetch.Outputs;
+                    }
+                }
+                return outputContainer.Children().Where(x => x is Port).Cast<Port>().Where(x => x.direction == Direction.Output);
+            }
+        }
 
         protected abstract void Generate(NodeVisitor visitor);
 
@@ -408,7 +437,7 @@ namespace ZSG
 
         public static int UniqueVariableID { get; protected set; } = 0;
         public Dictionary<int, GeneratedPortData> PortData { get; set; } = new();
-        GeneratedPortData GetInputPortData(int portID, NodeVisitor visitor)
+        public GeneratedPortData GetInputPortData(int portID, NodeVisitor visitor)
         {
             var port = Inputs.Where(x => x.GetPortID() == portID).First();
             if (port.connected)

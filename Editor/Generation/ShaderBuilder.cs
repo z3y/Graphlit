@@ -136,7 +136,7 @@ namespace ZSG
 
             shaderNode.UpdateGraphView();
 
-            if (GenerationMode == GenerationMode.Preview)
+            if (GenerationMode == GenerationMode.Preview && !shaderNode.DisablePreview)
             {
                 var sb = passBuilders[0].surfaceDescription;
                 var str = passBuilders[0].surfaceDescriptionStruct;

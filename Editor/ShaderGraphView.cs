@@ -317,6 +317,7 @@ namespace ZSG
                 case KeyCode.Alpha3: CreateNode(typeof(Float3Node), position, false); break;
                 case KeyCode.Alpha4: CreateNode(typeof(Float4Node), position, false); break;
                 case KeyCode.Alpha5: CreateNode(typeof(ColorNode), position, false); break;
+                case KeyCode.Alpha6: CreateNode(typeof(Texture2DPropertyNode), position, false); break;
                 case KeyCode.M: CreateNode(typeof(MultiplyNode), position, false); break;
                 case KeyCode.A: CreateNode(typeof(AddNode), position, false); break;
                 case KeyCode.Period: CreateNode(typeof(DotNode), position, false); break;
