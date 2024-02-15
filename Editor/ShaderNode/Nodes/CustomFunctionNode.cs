@@ -224,7 +224,7 @@ namespace ZSG
 
         protected override void Generate(NodeVisitor visitor)
         {
-            string uniqueID = UniqueVariableID++.ToString();
+            string uniqueID = UniqueVariableID;
 
             string methodName = _functionParser.methodName;
 

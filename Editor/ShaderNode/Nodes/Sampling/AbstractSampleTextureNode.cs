@@ -57,7 +57,7 @@ namespace ZSG
 
         protected override void Generate(NodeVisitor visitor)
         {
-            string name = "TextureSample" + UniqueVariableID++.ToString();
+            string name = "TextureSample" + UniqueVariableID;
             SetVariable(OUT_RGBA, name);
 
 

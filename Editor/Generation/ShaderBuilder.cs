@@ -176,6 +176,7 @@ namespace ZSG
             shaderBuilder.AddPass(pass);
             pass.varyings.RequirePositionCS();
 
+            pass.pragmas.Add("#pragma skip_optimizations d3d11");
             pass.pragmas.Add("#define PREVIEW");
             pass.pragmas.Add("#include \"Packages/com.z3y.zsg/ShaderLibrary/BuiltInLibrary.hlsl\"");
 

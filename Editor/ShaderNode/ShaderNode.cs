@@ -60,8 +60,10 @@ namespace ZSG
 
     public abstract class ShaderNode : Node
     {
+        static int _id = 0;
         public void InitializeInternal(ShaderGraphView graphView, Vector2 position, string guid = null)
         {
+            UniqueVariableID = _id++.ToString();
             base.SetPosition(new Rect(position, Vector3.one));
             if (guid is not null) viewDataKey = guid;
             GraphView = graphView;
@@ -435,7 +437,7 @@ namespace ZSG
             titleStyle.backgroundColor = Color.black;
         }
 
-        public static int UniqueVariableID { get; protected set; } = 0;
+        public string UniqueVariableID { get; private set; }
         public Dictionary<int, GeneratedPortData> PortData { get; set; } = new();
         public GeneratedPortData GetInputPortData(int portID, NodeVisitor visitor)
         {
@@ -579,7 +581,7 @@ namespace ZSG
             Generate(visitor);
         }
         string DisplayName => Info.name.Split("/")[^1];
-        public string UniqueVariable => DisplayName.Replace(" ", "") + UniqueVariableID++;
+        public string UniqueVariable => DisplayName.Replace(" ", "") + UniqueVariableID;
         public void SetVariable(int id, string name)
         {
             var data = PortData[id];
