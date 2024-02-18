@@ -111,7 +111,12 @@ namespace ZSG
                 guidMap.Add(node.guid, newGuid);
                 var newNode = node;
                 newNode.guid = newGuid;
+                newGraph.nodes.Add(newNode);
+            }
 
+            for (int i = 0; i < newGraph.nodes.Count; i++)
+            {
+                SerializableNode node = newGraph.nodes[i];
                 var newConnections = new List<NodeConnection>();
                 foreach (NodeConnection connection in node.connections)
                 {
@@ -123,8 +128,8 @@ namespace ZSG
                     }
                 }
 
-                newNode.connections = newConnections;
-                newGraph.nodes.Add(newNode);
+                node.connections = newConnections;
+                newGraph.nodes[i] = node;
             }
 
             return newGraph;

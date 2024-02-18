@@ -39,5 +39,4 @@ https://github.com/z3y/MyShaderGraph/assets/33181641/ae523917-56ee-420d-90ac-a3f
 - Custom varyings
 - Custom function parser is not very advanced
 - Changing inputs or outputs on custom function nodes can leave some edges disconnected
-- Copied nodes might have missing edges
 - Sharing sampler states between textures will result in failed to compile previews
