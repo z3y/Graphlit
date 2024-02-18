@@ -711,9 +711,14 @@ namespace ZSG
         public override void OnSelected()
         {
             base.OnSelected();
-            if (GraphView.additionalNodeElements.childCount < 10)
+            const int MaxSelection = 3;
+            if (GraphView.selection.OfType<ShaderNode>().Count() <= MaxSelection)
             {
                 DefaultAdditionalElements(GraphView.additionalNodeElements);
+            }
+            else
+            {
+                GraphView.additionalNodeElements.Clear();
             }
         }
 
@@ -760,6 +765,11 @@ namespace ZSG
             style.marginTop = 5;
             style.marginRight = 5;
             style.bottom = 5;
+
+            if (!DisablePreview && previewDrawer is not null && previewDrawer.cachedShader != null)
+            {
+                ve.Add(previewDrawer.GetExtensionPreview());
+            }
 
             if (this is not TemplateOutput)
             {

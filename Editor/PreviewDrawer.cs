@@ -1,5 +1,6 @@
 using System;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -15,8 +16,8 @@ namespace ZSG
     public class PreviewDrawer : ImmediateModeElement
     {
         int _resolution = 96;
-        string _shader;
-        Shader _cachedShader;
+        public string shaderLabString;
+        public Shader cachedShader;
         Material _material;
         ShaderGraphView _graphView;
         static Shader _defaultShader = Shader.Find("Unlit/Color");
@@ -25,22 +26,35 @@ namespace ZSG
         {
             get
             {
-                if (_cachedShader == null)
+                if (cachedShader == null)
                 {
                     CompileShader();
                 }
-                return _cachedShader;
+                return cachedShader;
             }
         }
 
         void CompileShader()
         {
-            if (string.IsNullOrEmpty(_shader))
+            if (string.IsNullOrEmpty(shaderLabString))
             {
-                _cachedShader = _defaultShader;
+                cachedShader = _defaultShader;
                 return;
             }
-            _cachedShader = ShaderUtil.CreateShaderAsset(_shader, false);
+            cachedShader = ShaderUtil.CreateShaderAsset(shaderLabString, false);
+        }
+
+        PreviewDrawer _extensionPreviewDrawer;
+
+        public PreviewDrawer GetExtensionPreview()
+        {
+            _extensionPreviewDrawer ??= new PreviewDrawer(_graphView, 389)
+            {
+                shaderLabString = shaderLabString,
+                cachedShader = cachedShader
+            };
+
+            return _extensionPreviewDrawer;
         }
 
         public PreviewDrawer(ShaderGraphView graphView, int resolution = 96)
@@ -50,7 +64,7 @@ namespace ZSG
             _resolution = resolution;
             style.width = _resolution;
             style.height = _resolution;
-            cullingEnabled = true;
+            //cullingEnabled = true;
 
             name = "PreviewDrawer";
         }
@@ -58,8 +72,13 @@ namespace ZSG
         public void SetShader(string shader)
         {
             Dispose();
-            _shader = shader;
+            shaderLabString = shader;
             CompileShader();
+            if (_extensionPreviewDrawer is not null)
+            {
+                _extensionPreviewDrawer.shaderLabString = shaderLabString;
+                _extensionPreviewDrawer.cachedShader = cachedShader;
+            }
             MarkDirtyRepaint();
         }
 
@@ -80,11 +99,11 @@ namespace ZSG
 
         public void Dispose()
         {
-            if (_cachedShader)
+            if (cachedShader)
             {
-                GameObject.DestroyImmediate(_cachedShader);
+                GameObject.DestroyImmediate(cachedShader);
             }
-            _shader = string.Empty;
+            shaderLabString = string.Empty;
         }
         int _graphTimeId = Shader.PropertyToID("_GraphTime");
         protected override void ImmediateRepaint()
@@ -100,7 +119,7 @@ namespace ZSG
                 return;
             }
 
-            if (!string.IsNullOrEmpty(_shader))
+            if (!string.IsNullOrEmpty(shaderLabString))
             {
                 _material.shader = PreviewShader;
             }
