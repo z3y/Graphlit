@@ -35,10 +35,14 @@ namespace ZSG
             int c = GetDimensions(IN);
             string name = PortData[IN].Name;
 
-            _r.visible = c >= 1;
             _g.visible = c >= 2;
             _b.visible = c >= 3;
             _a.visible = c >= 4;
+            const int H = 24;
+            _g.style.height = c >= 2 ? H : 0;
+            _b.style.height = c >= 3 ? H : 0;
+            _a.style.height = c >= 4 ? H : 0;
+
             string zero = PrecisionString(1) + "(0)";
             SetVariable(R, c >= 1 ? name + ".x" : zero);
             SetVariable(G, c >= 2 ? name + ".y" : zero);

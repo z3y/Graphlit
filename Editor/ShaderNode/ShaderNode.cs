@@ -581,9 +581,9 @@ namespace ZSG
             }
             PortData[id] = data;
         }
-        public void Output(NodeVisitor visitor, int outID, string line)
+        public void Output(NodeVisitor visitor, int outID, string line, string suffix = "")
         {
-            SetVariable(outID, UniqueVariable);
+            SetVariable(outID, UniqueVariable + suffix);
 
             var data = PortData[outID];
             var type = (Float)data.Type;
