@@ -107,7 +107,7 @@ half4 frag(Varyings varyings) : SV_Target
     // checkerboard = 1;
 
     half4 col = surfaceDescription.Color;
-    half alpha = surfaceDescription.Color.a;
+    half alpha = saturate(surfaceDescription.Color.a);
 
     #ifdef PREVIEW3D
         col.a = alpha3D;
