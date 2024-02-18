@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 using ZSG.Nodes;
@@ -23,6 +25,19 @@ namespace ZSG
             if (!string.IsNullOrEmpty(_name))
             {
                 TitleLabel.text = _name;
+            }
+        }
+
+        public override IEnumerable<Port> Inputs
+        {
+            get
+            {
+                var reg = GraphView.graphElements.OfType<RegisterVariableNode>().Where(x => x._name == _name).FirstOrDefault();
+                if (reg is not null)
+                {
+                    return reg.Inputs;
+                }
+                return Enumerable.Empty<Port>();
             }
         }
 

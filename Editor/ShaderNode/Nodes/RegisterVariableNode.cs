@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 using ZSG.Nodes;
@@ -22,6 +25,19 @@ namespace ZSG
             if (!string.IsNullOrEmpty(_name))
             {
                 TitleLabel.text = _name;
+            }
+        }
+
+        public override IEnumerable<Port> Outputs
+        {
+            get
+            {
+                var fetch = GraphView.graphElements.OfType<FetchVariableNode>().Where(x => x._name == _name).FirstOrDefault();
+                if (fetch is not null)
+                {
+                    return fetch.Outputs;
+                }
+                return Enumerable.Empty<Port>();
             }
         }
 

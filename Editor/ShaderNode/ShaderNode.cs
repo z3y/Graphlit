@@ -60,14 +60,18 @@ namespace ZSG
 
     public abstract class ShaderNode : Node
     {
-        static int _id = 0;
         public void InitializeInternal(ShaderGraphView graphView, Vector2 position, string guid = null)
         {
-            UniqueVariableID = _id++.ToString();
-            base.SetPosition(new Rect(position, Vector3.one));
+            UniqueVariableID = graphView.uniqueID++.ToString();
+            SetPosition(position);
             if (guid is not null) viewDataKey = guid;
             GraphView = graphView;
             AddDefaultElements();
+        }
+
+        public void SetPosition(Vector2 position)
+        {
+            base.SetPosition(new Rect(position, Vector3.one));
         }
 
         public ShaderGraphView GraphView { get; private set; }
@@ -107,37 +111,8 @@ namespace ZSG
         }
 
         public IEnumerable<Port> PortElements => Inputs.Union(Outputs);
-        public IEnumerable<Port> Inputs
-        {
-            get
-            {
-                if (this is FetchVariableNode fetch)
-                {
-                    var reg = GraphView.graphElements.OfType<RegisterVariableNode>().Where(x => x._name == fetch._name).FirstOrDefault();
-                    if (reg is not null)
-                    {
-                        return reg.Inputs;
-                    }
-                }
-                return inputContainer.Children().Where(x => x is Port).Cast<Port>().Where(x => x.direction == Direction.Input);
-            }
-        }
-
-        public IEnumerable<Port> Outputs
-        {
-            get
-            {
-                if (this is RegisterVariableNode reg)
-                {
-                    var fetch = GraphView.graphElements.OfType<FetchVariableNode>().Where(x => x._name == reg._name).FirstOrDefault();
-                    if (fetch is not null)
-                    {
-                        return fetch.Outputs;
-                    }
-                }
-                return outputContainer.Children().Where(x => x is Port).Cast<Port>().Where(x => x.direction == Direction.Output);
-            }
-        }
+        public virtual IEnumerable<Port> Inputs => inputContainer.Children().OfType<Port>();
+        public virtual IEnumerable<Port> Outputs => outputContainer.Children().OfType<Port>();
 
         protected abstract void Generate(NodeVisitor visitor);
 

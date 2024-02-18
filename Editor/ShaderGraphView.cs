@@ -18,6 +18,7 @@ namespace ZSG
 
         public GraphData graphData;
         public VisualElement additionalNodeElements;
+        public int uniqueID = 0;
 
         public Material PreviewMaterial = new(Shader.Find("Unlit/Color"))
         {
@@ -215,7 +216,7 @@ namespace ZSG
 
         public void CreateNode(ShaderNode node, Vector2 position, bool transform = true)
         {
-            _editorWindow.SetDirty();
+            _editorWindow?.SetDirty();
             if (transform) TransformMousePositionToLocalSpace(ref position, true);
 
             if (node is not PreviewNode)

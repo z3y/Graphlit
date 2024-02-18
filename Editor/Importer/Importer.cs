@@ -104,9 +104,42 @@ namespace ZSG
 
         public static void CreateEmptyTemplate(TemplateOutput template)
         {
-            var graphView = new ShaderGraphView(null);
-            graphView.AddElement(template);
+            var graphView = new ShaderGraphView(null)
+            {
+                graphData = new GraphData()
+            };
+            graphView.CreateNode(template, Vector2.zero, false);
+            var firstPort = template.Inputs.Where(x => x.GetPortID() == template.FragmentPorts[0]).First();
+
+            var tex2d = new SampleTexture2DNode();
+            graphView.CreateNode(tex2d, new Vector2(-100, 0), false);
+            tex2d.Outputs.First().ConnectTo(firstPort);
+
+            var prop = new Texture2DPropertyNode();
+            graphView.CreateNode(prop, new Vector2(-200, 0), false);
+            var desc = prop.propertyDescriptor;
+            desc.displayName = "Main Texture";
+            desc.referenceName = "_MainTex";
+            prop.Outputs.First().ConnectTo(tex2d.Inputs.First());
+
+            // for some reason position is not applied
             var data = SerializableGraph.StoreGraph(graphView);
+            for (int i = 0; i < data.nodes.Count(); i++)
+            {
+                if (data.nodes[i].guid == prop.viewDataKey)
+                {
+                    var a = data.nodes[i];
+                    a.x = -500;
+                    data.nodes[i] = a;
+                }
+                else if (data.nodes[i].guid == tex2d.viewDataKey)
+                {
+                    var a = data.nodes[i];
+                    a.x = -300;
+                    data.nodes[i] = a;
+                }
+            }
+
             var jsonData = JsonUtility.ToJson(data, true);
             ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.{EXTENSION}", jsonData);
         }
