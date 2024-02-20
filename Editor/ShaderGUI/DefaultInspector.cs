@@ -4,7 +4,6 @@ using UnityEditor.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 
 namespace ZSG
@@ -33,6 +32,11 @@ namespace ZSG
             {
                 richTextState[i] = style[i].richText;
                 style[i].richText = true;
+            }
+
+            if (_shader != ((Material)editor.target).shader)
+            {
+                _reinitialize = true;
             }
 
             if (_start || _reinitialize)
