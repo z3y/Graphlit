@@ -20,6 +20,10 @@ half4 frag(Varyings varyings) : SV_Target
     
     SurfaceDescription desc = SurfaceDescriptionFunction(varyings);
 
+    #if !defined(_ALPHATEST_ON) && !defined(_ALPHAPREMULTIPLY_ON) && !defined(_ALPHAMODULATE_ON) && !defined(_ALPHAFADE_ON)
+        desc.Alpha = 1.0;
+    #endif
+
     #if defined(_ALPHATEST_ON)
         if (desc.Alpha < desc.Cutoff) discard;
     #endif
@@ -233,9 +237,15 @@ half4 frag(Varyings varyings) : SV_Target
     specularAO *= lerp(1.0, saturate(sqrt(dot(indirectOcclusion + directDiffuse, 1.0))), specularAOIntensity);
     indirectSpecular *= specularAO;
 
+
     #ifdef _FLATSHADING
         indirectDiffuse = saturate(max(indirectDiffuse, directDiffuse));
         directDiffuse = 0.0;
+        #if !(!defined(_ALPHATEST_ON) && !defined(_ALPHAPREMULTIPLY_ON) && !defined(_ALPHAMODULATE_ON) && !defined(_ALPHAFADE_ON))
+            #ifdef UNITY_PASS_FORWARDADD
+                desc.Albedo *= desc.Alpha; // theres probably a better way
+            #endif
+        #endif
     #endif
 
     AlphaTransparentBlend(desc.Alpha, desc.Albedo, desc.Metallic);
@@ -247,9 +257,6 @@ half4 frag(Varyings varyings) : SV_Target
     color.rgb += desc.Emission;
     #endif
 
-    #if !defined(_ALPHATEST_ON) && !defined(_ALPHAPREMULTIPLY_ON) && !defined(_ALPHAMODULATE_ON) && !defined(_ALPHAFADE_ON)
-        color.a = 1.0;
-    #endif
 
     UNITY_APPLY_FOG(varyings.fogCoord, color);
 
