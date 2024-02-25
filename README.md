@@ -28,7 +28,6 @@ https://github.com/z3y/MyShaderGraph/assets/33181641/ae523917-56ee-420d-90ac-a3f
 - Any variable type can be used, even if it's not supported by the graph, to pass values between custom functions
 
 ## Currently not implemented
-- Groups are not saved
 - Might lack some basic nodes
 - Lacks validation (Same nodes shouldn't be allowed to connect to both shader stages, etc.)
 - Undo not fully implemented

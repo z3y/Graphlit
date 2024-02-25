@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace ZSG
 {
@@ -12,34 +11,30 @@ namespace ZSG
     {
         public GraphData data = new GraphData();
         public List<SerializableNode> nodes = new List<SerializableNode>();
-        //public List<GroupInfo> groups = new List<GroupInfo>();
+        public List<SerializableGroup> groups = new List<SerializableGroup>();
 
-        /*[Serializable]
-        public struct GroupInfo
+        [Serializable]
+        public struct SerializableGroup
         {
-            public GroupInfo(Group groupNode, GraphView graphView)
+            public SerializableGroup(Group groupNode, GraphView graphView)
             {
                 Vector2 pos = groupNode.GetPosition().position;
                 x = (int)pos.x;
                 y = (int)pos.y;
-                nodes = new List<string>();
-                foreach (var node in )
+                elements = new List<string>();
+                foreach (var element in groupNode.containedElements)
                 {
-                    Debug.Log(node.GetType());
-
-                    if (node is not ShaderNode shaderNode)
-                    {
-                        continue;
-                    }
-                    Debug.Log(shaderNode.Info.name);
-                    nodes.Add(shaderNode.viewDataKey);
+                    elements.Add(element.viewDataKey);
                 }
 
+                title = groupNode.title;
             }
+
             public int x;
             public int y;
-            public List<string> nodes;
-        }*/
+            public string title;
+            public List<string> elements;
+        }
 
         public static SerializableGraph StoreGraph(ShaderGraphView graphView)
         {
@@ -49,9 +44,9 @@ namespace ZSG
                 nodes = ElementsToSerializableNode(graphView.graphElements).ToList()
             };
 
-     /*       serializableGraph.groups = graphView.graphElements
+            serializableGraph.groups = graphView.graphElements
                 .OfType<Group>()
-                .Select(x => new GroupInfo(x)).ToList();*/
+                .Select(x => new SerializableGroup(x, graphView)).ToList();
 
             return serializableGraph;
         }
@@ -83,6 +78,29 @@ namespace ZSG
             }
 
             SetupNodeConnections(graphView);
+
+            SetupGroups(graphView);
+        }
+
+        void SetupGroups(ShaderGraphView graphView)
+        {
+            foreach (var group in groups)
+            {
+                var g = new Group();
+                g.SetPosition(new Rect(group.x, group.y, 1, 1));
+                g.title = group.title;
+
+                foreach (var guid in group.elements)
+                {
+                    var element = graphView.GetElementByGuid(guid);
+                    if (element is not null)
+                    {
+                        g.AddElement(element);
+                    }
+                }
+
+                graphView.AddElement(g);
+            }
         }
 
         private void UpdatePreviews(ShaderGraphView graphView)
