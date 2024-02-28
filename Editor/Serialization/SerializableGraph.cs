@@ -16,7 +16,7 @@ namespace ZSG
         [Serializable]
         public struct SerializableGroup
         {
-            public SerializableGroup(Group groupNode, GraphView graphView)
+            public SerializableGroup(Group groupNode)
             {
                 Vector2 pos = groupNode.GetPosition().position;
                 x = (int)pos.x;
@@ -46,7 +46,7 @@ namespace ZSG
 
             serializableGraph.groups = graphView.graphElements
                 .OfType<Group>()
-                .Select(x => new SerializableGroup(x, graphView)).ToList();
+                .Select(x => new SerializableGroup(x)).ToList();
 
             return serializableGraph;
         }
@@ -153,7 +153,7 @@ namespace ZSG
             return newGraph;
         }
 
-        public List<ShaderNode> PasteNodesAndOverwiteGuids(ShaderGraphView graphView, Vector2? positionOffset = null)
+        public List<ShaderNode> PasteElementsAndOverwiteGuids(ShaderGraphView graphView, Vector2? positionOffset = null)
         {
             var newElements = GenerateNewGUIDs();
             var graphElements = new List<ShaderNode>();
@@ -170,6 +170,8 @@ namespace ZSG
             }
 
             newElements.SetupNodeConnections(graphView);
+
+            SetupGroups(graphView);
 
             UpdatePreviews(graphView);
 

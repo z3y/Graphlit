@@ -134,6 +134,14 @@ namespace ZSG
                 nodes = SerializableGraph.ElementsToSerializableNode(elements).ToList()
             };
 
+            foreach (var element in elements)
+            {
+                if (element is Group group)
+                {
+                    data.groups.Add(new SerializableGraph.SerializableGroup(group));
+                }
+            }
+
             _lastCopyGraph = data;
 
             //var jsonData = JsonUtility.ToJson(data, false);
@@ -149,7 +157,7 @@ namespace ZSG
 
             //Vector2 mousePosition = new Vector2(-200, -200);
             //ShaderGraphImporter.DeserializeNodesToGraph(data, this, mousePosition);
-            var graphElements = data.PasteNodesAndOverwiteGuids(this, new Vector2(100, -100));
+            var graphElements = data.PasteElementsAndOverwiteGuids(this, new Vector2(100, -100));
 
             ClearSelection();
 
