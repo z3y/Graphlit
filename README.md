@@ -97,3 +97,8 @@ L: Lerp
 - Custom function parser is not very advanced
 - Changing inputs or outputs on custom function nodes can leave some edges disconnected
 - Sharing sampler states between textures will result in failed to compile previews
+
+
+[Patreon](https://www.patreon.com/z3y) |
+[Bug Reports](https://github.com/z3y/ShaderGraphZ/issues) |
+[Discord Support](https://discord.gg/bw46tKgRFT)
