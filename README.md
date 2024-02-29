@@ -38,7 +38,7 @@ Install with [VCC](https://z3y.github.io/vpm-package-listing/) or add the git ur
 
 ## Preview
 
-![Screenshot 2024-02-09 231826](https://github.com/z3y/MyShaderGraph/assets/33181641/f94a7774-2273-48e5-835c-8ddad39d4983)
+![image](https://github.com/z3y/ShaderGraphZ/assets/33181641/e3c10af5-9c49-4794-875f-ea1692a10b78)
 
 https://github.com/z3y/MyShaderGraph/assets/33181641/ae523917-56ee-420d-90ac-a3f3afdecf82
 
