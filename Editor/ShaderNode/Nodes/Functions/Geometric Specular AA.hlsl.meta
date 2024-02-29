@@ -1,7 +1,8 @@
 fileFormatVersion: 2
-guid: 9de8ed102f33ead459a6740f19f40580
-folderAsset: yes
-DefaultImporter:
+guid: c63569117ea5bc04e913aa954fa423d7
+labels:
+- ZSGFunction
+ShaderIncludeImporter:
   externalObjects: {}
   userData: 
   assetBundleName: 
