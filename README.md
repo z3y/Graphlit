@@ -28,6 +28,8 @@ Install with [VCC](https://z3y.github.io/vpm-package-listing/) or add the git ur
 
 - Outline - Duplicates the first pass of the target and inverts cull, you can use the outline pass branch node to adjust the outline.
 
+- Geometric Specular Anti-Aliasing
+
 ## Lit Template
 - Bakery Mono SH
 - Lightmapped Specular
