@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Debug = UnityEngine.Debug;
+using System.Globalization;
 
 namespace ZSG
 {
@@ -121,8 +122,8 @@ namespace ZSG
                         Debug.LogError("Invalid Min Max");
                         continue;
                     }
-                    float.TryParse(split[0], out float min);
-                    float.TryParse(split[1], out float max);
+                    float.TryParse(split[0], NumberStyles.Float, CultureInfo.InvariantCulture, out float min);
+                    float.TryParse(split[1], NumberStyles.Float, CultureInfo.InvariantCulture, out float max);
 
                     p.onGui = (e, p, g) => Vector2MinMaxProperty(e, p, g, min, max);
                 }

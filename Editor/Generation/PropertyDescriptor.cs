@@ -103,7 +103,7 @@ namespace ZSG
         {
             get
             {
-                float.TryParse(_value, out float value);
+                float.TryParse(_value, NumberStyles.Float, CultureInfo.InvariantCulture, out float value);
                 return value;
             }
             set
@@ -122,10 +122,10 @@ namespace ZSG
 
                 string withoutParens = _value.Replace(")", "").Replace("(", "");
                 string[] split = withoutParens.Split(',');
-                float.TryParse(split[0], out float x);
-                float.TryParse(split[1], out float y);
-                float.TryParse(split[2], out float z);
-                float.TryParse(split[3], out float w);
+                float.TryParse(split[0], NumberStyles.Float, CultureInfo.InvariantCulture, out float x);
+                float.TryParse(split[1], NumberStyles.Float, CultureInfo.InvariantCulture, out float y);
+                float.TryParse(split[2], NumberStyles.Float, CultureInfo.InvariantCulture, out float z);
+                float.TryParse(split[3], NumberStyles.Float, CultureInfo.InvariantCulture, out float w);
                 return new Vector4(x, y, z, w);
             }
             set
