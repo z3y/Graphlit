@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using UnityEditor;
@@ -107,7 +108,7 @@ namespace ZSG
             }
             set
             {
-                _value = value.ToString();
+                _value = value.ToString(System.Globalization.CultureInfo.InvariantCulture);
             }
         }
         public Vector4 VectorValue
@@ -218,14 +219,14 @@ namespace ZSG
             }
             return type switch
             {
-                PropertyType.Float => FloatValue.ToString(),
+                PropertyType.Float => FloatValue.ToString(System.Globalization.CultureInfo.InvariantCulture),
                 PropertyType.Float2 => VectorValue.ToString(),
                 PropertyType.Float3 => VectorValue.ToString(),
                 PropertyType.Float4 => VectorValue.ToString(),
                 PropertyType.Color => VectorValue.ToString(),
-                PropertyType.Integer => FloatValue.ToString(),
-                PropertyType.Bool => FloatValue.ToString(),
-                PropertyType.KeywordToggle => FloatValue.ToString(),
+                PropertyType.Integer => FloatValue.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                PropertyType.Bool => FloatValue.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                PropertyType.KeywordToggle => FloatValue.ToString(System.Globalization.CultureInfo.InvariantCulture),
                 _ => throw new System.NotImplementedException(),
             };
         }
@@ -235,7 +236,7 @@ namespace ZSG
             if (type == PropertyType.Float && HasRange)
             {
                 var range = Range;
-                return $"Range ({range.x:R}, {range.y:R})";
+                return $"Range ({range.x.ToString("R", CultureInfo.InvariantCulture)}, {range.y.ToString("R", CultureInfo.InvariantCulture)})";
             }
 
             return type switch

@@ -104,7 +104,7 @@ namespace ZSG
                 string value = var;
                 if (value.Contains('*'))
                 {
-                    value = value.Replace("*", semanticCounter++.ToString());
+                    value = value.Replace("*", semanticCounter++.ToString(System.Globalization.CultureInfo.InvariantCulture));
                 }
                 foreach (var split in value.Split('\n'))
                 {

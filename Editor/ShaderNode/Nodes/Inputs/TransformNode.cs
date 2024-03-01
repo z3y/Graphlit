@@ -84,7 +84,7 @@ namespace ZSG
             }
             else if (_type == SpaceTransform.Type.Direction || _type == SpaceTransform.Type.Normal)
             {
-                Output(visitor, OUT, $"{methodName}({PortData[IN].Name}, {_normalize.ToString().ToLower()})");
+                Output(visitor, OUT, $"{methodName}({PortData[IN].Name}, {_normalize.ToString(System.Globalization.CultureInfo.InvariantCulture).ToLower()})");
             }
             else
             {

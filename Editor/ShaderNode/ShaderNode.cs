@@ -62,7 +62,7 @@ namespace ZSG
     {
         public void InitializeInternal(ShaderGraphView graphView, Vector2 position, string guid = null)
         {
-            UniqueVariableID = graphView.uniqueID++.ToString();
+            UniqueVariableID = graphView.uniqueID++.ToString(System.Globalization.CultureInfo.InvariantCulture);
             SetPosition(position);
             if (guid is not null) viewDataKey = guid;
             GraphView = graphView;

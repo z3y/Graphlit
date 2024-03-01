@@ -46,7 +46,7 @@ namespace ZSG
             }
             else
             {
-                SetVariable(OUT, $"{PrecisionString(1)}({_value})");
+                SetVariable(OUT, $"{PrecisionString(1)}({_value.ToString(System.Globalization.CultureInfo.InvariantCulture)})");
             }
         }
     }

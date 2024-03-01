@@ -47,7 +47,7 @@ namespace ZSG
             }
             else
             {
-                SetVariable(OUT, $"{_value.ToString().ToLower()}");
+                SetVariable(OUT, $"{_value.ToString(System.Globalization.CultureInfo.InvariantCulture).ToLower()}");
             }
         }
     }

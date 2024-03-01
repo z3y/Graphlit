@@ -27,7 +27,7 @@ namespace ZSG
 
         protected override void Generate(NodeVisitor visitor)
         {
-            string distanceVar = UniqueVariable.ToString() + "Distance";
+            string distanceVar = UniqueVariable.ToString(System.Globalization.CultureInfo.InvariantCulture) + "Distance";
             visitor.AppendLine($"{PrecisionString(1)} {distanceVar} = distance({PortData[IN].Name}, {PortData[COLOR].Name});");
             Output(visitor, OUT, $"1.0 - saturate(({distanceVar} - {PortData[RANGE].Name}) / {PortData[SOFTNESS].Name})");
         }

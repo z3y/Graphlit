@@ -48,6 +48,7 @@ namespace ZSG
                 tree.Add(new SearchTreeEntry(new GUIContent(property.type.ToString() + ": " + property.displayName, _nodeIndentationIcon)) { level = 2, userData = i });
             }
 
+
             tree.Add(new SearchTreeGroupEntry(new GUIContent("Functions"), 1));
 
             var functionIncludes = AssetDatabase.FindAssets("l:" + CustomFunctionNode.Tag);
