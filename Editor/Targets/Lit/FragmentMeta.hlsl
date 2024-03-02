@@ -51,7 +51,7 @@ half4 frag(Varyings varyings) : SV_Target
     o.Emission = desc.Emission;
 
     #if defined(_ALPHATEST_ON)
-        clip(alpha - alphaClipThreshold);
+        clip(desc.Alpha - desc.Cutoff);
     #endif
     
     return UnityMetaFragment(o);
