@@ -21,7 +21,7 @@ namespace ZSG
         BitangentOS = 14,
         VertexColor = 15,
         FrontFace = 16,
-        PositionCSRaw = 17,
+        PositionCSRaw = 17, // Ideally this would be called PositionCS, but that requires renaming everything else to PositionHCS
         GrabScreenPosition = 18,
         ScreenPosition = 19,
         TangentSpaceTransform = 20,

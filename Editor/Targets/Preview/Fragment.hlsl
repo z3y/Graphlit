@@ -97,6 +97,11 @@ half4 frag(Varyings varyings) : SV_Target
         UNPACK_COLOR = 1.0;
     #endif
 
+    #ifdef UNPACK_POSITIONCSR
+        // TODO: figure out how to make an accurate preview
+        UNPACK_POSITIONCSR = float4((rawUV.xy - 0.5) * float2(1, -1), 0, 1);
+    #endif
+
 
     SurfaceDescription surfaceDescription = SurfaceDescriptionFunction(varyings);
 
