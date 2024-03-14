@@ -19,9 +19,9 @@ namespace ZSG
             var template = new LitTemplate
             {
                 _specular = false,
-                _shading = Shading.Flat
+                _shading = Shading.Flat,
             };
-            ShaderGraphImporter.CreateEmptyTemplate(template);
+            ShaderGraphImporter.CreateEmptyTemplate(template, x => x.graphData.vrcFallbackTags.type = VRCFallbackTags.ShaderType.Toon);
         }
 
         public override string Name { get; } = "Lit";

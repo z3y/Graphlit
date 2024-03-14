@@ -102,7 +102,7 @@ namespace ZSG
             DefaultInspector.Reinitialize();
         }
 
-        public static void CreateEmptyTemplate(TemplateOutput template)
+        public static void CreateEmptyTemplate(TemplateOutput template, Action<ShaderGraphView> onCreate = null)
         {
             var graphView = new ShaderGraphView(null)
             {
@@ -121,6 +121,8 @@ namespace ZSG
             desc.displayName = "Main Texture";
             desc.referenceName = "_MainTex";
             prop.Outputs.First().ConnectTo(tex2d.Inputs.First());
+
+            onCreate?.Invoke(graphView);
 
             // for some reason position is not applied
             var data = SerializableGraph.StoreGraph(graphView);

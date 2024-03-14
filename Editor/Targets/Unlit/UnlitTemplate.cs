@@ -10,7 +10,8 @@ namespace ZSG
     public class UnlitTemplate : TemplateOutput
     {
         [MenuItem("Assets/Create/Shader Graph Z/Unlit Graph")]
-        public static void CreateVariantFile() => ShaderGraphImporter.CreateEmptyTemplate<UnlitTemplate>();
+        public static void CreateVariantFile() => ShaderGraphImporter.CreateEmptyTemplate(new UnlitTemplate(),
+            x => x.graphData.vrcFallbackTags.type = VRCFallbackTags.ShaderType.Unlit);
 
         public override string Name { get; } = "Unlit";
         public override int[] VertexPorts => new int[] { POSITION, NORMAL, TANGENT };
