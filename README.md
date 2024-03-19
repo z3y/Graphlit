@@ -99,6 +99,7 @@ L: Lerp
 - Custom function parser is not very advanced
 - Changing inputs or outputs on custom function nodes can leave some edges disconnected
 - Sharing sampler states between textures will result in failed to compile previews
+- Previews can lead to high CPU usage if the interaction mode is set to default. Set `Preferences -> General -> Interaction Mode` to monitor refresh rate or custom
 
 
 [Patreon](https://www.patreon.com/z3y) |

@@ -35,7 +35,15 @@ half4 frag(Varyings varyings) : SV_Target
     float3 lightDirection = light.direction;
     half lightAttenuation = light.attenuation;
     float3 positionWS = data.positionWS;
-    float3 normalWS = SafeNormalize(mul(desc.Normal, data.tangentSpaceTransform));
+
+    #if defined(_NORMAL_DROPOFF_WS)
+        float3 normalWS = desc.Normal;
+    #elif defined(_NORMAL_DROPOFF_OS)
+        float3 normalWS = TransformObjectToWorldNormal(desc.Normal);
+    #else // _NORMAL_DROPOFF_TS
+        float3 normalWS = SafeNormalize(mul(desc.Normal, data.tangentSpaceTransform));
+    #endif
+
     float3 tangentWS = data.tangentWS;
     float3 bitangentWS = data.bitangentWS;
     float3 viewDirectionWS = data.viewDirectionWS;

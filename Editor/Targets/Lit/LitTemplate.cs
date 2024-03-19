@@ -85,6 +85,23 @@ namespace ZSG
         [SerializeField] bool _cbirp = false;
         [SerializeField] bool _specular = true;
 
+        enum Normal
+        {
+            Tangent = 0,
+            World = 1,
+            Object = 2,
+        }
+        [SerializeField] Normal _normal = Normal.Tangent;
+        string NormalDropoffDefine()
+        {
+            return _normal switch
+            {
+                Normal.World => "#define _NORMAL_DROPOFF_WS",
+                Normal.Object => "#define _NORMAL_DROPOFF_OS",
+                Normal.Tangent or _ => "#define _NORMAL_DROPOFF_TS",
+            };
+        }
+
         public override void AdditionalElements(VisualElement root)
         {
             base.AdditionalElements(root);
@@ -92,6 +109,10 @@ namespace ZSG
             var shading = new EnumField("Shading", _shading);
             shading.RegisterValueChangedCallback(x => _shading = (Shading)x.newValue);
             root.Add(shading);
+
+            var normal = new EnumField("Normal", _normal);
+            normal.RegisterValueChangedCallback(x => _normal = (Normal)x.newValue);
+            root.Add(normal);
 
             if (_cbirpExists)
             {
@@ -194,7 +215,11 @@ namespace ZSG
                 {
                     pass.pragmas.Add("#define _CBIRP");
                 }
+
+                pass.pragmas.Add(NormalDropoffDefine());
+
                 if (_ltcgiExists && builder.BuildTarget != BuildTarget.Android) pass.pragmas.Add("#pragma shader_feature_local_fragment _LTCGI");
+
 
                 pass.attributes.RequirePositionOS();
                 pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
@@ -247,6 +272,7 @@ namespace ZSG
                     pass.pragmas.Add("#pragma skip_variants SHADOWS_CUBE");
                     pass.pragmas.Add("#pragma skip_variants SHADOWS_SOFT");
                 }
+                pass.pragmas.Add(NormalDropoffDefine());
 
                 pass.attributes.RequirePositionOS();
                 pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
