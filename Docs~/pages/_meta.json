@@ -1,5 +1,8 @@
 
 {
     "index": "Getting Started",
-    "master-node": "Master Node"
+    "master-node": "Master Node",
+    "hotkeys": "Hotkeys",
+    "custom-nodes": "Custom Nodes",
+    "changelog": "Change Log"
 }

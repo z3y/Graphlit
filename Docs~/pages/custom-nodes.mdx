@@ -1,0 +1,29 @@
+import { Callout } from 'nextra/components'
+
+# Custom Function Nodes
+
+Custom function nodes are entirely defined with code. They can either be inlined directly in the node, or imported from a file.
+
+Inputs and outputs are automatically created by parsing the text. It is recommended to use `in` and `out` variables.
+Any variable type can be used, even if it's not supported by the graph, to pass values between custom functions.
+The last declared function in the file is used.
+
+<Callout type="warning">
+Custom function parser is currently not very advanced. Some inputs and outputs might fail to parse, like using arrays etc.
+</Callout>
+
+To add custom function nodes to the graph search tree menu create an .hlsl and add a `ZSGFunction` tag.
+
+## Binding Inputs
+You can bind inputs, for example `float2 UV` would automatically pass in the `uv0` texture coordinate to the function when input is not connected.
+
+```hlsl filename="UVScaleCenter.hlsl" showLineNumbers
+void UVScaleCenter(float2 UV, float Scale, out float2 Out)
+{
+    float s = 1-Scale;
+    UV *= s; 
+    UV += 0.5 * Scale;
+    Out = UV;
+}
+```
+

@@ -30,9 +30,10 @@ Install with [VCC](https://z3y.github.io/vpm-package-listing/) or add the git ur
 
 - Geometric Specular Anti-Aliasing
 
-## Lit Template
 - Bakery Mono SH
+
 - Lightmapped Specular
+
 - Bicubic Lightmap
 
 
@@ -41,52 +42,6 @@ Install with [VCC](https://z3y.github.io/vpm-package-listing/) or add the git ur
 ![image](https://github.com/z3y/ShaderGraphZ/assets/33181641/e3c10af5-9c49-4794-875f-ea1692a10b78)
 
 https://github.com/z3y/MyShaderGraph/assets/33181641/ae523917-56ee-420d-90ac-a3f3afdecf82
-
-# How to use
-
-Generally most of the tutorials for other shader editors can apply.
-
-## Creating new shaders
-`Right Click > Create > Shader Graph Z > Lit Graph`
-
-## Master Node
-- This is the main node where all settings, properties and target features can be adjusted. When the property is added it will appear in the node search list under Properties.
-
-- All vertex ports (Position, Normal, Tangent) are in absolute World Space, to avoid unnecessary conversion from world, to object, back to world again. Use a transform node to convert from object to world when needed.
-
-
-## Custom function node
-- Custom function nodes are entirely defined with code. They can either be inlined directly in the node, or imported from a file.
-- Inputs and outputs are automatically created by parsing the text. The last declared function is used.
-- You can add custom function nodes to the graph search tree menu by creating an .hlsl file with a ZSGFunction tag.
-- You can bind inputs (example "float2 UV" would automatically pass in the uv0 texture coordinate to the function when nothing is connected)
-- Any variable type can be used, even if it's not supported by the graph, to pass values between custom functions
-
-## Hotkeys
-Left click while holding down one of the keys:
-```
-Alpha1: Float
-Alpha2: Float2
-Alpha3: Float3
-Alpha4: Float4
-Alpha5: Color
-Alpha6: Texture2DProperty
-Period: Dot
-M: Multiply
-A: Add
-Z: Swizzle
-N: Normalize
-O: OneMinus
-S: Subtract
-T: SampleTexture2D
-U: UV
-P: Preview
-C: CustomFunction
-B: Branch
-V: Append
-L: Lerp
-```
-
 
 ## Currently not implemented
 - Might lack some basic nodes
