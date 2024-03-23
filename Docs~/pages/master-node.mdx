@@ -1,0 +1,32 @@
+import { Callout } from 'nextra/components'
+
+# Master Node
+
+This is the main node where all settings, properties and target features can be adjusted. When the property is added it will appear in the node search list under Properties.
+
+All vertex ports (Position, Normal, Tangent) are in absolute World Space, to avoid unnecessary conversion from world, to object, back to world again. Use a transform node to convert from object to world when needed.
+
+## Target Options
+- `Shader Name` Name used for the generated shader
+- `Custom Editor` Set a [Custom Editor](https://docs.unity3d.com/Manual/SL-CustomEditor.html). Default editor used when empty
+- `Fallback` Set a [Fallback](https://docs.unity3d.com/Manual/SL-Fallback.html)
+- `Graph Precision` Default precision used for nodes. Some nodes override this and use full precision by default
+- `Default Preview` Default preview mode when creating a new node
+- `Include` A string included after default includes. Supports multiple lines
+- `Outline Pass` Creates a copy of the first pass in the target. Use `Outline Pass Branch` node to control outputs for this pass
+- `Stencil` Add stencil options on the material
+
+## Properties
+
+Use `+/-` to add or remove properties.
+
+<Callout>
+Created properties appear in the Create Node menu under the `Properties` section
+</Callout>
+
+## Lit Target Options
+
+- `Shading` Set PBR or Flat Lit shading
+- `Normal` Set Normal dropoff for the fragment shader
+- `Specular` Disable Specular Highlighs and Reflections
+
