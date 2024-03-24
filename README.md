@@ -2,6 +2,8 @@ A node shader editor with primary focus on the built-in pipeline and VRChat. Ear
 
 Install with [VCC](https://z3y.github.io/vpm-package-listing/) or add the git url.
 
+### [Documentation](https://z3y.github.io/shadergraphz)
+
 ## Templates
 - Unlit
 - Lit (Flat and PBR)
