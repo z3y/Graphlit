@@ -57,12 +57,13 @@ namespace ZSG
             root.Add(stencil);
 
             AddVRCTagsElements(root, graphData);
+            var propertyEditor = new VisualElement();
 
             var properties = new ListView()
             {
                 headerTitle = "Properties",
                 showAddRemoveFooter = true,
-                reorderMode = ListViewReorderMode.Animated,
+                reorderMode = ListViewReorderMode.Simple,
                 showFoldoutHeader = true,
                 reorderable = true,
                 itemsSource = graphData.properties
@@ -80,7 +81,7 @@ namespace ZSG
                 nameField.RegisterValueChangedCallback((evt) =>
                 {
                     graphData.properties[i].displayName = evt.newValue;
-                    graphData.properties[i].onValueChange();
+                    graphData.properties[i].onValueChange?.Invoke();
                 });
 
                 typeLabel.text = graphData.properties[i].type.ToString();
@@ -119,7 +120,6 @@ namespace ZSG
             removeButton.clickable.clicked += OnRemovePropertyItem;
 
             root.Add(properties);
-            var propertyEditor = new VisualElement();
             root.Add(propertyEditor);
 
             properties.selectionChanged += objects =>

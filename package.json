@@ -1,6 +1,6 @@
 {
   "name": "com.z3y.zsg",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "unity": "2022.3",
   "displayName": "ShaderGraphZ",
   "hideInEditor": false,
