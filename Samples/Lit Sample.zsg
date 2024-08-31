@@ -81,6 +81,19 @@
                 "declaration": 0
             },
             {
+                "guid": "b3791d19-6311-4ec5-ad73-bbd64921f898",
+                "referenceName": "_Reflectance",
+                "displayName": "Reflectance",
+                "type": 1,
+                "customAttributes": "",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 1.0,
+                "_value": "0.5",
+                "_defaultTexture": "",
+                "declaration": 0
+            },
+            {
                 "guid": "e68b53ec-d1bb-4cf4-b8b1-76a34ae625ba",
                 "referenceName": "_BumpMap",
                 "displayName": "Normal Map",
@@ -767,6 +780,11 @@
                     "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
                 },
                 {
+                    "a": 0,
+                    "b": 11,
+                    "node": "bb4d0ceb-2d94-42d0-8a0f-e5193879077f"
+                },
+                {
                     "a": 1,
                     "b": 10,
                     "node": "a96f5bd4-5447-4c91-a77f-fe5d610fe8b2"
@@ -781,6 +799,17 @@
             "preview": 0,
             "previewDisabled": false,
             "data": "{\"_shading\":0,\"_cbirp\":true,\"_specular\":true,\"_normal\":0}"
+        },
+        {
+            "type": "ZSG.FloatPropertyNode",
+            "guid": "bb4d0ceb-2d94-42d0-8a0f-e5193879077f",
+            "x": -134,
+            "y": 316,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"b3791d19-6311-4ec5-ad73-bbd64921f898\"}"
         }
     ],
     "groups": [

@@ -207,8 +207,9 @@ float shEvaluateDiffuseL1Geomerics(float L0, float3 L1, float3 n)
     return R0 * (a + (1.0f - a) * (p + 1.0f) * pow(q, p));
 }
 
-
-void ShadeLightDefault(Light light, FragmentData fragData, GIInput giInput, SurfaceDescription surf, inout GIOutput giOutput)
+#define LIGHT_FUNC void LightCustom(Light light, FragmentData fragData, GIInput giInput, SurfaceDescription surf, inout GIOutput giOutput)
+#define LIGHT_DEFAULT LightDefault(light, fragData, giInput, surf, giOutput)
+void LightDefault(Light light, FragmentData fragData, GIInput giInput, SurfaceDescription surf, inout GIOutput giOutput)
 {
     UNITY_BRANCH
     if (light.attenuation * light.NoL > 0)
@@ -236,14 +237,16 @@ void ShadeLightDefault(Light light, FragmentData fragData, GIInput giInput, Surf
     }
 }
 
-float4 FinalColorDefault(SurfaceDescription s, FragmentData fragData, GIInput giInput, GIOutput giOutput)
+#define COLOR_FUNC half4 ColorCustom(SurfaceDescription surf, FragmentData fragData, GIInput giInput, GIOutput giOutput)
+#define COLOR_DEFAULT ColorDefault(surf, fragData, giInput, giOutput)
+half4 ColorDefault(SurfaceDescription surf, FragmentData fragData, GIInput giInput, GIOutput giOutput)
 {
-    half4 color = half4(s.Albedo * (1.0 - s.Metallic) * (giOutput.indirectDiffuse * s.Occlusion + giOutput.directDiffuse), s.Alpha);
+    half4 color = half4(surf.Albedo * (1.0 - surf.Metallic) * (giOutput.indirectDiffuse * surf.Occlusion + giOutput.directDiffuse), surf.Alpha);
     color.rgb += giOutput.directSpecular;
 
     #if defined(UNITY_PASS_FORWARDBASE)
         color.rgb += giOutput.indirectSpecular;
-        color.rgb += s.Emission;
+        color.rgb += surf.Emission;
     #endif
 
     return color;

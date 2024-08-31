@@ -22,6 +22,7 @@ namespace ZSG
         public List<string> cbuffer = new();
         public List<string> objectDecleration = new();
         public List<string> functions = new();
+        public List<string> preincludes = new();
         public List<string> vertexDescription = new();
         public List<string> vertexDescriptionStruct = new();
         public List<string> surfaceDescription = new();
@@ -213,7 +214,10 @@ namespace ZSG
             sb.Space();
             AppendSurfaceDescription(sb);
 
-
+            foreach (var include in preincludes)
+            {
+                sb.AppendLine("#include_with_pragmas \"" + include + '"');
+            }
             sb.AppendLine("#include_with_pragmas \"" + vertexShaderPath + '"');
             sb.AppendLine("#include_with_pragmas \"" + fragmentShaderPath + '"');
         }

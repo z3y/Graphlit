@@ -4,6 +4,7 @@ using ZSG.Nodes;
 using UnityEngine;
 using UnityEditor;
 using System;
+using UnityEditor.UIElements;
 
 namespace ZSG
 {
@@ -12,17 +13,6 @@ namespace ZSG
     {
         [MenuItem("Assets/Create/Shader Graph Z/Lit Graph")]
         public static void CreateVariantFile() => ShaderGraphImporter.CreateEmptyTemplate<LitTemplate>();
-
-        [MenuItem("Assets/Create/Shader Graph Z/Flat Lit Graph")]
-        public static void CreateVariantFileFlatLit()
-        {
-            var template = new LitTemplate
-            {
-                _specular = false,
-                _shading = Shading.Flat,
-            };
-            ShaderGraphImporter.CreateEmptyTemplate(template, x => x.graphData.vrcFallbackTags.type = VRCFallbackTags.ShaderType.Toon);
-        }
 
         public override string Name { get; } = "Lit";
         public override int[] VertexPorts => new int[] { POSITION, NORMAL_VERTEX, TANGENT };
@@ -80,14 +70,9 @@ namespace ZSG
             DefaultValues[NORMAL_TS] = "float3(0.0, 0.0, 1.0)";
         }
 
-        enum Shading
-        {
-            PBR,
-            Flat
-        }
-        [SerializeField] Shading _shading = Shading.PBR;
         [SerializeField] bool _cbirp = false;
         [SerializeField] bool _specular = true;
+        [SerializeField] string _customLighting = string.Empty;
 
         enum Normal
         {
@@ -110,9 +95,16 @@ namespace ZSG
         {
             base.AdditionalElements(root);
 
-            var shading = new EnumField("Shading", _shading);
-            shading.RegisterValueChangedCallback(x => _shading = (Shading)x.newValue);
-            root.Add(shading);
+            var customLighting = new ObjectField("Custom Lighting")
+            {
+                objectType = typeof(ShaderInclude)
+            };
+            if (!string.IsNullOrEmpty(_customLighting))
+            {
+                customLighting.value = Helpers.SerializableReferenceToObject<ShaderInclude>(_customLighting);
+            }
+            customLighting.RegisterValueChangedCallback(x => _customLighting = Helpers.AssetSerializableReference(x.newValue));
+            root.Add(customLighting);
 
             var normal = new EnumField("Normal", _normal);
             normal.RegisterValueChangedCallback(x => _normal = (Normal)x.newValue);
@@ -188,6 +180,13 @@ namespace ZSG
             builder.subshaderTags["RenderType"] = "Opaque";
             builder.subshaderTags["Queue"] = "Geometry";
 
+            string customLightingPath = string.Empty;
+            if (!string.IsNullOrEmpty(_customLighting))
+            {
+                var customLightingInclude = Helpers.SerializableReferenceToObject<ShaderInclude>(_customLighting);
+                customLightingPath = AssetDatabase.GetAssetPath(customLightingInclude);
+            }
+
             {
                 var pass = new PassBuilder("FORWARD", Vertex, FragmentForward, POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, EMISSION, NORMAL_TS );
                 pass.tags["LightMode"] = "ForwardBase";
@@ -209,11 +208,7 @@ namespace ZSG
                 pass.pragmas.Add("#pragma shader_feature_local _LIGHTMAPPED_SPECULAR");
                 pass.pragmas.Add("#pragma shader_feature_local _NONLINEAR_LIGHTPROBESH");
 
-                if (_shading == Shading.Flat)
-                {
-                    pass.pragmas.Add("#define _FLATSHADING");
-                    pass.pragmas.Add("#pragma skip_variants SHADOWS_SCREEN");
-                }
+
                 if (!_specular)
                 {
                     pass.pragmas.Add("#define _SPECULARHIGHLIGHTS_OFF");
@@ -247,7 +242,16 @@ namespace ZSG
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
                 pass.pragmas.Add("#include \"Packages/com.z3y.zsg/ShaderLibrary/BuiltInLibrary.hlsl\"");
+
+                pass.preincludes.Add("Packages/com.z3y.zsg/Editor/Targets/Lit/Functions.hlsl");
+                if (!string.IsNullOrEmpty(customLightingPath))
+                {
+                    pass.pragmas.Add("#define CUSTOM_LIGHTING_INCLUDED");
+                    pass.preincludes.Add(customLightingPath);
+                }
+
                 builder.AddPass(pass);
+
             }
             {
                 var pass = new PassBuilder("FORWARD_DELTA", Vertex, FragmentForward, POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, EMISSION, NORMAL_TS);
@@ -258,11 +262,6 @@ namespace ZSG
                 pass.renderStates["Blend"] = "[_SrcBlend] One";
                 pass.renderStates["ZWrite"] = "Off";
                 pass.renderStates["ZTest"] = "LEqual";
-                if (_shading == Shading.Flat)
-                {
-                    pass.renderStates["BlendOp"] = "Max";
-                }
-
 
                 pass.pragmas.Add("#pragma shader_feature_local _ _ALPHAFADE_ON _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
 
@@ -274,12 +273,7 @@ namespace ZSG
                 {
                     pass.pragmas.Add("#define _SPECULARHIGHLIGHTS_OFF");
                 }
-                if (_shading == Shading.Flat)
-                {
-                    pass.pragmas.Add("#define _FLATSHADING");
-                    pass.pragmas.Add("#pragma skip_variants SHADOWS_CUBE");
-                    pass.pragmas.Add("#pragma skip_variants SHADOWS_SOFT");
-                }
+
                 pass.pragmas.Add(NormalDropoffDefine());
 
                 pass.attributes.RequirePositionOS();
@@ -295,6 +289,13 @@ namespace ZSG
                 pass.varyings.RequireCustomString("UNITY_SHADOW_COORDS(*)");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
+
+                pass.preincludes.Add("Packages/com.z3y.zsg/Editor/Targets/Lit/Functions.hlsl");
+                if (!string.IsNullOrEmpty(customLightingPath))
+                {
+                    pass.pragmas.Add("#define CUSTOM_LIGHTING_INCLUDED");
+                    pass.preincludes.Add(customLightingPath);
+                }
 
                 pass.pragmas.Add("#include \"Packages/com.z3y.zsg/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 if (!(_cbirpExists && _cbirp))

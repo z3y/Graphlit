@@ -1,6 +1,15 @@
 #pragma fragment frag
 
-#include "Functions.hlsl"
+#ifdef CUSTOM_COLOR
+    #define COLOR_IMPL ColorCustom
+#else
+    #define COLOR_IMPL ColorDefault
+#endif
+#ifdef CUSTOM_LIGHT
+    #define LIGHT_IMPL LightCustom
+#else
+    #define LIGHT_IMPL LightDefault
+#endif
 
 #ifdef _CBIRP
     #include "Packages/z3y.clusteredbirp/Shaders/CBIRP.hlsl"
@@ -149,7 +158,7 @@ half4 frag(Varyings varyings) : SV_Target
 
 
     // unity lights
-    ShadeLightDefault(unityLight, fragData, giInput, surf, giOutput);
+    LIGHT_IMPL(unityLight, fragData, giInput, surf, giOutput);
 
     // reflection probes
     #if !defined(_GLOSSYREFLECTIONS_OFF)
@@ -226,7 +235,7 @@ half4 frag(Varyings varyings) : SV_Target
 
     AlphaTransparentBlend(surf.Alpha, surf.Albedo, surf.Metallic);
 
-    half4 color = FinalColorDefault(surf, fragData, giInput, giOutput);
+    half4 color = COLOR_IMPL(surf, fragData, giInput, giOutput);
 
     UNITY_APPLY_FOG(varyings.fogCoord, color);
 
