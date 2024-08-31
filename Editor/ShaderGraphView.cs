@@ -338,7 +338,7 @@ namespace ZSG
                 case KeyCode.U: CreateNode(typeof(UVNode), position, false); break;
                 case KeyCode.P: CreateNode(typeof(PreviewNode), position, false); break;
                 case KeyCode.C: CreateNode(typeof(CustomFunctionNode), position, false); break;
-                case KeyCode.B: CreateNode(typeof(BranchNode), position, false); break;
+                case KeyCode.B: CreateNode(typeof(SplitNode), position, false); break;
                 case KeyCode.V: CreateNode(typeof(AppendNode), position, false); break;
                 case KeyCode.L: CreateNode(typeof(LerpNode), position, false); break;
                 case KeyCode.R: CreateNode(typeof(RegisterVariableNode), position, false); break;
