@@ -233,17 +233,6 @@ half4 frag(Varyings varyings) : SV_Target
     specularAO *= lerp(1.0, saturate(sqrt(dot(giOutput.indirectOcclusion + giOutput.directDiffuse, 1.0))), indirectOcclusionIntensity);
     giOutput.indirectSpecular *= specularAO;
 
-
-    #ifdef _FLATSHADING
-        giOutput.indirectDiffuse = saturate(max(giOutput.indirectDiffuse, giOutput.directDiffuse));
-        giOutput.directDiffuse = 0.0;
-        #if !(!defined(_ALPHATEST_ON) && !defined(_ALPHAPREMULTIPLY_ON) && !defined(_ALPHAMODULATE_ON) && !defined(_ALPHAFADE_ON))
-            #ifdef UNITY_PASS_FORWARDADD
-                surf.Albedo *= surf.Alpha; // theres probably a better way
-            #endif
-        #endif
-    #endif
-
     AlphaTransparentBlend(surf.Alpha, surf.Albedo, surf.Metallic);
 
     half4 color = FinalColorDefault(surf, fragData, giInput, giOutput);
