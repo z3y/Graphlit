@@ -1,11 +1,48 @@
 Texture2D<float4> _DFG;
 SamplerState custom_bilinear_clamp_sampler;
 
-#ifdef UNITY_PBS_USE_BRDF2
+#ifndef UNITY_PBS_USE_BRDF1
     #define QUALITY_LOW
 #endif
 
 #include "Filament.hlsl"
+
+struct GIInput
+{
+    half NoV;
+    float3 reflectVector;
+    half3 f0;
+    half3 brdf;
+    half3 energyCompensation;
+    float3 normalWS; // this is the normal after the normal map is applied
+    
+    static GIInput New()
+    {
+        GIInput giInput = (GIInput)0;
+        return giInput;
+    }
+};
+
+struct GIOutput
+{
+    half3 directDiffuse;
+    half3 directSpecular;
+    half3 indirectDiffuse;
+    half3 indirectSpecular;
+    half3 indirectOcclusion;
+
+    static GIOutput New()
+    {
+        GIOutput o = (GIOutput)0;
+        o.directDiffuse = 0;
+        o.directSpecular = 0;
+        o.indirectSpecular = 0;
+        o.indirectDiffuse = 0;
+        o.indirectOcclusion = 1;
+        
+        return o;
+    }
+};
 
 void AlphaTransparentBlend(inout half alpha, inout half3 albedo, half metallic)
 {
@@ -22,6 +59,7 @@ void AlphaTransparentBlend(inout half alpha, inout half3 albedo, half metallic)
         alpha = 1.0f;
     #endif
 }
+
 void ApplyAlphaClip(inout half alpha, half clipThreshold)
 {
     #if defined(_ALPHATEST_ON)
@@ -31,11 +69,18 @@ void ApplyAlphaClip(inout half alpha, half clipThreshold)
 
 struct Light
 {
+    // properties
     float3 direction;
     half3 color;
     half attenuation;
+    
+    // calculated values
+    float3 halfVector;
+    half NoL;
+    half LoH;
+    half NoH;
 
-    static Light Initialize(Varyings varyings)
+    static Light GetUnityLight(Varyings varyings)
     {
         Light light = (Light)0;
 
@@ -69,67 +114,16 @@ struct Light
 
         return light;
     }
-};
 
-void ShadeLight(Light light, float3 viewDirectionWS, float3 normalWS, half roughness, half NoV, half3 f0, half3 energyCompensation, inout half3 color, inout half3 specular)
-{
-    half lightNoL = saturate(dot(normalWS, light.direction));
-    #if !defined(_FLATSHADING)
-    UNITY_BRANCH
-    if (light.attenuation * lightNoL > 0)
+    // universal for any light
+    void ComputeData(FragmentData fragData, GIInput giInput)
     {
-    #endif
-        float3 lightHalfVector = normalize(light.direction + viewDirectionWS);
-        half lightLoH = saturate(dot(light.direction, lightHalfVector));
-        half lightNoH = saturate(dot(normalWS, lightHalfVector));
-
-        half3 lightColor = lightNoL * light.attenuation * light.color;
-
-        #ifdef UNITY_PASS_FORWARDBASE
-            #if !defined(QUALITY_LOW) && !defined(LIGHTMAP_ON)
-                lightColor *= Filament::Fd_Burley(roughness, NoV, lightNoL, lightLoH);
-            #endif
-        #endif
-
-        #if defined(_FLATSHADING)
-            color += light.attenuation * light.color;
-        #else
-            color += lightColor;
-        #endif
-
-        #ifndef _SPECULARHIGHLIGHTS_OFF
-            half clampedRoughness = max(roughness * roughness, 0.002);
-            #ifdef _ANISOTROPY
-                // half at = max(clampedRoughness * (1.0 + surfaceDescription.Anisotropy), 0.001);
-                // half ab = max(clampedRoughness * (1.0 - surfaceDescription.Anisotropy), 0.001);
-
-                // float3 l = light.direction;
-                // float3 t = sd.tangentWS;
-                // float3 b = sd.bitangentWS;
-                // float3 v = viewDirectionWS;
-
-                // half ToV = dot(t, v);
-                // half BoV = dot(b, v);
-                // half ToL = dot(t, l);
-                // half BoL = dot(b, l);
-                // half ToH = dot(t, lightHalfVector);
-                // half BoH = dot(b, lightHalfVector);
-
-                // half3 F = Filament::F_Schlick(lightLoH, sd.f0) * energyCompensation;
-                // half D = Filament::D_GGX_Anisotropic(lightNoH, lightHalfVector, t, b, at, ab);
-                // half V = Filament::V_SmithGGXCorrelated_Anisotropic(at, ab, ToV, BoV, ToL, BoL, NoV, lightNoL);
-            #else
-                half3 F = Filament::F_Schlick(lightLoH, f0) * energyCompensation;
-                half D = Filament::D_GGX(lightNoH, clampedRoughness);
-                half V = Filament::V_SmithGGXCorrelated(NoV, lightNoL, clampedRoughness);
-            #endif
-
-            specular += max(0.0, (D * V) * F) * lightColor;
-        #endif
-    #if !defined(_FLATSHADING)
+        NoL = saturate(dot(giInput.normalWS, direction));
+        halfVector = normalize(direction + fragData.viewDirectionWS);
+        LoH = saturate(dot(direction, halfVector));
+        NoH = saturate(dot(giInput.normalWS, halfVector));
     }
-    #endif
-}
+};
 
 // Bicubic from Core RP
 
@@ -211,4 +205,46 @@ float shEvaluateDiffuseL1Geomerics(float L0, float3 L1, float3 n)
     float a = (1.0f - lenR1 / R0) / (1.0f + lenR1 / R0);
     
     return R0 * (a + (1.0f - a) * (p + 1.0f) * pow(q, p));
+}
+
+
+void ShadeLightDefault(Light light, FragmentData fragData, GIInput giInput, SurfaceDescription surf, inout GIOutput giOutput)
+{
+    UNITY_BRANCH
+    if (light.attenuation * light.NoL > 0)
+    {
+        half3 lightColor = light.NoL * light.attenuation * light.color;
+
+        #ifdef UNITY_PASS_FORWARDBASE
+            #if !(defined(QUALITY_LOW) || defined(LIGHTMAP_ON))
+                lightColor *= Filament::Fd_Burley(surf.Roughness, giInput.NoV, light.NoL, light.LoH);
+            #endif
+        #endif
+
+        giOutput.directDiffuse += lightColor;
+
+        #ifndef _SPECULARHIGHLIGHTS_OFF
+            half clampedRoughness = max(surf.Roughness * surf.Roughness, 0.002);
+
+            half3 F = Filament::F_Schlick(light.LoH, giInput.f0) * giInput.energyCompensation;
+            half D = Filament::D_GGX(light.NoH, clampedRoughness);
+            half V = Filament::V_SmithGGXCorrelated(giInput.NoV, light.NoL, clampedRoughness);
+
+            giOutput.directSpecular += max(0.0, (D * V) * F) * lightColor * UNITY_PI;
+        #endif
+
+    }
+}
+
+float4 FinalColorDefault(SurfaceDescription s, FragmentData fragData, GIInput giInput, GIOutput giOutput)
+{
+    half4 color = half4(s.Albedo * (1.0 - s.Metallic) * (giOutput.indirectDiffuse * s.Occlusion + giOutput.directDiffuse), s.Alpha);
+    color.rgb += giOutput.directSpecular;
+
+    #if defined(UNITY_PASS_FORWARDBASE)
+        color.rgb += giOutput.indirectSpecular;
+        color.rgb += s.Emission;
+    #endif
+
+    return color;
 }

@@ -26,7 +26,7 @@ namespace ZSG
 
         public override string Name { get; } = "Lit";
         public override int[] VertexPorts => new int[] { POSITION, NORMAL_VERTEX, TANGENT };
-        public override int[] FragmentPorts => new int[] { ALBEDO, ALPHA, METALLIC, OCCLUSION, EMISSION, ROUGHNESS, NORMAL_TS, CUTOFF };
+        public override int[] FragmentPorts => new int[] { ALBEDO, ALPHA, METALLIC, OCCLUSION, EMISSION, ROUGHNESS, REFLECTANCE, NORMAL_TS, CUTOFF };
 
         const int POSITION = 0;
         const int NORMAL_VERTEX = 1;
@@ -39,6 +39,8 @@ namespace ZSG
         const int OCCLUSION = 8;
         const int EMISSION = 9;
         const int NORMAL_TS = 10;
+        const int REFLECTANCE = 11;
+
         public override void Initialize()
         {
             AddPort(new(PortDirection.Input, new Float(3, false), POSITION, "Position"));
@@ -56,6 +58,7 @@ namespace ZSG
             AddPort(new(PortDirection.Input, new Float(1, false), ROUGHNESS, "Roughness"));
             AddPort(new(PortDirection.Input, new Float(1, false), METALLIC, "Metallic"));
             AddPort(new(PortDirection.Input, new Float(1, false), OCCLUSION, "Occlusion"));
+            AddPort(new(PortDirection.Input, new Float(1, false), REFLECTANCE, "Reflectance"));
 
             AddPort(new(PortDirection.Input, new Float(3, false), NORMAL_TS, "Normal"));
             AddPort(new(PortDirection.Input, new Float(3, false), EMISSION, "Emission"));
@@ -70,6 +73,7 @@ namespace ZSG
             DefaultValues[ALPHA] = "1.0";
             DefaultValues[CUTOFF] = "0.5";
             DefaultValues[ROUGHNESS] = "0.5";
+            DefaultValues[REFLECTANCE] = "0.5";
             DefaultValues[METALLIC] = "0.0";
             DefaultValues[OCCLUSION] = "1.0";
             DefaultValues[EMISSION] = "float3(0.0, 0.0, 0.0)";
@@ -182,7 +186,7 @@ namespace ZSG
             builder.subshaderTags["Queue"] = "Geometry";
 
             {
-                var pass = new PassBuilder("FORWARD", Vertex, FragmentForward, POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, EMISSION, NORMAL_TS );
+                var pass = new PassBuilder("FORWARD", Vertex, FragmentForward, POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, EMISSION, NORMAL_TS );
                 pass.tags["LightMode"] = "ForwardBase";
 
                 pass.renderStates["Cull"] = "[_Cull]";
@@ -242,7 +246,7 @@ namespace ZSG
                 builder.AddPass(pass);
             }
             {
-                var pass = new PassBuilder("FORWARD_DELTA", Vertex, FragmentForward, POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, EMISSION, NORMAL_TS);
+                var pass = new PassBuilder("FORWARD_DELTA", Vertex, FragmentForward, POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, EMISSION, NORMAL_TS);
                 pass.tags["LightMode"] = "ForwardAdd";
 
                 pass.renderStates["Fog"] = "{ Color (0,0,0,0) }";
