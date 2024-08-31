@@ -138,6 +138,8 @@ namespace ZSG
         static readonly PropertyDescriptor _properties = new(PropertyType.Float, "Properties", "_Properties") { customAttributes = "[Foldout]" };
         static readonly PropertyDescriptor _monosh = new(PropertyType.Float, "Mono SH", "_MonoSH") { customAttributes = "[Toggle(_BAKERY_MONOSH)]" };
         static readonly PropertyDescriptor _bicubicLightmap = new(PropertyType.Float, "Bicubic Lightmap", "_BicubicLightmap") { customAttributes = "[Toggle(_BICUBIC_LIGHTMAP)]" };
+        static readonly PropertyDescriptor _nonLinearLightprobeSh = new(PropertyType.Float, "Non Linear Light Probe SH", "_NonLinearLightProbeSH") { customAttributes = "[Toggle(_NONLINEAR_LIGHTPROBESH)]" };
+
         static readonly PropertyDescriptor _lmSpec = new(PropertyType.Float, "Lightmapped Specular", "_LightmappedSpecular") { customAttributes = "[Toggle(_LIGHTMAPPED_SPECULAR)]" };
         static readonly PropertyDescriptor _ltcgi = new(PropertyType.Float, "LTCGI", "_LTCGI") { customAttributes = "[Toggle(_LTCGI)]" };
 
@@ -172,6 +174,7 @@ namespace ZSG
             builder.properties.Add(_monosh);
             builder.properties.Add(_bicubicLightmap);
             builder.properties.Add(_lmSpec);
+            builder.properties.Add(_nonLinearLightprobeSh);
 
             if (_ltcgiExists && builder.BuildTarget != BuildTarget.Android)
             {
@@ -204,6 +207,7 @@ namespace ZSG
                 pass.pragmas.Add("#pragma shader_feature_local _BAKERY_MONOSH");
                 pass.pragmas.Add("#pragma shader_feature_local _BICUBIC_LIGHTMAP");
                 pass.pragmas.Add("#pragma shader_feature_local _LIGHTMAPPED_SPECULAR");
+                pass.pragmas.Add("#pragma shader_feature_local _NONLINEAR_LIGHTPROBESH");
 
                 if (_shading == Shading.Flat)
                 {

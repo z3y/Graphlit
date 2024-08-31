@@ -131,28 +131,19 @@ half4 frag(Varyings varyings) : SV_Target
         #endif
 
     #elif defined(UNITY_PASS_FORWARDBASE)
-        #if defined(_FLATSHADING)
-        {
-            float3 sh9Dir = (unity_SHAr.xyz + unity_SHAg.xyz + unity_SHAb.xyz);
-            float3 sh9DirAbs = float3(sh9Dir.x, abs(sh9Dir.y), sh9Dir.z);
-            half3 N = normalize(sh9DirAbs);
-            UNITY_FLATTEN
-            if (!any(unity_SHC.xyz))
-            {
-                N = 0;
-            }
-            half3 l0l1 = SHEvalLinearL0L1(float4(N, 1));
-            half3 l2 = SHEvalLinearL2(float4(N, 1));
-            giOutput.indirectDiffuse = l0l1 + l2;
-        }
+
+        #if defined(_NONLINEAR_LIGHTPROBESH) && !defined(QUALITY_LOW)
+            giOutput.indirectDiffuse.r = shEvaluateDiffuseL1Geomerics(unity_SHAr.w, unity_SHAr.xyz, giInput.normalWS);
+            giOutput.indirectDiffuse.g = shEvaluateDiffuseL1Geomerics(unity_SHAg.w, unity_SHAg.xyz, giInput.normalWS);
+            giOutput.indirectDiffuse.b = shEvaluateDiffuseL1Geomerics(unity_SHAb.w, unity_SHAb.xyz, giInput.normalWS);
         #else
             #if UNITY_SAMPLE_FULL_SH_PER_PIXEL
                 giOutput.indirectDiffuse = ShadeSHPerPixel(giInput.normalWS, 0.0, fragData.positionWS);
             #else
                 giOutput.indirectDiffuse = ShadeSHPerPixel(giInput.normalWS, varyings.sh, fragData.positionWS);
             #endif
-            giOutput.indirectOcclusion = giOutput.indirectDiffuse;
         #endif
+        giOutput.indirectOcclusion = giOutput.indirectDiffuse;
     #endif
     giOutput.indirectDiffuse = max(0.0, giOutput.indirectDiffuse);
 
