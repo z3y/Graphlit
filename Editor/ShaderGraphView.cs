@@ -342,6 +342,7 @@ namespace ZSG
                 case KeyCode.V: CreateNode(typeof(AppendNode), position, false); break;
                 case KeyCode.L: CreateNode(typeof(LerpNode), position, false); break;
                 case KeyCode.R: CreateNode(typeof(RegisterVariableNode), position, false); break;
+                case KeyCode.G: CreateNode(typeof(FetchVariableNode), position, false); break;
                 case KeyCode.Insert: CreateAll(); break;
             }
 
