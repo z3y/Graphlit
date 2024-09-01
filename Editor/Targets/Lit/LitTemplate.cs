@@ -191,8 +191,10 @@ namespace ZSG
                 {
                     builder.dependencies.Add(customLightingPath);
 
-
-                    builder.properties.Add(new PropertyDescriptor(PropertyType.Float, "Custom Lighting", "_CustomLighting") { customAttributes = "[Foldout]" });
+                    if (customLightingInclude.properties.Count > 0)
+                    {
+                        builder.properties.Add(new PropertyDescriptor(PropertyType.Float, "Custom Lighting", "_CustomLighting") { customAttributes = "[Foldout]" });
+                    }
                     foreach (var p in customLightingInclude.properties)
                     {
                         builder.properties.Add(p);
