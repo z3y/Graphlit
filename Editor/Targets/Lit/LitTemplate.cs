@@ -177,7 +177,6 @@ namespace ZSG
             }
 
             builder._defaultTextures["_DFG"] = _dfg;
-            builder.properties.Add(_properties);
 
             builder.subshaderTags["RenderType"] = "Opaque";
             builder.subshaderTags["Queue"] = "Geometry";
@@ -192,12 +191,16 @@ namespace ZSG
                 {
                     builder.dependencies.Add(customLightingPath);
 
+
+                    builder.properties.Add(new PropertyDescriptor(PropertyType.Float, "Custom Lighting", "_CustomLighting") { customAttributes = "[Foldout]" });
                     foreach (var p in customLightingInclude.properties)
                     {
                         builder.properties.Add(p);
                     }
                 }
             }
+
+            builder.properties.Add(_properties);
 
             {
                 var pass = new PassBuilder("FORWARD", Vertex, FragmentForward, POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, EMISSION, NORMAL_TS );
