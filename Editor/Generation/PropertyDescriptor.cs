@@ -343,6 +343,10 @@ namespace ZSG
             }
             if (!string.IsNullOrEmpty(referenceName))
             {
+                if (referenceName == "_")
+                {
+                    return $"_{displayName.Replace(" ", "")}";
+                }
                 return referenceName;
             }
 
