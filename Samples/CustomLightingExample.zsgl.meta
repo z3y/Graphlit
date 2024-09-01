@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: d3efc25ee1ce6f1449469240a2860143
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 827475b98c62cbe40a87475805eb6d0b, type: 3}
+  properties:
+  - guid: f121ce22-36e2-4d43-8979-207ee893c15c
+    referenceName: 
+    displayName: Color
+    type: 5
+    customAttributes: 
+    defaultAttributes: 0
+    rangeX: 0
+    rangeY: 0
+    _value: (1.00, 1.00, 1.00, 1.00)
+    _defaultTexture: 
+    declaration: 0

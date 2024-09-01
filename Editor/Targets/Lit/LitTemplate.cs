@@ -97,11 +97,11 @@ namespace ZSG
 
             var customLighting = new ObjectField("Custom Lighting")
             {
-                objectType = typeof(ShaderInclude)
+                objectType = typeof(CustomLightingAsset)
             };
             if (!string.IsNullOrEmpty(_customLighting))
             {
-                customLighting.value = Helpers.SerializableReferenceToObject<ShaderInclude>(_customLighting);
+                customLighting.value = Helpers.SerializableReferenceToObject<CustomLightingAsset>(_customLighting);
             }
             customLighting.RegisterValueChangedCallback(x => _customLighting = Helpers.AssetSerializableReference(x.newValue));
             root.Add(customLighting);
@@ -168,6 +168,8 @@ namespace ZSG
             builder.properties.Add(_lmSpec);
             builder.properties.Add(_nonLinearLightprobeSh);
 
+
+
             if (_ltcgiExists && builder.BuildTarget != BuildTarget.Android)
             {
                 builder.properties.Add(_ltcgi);
@@ -181,10 +183,20 @@ namespace ZSG
             builder.subshaderTags["Queue"] = "Geometry";
 
             string customLightingPath = string.Empty;
+            CustomLightingAsset customLightingInclude = null;
             if (!string.IsNullOrEmpty(_customLighting))
             {
-                var customLightingInclude = Helpers.SerializableReferenceToObject<ShaderInclude>(_customLighting);
+                customLightingInclude = Helpers.SerializableReferenceToObject<CustomLightingAsset>(_customLighting);
                 customLightingPath = AssetDatabase.GetAssetPath(customLightingInclude);
+                if (!string.IsNullOrEmpty(customLightingPath))
+                {
+                    builder.dependencies.Add(customLightingPath);
+
+                    foreach (var p in customLightingInclude.properties)
+                    {
+                        builder.properties.Add(p);
+                    }
+                }
             }
 
             {
@@ -244,10 +256,15 @@ namespace ZSG
                 pass.pragmas.Add("#include \"Packages/com.z3y.zsg/ShaderLibrary/BuiltInLibrary.hlsl\"");
 
                 pass.preincludes.Add("Packages/com.z3y.zsg/Editor/Targets/Lit/Functions.hlsl");
-                if (!string.IsNullOrEmpty(customLightingPath))
+                if (customLightingInclude != null)
                 {
                     pass.pragmas.Add("#define CUSTOM_LIGHTING_INCLUDED");
                     pass.preincludes.Add(customLightingPath);
+
+                    foreach (var p in customLightingInclude.properties)
+                    {
+                        pass.properties.Add(p);
+                    }
                 }
 
                 builder.AddPass(pass);
@@ -291,10 +308,15 @@ namespace ZSG
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
                 pass.preincludes.Add("Packages/com.z3y.zsg/Editor/Targets/Lit/Functions.hlsl");
-                if (!string.IsNullOrEmpty(customLightingPath))
+                if (customLightingInclude != null)
                 {
                     pass.pragmas.Add("#define CUSTOM_LIGHTING_INCLUDED");
                     pass.preincludes.Add(customLightingPath);
+
+                    foreach (var p in customLightingInclude.properties)
+                    {
+                        pass.properties.Add(p);
+                    }
                 }
 
                 pass.pragmas.Add("#include \"Packages/com.z3y.zsg/ShaderLibrary/BuiltInLibrary.hlsl\"");
