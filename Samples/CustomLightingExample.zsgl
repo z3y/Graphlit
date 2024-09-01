@@ -13,5 +13,5 @@ COLOR_FUNC // args: surf, fragData, giInput, giOutput
 {
     half4 color = COLOR_DEFAULT;
     
-    return color;
+    return color * _MultiplyColor;
 }
