@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 using ZSG.Nodes.PortType;
@@ -57,81 +56,11 @@ namespace ZSG
             root.Add(stencil);
 
             AddVRCTagsElements(root, graphData);
-            var propertyEditor = new VisualElement();
 
-            var properties = new ListView()
-            {
-                headerTitle = "Properties",
-                showAddRemoveFooter = true,
-                reorderMode = ListViewReorderMode.Simple,
-                showFoldoutHeader = true,
-                reorderable = true,
-                itemsSource = graphData.properties
-            };
-            properties.itemsSource = graphData.properties;
-            properties.bindItem = (e, i) =>
-            {
-                var nameField = e.Q<TextField>("Name");
-                var typeLabel = e.Q<Label>("Type");
-                if (graphData.properties[i] is null)
-                {
-                    graphData.properties[i] = new PropertyDescriptor(PropertyType.Float);
-                }
-                nameField.value = graphData.properties[i].displayName;
-                nameField.RegisterValueChangedCallback((evt) =>
-                {
-                    graphData.properties[i].displayName = evt.newValue;
-                    graphData.properties[i].onValueChange?.Invoke();
-                });
-
-                typeLabel.text = graphData.properties[i].type.ToString();
-                graphData.properties[i].graphView = GraphView;
-            };
-            properties.makeItem = () =>
-            {
-                var root = new VisualElement();
-                root.style.flexDirection = FlexDirection.Row;
-                var nameField = new TextField() { name = "Name"};
-                nameField.style.width = 250;
-                root.Add(nameField);
-                root.Add(new Label("asd") { name = "Type" });
-                return root;
-            };
-            var addButton = properties.Q<Button>("unity-list-view__add-button");
-            addButton.clickable = new Clickable((evt) =>
-            {
-                void OnTypeSelected(object data)
-                {
-                    var type = (PropertyType)data;
-                    GraphView.graphData.properties.Add(new PropertyDescriptor(type));
-                    properties.RefreshItems();
-                }
-
-                var menu = new GenericMenu();
-                foreach (PropertyType value in Enum.GetValues(typeof(PropertyType)))
-                {
-                    menu.AddItem(new GUIContent(Enum.GetName(typeof(PropertyType), value)), false, OnTypeSelected, value);
-                }
-
-                menu.ShowAsContext();
-            });
-
-            var removeButton = properties.Q<Button>("unity-list-view__remove-button");
-            removeButton.clickable.clicked += OnRemovePropertyItem;
-
-            root.Add(properties);
-            root.Add(propertyEditor);
-
-            properties.selectionChanged += objects =>
-            {
-                propertyEditor.Clear();
-                foreach (PropertyDescriptor obj in objects)
-                {
-                    propertyEditor.Add(obj.PropertyEditorGUI());
-                }
-            };
-
+            root.Add(PropertyDescriptor.CreateReordableListElement(graphData.properties, GraphView));
         }
+
+
         void AddVRCTagsElements(VisualElement root, GraphData graphData)
         {
             var foldout = new Foldout
@@ -152,26 +81,6 @@ namespace ZSG
             var doubleSided = new Toggle("Double-Sided") { value = graphData.vrcFallbackTags.doubleSided };
             doubleSided.RegisterValueChangedCallback(x => graphData.vrcFallbackTags.doubleSided = x.newValue);
             foldout.Add(doubleSided);
-        }
-
-        void OnRemovePropertyItem()
-        {
-            var propertyNodes = GraphView.graphElements.OfType<PropertyNode>();
-            var properties = GraphView.graphData.properties;
-            foreach (var node in propertyNodes)
-            {
-                if (properties.Any(x => x.guid == node.propertyDescriptor.guid))
-                {
-                    continue;
-                }
-
-                // remove for now, convert later when avaliable
-                foreach (var port in node.PortElements)
-                {
-                    node.Disconnect(port);
-                }
-                GraphView.RemoveElement(node);
-            }
         }
 
         public void VisitTemplate(NodeVisitor visitor, int[] ports)

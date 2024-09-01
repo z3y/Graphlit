@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using UnityEditor;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -483,6 +484,10 @@ namespace ZSG
 
         public void UpdatePreviewMaterial()
         {
+            if (graphView == null)
+            {
+                return;
+            }
             Material m = graphView.PreviewMaterial;
             string name = GetReferenceName(GenerationMode.Preview);
             if (type == PropertyType.Float || type == PropertyType.Bool) m.SetFloat(name, FloatValue);
@@ -504,23 +509,16 @@ namespace ZSG
 
         [NonSerialized] public ShaderGraphView graphView;
 
-        public VisualElement PropertyEditorGUI()
+
+        public void PropertyEditorGUI()
         {
-            var imgui = new IMGUIContainer(OnDefaultGUI); // too much data to bind, easier to just use imgui
-            if (type == PropertyType.Float) imgui.onGUIHandler += OnGUIFloat;
-            else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) imgui.onGUIHandler += OnGUIVector;
-            else if (type == PropertyType.Color) imgui.onGUIHandler += OnGUIColor;
-            else if (type == PropertyType.Bool || type == PropertyType.KeywordToggle) imgui.onGUIHandler += OnGUIBool;
-            else if (IsTextureType) imgui.onGUIHandler += OnGUITexture;
+            OnDefaultGUI();
 
-            var s = imgui.style;
-            s.marginLeft = 6;
-            s.marginRight = 6;
-            s.marginTop = 6;
-            s.marginBottom = 6;
-
-
-            return imgui;
+            if (type == PropertyType.Float) OnGUIFloat();
+            else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) OnGUIVector();
+            else if (type == PropertyType.Color) OnGUIColor();
+            else if (type == PropertyType.Bool || type == PropertyType.KeywordToggle) OnGUIBool();
+            else if (IsTextureType) OnGUITexture();
         }
 
         public Type GetNodeType()
@@ -545,6 +543,96 @@ namespace ZSG
         }
 
         public Action onValueChange = delegate { };
+
+
+        public static VisualElement CreateReordableListElement(List<PropertyDescriptor> properties, ShaderGraphView graphView)
+        {
+            var e = new IMGUIContainer();
+            var list = CreateReordableList(properties, graphView);
+
+
+            e.onGUIHandler += () =>
+            {
+                foreach (var p in properties)
+                {
+                    p.graphView = graphView;
+                }
+                list.DoLayoutList();
+            };
+
+            return e;
+        }
+
+        public static ReorderableList CreateReordableList(List<PropertyDescriptor> properties, ShaderGraphView graphView)
+        {
+            var reorderableList = new ReorderableList(properties, typeof(PropertyDescriptor), true, true, true, true);
+
+            reorderableList.drawHeaderCallback = (Rect rect) => {
+
+                EditorGUI.LabelField(rect, "Properties");
+            };
+
+            reorderableList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) => {
+                var p = properties[index];
+                var style = new GUIStyle(GUI.skin.label) { richText = true };
+
+                EditorGUI.LabelField(rect, $"<b>{p.type}</b>", style);
+                rect.x += 120;
+                rect.width -= 120;
+                EditorGUI.LabelField(rect, $"{p.displayName}", style);
+
+                if (isActive)
+                {
+                    EditorGUILayout.BeginVertical(new GUIStyle(EditorStyles.helpBox));
+                    properties[index].PropertyEditorGUI();
+                    EditorGUILayout.EndVertical();
+                }
+            };
+
+            reorderableList.onAddCallback = (ReorderableList list) => {
+                void OnTypeSelected(object data)
+                {
+                    var type = (PropertyType)data;
+                    properties.Add(new PropertyDescriptor(type));
+                }
+
+                var menu = new GenericMenu();
+                foreach (PropertyType value in Enum.GetValues(typeof(PropertyType)))
+                {
+                    menu.AddItem(new GUIContent(Enum.GetName(typeof(PropertyType), value)), false, OnTypeSelected, value);
+                }
+
+                menu.ShowAsContext();
+            };
+
+            reorderableList.onRemoveCallback += (ReorderableList list) =>
+            {
+                ReorderableList.defaultBehaviours.DoRemoveButton(list);
+
+                if (graphView == null)
+                {
+                    return;
+                }
+
+                var propertyNodes = graphView.graphElements.OfType<PropertyNode>();
+                foreach (var node in propertyNodes)
+                {
+                    if (properties.Any(x => x.guid == node.propertyDescriptor.guid))
+                    {
+                        continue;
+                    }
+
+                    // remove for now, convert later when avaliable
+                    foreach (var port in node.PortElements)
+                    {
+                        node.Disconnect(port);
+                    }
+                    graphView.RemoveElement(node);
+                }
+            };
+
+            return reorderableList;
+        }
     }
 
 }

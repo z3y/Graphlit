@@ -2,6 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine.UIElements;
 using UnityEngine;
+using System.Net.NetworkInformation;
 
 namespace ZSG
 {
@@ -53,7 +54,12 @@ namespace ZSG
 
         public override void AdditionalElements(VisualElement root)
         {
-            root.Add(propertyDescriptor.PropertyEditorGUI());
+            var imgui = new IMGUIContainer();
+            imgui.onGUIHandler = () =>
+            {
+                propertyDescriptor.PropertyEditorGUI();
+            };
+            root.Add(imgui);
         }
 
         protected override void Generate(NodeVisitor visitor)
