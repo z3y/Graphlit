@@ -86,29 +86,27 @@ namespace Enlit
 
         public void AddBar(VisualElement visualElement)
         {
-            var toolbar = new VisualElement();
-            {
-                var s = toolbar.style;
-                s.height = 32;
-                s.flexDirection = FlexDirection.Row;
-                s.backgroundColor = Color.clear;
-            }
+            var toolbar = new VisualElement() {
+                style = {
+                    flexDirection = FlexDirection.Column,
+                    width = 100,
+                    backgroundColor  = new Color(0.1f, 0.1f, 0.1f),
+                    marginTop = 4,
+                    marginLeft = 4
+                }
+            };
+            toolbar.style.SetBorderRadius(8);
+            toolbar.style.SetPadding(2);
+            toolbar.style.paddingTop = 4;
+            toolbar.style.paddingBottom = 4;
 
-            var saveButton = new Button() { text = "Save" };
+
+            var saveButton = new Button() { text = "Save", style = { height = 32 } };
             saveButton.clicked += SaveChanges;
             toolbar.Add(saveButton);
 
-            var pingAsset = new Button() { text = "Select Asset" };
-            pingAsset.clicked += () =>
-            {
-                var assetPath = AssetDatabase.GUIDToAssetPath(importerGuid);
-                var obj = AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityEngine.Object));
-                //EditorGUIUtility.PingObject(obj);
-                Selection.activeObject = obj;
-            };
-            toolbar.Add(pingAsset);
 
-            var selectMasterNode = new Button() { text = "Master Node" };
+            var selectMasterNode = new Button() { text = "Master Node", style = { height = 24 } };
             selectMasterNode.clicked += () =>
             {
                 var masterNode = graphView.graphElements.Where(x => x is TemplateOutput).First();
@@ -123,6 +121,17 @@ namespace Enlit
                 }
             };
             toolbar.Add(selectMasterNode);
+
+            var pingAsset = new Button() { text = "Select Asset", style = { height = 24 } };
+            pingAsset.clicked += () =>
+            {
+                var assetPath = AssetDatabase.GUIDToAssetPath(importerGuid);
+                var obj = AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityEngine.Object));
+                //EditorGUIUtility.PingObject(obj);
+                Selection.activeObject = obj;
+            };
+            toolbar.Add(pingAsset);
+
 
             visualElement.Add(toolbar);
         }

@@ -107,12 +107,26 @@ namespace Enlit
             style.borderTopWidth = width;
             style.borderBottomWidth = width;
         }
+        public static void SetBorderRadius(this IStyle style, float width)
+        {
+            style.borderBottomLeftRadius = width;
+            style.borderBottomRightRadius = width;
+            style.borderTopLeftRadius = width;
+            style.borderTopRightRadius = width;
+        }
         public static void SetPadding(this IStyle style, float width)
         {
             style.paddingRight = width;
             style.paddingLeft = width;
             style.paddingTop = width;
             style.paddingBottom = width;
+        }
+        public static void SetPaddingWidth(this IStyle style, float width)
+        {
+            style.paddingLeft = width;
+            style.paddingBottom = width;
+            style.paddingRight = width;
+            style.paddingTop = width;
         }
     }
 

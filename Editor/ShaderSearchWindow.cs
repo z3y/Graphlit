@@ -52,7 +52,7 @@ namespace Enlit
             tree.Add(new SearchTreeGroupEntry(new GUIContent("Functions"), 1));
 
             var functionIncludes = AssetDatabase.FindAssets("l:" + CustomFunctionNode.Tag[0])
-                .Union(AssetDatabase.FindAssets("l:" + CustomFunctionNode.Tag[1]))
+                .Union(AssetDatabase.FindAssets("l:" + CustomFunctionNode.Tag[1]));
 
             foreach (var guid in functionIncludes)
             {
