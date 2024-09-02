@@ -31,19 +31,22 @@ COLOR_FUNC // args: surf, fragData, giInput, giOutput
         giOutput.indirectDiffuse = l0l1 + l2;
         giOutput.indirectOcclusion = giOutput.indirectDiffuse;
     #endif
-    giOutput.indirectSpecular = 0;
-    giOutput.directSpecular = 0;
 
-    half lightRenorm = max(max(giOutput.directDiffuse.r, giOutput.directDiffuse.g), giOutput.directDiffuse.b);
-    lightRenorm += max(max(giOutput.indirectDiffuse.r, giOutput.indirectDiffuse.g), giOutput.indirectDiffuse.b);
-    giOutput.indirectDiffuse += giOutput.directDiffuse;
-    giOutput.directDiffuse = 0;
-    if (lightRenorm > _LightMaxLimit)
-    {
-        giOutput.indirectDiffuse /= lightRenorm / _LightMaxLimit;
-    }
-    giOutput.indirectDiffuse = max(_LightMinLimit, giOutput.indirectDiffuse);
-    giOutput.indirectDiffuse = lerp(giOutput.indirectDiffuse, OpenLitGray(giOutput.indirectDiffuse), _MonochromeLighting);
+    #ifndef LIGHTMAP_ON
+        giOutput.indirectSpecular = 0;
+        giOutput.directSpecular = 0;
+
+        half lightRenorm = max(max(giOutput.directDiffuse.r, giOutput.directDiffuse.g), giOutput.directDiffuse.b);
+        lightRenorm += max(max(giOutput.indirectDiffuse.r, giOutput.indirectDiffuse.g), giOutput.indirectDiffuse.b);
+        giOutput.indirectDiffuse += giOutput.directDiffuse;
+        giOutput.directDiffuse = 0;
+        if (lightRenorm > _LightMaxLimit)
+        {
+            giOutput.indirectDiffuse /= lightRenorm / _LightMaxLimit;
+        }
+        giOutput.indirectDiffuse = max(_LightMinLimit, giOutput.indirectDiffuse);
+        giOutput.indirectDiffuse = lerp(giOutput.indirectDiffuse, OpenLitGray(giOutput.indirectDiffuse), _MonochromeLighting);
+    #endif
 
     half4 color = COLOR_DEFAULT;
     

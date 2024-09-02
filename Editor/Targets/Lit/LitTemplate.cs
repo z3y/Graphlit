@@ -11,7 +11,7 @@ namespace Enlit
     [NodeInfo("Targets/Lit Target"), Serializable]
     public class LitTemplate : TemplateOutput
     {
-        [MenuItem("Assets/Create/Shader/Enlit/Lit Graph")]
+        [MenuItem("Assets/Create/Enlit/Lit Graph")]
         public static void CreateVariantFile() => ShaderGraphImporter.CreateEmptyTemplate<LitTemplate>();
 
         public override string Name { get; } = "Lit";

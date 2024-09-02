@@ -10,7 +10,7 @@ namespace Enlit
     [NodeInfo("Targets/Unlit Target")]
     public class UnlitTemplate : TemplateOutput
     {
-        [MenuItem("Assets/Create/Shader/Enlit/Unlit Graph")]
+        [MenuItem("Assets/Create/Enlit/Unlit Graph")]
         public static void CreateVariantFile() => ShaderGraphImporter.CreateEmptyTemplate(new UnlitTemplate(),
             x => x.graphData.vrcFallbackTags.type = VRCFallbackTags.ShaderType.Unlit);
 

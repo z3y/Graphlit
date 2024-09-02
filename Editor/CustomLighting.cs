@@ -24,7 +24,7 @@ namespace Enlit
             ctx.AddObjectToAsset("main", file);
         }
 
-        [MenuItem("Assets/Create/Shader/Enlit/Custom Lighting Asset")]
+        [MenuItem("Assets/Create/Enlit/Custom Lighting Asset")]
         public static void CreateCustomLightingAsset()
         {
             var text = File.ReadAllText("Packages/com.enlit/Samples/Example.enlitc");

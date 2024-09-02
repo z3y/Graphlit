@@ -13,8 +13,8 @@ namespace Enlit
     [NodeInfo("Input/Custom Function"), Serializable]
     public class CustomFunctionNode : ShaderNode
     {
-        public static readonly string[] Tag = new [] { "EnlitFunction", "ZSGFunction" };
-        [MenuItem("Assets/Create/Shader/Enlit/Shader Include")]
+        public static readonly string[] Tag = new[] { "EnlitFunction", "ZSGFunction" };
+        [MenuItem("Assets/Create/Enlit/Shader Include")]
         public static void CreateVariantFile()
         {
             ProjectWindowUtil.CreateAssetWithContent("CustomFunction.hlsl", DefaultFunction);

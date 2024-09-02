@@ -106,6 +106,16 @@ namespace Enlit
             toolbar.Add(saveButton);
 
 
+            var pingAsset = new Button() { text = "Select Asset", style = { height = 24 } };
+            pingAsset.clicked += () =>
+            {
+                var assetPath = AssetDatabase.GUIDToAssetPath(importerGuid);
+                var obj = AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityEngine.Object));
+                //EditorGUIUtility.PingObject(obj);
+                Selection.activeObject = obj;
+            };
+            toolbar.Add(pingAsset);
+
             var selectMasterNode = new Button() { text = "Master Node", style = { height = 24 } };
             selectMasterNode.clicked += () =>
             {
@@ -121,17 +131,6 @@ namespace Enlit
                 }
             };
             toolbar.Add(selectMasterNode);
-
-            var pingAsset = new Button() { text = "Select Asset", style = { height = 24 } };
-            pingAsset.clicked += () =>
-            {
-                var assetPath = AssetDatabase.GUIDToAssetPath(importerGuid);
-                var obj = AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityEngine.Object));
-                //EditorGUIUtility.PingObject(obj);
-                Selection.activeObject = obj;
-            };
-            toolbar.Add(pingAsset);
-
 
             visualElement.Add(toolbar);
         }
