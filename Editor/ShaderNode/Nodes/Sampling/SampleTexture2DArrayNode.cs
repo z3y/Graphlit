@@ -1,9 +1,9 @@
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using ZSG.Nodes;
-using ZSG.Nodes.PortType;
+using Enlit.Nodes;
+using Enlit.Nodes.PortType;
 
-namespace ZSG
+namespace Enlit
 {
     [NodeInfo("Texture/Sample Texture 2D Array")]
     public class SampleTexture2DArrayNode : SampleTextureNode

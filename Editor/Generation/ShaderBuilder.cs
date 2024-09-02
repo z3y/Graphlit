@@ -4,9 +4,9 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using ZSG.Nodes.PortType;
+using Enlit.Nodes.PortType;
 
-namespace ZSG
+namespace Enlit
 {
     public class ShaderBuilder
     {
@@ -164,13 +164,13 @@ namespace ZSG
 
         }
 
-        const string VertexPreview = "Packages/com.z3y.zsg/Editor/Targets/Preview/Vertex.hlsl";
-        const string FragmentPreview = "Packages/com.z3y.zsg/Editor/Targets/Preview/Fragment.hlsl";
+        const string VertexPreview = "Packages/com.enlit/Editor/Targets/Preview/Vertex.hlsl";
+        const string FragmentPreview = "Packages/com.enlit/Editor/Targets/Preview/Fragment.hlsl";
 
         public static void GeneratePreview(ShaderGraphView graphView, ShaderNode shaderNode, bool log = false)
         {
             var shaderBuilder = new ShaderBuilder(GenerationMode.Preview, graphView);
-            shaderBuilder.shaderName = "Hidden/ZSGPreviews/" + shaderNode.viewDataKey;
+            shaderBuilder.shaderName = "Hidden/EnlitPreviews/" + shaderNode.viewDataKey;
             var pass = new PassBuilder("FORWARD", VertexPreview, FragmentPreview);
 
             shaderBuilder.AddPass(pass);
@@ -178,7 +178,7 @@ namespace ZSG
 
             pass.pragmas.Add("#pragma skip_optimizations d3d11");
             pass.pragmas.Add("#define PREVIEW");
-            pass.pragmas.Add("#include \"Packages/com.z3y.zsg/ShaderLibrary/BuiltInLibrary.hlsl\"");
+            pass.pragmas.Add("#include \"Packages/com.enlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
 
             var tags = shaderBuilder.subshaderTags;
             tags.Add("Queue", "Transparent");
@@ -222,7 +222,7 @@ namespace ZSG
                 }
             }
         }
-        
+
         public static void GeneratePreviewFromEdge(ShaderGraphView graphView, Edge edge, bool toRemove)
         {
             var nodesToGenerate = new HashSet<ShaderNode>();
@@ -335,7 +335,7 @@ namespace ZSG
             }
 
             _sb.AppendLine(string.IsNullOrEmpty(fallback) ? "// Fallback None" : "Fallback \"" + fallback + "\"");
-            _sb.AppendLine(string.IsNullOrEmpty(customEditor) ? "CustomEditor \"ZSG.DefaultInspector\"" : "CustomEditor \"" + customEditor + "\"");
+            _sb.AppendLine(string.IsNullOrEmpty(customEditor) ? "CustomEditor \"Enlit.DefaultInspector\"" : "CustomEditor \"" + customEditor + "\"");
 
             _sb.UnIndent();
 

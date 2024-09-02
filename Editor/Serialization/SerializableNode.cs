@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-namespace ZSG
+namespace Enlit
 {
     [Serializable]
     public struct SerializableNode
@@ -18,7 +18,7 @@ namespace ZSG
 
         public string data;
 
-        public readonly Vector2 Position => new (x, y);
+        public readonly Vector2 Position => new(x, y);
 
         public SerializableNode(ShaderNode node)
         {
@@ -48,7 +48,7 @@ namespace ZSG
 
         public readonly bool TryDeserialize(ShaderGraphView graphView, out ShaderNode shaderNode)
         {
-            Type type = Type.GetType(this.type);
+            Type type = Type.GetType(this.type.Replace("ZSG", "Enlit"));
             if (type is null)
             {
                 Debug.LogError($"Node of type {this.type} not found");

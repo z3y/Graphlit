@@ -1,11 +1,11 @@
 using System;
 using UnityEngine.UIElements;
 using UnityEngine;
-using ZSG.Nodes;
-using ZSG.Nodes.PortType;
+using Enlit.Nodes;
+using Enlit.Nodes.PortType;
 using System.Linq;
 
-namespace ZSG
+namespace Enlit
 {
     [NodeInfo("Constants/Float2"), Serializable]
     public class Float2Node : ShaderNode

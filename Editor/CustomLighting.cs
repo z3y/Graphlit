@@ -1,15 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEditor.AssetImporters;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace ZSG
+namespace Enlit
 {
-    [ScriptedImporter(2, "zsgl", 0)]
+    [ScriptedImporter(2, EXTENSION, 0)]
     public class CustomLighting : ScriptedImporter
     {
+        const string EXTENSION = "enlitc";
+
         public List<PropertyDescriptor> properties = new();
 
         public override void OnImportAsset(AssetImportContext ctx)
@@ -19,6 +22,13 @@ namespace ZSG
             file.properties = properties;
 
             ctx.AddObjectToAsset("main", file);
+        }
+
+        [MenuItem("Assets/Create/Shader/Enlit/Custom Lighting Asset")]
+        public static void CreateCustomLightingAsset()
+        {
+            var text = File.ReadAllText("Packages/com.enlit/Samples/Example.enlitc");
+            ProjectWindowUtil.CreateAssetWithContent($"New Custom Lighting.{EXTENSION}", text);
         }
     }
 

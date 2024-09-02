@@ -4,7 +4,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ZSG
+namespace Enlit
 {
     // https://forum.unity.com/threads/callback-on-edge-connection-in-graphview.796290/
     public class NodePort : Port

@@ -1,7 +1,7 @@
 using System;
-using ZSG.Nodes;
+using Enlit.Nodes;
 
-namespace ZSG
+namespace Enlit
 {
     [NodeInfo("Utility/Preview"), Serializable]
     public class PreviewNode : PassthroughNode

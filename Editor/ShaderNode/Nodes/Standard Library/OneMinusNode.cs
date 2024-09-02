@@ -1,6 +1,6 @@
-using ZSG.Nodes;
+using Enlit.Nodes;
 
-namespace ZSG
+namespace Enlit
 {
     [NodeInfo("Math/One Minus", "1 - a")]
     public class OneMinusNode : PassthroughNode

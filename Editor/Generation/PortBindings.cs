@@ -1,6 +1,6 @@
 using System;
 
-namespace ZSG
+namespace Enlit
 {
     public enum PortBinding
     {

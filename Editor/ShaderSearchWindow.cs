@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-namespace ZSG
+namespace Enlit
 {
     using System.Linq;
     using System.Reflection;
     using UnityEditor;
-    using ZSG.Nodes;
+    using Enlit.Nodes;
     public class ShaderNodeSearchWindow : ScriptableObject, ISearchWindowProvider
     {
         private ShaderGraphView _graphView;
@@ -18,7 +18,7 @@ namespace ZSG
             _graphView = graphView;
 
             _nodeIndentationIcon = new Texture2D(1, 1);
-            _nodeIndentationIcon.SetPixel(0,0, Color.clear);
+            _nodeIndentationIcon.SetPixel(0, 0, Color.clear);
             _nodeIndentationIcon.Apply();
         }
 
@@ -51,7 +51,9 @@ namespace ZSG
 
             tree.Add(new SearchTreeGroupEntry(new GUIContent("Functions"), 1));
 
-            var functionIncludes = AssetDatabase.FindAssets("l:" + CustomFunctionNode.Tag);
+            var functionIncludes = AssetDatabase.FindAssets("l:" + CustomFunctionNode.Tag[0])
+                .Union(AssetDatabase.FindAssets("l:" + CustomFunctionNode.Tag[1]))
+
             foreach (var guid in functionIncludes)
             {
                 var path = AssetDatabase.GUIDToAssetPath(guid);

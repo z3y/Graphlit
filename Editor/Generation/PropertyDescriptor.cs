@@ -8,7 +8,7 @@ using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ZSG
+namespace Enlit
 {
     [Serializable]
     public enum PropertyType
@@ -571,12 +571,14 @@ namespace ZSG
         {
             var reorderableList = new ReorderableList(properties, typeof(PropertyDescriptor), true, true, true, true);
 
-            reorderableList.drawHeaderCallback = (Rect rect) => {
+            reorderableList.drawHeaderCallback = (Rect rect) =>
+            {
 
                 EditorGUI.LabelField(rect, "Properties");
             };
 
-            reorderableList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) => {
+            reorderableList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
+            {
                 var p = properties[index];
                 var style = new GUIStyle(GUI.skin.label) { richText = true };
 
@@ -587,13 +589,15 @@ namespace ZSG
 
                 if (isActive)
                 {
-                    EditorGUILayout.BeginVertical(new GUIStyle(EditorStyles.helpBox));
+                    EditorGUILayout.BeginVertical(new GUIStyle("GroupBox"));
                     properties[index].PropertyEditorGUI();
                     EditorGUILayout.EndVertical();
+                    EditorGUILayout.Space();
                 }
             };
 
-            reorderableList.onAddCallback = (ReorderableList list) => {
+            reorderableList.onAddCallback = (ReorderableList list) =>
+            {
                 void OnTypeSelected(object data)
                 {
                     var type = (PropertyType)data;

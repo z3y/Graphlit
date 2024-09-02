@@ -5,11 +5,11 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ZSG
+namespace Enlit
 {
     public class ShaderGraphWindow : EditorWindow
     {
-        [NonSerialized] public const string ROOT = "Packages/com.z3y.zsg/Editor/";
+        [NonSerialized] public const string ROOT = "Packages/com.enlit/Editor/";
         [NonSerialized] public ShaderGraphView graphView;
         [NonSerialized] public static Dictionary<string, ShaderGraphWindow> editorInstances = new();
 

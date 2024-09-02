@@ -1,8 +1,8 @@
 using UnityEditor.Experimental.GraphView;
-using ZSG.Nodes;
-using ZSG.Nodes.PortType;
+using Enlit.Nodes;
+using Enlit.Nodes.PortType;
 
-namespace ZSG
+namespace Enlit
 {
     [NodeInfo("Utility/Split")]
     public class SplitNode : ShaderNode

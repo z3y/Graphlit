@@ -1,8 +1,9 @@
 {
-    "name": "com.z3y.zsg",
+    "name": "com.enlit",
     "rootNamespace": "",
     "references": [
-        "Unity.RenderPipelines.Core.Editor"
+        "Unity.RenderPipelines.Core.Editor",
+        "Unity.RenderPipelines.Core.Runtime"
     ],
     "includePlatforms": [
         "Editor"

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ZSG
+namespace Enlit
 {
     public enum GenerationMode
     {
@@ -41,7 +41,7 @@ namespace ZSG
 
         public GenerationMode GenerationMode => _shaderBuilder.GenerationMode;
         public ShaderStage Stage { get; }
-        public int Pass {  get; }
+        public int Pass { get; }
 
         private List<string> _expression;
         private List<string> _function;
@@ -88,7 +88,7 @@ namespace ZSG
 
         public void AppendLine(string value)
         {
-             _expression.Add(value);
+            _expression.Add(value);
         }
         public void AddFunction(string function)
         {

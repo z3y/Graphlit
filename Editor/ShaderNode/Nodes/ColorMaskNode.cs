@@ -1,9 +1,9 @@
 using System;
 using UnityEngine;
-using ZSG.Nodes;
-using ZSG.Nodes.PortType;
+using Enlit.Nodes;
+using Enlit.Nodes.PortType;
 
-namespace ZSG
+namespace Enlit
 {
     [NodeInfo("Utility/Color Mask"), Serializable]
     public class ColorMaskNode : ShaderNode

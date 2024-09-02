@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace ZSG
+namespace Enlit
 {
-/*    [Flags]
-    public enum ChannelMask : int
-    {
-        X = 1 << 0,
-        Y = 1 << 1,
-        Z = 1 << 2,
-        W = 1 << 3,
-        XY = X | Y,
-        XYZ = X | Y | Z,
-        XYZW = X | Y | Z | W
-    }
-*/
+    /*    [Flags]
+        public enum ChannelMask : int
+        {
+            X = 1 << 0,
+            Y = 1 << 1,
+            Z = 1 << 2,
+            W = 1 << 3,
+            XY = X | Y,
+            XYZ = X | Y | Z,
+            XYZW = X | Y | Z | W
+        }
+    */
     public class ShaderAttributes
     {
         public enum AttributeType
@@ -114,7 +114,7 @@ namespace ZSG
 
         public void AppendAttributeDefines(ShaderStringBuilder sb)
         {
-            foreach(var def in attributeDefines)
+            foreach (var def in attributeDefines)
             {
                 sb.AppendLine(def);
             }

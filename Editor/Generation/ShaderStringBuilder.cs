@@ -1,7 +1,7 @@
 using System.Text;
 
-namespace ZSG
-{ 
+namespace Enlit
+{
     public class ShaderStringBuilder
     {
         private StringBuilder _sb = new StringBuilder();

@@ -1,0 +1,44 @@
+fileFormatVersion: 2
+guid: 283dd621a216e3a4297f852de8df574b
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 827475b98c62cbe40a87475805eb6d0b, type: 3}
+  properties:
+  - guid: cf6c9017-8de2-450c-b0cc-e1ee08cc7f9f
+    referenceName: _LightMinLimit
+    displayName: Min Brightness
+    type: 1
+    customAttributes: 
+    defaultAttributes: 0
+    rangeX: 0
+    rangeY: 5
+    _value: 0
+    _defaultTexture: 
+    declaration: 0
+  - guid: 550eb8a2-9cc0-400e-9592-0e92108a90cc
+    referenceName: _LightMaxLimit
+    displayName: Max Brightness
+    type: 1
+    customAttributes: 
+    defaultAttributes: 0
+    rangeX: 0
+    rangeY: 5
+    _value: 1
+    _defaultTexture: 
+    declaration: 0
+  - guid: 1fb5ada7-781f-4d0c-8326-1c508033d39f
+    referenceName: _MonochromeLighting
+    displayName: Monochrome Lighting
+    type: 1
+    customAttributes: 
+    defaultAttributes: 0
+    rangeX: 0
+    rangeY: 1
+    _value: 0
+    _defaultTexture: 
+    declaration: 0

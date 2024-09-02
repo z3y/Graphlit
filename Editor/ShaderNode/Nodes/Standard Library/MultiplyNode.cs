@@ -1,6 +1,6 @@
-using ZSG.Nodes;
+using Enlit.Nodes;
 
-namespace ZSG
+namespace Enlit
 {
     [NodeInfo("Math/Multiply", "a * b")]
     public class MultiplyNode : SimpleExpressionNode

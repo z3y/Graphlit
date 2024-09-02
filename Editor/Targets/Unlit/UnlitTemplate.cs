@@ -1,15 +1,16 @@
 using UnityEngine.UIElements;
-using ZSG.Nodes.PortType;
-using ZSG.Nodes;
+using Enlit.Nodes.PortType;
+using Enlit.Nodes;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.Rendering;
 
-namespace ZSG
+namespace Enlit
 {
     [NodeInfo("Targets/Unlit Target")]
     public class UnlitTemplate : TemplateOutput
     {
-        [MenuItem("Assets/Create/Shader Graph Z/Unlit Graph")]
+        [MenuItem("Assets/Create/Shader/Enlit/Unlit Graph")]
         public static void CreateVariantFile() => ShaderGraphImporter.CreateEmptyTemplate(new UnlitTemplate(),
             x => x.graphData.vrcFallbackTags.type = VRCFallbackTags.ShaderType.Unlit);
 
@@ -47,16 +48,16 @@ namespace ZSG
         }
 
         static readonly PropertyDescriptor _surfaceOptionsStart = new(PropertyType.Float, "SurfaceOptions", "_SurfaceOptions") { customAttributes = "[Foldout]" };
-        static readonly PropertyDescriptor _mode = new (PropertyType.Float, "Rendering Mode", "_Mode") { customAttributes = "[Enum(Opaque, 0, Cutout, 1, Fade, 2, Transparent, 3, Additive, 4, Multiply, 5)]" };
-        static readonly PropertyDescriptor _srcBlend = new (PropertyType.Float, "Source Blend", "_SrcBlend") { FloatValue = 1, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
+        static readonly PropertyDescriptor _mode = new(PropertyType.Float, "Rendering Mode", "_Mode") { customAttributes = "[Enum(Opaque, 0, Cutout, 1, Fade, 2, Transparent, 3, Additive, 4, Multiply, 5)]" };
+        static readonly PropertyDescriptor _srcBlend = new(PropertyType.Float, "Source Blend", "_SrcBlend") { FloatValue = 1, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         static readonly PropertyDescriptor _dstBlend = new(PropertyType.Float, "Destination Blend", "_DstBlend") { FloatValue = 0, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         static readonly PropertyDescriptor _zwrite = new(PropertyType.Float, "ZWrite", "_ZWrite") { FloatValue = 1, customAttributes = "[Enum(Off, 0, On, 1)]" };
         static readonly PropertyDescriptor _cull = new(PropertyType.Float, "Cull", "_Cull") { FloatValue = 2, customAttributes = "[Enum(UnityEngine.Rendering.CullMode)]" };
         static readonly PropertyDescriptor _properties = new(PropertyType.Float, "Properties", "_Properties") { customAttributes = "[Foldout]" };
 
-        const string Vertex = "Packages/com.z3y.zsg/Editor/Targets/Unlit/Vertex.hlsl";
-        const string FragmentForward = "Packages/com.z3y.zsg/Editor/Targets/Unlit/FragmentForward.hlsl";
-        const string FragmentShadow = "Packages/com.z3y.zsg/Editor/Targets/Unlit/FragmentShadow.hlsl";
+        const string Vertex = "Packages/com.enlit/Editor/Targets/Unlit/Vertex.hlsl";
+        const string FragmentForward = "Packages/com.enlit/Editor/Targets/Unlit/FragmentForward.hlsl";
+        const string FragmentShadow = "Packages/com.enlit/Editor/Targets/Unlit/FragmentShadow.hlsl";
 
         public override void OnBeforeBuild(ShaderBuilder builder)
         {
@@ -97,7 +98,7 @@ namespace ZSG
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.pragmas.Add("#include \"Packages/com.z3y.zsg/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.enlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 builder.AddPass(pass);
             }
 
@@ -120,7 +121,7 @@ namespace ZSG
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.pragmas.Add("#include \"Packages/com.z3y.zsg/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.enlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 builder.AddPass(pass);
             }
         }

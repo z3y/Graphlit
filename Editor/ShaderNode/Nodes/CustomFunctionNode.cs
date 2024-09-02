@@ -1,25 +1,25 @@
 using System;
 using UnityEngine.UIElements;
 using UnityEngine;
-using ZSG.Nodes;
+using Enlit.Nodes;
 using System.Linq;
 using UnityEditor.UIElements;
 using UnityEditor;
 using System.IO;
 
-namespace ZSG
+namespace Enlit
 {
 
     [NodeInfo("Input/Custom Function"), Serializable]
     public class CustomFunctionNode : ShaderNode
     {
-        public const string Tag = "ZSGFunction";
-        [MenuItem("Assets/Create/Shader Graph Z/Shader Include")]
+        public static readonly string[] Tag = new [] { "EnlitFunction", "ZSGFunction" };
+        [MenuItem("Assets/Create/Shader/Enlit/Shader Include")]
         public static void CreateVariantFile()
         {
             ProjectWindowUtil.CreateAssetWithContent("CustomFunction.hlsl", DefaultFunction);
             var include = new ShaderInclude();
-            AssetDatabase.SetLabels(include, new [] { Tag });
+            AssetDatabase.SetLabels(include, new[] { Tag[0] });
         }
         const string DefaultFunction = "void CustomFunction(float3 In, out float3 Out)\n{\n    Out = In;\n}";
         [SerializeField] string _code = DefaultFunction;
@@ -51,7 +51,7 @@ namespace ZSG
             _file = Helpers.AssetSerializableReference(include);
             _useFile = true;
         }
-        private FunctionParser _functionParser = new ();
+        private FunctionParser _functionParser = new();
         public override bool DisablePreview => true;
 
         public override Color Accent => new Color(0.2f, 0.4f, 0.8f);
@@ -138,7 +138,7 @@ namespace ZSG
                     string unityPath = "Assets" + path.Substring(Application.dataPath.Length);
                     AssetDatabase.ImportAsset(unityPath);
                     var asset = AssetDatabase.LoadAssetAtPath<ShaderInclude>(unityPath);
-                    AssetDatabase.SetLabels(asset, new[] { Tag });
+                    AssetDatabase.SetLabels(asset, new[] { Tag[0] });
                     UseFile(asset);
                     file.value = asset;
                     RefreshState();
@@ -171,7 +171,7 @@ namespace ZSG
         {
             if (!_functionParser.TryParse(Code)) return;
             portDescriptors.Clear();
-            foreach(var descriptor in _functionParser.descriptors)
+            foreach (var descriptor in _functionParser.descriptors)
             {
                 portDescriptors.Add(descriptor.ID, descriptor);
             }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace ZSG
+namespace Enlit
 {
     public class ShaderVaryings
     {

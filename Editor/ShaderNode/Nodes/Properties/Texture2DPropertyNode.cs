@@ -1,7 +1,7 @@
 using System;
-using ZSG.Nodes;
+using Enlit.Nodes;
 
-namespace ZSG
+namespace Enlit
 {
     [NodeInfo("Input/Texture 2D Property"), Serializable]
     public class Texture2DPropertyNode : TexturePropertyNode

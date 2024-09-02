@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 
-namespace ZSG
+namespace Enlit
 {
     [Serializable]
     public struct NodeConnection

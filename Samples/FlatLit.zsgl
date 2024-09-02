@@ -1,0 +1,51 @@
+// not exactly open lit but close
+
+#pragma skip_variants SHADOWS_SCREEN SHADOWS_CUBE SHADOWS_SOFT POINT_COOKIE SHADOWS_DEPTH
+#define CUSTOM_LIGHT
+LIGHT_FUNC // args: light, fragData, giInput, surf, giOutput
+{
+    half3 col = light.color * light.attenuation;
+    giOutput.directDiffuse += col;
+}
+
+float OpenLitGray(float3 rgb)
+{
+    return dot(rgb, float3(1.0/3.0, 1.0/3.0, 1.0/3.0));
+}
+
+// should be moved to another func for indirect diffuse when its added so it runs earlier
+#define CUSTOM_COLOR
+COLOR_FUNC // args: surf, fragData, giInput, giOutput
+{
+    #if !defined(LIGHTMAP_ON) && defined(UNITY_PASS_FORWARDBASE)
+        float3 sh9Dir = (unity_SHAr.xyz + unity_SHAg.xyz + unity_SHAb.xyz);
+        float3 sh9DirAbs = float3(sh9Dir.x, abs(sh9Dir.y), sh9Dir.z);
+        half3 N = normalize(sh9DirAbs);
+        UNITY_FLATTEN
+        if (!any(unity_SHC.xyz))
+        {
+            N = 0;
+        }
+        half3 l0l1 = SHEvalLinearL0L1(float4(N, 1));
+        half3 l2 = SHEvalLinearL2(float4(N, 1));
+        giOutput.indirectDiffuse = l0l1 + l2;
+        giOutput.indirectOcclusion = giOutput.indirectDiffuse;
+    #endif
+    giOutput.indirectSpecular = 0;
+    giOutput.directSpecular = 0;
+
+    half lightRenorm = max(max(giOutput.directDiffuse.r, giOutput.directDiffuse.g), giOutput.directDiffuse.b);
+    lightRenorm += max(max(giOutput.indirectDiffuse.r, giOutput.indirectDiffuse.g), giOutput.indirectDiffuse.b);
+    giOutput.indirectDiffuse += giOutput.directDiffuse;
+    giOutput.directDiffuse = 0;
+    if (lightRenorm > _LightMaxLimit)
+    {
+        giOutput.indirectDiffuse /= lightRenorm / _LightMaxLimit;
+    }
+    giOutput.indirectDiffuse = max(_LightMinLimit, giOutput.indirectDiffuse);
+    giOutput.indirectDiffuse = lerp(giOutput.indirectDiffuse, OpenLitGray(giOutput.indirectDiffuse), _MonochromeLighting);
+
+    half4 color = COLOR_DEFAULT;
+    
+    return color;
+}

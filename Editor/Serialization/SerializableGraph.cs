@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-namespace ZSG
+namespace Enlit
 {
     [Serializable]
     public class SerializableGraph
@@ -105,7 +105,7 @@ namespace ZSG
 
         private void UpdatePreviews(ShaderGraphView graphView)
         {
-            foreach(var node in graphView.graphElements)
+            foreach (var node in graphView.graphElements)
             {
                 if (node is ShaderNode shaderNode)
                 {
@@ -230,10 +230,10 @@ namespace ZSG
             }
         }
 
-/*        public void ConnectPort(ShaderNodeVisualElement node, NodeConnection connection)
-        {
+        /*        public void ConnectPort(ShaderNodeVisualElement node, NodeConnection connection)
+                {
 
-        }*/
+                }*/
 
     }
 }

@@ -1,6 +1,6 @@
-using ZSG.Nodes;
+using Enlit.Nodes;
 
-namespace ZSG
+namespace Enlit
 {
     [NodeInfo("Math/DDX")]
     public class DDXNode : PassthroughNode

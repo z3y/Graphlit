@@ -1,10 +1,10 @@
 using System;
 using UnityEngine.UIElements;
 using UnityEngine;
-using ZSG.Nodes;
-using ZSG.Nodes.PortType;
+using Enlit.Nodes;
+using Enlit.Nodes.PortType;
 
-namespace ZSG
+namespace Enlit
 {
     [@NodeInfo("Utility/Swizzle"), Serializable]
     public sealed class SwizzleNode : ShaderNode

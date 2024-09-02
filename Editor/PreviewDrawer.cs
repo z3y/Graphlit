@@ -4,7 +4,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace ZSG
+namespace Enlit
 {
     public enum PreviewType
     {
@@ -131,7 +131,7 @@ namespace ZSG
 
             float t = Time.realtimeSinceStartup;
 
-            Vector4 time = new (t / 20.0f, t, t * 2.0f, t * 3.0f);
+            Vector4 time = new(t / 20.0f, t, t * 2.0f, t * 3.0f);
             //Vector4 timeParameters = new Vector4(t, Mathf.Sin(t), Mathf.Cos(t), 0.0f);
 
             _material.SetVector(_graphTimeId, time);

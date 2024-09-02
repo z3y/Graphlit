@@ -1,6 +1,6 @@
 #pragma fragment frag
 
-#include "Packages/com.z3y.zsg/ShaderLibrary/GraphFunctions.hlsl"
+#include "Packages/com.enlit/ShaderLibrary/GraphFunctions.hlsl"
 
 void frag(Varyings varyings)
 {

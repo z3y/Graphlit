@@ -8,15 +8,4 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 827475b98c62cbe40a87475805eb6d0b, type: 3}
-  properties:
-  - guid: fb976e4c-f388-4a2e-8434-30fea95aa538
-    referenceName: _MultiplyColor
-    displayName: Multiply Color
-    type: 1
-    customAttributes: 
-    defaultAttributes: 0
-    rangeX: 0
-    rangeY: 0
-    _value: 1
-    _defaultTexture: 
-    declaration: 0
+  properties: []

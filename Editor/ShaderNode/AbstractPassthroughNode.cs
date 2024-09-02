@@ -1,6 +1,6 @@
-using ZSG.Nodes.PortType;
+using Enlit.Nodes.PortType;
 
-namespace ZSG
+namespace Enlit
 {
     public abstract class PassthroughNode : ShaderNode
     {

@@ -17,6 +17,7 @@ struct FragmentData
     float4 positionCSR;
     float2 grabScreenPosition;
     float2 screenPosition;
+    float2 lightmapUV;
 
     static FragmentData Create(Varyings varyings)
     {
@@ -67,6 +68,10 @@ struct FragmentData
             float4 screenPos = ComputeScreenPos(output.positionCSR);
             output.grabScreenPosition = grabPos.xy / grabPos.w;
             output.screenPosition = screenPos.xy / screenPos.w;
+        #endif
+
+        #ifdef LIGHTMAP_ON
+            output.lightmapUV = varyings.lightmapUV;
         #endif
 
         return output;

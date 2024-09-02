@@ -4,6 +4,7 @@
 LIGHT_FUNC // args: light, fragData, giInput, surf, giOutput
 {
     giOutput.directDiffuse += light.color * light.NoL * light.attenuation;
+    // giOutput.directSpecular +=
 }
 
 // override the function called at the end before the color is returned
@@ -13,5 +14,5 @@ COLOR_FUNC // args: surf, fragData, giInput, giOutput
 {
     half4 color = COLOR_DEFAULT;
     
-    return color * _MultiplyColor;
+    return color;
 }

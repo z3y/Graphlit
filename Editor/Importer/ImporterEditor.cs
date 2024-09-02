@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using System.IO;
 using UnityEditorInternal;
-namespace ZSG
+namespace Enlit
 {
 
     [CustomEditor(typeof(ShaderGraphImporter))]
@@ -40,7 +40,7 @@ namespace ZSG
             if (GUILayout.Button("Show Generated Shader"))
             {
                 AssetDatabase.ImportAsset(importer.assetPath, ImportAssetOptions.ForceUpdate);
-                string path = "Temp/ZSG.shader";
+                string path = "Temp/Enlit.shader";
                 File.WriteAllText(path, ShaderGraphImporter._lastImport);
                 InternalEditorUtility.OpenFileAtLineExternal(Path.GetFullPath(path), 0);
             }

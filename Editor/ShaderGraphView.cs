@@ -6,9 +6,9 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
-using ZSG.Nodes;
+using Enlit.Nodes;
 
-namespace ZSG
+namespace Enlit
 {
 
     public class ShaderGraphView : GraphView
@@ -169,22 +169,22 @@ namespace ZSG
 
         private SerializedGraphDataSo _serializedGraphDataSo;
         private Stack<SerializableGraph> _undoStates = new(10);
-      /*  public void RecordUndo()
-        {
-            if (_serializedGraphDataSo == null)
-            {
-                _serializedGraphDataSo = ScriptableObject.CreateInstance<SerializedGraphDataSo>();
-            }
-            Undo.RegisterCompleteObjectUndo(_serializedGraphDataSo, "Graph Undo");
+        /*  public void RecordUndo()
+          {
+              if (_serializedGraphDataSo == null)
+              {
+                  _serializedGraphDataSo = ScriptableObject.CreateInstance<SerializedGraphDataSo>();
+              }
+              Undo.RegisterCompleteObjectUndo(_serializedGraphDataSo, "Graph Undo");
 
-            var data = SerializableGraph.StoreGraph(this);
-            _undoStates.Push(data);
+              var data = SerializableGraph.StoreGraph(this);
+              _undoStates.Push(data);
 
-            _serializedGraphDataSo.graphView = this;
-            EditorUtility.SetDirty(_serializedGraphDataSo);
-            _editorWindow.SetDirty();
-            _serializedGraphDataSo.Init();
-        }*/
+              _serializedGraphDataSo.graphView = this;
+              EditorUtility.SetDirty(_serializedGraphDataSo);
+              _editorWindow.SetDirty();
+              _serializedGraphDataSo.Init();
+          }*/
 
         public void OnUndoPerformed()
         {
@@ -350,7 +350,7 @@ namespace ZSG
         }
         void CreateAll()
         {
-            Vector2 p = new Vector2(0,0);
+            Vector2 p = new Vector2(0, 0);
             Type[] _existingNodeTypes = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(domainAssembly => domainAssembly.GetTypes())
                 .Where(type => typeof(ShaderNode).IsAssignableFrom(type))

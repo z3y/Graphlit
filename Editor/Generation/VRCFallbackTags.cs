@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace ZSG
+namespace Enlit
 {
     [Serializable]
     public class VRCFallbackTags

@@ -7,12 +7,11 @@ using System;
 using UnityEditor.Callbacks;
 using System.Linq;
 
-namespace ZSG
+namespace Enlit
 {
-    [ScriptedImporter(2, EXTENSION, 0)]
+    [ScriptedImporter(3, new[] { "enlit", "zsg" }, 0)]
     public class ShaderGraphImporter : ScriptedImporter
     {
-        public const string EXTENSION = "zsg";
         internal static Dictionary<string, ShaderGraphView> _graphViews = new();
         internal static string _lastImport;
 
@@ -143,7 +142,7 @@ namespace ZSG
             }
 
             var jsonData = JsonUtility.ToJson(data, true);
-            ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.{EXTENSION}", jsonData);
+            ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.enlit", jsonData);
         }
         public static void CreateEmptyTemplate<T>() where T : TemplateOutput, new()
         {

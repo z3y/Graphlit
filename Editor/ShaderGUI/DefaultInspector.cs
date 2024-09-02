@@ -7,7 +7,7 @@ using System.Linq;
 using Debug = UnityEngine.Debug;
 using System.Globalization;
 
-namespace ZSG
+namespace Enlit
 {
     public partial class DefaultInspector : ShaderGUI
     {

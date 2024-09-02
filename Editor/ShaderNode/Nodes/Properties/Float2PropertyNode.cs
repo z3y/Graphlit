@@ -1,8 +1,8 @@
 using System;
-using ZSG.Nodes;
-using ZSG.Nodes.PortType;
+using Enlit.Nodes;
+using Enlit.Nodes.PortType;
 
-namespace ZSG
+namespace Enlit
 {
     [NodeInfo("Input/Float2 Property"), Serializable]
     public class Float2PropertyNode : PropertyNode

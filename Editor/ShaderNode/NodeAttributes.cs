@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace ZSG.Nodes
+namespace Enlit.Nodes
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class NodeInfo : Attribute

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using ZSG.Nodes.PortType;
+using Enlit.Nodes.PortType;
 
-namespace ZSG
+namespace Enlit
 {
     public class FunctionParser
     {
@@ -32,7 +32,7 @@ namespace ZSG
             }; ;
         }
 
-        readonly string[] EntryKeywords = new []
+        readonly string[] EntryKeywords = new[]
         {
             "void ",
             "float",
@@ -146,7 +146,7 @@ namespace ZSG
 
                 return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Debug.LogError("Failed to parse " + code + e);
             }

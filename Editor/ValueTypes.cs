@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ZSG.Nodes.PortType
+namespace Enlit.Nodes.PortType
 {
     public interface IPortType
     {

@@ -1,17 +1,17 @@
 using UnityEngine.UIElements;
-using ZSG.Nodes.PortType;
-using ZSG.Nodes;
+using Enlit.Nodes.PortType;
+using Enlit.Nodes;
 using UnityEngine;
 using UnityEditor;
 using System;
 using UnityEditor.UIElements;
 
-namespace ZSG
+namespace Enlit
 {
     [NodeInfo("Targets/Lit Target"), Serializable]
     public class LitTemplate : TemplateOutput
     {
-        [MenuItem("Assets/Create/Shader Graph Z/Lit Graph")]
+        [MenuItem("Assets/Create/Shader/Enlit/Lit Graph")]
         public static void CreateVariantFile() => ShaderGraphImporter.CreateEmptyTemplate<LitTemplate>();
 
         public override string Name { get; } = "Lit";
@@ -122,8 +122,8 @@ namespace ZSG
         }
 
         static readonly PropertyDescriptor _surfaceOptionsStart = new(PropertyType.Float, "Surface Options", "_SurfaceOptions") { customAttributes = "[Foldout]" };
-        static readonly PropertyDescriptor _mode = new (PropertyType.Float, "Rendering Mode", "_Mode") { customAttributes = "[Enum(Opaque, 0, Cutout, 1, Fade, 2, Transparent, 3, Additive, 4, Multiply, 5)]" };
-        static readonly PropertyDescriptor _srcBlend = new (PropertyType.Float, "Source Blend", "_SrcBlend") { FloatValue = 1, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
+        static readonly PropertyDescriptor _mode = new(PropertyType.Float, "Rendering Mode", "_Mode") { customAttributes = "[Enum(Opaque, 0, Cutout, 1, Fade, 2, Transparent, 3, Additive, 4, Multiply, 5)]" };
+        static readonly PropertyDescriptor _srcBlend = new(PropertyType.Float, "Source Blend", "_SrcBlend") { FloatValue = 1, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         static readonly PropertyDescriptor _dstBlend = new(PropertyType.Float, "Destination Blend", "_DstBlend") { FloatValue = 0, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         static readonly PropertyDescriptor _zwrite = new(PropertyType.Float, "ZWrite", "_ZWrite") { FloatValue = 1, customAttributes = "[Enum(Off, 0, On, 1)]" };
         static readonly PropertyDescriptor _cull = new(PropertyType.Float, "Cull", "_Cull") { FloatValue = 2, customAttributes = "[Enum(UnityEngine.Rendering.CullMode)]" };
@@ -140,15 +140,15 @@ namespace ZSG
         static bool _ltcgiExists = System.IO.File.Exists(_ltcgiPath);
         static bool _cbirpExists = System.IO.File.Exists(_cbirpPath);
 
-        const string Vertex = "Packages/com.z3y.zsg/Editor/Targets/Lit/Vertex.hlsl";
-        const string FragmentForward = "Packages/com.z3y.zsg/Editor/Targets/Lit/FragmentForward.hlsl";
-        const string FragmentShadow = "Packages/com.z3y.zsg/Editor/Targets/Lit/FragmentShadow.hlsl";
-        const string FragmentMeta = "Packages/com.z3y.zsg/Editor/Targets/Lit/FragmentMeta.hlsl";
+        const string Vertex = "Packages/com.enlit/Editor/Targets/Lit/Vertex.hlsl";
+        const string FragmentForward = "Packages/com.enlit/Editor/Targets/Lit/FragmentForward.hlsl";
+        const string FragmentShadow = "Packages/com.enlit/Editor/Targets/Lit/FragmentShadow.hlsl";
+        const string FragmentMeta = "Packages/com.enlit/Editor/Targets/Lit/FragmentMeta.hlsl";
 
 
-        Texture2D _dfg = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.z3y.zsg/Editor/Targets/Lit/dfg-multiscatter.exr");
+        Texture2D _dfg = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.enlit/Editor/Targets/Lit/dfg-multiscatter.exr");
         static readonly PropertyDescriptor _dfgProperty = new(PropertyType.Texture2D, "", "_DFG")
-            { defaultAttributes = MaterialPropertyAttribute.HideInInspector | MaterialPropertyAttribute.NonModifiableTextureData };
+        { defaultAttributes = MaterialPropertyAttribute.HideInInspector | MaterialPropertyAttribute.NonModifiableTextureData };
 
         public override void OnBeforeBuild(ShaderBuilder builder)
         {
@@ -205,7 +205,7 @@ namespace ZSG
             builder.properties.Add(_properties);
 
             {
-                var pass = new PassBuilder("FORWARD", Vertex, FragmentForward, POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, EMISSION, NORMAL_TS );
+                var pass = new PassBuilder("FORWARD", Vertex, FragmentForward, POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, EMISSION, NORMAL_TS);
                 pass.tags["LightMode"] = "ForwardBase";
 
                 pass.renderStates["Cull"] = "[_Cull]";
@@ -258,9 +258,9 @@ namespace ZSG
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.pragmas.Add("#include \"Packages/com.z3y.zsg/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.enlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
 
-                pass.preincludes.Add("Packages/com.z3y.zsg/Editor/Targets/Lit/Functions.hlsl");
+                pass.preincludes.Add("Packages/com.enlit/Editor/Targets/Lit/Functions.hlsl");
                 if (customLightingInclude != null)
                 {
                     pass.pragmas.Add("#define CUSTOM_LIGHTING_INCLUDED");
@@ -312,7 +312,7 @@ namespace ZSG
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.preincludes.Add("Packages/com.z3y.zsg/Editor/Targets/Lit/Functions.hlsl");
+                pass.preincludes.Add("Packages/com.enlit/Editor/Targets/Lit/Functions.hlsl");
                 if (customLightingInclude != null)
                 {
                     pass.pragmas.Add("#define CUSTOM_LIGHTING_INCLUDED");
@@ -324,7 +324,7 @@ namespace ZSG
                     }
                 }
 
-                pass.pragmas.Add("#include \"Packages/com.z3y.zsg/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.enlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 if (!(_cbirpExists && _cbirp))
                 {
                     builder.AddPass(pass);
@@ -350,7 +350,7 @@ namespace ZSG
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.pragmas.Add("#include \"Packages/com.z3y.zsg/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.enlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 builder.AddPass(pass);
             }
             {
@@ -374,7 +374,7 @@ namespace ZSG
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.pragmas.Add("#include \"Packages/com.z3y.zsg/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.enlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 pass.pragmas.Add("#include \"UnityMetaPass.cginc\"");
 
                 builder.AddPass(pass);

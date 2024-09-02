@@ -1,11 +1,11 @@
 using System.Linq;
 using UnityEngine.UIElements;
 
-namespace ZSG
+namespace Enlit
 {
     public static class Swizzle
     {
-        private static char[] _validCharacters = new char[] { 'x', 'y', 'z', 'w'};
+        private static char[] _validCharacters = new char[] { 'x', 'y', 'z', 'w' };
         private static char[] _validCharacters2 = new char[] { 'r', 'g', 'b', 'a' };
 
 

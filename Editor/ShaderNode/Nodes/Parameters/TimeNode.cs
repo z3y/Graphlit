@@ -1,7 +1,7 @@
-using ZSG.Nodes;
-using ZSG.Nodes.PortType;
+using Enlit.Nodes;
+using Enlit.Nodes.PortType;
 
-namespace ZSG
+namespace Enlit
 {
     [NodeInfo("Built-in Variables/Time", "_Time")]
     public class TimeNode : ShaderNode

@@ -1,7 +1,7 @@
-using ZSG.Nodes;
-using ZSG.Nodes.PortType;
+using Enlit.Nodes;
+using Enlit.Nodes.PortType;
 
-namespace ZSG
+namespace Enlit
 {
     [NodeInfo("Input/Grab Screen Position")]
     public class GrabScreenPositionNode : ShaderNode

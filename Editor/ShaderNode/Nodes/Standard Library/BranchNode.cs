@@ -1,10 +1,10 @@
 using System;
 using UnityEngine;
 using UnityEngine.UIElements;
-using ZSG.Nodes;
-using ZSG.Nodes.PortType;
+using Enlit.Nodes;
+using Enlit.Nodes.PortType;
 
-namespace ZSG
+namespace Enlit
 {
     [NodeInfo("Utility/Branch"), Serializable]
     public class BranchNode : ShaderNode

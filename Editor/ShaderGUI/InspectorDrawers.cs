@@ -3,7 +3,7 @@ using UnityEngine;
 using System;
 using System.Linq;
 
-namespace ZSG
+namespace Enlit
 {
     public partial class DefaultInspector
     {

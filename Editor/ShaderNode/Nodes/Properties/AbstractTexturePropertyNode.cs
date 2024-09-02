@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using UnityEditor.Experimental.GraphView;
-using ZSG.Nodes;
-using ZSG.Nodes.PortType;
+using Enlit.Nodes;
+using Enlit.Nodes.PortType;
 
-namespace ZSG
+namespace Enlit
 {
     public abstract class TexturePropertyNode : PropertyNode
     {

@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using UnityEditor.Experimental.GraphView;
-using ZSG.Nodes;
-using ZSG.Nodes.PortType;
+using Enlit.Nodes;
+using Enlit.Nodes.PortType;
 
-namespace ZSG
+namespace Enlit
 {
     [NodeInfo("Input/Texture 3D Property"), Serializable]
     public class Texture3DPropertyNode : TexturePropertyNode

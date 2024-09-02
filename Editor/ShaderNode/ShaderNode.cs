@@ -6,39 +6,39 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
-using ZSG.Nodes;
-using ZSG.Nodes.PortType;
+using Enlit.Nodes;
+using Enlit.Nodes.PortType;
 using static UnityEditor.Experimental.GraphView.Port;
 
-namespace ZSG
+namespace Enlit
 {
-   /* class DefaultValueElement : GraphElement
-    {
-        public DefaultValueElement()
-        {
-            var s = style;
-            name = "default-value";
-            s.height = 15;
-            const float C = 1.0f / 10f;
-            s.backgroundColor = new Color(C, C, C);
-            pickingMode = PickingMode.Ignore;
-            s.borderTopRightRadius = 0;
-            s.borderBottomRightRadius = 0;
-            s.position = Position.Absolute;
-            s.fontSize = 10;
-            s.right = 86;
-            //s.flexGrow = 1;
-            //s.flexDirection = FlexDirection.RowReverse;
-           // s.alignContent = Align.FlexEnd;
+    /* class DefaultValueElement : GraphElement
+     {
+         public DefaultValueElement()
+         {
+             var s = style;
+             name = "default-value";
+             s.height = 15;
+             const float C = 1.0f / 10f;
+             s.backgroundColor = new Color(C, C, C);
+             pickingMode = PickingMode.Ignore;
+             s.borderTopRightRadius = 0;
+             s.borderBottomRightRadius = 0;
+             s.position = Position.Absolute;
+             s.fontSize = 10;
+             s.right = 86;
+             //s.flexGrow = 1;
+             //s.flexDirection = FlexDirection.RowReverse;
+            // s.alignContent = Align.FlexEnd;
 
-            var text = new Label("Value");
-            text.style.fontSize = 8;
-            //text.StretchToParentSize();
+             var text = new Label("Value");
+             text.style.fontSize = 8;
+             //text.StretchToParentSize();
 
-            //text.style.position = Position.Relative;
-            Add(text);
-        }
-    }*/
+             //text.style.position = Position.Relative;
+             Add(text);
+         }
+     }*/
     public struct GeneratedPortData
     {
         public GeneratedPortData(IPortType type, string name)
@@ -131,12 +131,12 @@ namespace ZSG
 
             var port = Port.Create<Edge>(Orientation.Horizontal, (Direction)portDescriptor.Direction, capacity, type);
 
-/*            if (port.direction == Direction.Input)
-            {
-                var defaultValueElement = new DefaultValueElement();
-                port.Insert(0, defaultValueElement);
-            }
-*/
+            /*            if (port.direction == Direction.Input)
+                        {
+                            var defaultValueElement = new DefaultValueElement();
+                            port.Insert(0, defaultValueElement);
+                        }
+            */
 
             port.AddManipulator(new EdgeConnector<Edge>(new EdgeConnectorListener()));
             port.portName = portDescriptor.Name;
@@ -171,7 +171,7 @@ namespace ZSG
         }
         public void ResetPorts()
         {
-            foreach ( var port in PortElements.ToArray())
+            foreach (var port in PortElements.ToArray())
             {
                 var descriptors = portDescriptors.Where(x => x.Key == port.GetPortID()).ToArray();
                 if (descriptors.Count() > 0)
@@ -289,7 +289,7 @@ namespace ZSG
                     continue;
                 }
 
-                foreach(var edge in port.connections)
+                foreach (var edge in port.connections)
                 {
                     var node = (ShaderNode)edge.output.node;
                     if (node is null)
@@ -483,7 +483,7 @@ namespace ZSG
             }
             else if (portDescriptor.Type is SamplerState)
             {
-                return "null_LinearRepeat"; 
+                return "null_LinearRepeat";
             }
             else if (portDescriptor.Type is Bool)
             {
@@ -501,7 +501,7 @@ namespace ZSG
             return PrecisionString(4) + "(0,0,0,0)";
         }
 
-        public Dictionary<int, string> DefaultValues {  get; set; } = new Dictionary<int, string>();
+        public Dictionary<int, string> DefaultValues { get; set; } = new Dictionary<int, string>();
 
         internal void BuilderVisit(NodeVisitor visitor, int[] portsMask = null)
         {
