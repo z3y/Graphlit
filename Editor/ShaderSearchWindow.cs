@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-namespace Enlit
+namespace Graphlit
 {
     using System.Linq;
     using System.Reflection;
     using UnityEditor;
-    using Enlit.Nodes;
+    using Graphlit.Nodes;
     public class ShaderNodeSearchWindow : ScriptableObject, ISearchWindowProvider
     {
         private ShaderGraphView _graphView;

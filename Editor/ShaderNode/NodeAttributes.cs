@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Enlit.Nodes
+namespace Graphlit.Nodes
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class NodeInfo : Attribute

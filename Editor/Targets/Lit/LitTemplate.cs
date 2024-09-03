@@ -1,17 +1,17 @@
 using UnityEngine.UIElements;
-using Enlit.Nodes.PortType;
-using Enlit.Nodes;
+using Graphlit.Nodes.PortType;
+using Graphlit.Nodes;
 using UnityEngine;
 using UnityEditor;
 using System;
 using UnityEditor.UIElements;
 
-namespace Enlit
+namespace Graphlit
 {
     [NodeInfo("Targets/Lit Target"), Serializable]
     public class LitTemplate : TemplateOutput
     {
-        [MenuItem("Assets/Create/Enlit/Lit Graph")]
+        [MenuItem("Assets/Create/Graphlit/Lit Graph")]
         public static void CreateVariantFile() => ShaderGraphImporter.CreateEmptyTemplate<LitTemplate>();
 
         public override string Name { get; } = "Lit";
@@ -140,13 +140,13 @@ namespace Enlit
         static bool _ltcgiExists = System.IO.File.Exists(_ltcgiPath);
         static bool _cbirpExists = System.IO.File.Exists(_cbirpPath);
 
-        const string Vertex = "Packages/com.enlit/Editor/Targets/Lit/Vertex.hlsl";
-        const string FragmentForward = "Packages/com.enlit/Editor/Targets/Lit/FragmentForward.hlsl";
-        const string FragmentShadow = "Packages/com.enlit/Editor/Targets/Lit/FragmentShadow.hlsl";
-        const string FragmentMeta = "Packages/com.enlit/Editor/Targets/Lit/FragmentMeta.hlsl";
+        const string Vertex = "Packages/com.z3y.graphlit/Editor/Targets/Lit/Vertex.hlsl";
+        const string FragmentForward = "Packages/com.z3y.graphlit/Editor/Targets/Lit/FragmentForward.hlsl";
+        const string FragmentShadow = "Packages/com.z3y.graphlit/Editor/Targets/Lit/FragmentShadow.hlsl";
+        const string FragmentMeta = "Packages/com.z3y.graphlit/Editor/Targets/Lit/FragmentMeta.hlsl";
 
 
-        Texture2D _dfg = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.enlit/Editor/Targets/Lit/dfg-multiscatter.exr");
+        Texture2D _dfg = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.z3y.graphlit/Editor/Targets/Lit/dfg-multiscatter.exr");
         static readonly PropertyDescriptor _dfgProperty = new(PropertyType.Texture2D, "", "_DFG")
         { defaultAttributes = MaterialPropertyAttribute.HideInInspector | MaterialPropertyAttribute.NonModifiableTextureData };
 
@@ -258,9 +258,9 @@ namespace Enlit
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.pragmas.Add("#include \"Packages/com.enlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
 
-                pass.preincludes.Add("Packages/com.enlit/Editor/Targets/Lit/Functions.hlsl");
+                pass.preincludes.Add("Packages/com.z3y.graphlit/Editor/Targets/Lit/Functions.hlsl");
                 if (customLightingInclude != null)
                 {
                     pass.pragmas.Add("#define CUSTOM_LIGHTING_INCLUDED");
@@ -312,7 +312,7 @@ namespace Enlit
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.preincludes.Add("Packages/com.enlit/Editor/Targets/Lit/Functions.hlsl");
+                pass.preincludes.Add("Packages/com.z3y.graphlit/Editor/Targets/Lit/Functions.hlsl");
                 if (customLightingInclude != null)
                 {
                     pass.pragmas.Add("#define CUSTOM_LIGHTING_INCLUDED");
@@ -324,7 +324,7 @@ namespace Enlit
                     }
                 }
 
-                pass.pragmas.Add("#include \"Packages/com.enlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 if (!(_cbirpExists && _cbirp))
                 {
                     builder.AddPass(pass);
@@ -350,7 +350,7 @@ namespace Enlit
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.pragmas.Add("#include \"Packages/com.enlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 builder.AddPass(pass);
             }
             {
@@ -374,7 +374,7 @@ namespace Enlit
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.pragmas.Add("#include \"Packages/com.enlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 pass.pragmas.Add("#include \"UnityMetaPass.cginc\"");
 
                 builder.AddPass(pass);

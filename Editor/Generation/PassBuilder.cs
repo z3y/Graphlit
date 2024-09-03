@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Enlit
+namespace Graphlit
 {
     public class PassBuilder
     {
@@ -35,8 +35,8 @@ namespace Enlit
 
         public string target = "4.5";
 
-        public string fragmentDataPath = "Packages/com.enlit/Editor/Targets/FragmentData.hlsl";
-        public string vertexDataPath = "Packages/com.enlit/Editor/Targets/VertexData.hlsl";
+        public string fragmentDataPath = "Packages/com.z3y.graphlit/Editor/Targets/FragmentData.hlsl";
+        public string vertexDataPath = "Packages/com.z3y.graphlit/Editor/Targets/VertexData.hlsl";
 
         public GenerationMode generationMode;
 

@@ -1,8 +1,8 @@
 {
-  "name": "com.enlit",
+  "name": "com.z3y.graphlit",
   "version": "1.0.0",
   "unity": "2022.3",
-  "displayName": "Enlit",
+  "displayName": "Graphlit",
   "hideInEditor": false,
   "gitDependencies": {},
   "vpmDependencies": {},

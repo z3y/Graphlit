@@ -1,6 +1,6 @@
-using Enlit.Nodes;
+using Graphlit.Nodes;
 
-namespace Enlit
+namespace Graphlit
 {
     [NodeInfo("Math/ATan")]
     public class ATanNode : PassthroughNode

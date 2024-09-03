@@ -1,6 +1,6 @@
-using Enlit.Nodes;
+using Graphlit.Nodes;
 
-namespace Enlit
+namespace Graphlit
 {
     [NodeInfo("Math/Floor")]
     public class FloorNode : PassthroughNode

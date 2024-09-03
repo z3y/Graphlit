@@ -1,6 +1,6 @@
-using Enlit.Nodes;
+using Graphlit.Nodes;
 
-namespace Enlit
+namespace Graphlit
 {
     [NodeInfo("Math/Multiply", "a * b")]
     public class MultiplyNode : SimpleExpressionNode

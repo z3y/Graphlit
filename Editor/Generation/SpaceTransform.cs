@@ -1,4 +1,4 @@
-namespace Enlit
+namespace Graphlit
 {
     public static class SpaceTransform
     {

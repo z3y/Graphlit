@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-namespace Enlit
+namespace Graphlit
 {
     [Serializable]
     public class SerializableGraph

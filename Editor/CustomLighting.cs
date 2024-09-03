@@ -6,12 +6,12 @@ using UnityEditor.AssetImporters;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace Enlit
+namespace Graphlit
 {
     [ScriptedImporter(2, EXTENSION, 0)]
     public class CustomLighting : ScriptedImporter
     {
-        const string EXTENSION = "enlitc";
+        const string EXTENSION = "graphlitc";
 
         public List<PropertyDescriptor> properties = new();
 
@@ -24,10 +24,10 @@ namespace Enlit
             ctx.AddObjectToAsset("main", file);
         }
 
-        [MenuItem("Assets/Create/Enlit/Custom Lighting Asset")]
+        [MenuItem("Assets/Create/Graphlit/Custom Lighting Asset")]
         public static void CreateCustomLightingAsset()
         {
-            var text = File.ReadAllText("Packages/com.enlit/Samples/Example.enlitc");
+            var text = File.ReadAllText("Packages/com.z3y.graphlit/Samples/Example.graphlitc");
             ProjectWindowUtil.CreateAssetWithContent($"New Custom Lighting.{EXTENSION}", text);
         }
     }

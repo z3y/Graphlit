@@ -1,7 +1,7 @@
 using System.Linq;
 using UnityEngine.UIElements;
 
-namespace Enlit
+namespace Graphlit
 {
     public static class Swizzle
     {

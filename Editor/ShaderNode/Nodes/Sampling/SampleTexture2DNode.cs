@@ -1,9 +1,9 @@
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using Enlit.Nodes;
-using Enlit.Nodes.PortType;
+using Graphlit.Nodes;
+using Graphlit.Nodes.PortType;
 
-namespace Enlit
+namespace Graphlit
 {
     [NodeInfo("Texture/Sample Texture 2D")]
     public class SampleTexture2DNode : SampleTextureNode

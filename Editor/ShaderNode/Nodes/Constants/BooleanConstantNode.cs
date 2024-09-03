@@ -1,12 +1,12 @@
 using System;
 using UnityEngine.UIElements;
 using UnityEngine;
-using Enlit.Nodes;
-using Enlit.Nodes.PortType;
+using Graphlit.Nodes;
+using Graphlit.Nodes.PortType;
 using System.Linq;
 using UnityEditor.UIElements;
 
-namespace Enlit
+namespace Graphlit
 {
     [NodeInfo("Constants/Bool"), Serializable]
     public class BooleanConstantNode : ShaderNode

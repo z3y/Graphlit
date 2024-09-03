@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Enlit
+namespace Graphlit
 {
     public class ShaderStringBuilder
     {

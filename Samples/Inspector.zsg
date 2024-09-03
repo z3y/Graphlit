@@ -1,6 +1,6 @@
 {
     "data": {
-        "shaderName": "Enlit/Samples/Inspector",
+        "shaderName": "Graphlit/Samples/Inspector",
         "properties": [
             {
                 "guid": "0377e241-a3bb-4b2c-8657-4c0b699064aa",
@@ -291,7 +291,7 @@
     },
     "nodes": [
         {
-            "type": "Enlit.UnlitTemplate",
+            "type": "Graphlit.UnlitTemplate",
             "guid": "6c88538a-d989-49e2-a626-887656ce0634",
             "x": 2683,
             "y": 15,
@@ -308,7 +308,7 @@
             "data": ""
         },
         {
-            "type": "Enlit.ColorPropertyNode",
+            "type": "Graphlit.ColorPropertyNode",
             "guid": "6bbd0a42-cccb-4943-98ef-719627975319",
             "x": 2543,
             "y": 104,

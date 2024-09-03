@@ -1,20 +1,20 @@
 using System;
 using UnityEngine.UIElements;
 using UnityEngine;
-using Enlit.Nodes;
+using Graphlit.Nodes;
 using System.Linq;
 using UnityEditor.UIElements;
 using UnityEditor;
 using System.IO;
 
-namespace Enlit
+namespace Graphlit
 {
 
     [NodeInfo("Input/Custom Function"), Serializable]
     public class CustomFunctionNode : ShaderNode
     {
-        public static readonly string[] Tag = new[] { "EnlitFunction", "ZSGFunction" };
-        [MenuItem("Assets/Create/Enlit/Shader Include")]
+        public static readonly string[] Tag = new[] { "GraphlitFunction", "ZSGFunction" };
+        [MenuItem("Assets/Create/Graphlit/Shader Include")]
         public static void CreateVariantFile()
         {
             ProjectWindowUtil.CreateAssetWithContent("CustomFunction.hlsl", DefaultFunction);

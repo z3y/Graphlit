@@ -1,9 +1,9 @@
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using Enlit.Nodes;
-using Enlit.Nodes.PortType;
+using Graphlit.Nodes;
+using Graphlit.Nodes.PortType;
 
-namespace Enlit
+namespace Graphlit
 {
     public abstract class SampleTextureNode : ShaderNode
     {

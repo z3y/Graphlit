@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-namespace Enlit
+namespace Graphlit
 {
     [Serializable]
     public struct SerializableNode
@@ -48,7 +48,7 @@ namespace Enlit
 
         public readonly bool TryDeserialize(ShaderGraphView graphView, out ShaderNode shaderNode)
         {
-            Type type = Type.GetType(this.type.Replace("ZSG", "Enlit"));
+            Type type = Type.GetType(this.type.Replace("ZSG", "Graphlit"));
             if (type is null)
             {
                 Debug.LogError($"Node of type {this.type} not found");

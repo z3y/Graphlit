@@ -1,8 +1,8 @@
 using UnityEditor.Experimental.GraphView;
-using Enlit.Nodes;
-using Enlit.Nodes.PortType;
+using Graphlit.Nodes;
+using Graphlit.Nodes.PortType;
 
-namespace Enlit
+namespace Graphlit
 {
     [NodeInfo("Utility/Split")]
     public class SplitNode : ShaderNode

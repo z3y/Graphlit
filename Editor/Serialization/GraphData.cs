@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Enlit
+namespace Graphlit
 {
     [System.Serializable]
     public class GraphData

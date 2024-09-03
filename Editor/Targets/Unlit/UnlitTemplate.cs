@@ -1,16 +1,16 @@
 using UnityEngine.UIElements;
-using Enlit.Nodes.PortType;
-using Enlit.Nodes;
+using Graphlit.Nodes.PortType;
+using Graphlit.Nodes;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Rendering;
 
-namespace Enlit
+namespace Graphlit
 {
     [NodeInfo("Targets/Unlit Target")]
     public class UnlitTemplate : TemplateOutput
     {
-        [MenuItem("Assets/Create/Enlit/Unlit Graph")]
+        [MenuItem("Assets/Create/Graphlit/Unlit Graph")]
         public static void CreateVariantFile() => ShaderGraphImporter.CreateEmptyTemplate(new UnlitTemplate(),
             x => x.graphData.vrcFallbackTags.type = VRCFallbackTags.ShaderType.Unlit);
 
@@ -55,9 +55,9 @@ namespace Enlit
         static readonly PropertyDescriptor _cull = new(PropertyType.Float, "Cull", "_Cull") { FloatValue = 2, customAttributes = "[Enum(UnityEngine.Rendering.CullMode)]" };
         static readonly PropertyDescriptor _properties = new(PropertyType.Float, "Properties", "_Properties") { customAttributes = "[Foldout]" };
 
-        const string Vertex = "Packages/com.enlit/Editor/Targets/Unlit/Vertex.hlsl";
-        const string FragmentForward = "Packages/com.enlit/Editor/Targets/Unlit/FragmentForward.hlsl";
-        const string FragmentShadow = "Packages/com.enlit/Editor/Targets/Unlit/FragmentShadow.hlsl";
+        const string Vertex = "Packages/com.z3y.graphlit/Editor/Targets/Unlit/Vertex.hlsl";
+        const string FragmentForward = "Packages/com.z3y.graphlit/Editor/Targets/Unlit/FragmentForward.hlsl";
+        const string FragmentShadow = "Packages/com.z3y.graphlit/Editor/Targets/Unlit/FragmentShadow.hlsl";
 
         public override void OnBeforeBuild(ShaderBuilder builder)
         {
@@ -98,7 +98,7 @@ namespace Enlit
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.pragmas.Add("#include \"Packages/com.enlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 builder.AddPass(pass);
             }
 
@@ -121,7 +121,7 @@ namespace Enlit
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.pragmas.Add("#include \"Packages/com.enlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 builder.AddPass(pass);
             }
         }

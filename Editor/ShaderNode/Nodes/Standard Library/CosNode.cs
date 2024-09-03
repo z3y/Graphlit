@@ -1,6 +1,6 @@
-using Enlit.Nodes;
+using Graphlit.Nodes;
 
-namespace Enlit
+namespace Graphlit
 {
     [NodeInfo("Math/Cos", "cos(A)")]
     public class CosNode : PassthroughNode

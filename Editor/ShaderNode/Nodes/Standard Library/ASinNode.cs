@@ -1,6 +1,6 @@
-using Enlit.Nodes;
+using Graphlit.Nodes;
 
-namespace Enlit
+namespace Graphlit
 {
     [NodeInfo("Math/ASin")]
     public class ASinNode : PassthroughNode

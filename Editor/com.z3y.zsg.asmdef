@@ -1,5 +1,5 @@
 {
-    "name": "com.enlit",
+    "name": "com.z3y.graphlit",
     "rootNamespace": "",
     "references": [
         "Unity.RenderPipelines.Core.Editor",

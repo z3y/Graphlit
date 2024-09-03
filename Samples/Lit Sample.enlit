@@ -148,7 +148,7 @@
     },
     "nodes": [
         {
-            "type": "Enlit.CustomFunctionNode",
+            "type": "Graphlit.CustomFunctionNode",
             "guid": "349d5075-09b2-4746-b508-086f7f1c39d3",
             "x": -1504,
             "y": 947,
@@ -170,7 +170,7 @@
             "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n    Out = In;\\n}\",\"_file\":\"10900000|85a00f5fef33e1449bd1f3c09192fcfd\",\"_useFile\":true}"
         },
         {
-            "type": "Enlit.SampleTexture2DNode",
+            "type": "Graphlit.SampleTexture2DNode",
             "guid": "eeed48fa-e6d8-4e3b-8b63-ae43a0d7a7a0",
             "x": -1801,
             "y": 947,
@@ -192,7 +192,7 @@
             "data": ""
         },
         {
-            "type": "Enlit.FloatPropertyNode",
+            "type": "Graphlit.FloatPropertyNode",
             "guid": "793a46a4-7797-4c6a-9060-5d43665314f5",
             "x": -1625,
             "y": 1015,
@@ -203,7 +203,7 @@
             "data": "{\"_ref\":\"297341ee-cfd4-44cb-86a1-103f79528965\"}"
         },
         {
-            "type": "Enlit.FetchVariableNode",
+            "type": "Graphlit.FetchVariableNode",
             "guid": "096f95c7-60b4-4a07-8c58-70d8b7e1bbad",
             "x": -1868,
             "y": 994,
@@ -220,7 +220,7 @@
             "data": "{\"_name\":\"UV\"}"
         },
         {
-            "type": "Enlit.Texture2DPropertyNode",
+            "type": "Graphlit.Texture2DPropertyNode",
             "guid": "1a1ae703-2913-42c5-a306-32c4c43175b5",
             "x": -1986,
             "y": 947,
@@ -231,7 +231,7 @@
             "data": "{\"_ref\":\"e68b53ec-d1bb-4cf4-b8b1-76a34ae625ba\"}"
         },
         {
-            "type": "Enlit.RegisterVariableNode",
+            "type": "Graphlit.RegisterVariableNode",
             "guid": "b6e850c3-e2e2-4a1f-af1a-dabf484f87f5",
             "x": -1314,
             "y": 947,
@@ -248,7 +248,7 @@
             "data": "{\"_name\":\"normal\"}"
         },
         {
-            "type": "Enlit.FetchVariableNode",
+            "type": "Graphlit.FetchVariableNode",
             "guid": "a96f5bd4-5447-4c91-a77f-fe5d610fe8b2",
             "x": -14,
             "y": 277,
@@ -265,7 +265,7 @@
             "data": "{\"_name\":\"normal\"}"
         },
         {
-            "type": "Enlit.ColorPropertyNode",
+            "type": "Graphlit.ColorPropertyNode",
             "guid": "01892653-e808-4f9c-8954-f1f669a7c37b",
             "x": -11,
             "y": 413,
@@ -276,7 +276,7 @@
             "data": "{\"_ref\":\"adf3efa8-25dc-471f-a1bf-2b22231e5a7f\"}"
         },
         {
-            "type": "Enlit.Texture2DPropertyNode",
+            "type": "Graphlit.Texture2DPropertyNode",
             "guid": "c0624e57-139a-40d7-9895-a133d36df016",
             "x": -1899,
             "y": -548,
@@ -287,7 +287,7 @@
             "data": "{\"_ref\":\"6205ee3b-263e-4447-9b13-3e0619fbda1f\"}"
         },
         {
-            "type": "Enlit.ColorPropertyNode",
+            "type": "Graphlit.ColorPropertyNode",
             "guid": "e2bd02b6-b290-423a-935f-368f544848ad",
             "x": -1687,
             "y": -261,
@@ -298,7 +298,7 @@
             "data": "{\"_ref\":\"680d1962-c4ab-4a7e-8776-a104698eba52\"}"
         },
         {
-            "type": "Enlit.SwizzleNode",
+            "type": "Graphlit.SwizzleNode",
             "guid": "829ab759-191f-44f6-af55-12b13bfb07ec",
             "x": -1402,
             "y": -73,
@@ -315,7 +315,7 @@
             "data": "{\"swizzle\":\"a\"}"
         },
         {
-            "type": "Enlit.SampleTexture2DNode",
+            "type": "Graphlit.SampleTexture2DNode",
             "guid": "2597f835-fe72-42b9-92c2-c07f6273c28e",
             "x": -1710,
             "y": -174,
@@ -337,7 +337,7 @@
             "data": ""
         },
         {
-            "type": "Enlit.MultiplyNode",
+            "type": "Graphlit.MultiplyNode",
             "guid": "ce59d953-7136-481f-83bb-cd85811068b7",
             "x": -1484,
             "y": -219,
@@ -359,7 +359,7 @@
             "data": ""
         },
         {
-            "type": "Enlit.Texture2DPropertyNode",
+            "type": "Graphlit.Texture2DPropertyNode",
             "guid": "87d282ae-7274-45d4-8dc1-d6bdf29e9d42",
             "x": -1892,
             "y": -174,
@@ -370,7 +370,7 @@
             "data": "{\"_ref\":\"6205ee3b-263e-4447-9b13-3e0619fbda1f\"}"
         },
         {
-            "type": "Enlit.FetchVariableNode",
+            "type": "Graphlit.FetchVariableNode",
             "guid": "2c16e198-6522-44dc-9492-639cfbc0e913",
             "x": -1770,
             "y": -126,
@@ -387,7 +387,7 @@
             "data": "{\"_name\":\"UV\"}"
         },
         {
-            "type": "Enlit.RegisterVariableNode",
+            "type": "Graphlit.RegisterVariableNode",
             "guid": "ccfdf1e7-3b63-469c-a8a3-b43bbf0c21fb",
             "x": -1311,
             "y": -228,
@@ -404,7 +404,7 @@
             "data": "{\"_name\":\"albedo\"}"
         },
         {
-            "type": "Enlit.RegisterVariableNode",
+            "type": "Graphlit.RegisterVariableNode",
             "guid": "70fe79c5-0b8a-4f5e-9b30-71e5bb91b4a2",
             "x": -1303,
             "y": -69,
@@ -421,7 +421,7 @@
             "data": "{\"_name\":\"alpha\"}"
         },
         {
-            "type": "Enlit.FloatPropertyNode",
+            "type": "Graphlit.FloatPropertyNode",
             "guid": "9834c9ad-f7b8-44be-af3e-cae23d068406",
             "x": -1449,
             "y": 414,
@@ -432,7 +432,7 @@
             "data": "{\"_ref\":\"7e82e68b-1cc8-4fe2-bf56-4aa32315ff12\"}"
         },
         {
-            "type": "Enlit.MultiplyNode",
+            "type": "Graphlit.MultiplyNode",
             "guid": "a4d29d7e-6076-4cd8-9c83-8b45242c5778",
             "x": -1322,
             "y": 454,
@@ -454,7 +454,7 @@
             "data": ""
         },
         {
-            "type": "Enlit.CustomFunctionNode",
+            "type": "Graphlit.CustomFunctionNode",
             "guid": "80f8bb10-9a4f-4ae5-9696-79104c02a2ae",
             "x": -1208,
             "y": 414,
@@ -471,7 +471,7 @@
             "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n    Out = In;\\n}\",\"_file\":\"10900000|c63569117ea5bc04e913aa954fa423d7\",\"_useFile\":true}"
         },
         {
-            "type": "Enlit.LerpNode",
+            "type": "Graphlit.LerpNode",
             "guid": "46a61731-5656-428a-b3aa-9ed30199b8ab",
             "x": -1160,
             "y": 223,
@@ -498,7 +498,7 @@
             "data": ""
         },
         {
-            "type": "Enlit.FloatNode",
+            "type": "Graphlit.FloatNode",
             "guid": "51384c92-b6db-443f-966e-a4715e45cb2b",
             "x": -1265,
             "y": 223,
@@ -509,7 +509,7 @@
             "data": "{\"_value\":1.0}"
         },
         {
-            "type": "Enlit.FloatPropertyNode",
+            "type": "Graphlit.FloatPropertyNode",
             "guid": "80c8e3ee-d183-465a-b217-6be3147bcdeb",
             "x": -1266,
             "y": 312,
@@ -520,7 +520,7 @@
             "data": "{\"_ref\":\"567f003e-5f3f-4185-9672-81ed1ceef482\"}"
         },
         {
-            "type": "Enlit.MultiplyNode",
+            "type": "Graphlit.MultiplyNode",
             "guid": "f722ba12-f2ba-4311-9aaf-d6e7ab7b8965",
             "x": -1119,
             "y": 637,
@@ -542,7 +542,7 @@
             "data": ""
         },
         {
-            "type": "Enlit.FloatPropertyNode",
+            "type": "Graphlit.FloatPropertyNode",
             "guid": "f74110a7-c855-4a18-9d62-ca311a53c48c",
             "x": -1241,
             "y": 662,
@@ -553,7 +553,7 @@
             "data": "{\"_ref\":\"7f0163b5-00d2-4f7f-8c55-a86d293c70bd\"}"
         },
         {
-            "type": "Enlit.AppendNode",
+            "type": "Graphlit.AppendNode",
             "guid": "e519f896-449b-444d-a802-4dedb5eada34",
             "x": -892,
             "y": 414,
@@ -580,7 +580,7 @@
             "data": ""
         },
         {
-            "type": "Enlit.SampleTexture2DNode",
+            "type": "Graphlit.SampleTexture2DNode",
             "guid": "a9063074-ec30-4bf2-884f-cf79d4b03465",
             "x": -1797,
             "y": 358,
@@ -602,7 +602,7 @@
             "data": ""
         },
         {
-            "type": "Enlit.Texture2DPropertyNode",
+            "type": "Graphlit.Texture2DPropertyNode",
             "guid": "66d9ce50-e153-404e-a1ea-5e96ae44ad91",
             "x": -2014,
             "y": 358,
@@ -613,7 +613,7 @@
             "data": "{\"_ref\":\"9777dfe1-c006-4b0a-86bb-e80c8a92be53\"}"
         },
         {
-            "type": "Enlit.FetchVariableNode",
+            "type": "Graphlit.FetchVariableNode",
             "guid": "e42a6be6-d64d-41ef-a172-18651269502c",
             "x": -1886,
             "y": 406,
@@ -630,7 +630,7 @@
             "data": "{\"_name\":\"UV\"}"
         },
         {
-            "type": "Enlit.RegisterVariableNode",
+            "type": "Graphlit.RegisterVariableNode",
             "guid": "bf4bf0fa-63ba-4c9d-8287-80b5a8cac080",
             "x": -709,
             "y": 439,
@@ -647,7 +647,7 @@
             "data": "{\"_name\":\"ARM\"}"
         },
         {
-            "type": "Enlit.FloatPropertyNode",
+            "type": "Graphlit.FloatPropertyNode",
             "guid": "bb4d0ceb-2d94-42d0-8a0f-e5193879077f",
             "x": -134,
             "y": 316,
@@ -658,7 +658,7 @@
             "data": "{\"_ref\":\"b3791d19-6311-4ec5-ad73-bbd64921f898\"}"
         },
         {
-            "type": "Enlit.FetchVariableNode",
+            "type": "Graphlit.FetchVariableNode",
             "guid": "7b31e4d5-6a99-4d64-b9a1-4bcca6448069",
             "x": -18,
             "y": 2,
@@ -675,7 +675,7 @@
             "data": "{\"_name\":\"albedo\"}"
         },
         {
-            "type": "Enlit.FetchVariableNode",
+            "type": "Graphlit.FetchVariableNode",
             "guid": "29375d49-5df6-41ab-988a-c817ec490e27",
             "x": -14,
             "y": 78,
@@ -692,7 +692,7 @@
             "data": "{\"_name\":\"alpha\"}"
         },
         {
-            "type": "Enlit.LitTemplate",
+            "type": "Graphlit.LitTemplate",
             "guid": "a829ca21-17ba-4d50-b65d-d5c65e50b728",
             "x": 146,
             "y": 58,
@@ -744,7 +744,7 @@
             "data": "{\"_cbirp\":true,\"_specular\":true,\"_customLighting\":\"\",\"_normal\":0}"
         },
         {
-            "type": "Enlit.SplitNode",
+            "type": "Graphlit.SplitNode",
             "guid": "9115765f-9f73-4dda-bc1c-33f25e449159",
             "x": -83,
             "y": 143,
@@ -761,7 +761,7 @@
             "data": ""
         },
         {
-            "type": "Enlit.FetchVariableNode",
+            "type": "Graphlit.FetchVariableNode",
             "guid": "b372aebc-897b-47a7-a049-e369b83a04f9",
             "x": -175,
             "y": 143,
@@ -778,7 +778,7 @@
             "data": "{\"_name\":\"ARM\"}"
         },
         {
-            "type": "Enlit.CustomFunctionNode",
+            "type": "Graphlit.CustomFunctionNode",
             "guid": "cda4d1be-bd2c-424b-bde2-44c1f88fe449",
             "x": -1742,
             "y": -525,
@@ -795,7 +795,7 @@
             "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n    Out = In;\\n}\",\"_file\":\"10900000|66a03437d6d37e44c9d754713b85ddf1\",\"_useFile\":true}"
         },
         {
-            "type": "Enlit.RegisterVariableNode",
+            "type": "Graphlit.RegisterVariableNode",
             "guid": "afab89c1-bad3-4c61-bd7d-888d2d8980b5",
             "x": -1411,
             "y": -525,
@@ -812,7 +812,7 @@
             "data": "{\"_name\":\"UV\"}"
         },
         {
-            "type": "Enlit.PreviewNode",
+            "type": "Graphlit.PreviewNode",
             "guid": "1f269d72-7ca2-4a9e-9e06-6f1592979ca9",
             "x": -1549,
             "y": -525,

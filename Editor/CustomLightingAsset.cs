@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Enlit
+namespace Graphlit
 {
     public class CustomLightingAsset : ScriptableObject
     {

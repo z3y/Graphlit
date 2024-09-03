@@ -1,8 +1,8 @@
 using System;
-using Enlit.Nodes;
-using Enlit.Nodes.PortType;
+using Graphlit.Nodes;
+using Graphlit.Nodes.PortType;
 
-namespace Enlit
+namespace Graphlit
 {
     [NodeInfo("Input/Texture Cube Array Property"), Serializable]
     public class TextureCubeArrayPropertyNode : TexturePropertyNode

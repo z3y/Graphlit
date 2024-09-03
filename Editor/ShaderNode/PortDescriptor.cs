@@ -1,6 +1,6 @@
-using Enlit.Nodes.PortType;
+using Graphlit.Nodes.PortType;
 
-namespace Enlit
+namespace Graphlit
 {
     public class PortDescriptor
     {

@@ -3,7 +3,7 @@ using UnityEngine;
 using System;
 using System.Linq;
 
-namespace Enlit
+namespace Graphlit
 {
     public partial class DefaultInspector
     {

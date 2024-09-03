@@ -8,7 +8,7 @@ using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Enlit
+namespace Graphlit
 {
     [Serializable]
     public enum PropertyType

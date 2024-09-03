@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Enlit
+namespace Graphlit
 {
     public class SerializedGraphDataSo : ScriptableObject
     {

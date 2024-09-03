@@ -1,11 +1,11 @@
 export default {
   logo: (
     <span>
-      <b>Enlit</b>
+      <b>Graphlit</b>
     </span>
   ),
   project: {
-    link: "https://github.com/z3y/enlit",
+    link: "https://github.com/z3y/graphlit",
   },
   chat: {
     link: "https://discord.gg/bw46tKgRFT",
@@ -24,7 +24,7 @@ export default {
   },
   useNextSeoProps() {
     return {
-      titleTemplate: "%s - Enlit",
+      titleTemplate: "%s - Graphlit",
     }
   },
 

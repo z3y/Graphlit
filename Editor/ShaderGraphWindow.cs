@@ -5,11 +5,11 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Enlit
+namespace Graphlit
 {
     public class ShaderGraphWindow : EditorWindow
     {
-        [NonSerialized] public const string ROOT = "Packages/com.enlit/Editor/";
+        [NonSerialized] public const string ROOT = "Packages/com.z3y.graphlit/Editor/";
         [NonSerialized] public ShaderGraphView graphView;
         [NonSerialized] public static Dictionary<string, ShaderGraphWindow> editorInstances = new();
 
@@ -86,7 +86,8 @@ namespace Enlit
 
         public void AddBar(VisualElement visualElement)
         {
-            var toolbar = new VisualElement() {
+            var toolbar = new VisualElement()
+            {
                 style = {
                     flexDirection = FlexDirection.Column,
                     width = 100,

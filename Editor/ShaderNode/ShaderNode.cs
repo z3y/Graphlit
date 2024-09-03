@@ -6,11 +6,11 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Enlit.Nodes;
-using Enlit.Nodes.PortType;
+using Graphlit.Nodes;
+using Graphlit.Nodes.PortType;
 using static UnityEditor.Experimental.GraphView.Port;
 
-namespace Enlit
+namespace Graphlit
 {
     /* class DefaultValueElement : GraphElement
      {

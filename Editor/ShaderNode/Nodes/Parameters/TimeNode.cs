@@ -1,7 +1,7 @@
-using Enlit.Nodes;
-using Enlit.Nodes.PortType;
+using Graphlit.Nodes;
+using Graphlit.Nodes.PortType;
 
-namespace Enlit
+namespace Graphlit
 {
     [NodeInfo("Built-in Variables/Time", "_Time")]
     public class TimeNode : ShaderNode

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 
-namespace Enlit
+namespace Graphlit
 {
     [Serializable]
     public struct NodeConnection

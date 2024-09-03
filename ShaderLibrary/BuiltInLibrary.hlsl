@@ -34,7 +34,7 @@ half4 _SpecColor;
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl"
 
 #ifdef PREVIEW
-    #include "Packages/com.enlit/Editor/Targets/Graph.hlsl"
+    #include "Packages/com.z3y.graphlit/Editor/Targets/Graph.hlsl"
 #endif
 
 #include "UnityCG/UnityCG.hlsl"
@@ -42,5 +42,5 @@ half4 _SpecColor;
 
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
 
-#include "Packages/com.enlit/ShaderLibrary/GraphFunctions.hlsl"
+#include "Packages/com.z3y.graphlit/ShaderLibrary/GraphFunctions.hlsl"
 #include "BlendModes.hlsl"

@@ -7,9 +7,9 @@ using System;
 using UnityEditor.Callbacks;
 using System.Linq;
 
-namespace Enlit
+namespace Graphlit
 {
-    [ScriptedImporter(3, new[] { "enlit", "zsg" }, 0)]
+    [ScriptedImporter(3, new[] { "graphlit", "zsg" }, 0)]
     public class ShaderGraphImporter : ScriptedImporter
     {
         internal static Dictionary<string, ShaderGraphView> _graphViews = new();
@@ -142,7 +142,7 @@ namespace Enlit
             }
 
             var jsonData = JsonUtility.ToJson(data, true);
-            ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.enlit", jsonData);
+            ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.graphlit", jsonData);
         }
         public static void CreateEmptyTemplate<T>() where T : TemplateOutput, new()
         {

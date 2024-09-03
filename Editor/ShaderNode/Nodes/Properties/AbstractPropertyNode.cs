@@ -2,7 +2,7 @@ using System;
 using UnityEngine.UIElements;
 using UnityEngine;
 
-namespace Enlit
+namespace Graphlit
 {
     public abstract class PropertyNode : ShaderNode
     {

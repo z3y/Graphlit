@@ -2,9 +2,9 @@ using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Enlit.Nodes.PortType;
+using Graphlit.Nodes.PortType;
 
-namespace Enlit
+namespace Graphlit
 {
     public abstract class TemplateOutput : ShaderNode
     {

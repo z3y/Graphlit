@@ -1,6 +1,6 @@
 using System;
 
-namespace Enlit
+namespace Graphlit
 {
     public enum PortBinding
     {

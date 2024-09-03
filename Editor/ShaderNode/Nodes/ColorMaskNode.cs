@@ -1,9 +1,9 @@
 using System;
 using UnityEngine;
-using Enlit.Nodes;
-using Enlit.Nodes.PortType;
+using Graphlit.Nodes;
+using Graphlit.Nodes.PortType;
 
-namespace Enlit
+namespace Graphlit
 {
     [NodeInfo("Utility/Color Mask"), Serializable]
     public class ColorMaskNode : ShaderNode

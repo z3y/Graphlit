@@ -1,7 +1,7 @@
 using System;
-using Enlit.Nodes;
+using Graphlit.Nodes;
 
-namespace Enlit
+namespace Graphlit
 {
     [NodeInfo("Input/Texture 2D Property"), Serializable]
     public class Texture2DPropertyNode : TexturePropertyNode

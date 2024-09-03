@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Enlit.Nodes.PortType
+namespace Graphlit.Nodes.PortType
 {
     public interface IPortType
     {

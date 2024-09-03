@@ -2,7 +2,7 @@ A node shader editor with primary focus on the built-in pipeline and VRChat. Ear
 
 Install with [VCC](https://z3y.github.io/vpm-package-listing/) or add the git url.
 
-### [Documentation](https://z3y.github.io/enlit)
+### [Documentation](https://z3y.github.io/graphlit)
 
 ## Templates
 
@@ -41,7 +41,7 @@ Install with [VCC](https://z3y.github.io/vpm-package-listing/) or add the git ur
 
 ## Preview
 
-![image](https://github.com/z3y/enlit/assets/33181641/e3c10af5-9c49-4794-875f-ea1692a10b78)
+![image](https://github.com/z3y/graphlit/assets/33181641/e3c10af5-9c49-4794-875f-ea1692a10b78)
 
 https://github.com/z3y/MyShaderGraph/assets/33181641/ae523917-56ee-420d-90ac-a3f3afdecf82
 
@@ -60,5 +60,5 @@ https://github.com/z3y/MyShaderGraph/assets/33181641/ae523917-56ee-420d-90ac-a3f
 - Previews can lead to high CPU usage if the interaction mode is set to default. Set `Preferences -> General -> Interaction Mode` to monitor refresh rate or custom
 
 [Patreon](https://www.patreon.com/z3y) |
-[Bug Reports](https://github.com/z3y/enlit/issues) |
+[Bug Reports](https://github.com/z3y/graphlit/issues) |
 [Discord Support](https://discord.gg/bw46tKgRFT)

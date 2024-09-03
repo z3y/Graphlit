@@ -1,10 +1,10 @@
 using System;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Enlit.Nodes;
-using Enlit.Nodes.PortType;
+using Graphlit.Nodes;
+using Graphlit.Nodes.PortType;
 
-namespace Enlit
+namespace Graphlit
 {
     [NodeInfo("Input/Bitangent"), Serializable]
     public class BitangentNode : ShaderNode

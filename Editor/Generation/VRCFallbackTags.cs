@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace Enlit
+namespace Graphlit
 {
     [Serializable]
     public class VRCFallbackTags

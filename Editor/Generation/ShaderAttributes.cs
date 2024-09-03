@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace Enlit
+namespace Graphlit
 {
     /*    [Flags]
         public enum ChannelMask : int

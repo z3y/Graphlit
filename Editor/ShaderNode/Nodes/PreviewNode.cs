@@ -1,7 +1,7 @@
 using System;
-using Enlit.Nodes;
+using Graphlit.Nodes;
 
-namespace Enlit
+namespace Graphlit
 {
     [NodeInfo("Utility/Preview"), Serializable]
     public class PreviewNode : PassthroughNode

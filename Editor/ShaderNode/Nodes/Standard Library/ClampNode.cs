@@ -1,8 +1,8 @@
 using UnityEngine;
-using Enlit.Nodes;
-using Enlit.Nodes.PortType;
+using Graphlit.Nodes;
+using Graphlit.Nodes.PortType;
 
-namespace Enlit
+namespace Graphlit
 {
     [NodeInfo("Utility/Clamp")]
     public class ClampNode : ShaderNode
