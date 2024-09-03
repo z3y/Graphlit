@@ -300,6 +300,11 @@ namespace Enlit
         private KeyCode _lastKeyCode = KeyCode.None;
         private void NodeHotkeyKeyDown(KeyDownEvent e)
         {
+            if (e.ctrlKey && e.keyCode == KeyCode.S)
+            {
+                _editorWindow.SaveChanges();
+                return;
+            }
             var key = e.keyCode;
             if (key != KeyCode.None) _lastKeyCode = e.keyCode;
         }
