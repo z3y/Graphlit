@@ -126,6 +126,14 @@ namespace Enlit
                         {
                             bindings[id] = PortBinding.UV0;
                         }
+                        else if (name.Equals("position", StringComparison.OrdinalIgnoreCase))
+                        {
+                            bindings[id] = PortBinding.PositionWS;
+                        }
+                        else if (name.Equals("normal", StringComparison.OrdinalIgnoreCase))
+                        {
+                            bindings[id] = PortBinding.NormalWS;
+                        }
 
                         if (arg.Length > 3 && arg[2].Trim() == "=")
                         {
