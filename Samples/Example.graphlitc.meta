@@ -8,4 +8,15 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 827475b98c62cbe40a87475805eb6d0b, type: 3}
-  properties: []
+  properties:
+  - guid: c79b05c6-de17-4a8a-8223-9cf41c92114c
+    referenceName: 
+    displayName: Float
+    type: 1
+    customAttributes: 
+    defaultAttributes: 0
+    rangeX: 0
+    rangeY: 0
+    _value: 
+    _defaultTexture: 
+    declaration: 0
