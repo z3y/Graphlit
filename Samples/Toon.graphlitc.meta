@@ -105,7 +105,7 @@ ScriptedImporter:
     defaultAttributes: 0
     rangeX: 0
     rangeY: 1
-    _value: 0.5
+    _value: 0.15
     _defaultTexture: 
     declaration: 0
   - guid: 215cf9a8-4db9-4723-99b1-8c917a560725

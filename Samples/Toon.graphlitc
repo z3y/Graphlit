@@ -4,32 +4,20 @@ float lilTooningNoSaturateScale(float aascale, float value, float border, float 
     float borderMax = saturate(border + blur * 0.5);
     return (value - borderMin) / saturate(borderMax - borderMin + fwidth(value) * aascale);
 }
+float lilTooningNoSaturateScale(float aascale, float value, float border, float blur, float borderRange)
+{
+    float borderMin = saturate(border - blur * 0.5 - borderRange);
+    float borderMax = saturate(border + blur * 0.5);
+    return (value - borderMin) / saturate(borderMax - borderMin);
+}
 
-#pragma skip_variants SHADOWS_CUBE SHADOWS_SOFT POINT_COOKIE SHADOWS_DEPTH LIGHTMAP_ON
+#pragma skip_variants SHADOWS_SOFT SHADOWS_CUBE POINT_COOKIE LIGHTMAP_ON
 #define CUSTOM_LIGHT
 LIGHT_FUNC // args: light, fragData, giInput, surf, giOutput
 {
-    #if defined(UNITY_PASS_FORWARDBASE)
-    if (all(light.color == 0))
-    {
-        float3 sh9Dir = unity_SHAr.xyz + unity_SHAg.xyz + unity_SHAb.xyz;
-        float3 sh9DirAbs = float3(sh9Dir.x, abs(sh9Dir.y), sh9Dir.z);
-        half3 N = normalize(sh9DirAbs);
-        UNITY_FLATTEN
-        if (!any(unity_SHC.xyz))
-        {
-            N = 0;
-        }
-
-        light.direction = N;
-        light.color = float3(unity_SHAr.w, unity_SHAg.w, unity_SHAb.w);
-        light.attenuation = 1.0;
-    }
-    #endif
-
-    half3 col = light.color * light.attenuation;
+    half3 col = light.color;
     half defaultAtten = light.attenuation;
-    #ifdef SHADOWS_SCREEN
+    #if defined(SHADOWS_SCREEN)
         defaultAtten = 1;
     #endif
 
@@ -39,6 +27,7 @@ LIGHT_FUNC // args: light, fragData, giInput, surf, giOutput
     // layer 1
     lns.x = saturate(dot(light.direction, giInput.normalWS) * 0.5 + 0.5);
     lns.x *= lerp(defaultAtten, light.attenuation, _ShadowReceive);
+    lns.w = saturate(lilTooningNoSaturateScale(antialias, lns.x, _ShadowBorder, _ShadowBlur, _ShadowBorderRange));
     lns.x = saturate(lilTooningNoSaturateScale(antialias, lns.x, _ShadowBorder, _ShadowBlur));
     col = lerp(col * lerp(1.0, _ShadowColor.rgb, _ShadowColor.a), col, lns.x);
 
@@ -53,6 +42,8 @@ LIGHT_FUNC // args: light, fragData, giInput, surf, giOutput
     lns.z *= lerp(defaultAtten, light.attenuation, _Shadow3rdReceive);
     lns.z = saturate(lilTooningNoSaturateScale(antialias, lns.z, _Shadow3rdBorder, _Shadow3rdBlur));
     col = lerp(col * lerp(1.0, _Shadow3rdColor.rgb, _Shadow3rdColor.a), col, lns.z);
+
+    col = lerp(col, light.color, lns.w * _ShadowBorderColor.rgb);
 
     lns = lerp(1.0, lns, _ShadowStrength);
 
@@ -72,7 +63,7 @@ float OpenLitGray(float3 rgb)
 #define CUSTOM_COLOR
 COLOR_FUNC // args: surf, fragData, giInput, giOutput
 {
-    #if !defined(LIGHTMAP_ON) && defined(UNITY_PASS_FORWARDBASE)
+    #if defined(UNITY_PASS_FORWARDBASE)
         float3 sh9Dir = unity_SHAr.xyz + unity_SHAg.xyz + unity_SHAb.xyz;
         float3 sh9DirAbs = float3(sh9Dir.x, abs(sh9Dir.y), sh9Dir.z);
         half3 N = normalize(sh9DirAbs);
@@ -83,27 +74,31 @@ COLOR_FUNC // args: surf, fragData, giInput, giOutput
         }
         half3 l0l1 = SHEvalLinearL0L1(float4(N, 1));
         half3 l2 = SHEvalLinearL2(float4(N, 1));
-        giOutput.indirectDiffuse = l0l1 + l2;
-        giOutput.indirectOcclusion = giOutput.indirectDiffuse;
-        // giOutput.indirectDiffuse = 0;
+        half3 indirectColor = l0l1 + l2;
+
+        Light lightprobe = (Light)0;
+        lightprobe.color = indirectColor;
+        lightprobe.direction = N;
+        lightprobe.attenuation = 1.0;
+        lightprobe.ComputeData(fragData, giInput);
+        LightCustom(lightprobe, fragData, giInput, surf, giOutput);
+        giOutput.indirectOcclusion = 1.0;
     #endif
 
-    #ifndef LIGHTMAP_ON
-        giOutput.indirectSpecular = 0;
-        giOutput.directSpecular = 0;
+    half3 lightColor = giOutput.directDiffuse;
 
-        half lightRenorm = max(max(giOutput.directDiffuse.r, giOutput.directDiffuse.g), giOutput.directDiffuse.b);
-        lightRenorm += max(max(giOutput.indirectDiffuse.r, giOutput.indirectDiffuse.g), giOutput.indirectDiffuse.b);
-        giOutput.indirectDiffuse += giOutput.directDiffuse;
-        giOutput.directDiffuse = 0;
-        if (lightRenorm > _LightMaxLimit)
-        {
-            giOutput.indirectDiffuse /= lightRenorm / _LightMaxLimit;
-        }
-        giOutput.indirectDiffuse = max(_LightMinLimit, giOutput.indirectDiffuse);
-        giOutput.indirectDiffuse = lerp(giOutput.indirectDiffuse, OpenLitGray(giOutput.indirectDiffuse), _MonochromeLighting);
-    #endif
+    // half lightRenorm = max(max(lightColor.r, lightColor.g), lightColor.b);
+    // if (lightRenorm > _LightMaxLimit)
+    // {
+    //     lightColor /= lightRenorm / _LightMaxLimit;
+    // }
+    lightColor = min(_LightMaxLimit, lightColor);
+    lightColor = max(_LightMinLimit, lightColor);
+    lightColor = lerp(lightColor, OpenLitGray(lightColor), _MonochromeLighting);
 
+    // swap to apply ao
+    giOutput.directDiffuse = 0;
+    giOutput.indirectDiffuse = lightColor;
     half4 color = COLOR_DEFAULT;
     
     return color;
