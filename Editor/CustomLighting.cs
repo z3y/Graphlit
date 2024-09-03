@@ -55,6 +55,13 @@ namespace Graphlit
         {
             serializedObject.Update();
 
+            var t = (CustomLighting)target;
+
+            if (_reorderableList.list != t.properties)
+            {
+                _reorderableList = PropertyDescriptor.CreateReordableList(t.properties, null);
+            }
+
             EditorGUI.BeginChangeCheck();
 
             _reorderableList.DoLayoutList();
