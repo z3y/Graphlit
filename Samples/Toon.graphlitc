@@ -30,23 +30,25 @@ LIGHT_FUNC // args: light, fragData, giInput, surf, giOutput
     lns.w = lns.x;
     lns.w = saturate(lilTooningNoSaturateScale(antialias, lns.x, _ShadowBorder, _ShadowBlur, _ShadowBorderRange));
     lns.x = saturate(lilTooningNoSaturateScale(antialias, lns.x, _ShadowBorder, _ShadowBlur));
-    col = lerp(col, lerp(light.color * _ShadowColor.rgb, col, lns.x), _ShadowColor.a);
 
     //layer 2
     lns.y = saturate(dot(light.direction, giInput.normalWS) * 0.5 + 0.5);
     lns.y *= lerp(defaultAtten, light.attenuation, _Shadow2ndReceive);
     lns.y = saturate(lilTooningNoSaturateScale(antialias, lns.y, _Shadow2ndBorder, _Shadow2ndBlur));
-    col = lerp(col, lerp(light.color * _Shadow2ndColor.rgb, col, lns.y), _Shadow2ndColor.a);
 
     //layer 3
     lns.z = saturate(dot(light.direction, giInput.normalWS) * 0.5 + 0.5);
     lns.z *= lerp(defaultAtten, light.attenuation, _Shadow3rdReceive);
     lns.z = saturate(lilTooningNoSaturateScale(antialias, lns.z, _Shadow3rdBorder, _Shadow3rdBlur));
+
+
+    lns = lerp(1.0, lns, _ShadowStrength);
+    col = lerp(col, lerp(light.color * _ShadowColor.rgb, col, lns.x), _ShadowColor.a);
+    col = lerp(col, lerp(light.color * _Shadow2ndColor.rgb, col, lns.y), _Shadow2ndColor.a);
     col = lerp(col, lerp(light.color * _Shadow3rdColor.rgb, col, lns.z), _Shadow3rdColor.a);
 
     col = lerp(col, light.color, lns.w * _ShadowBorderColor.rgb);
 
-    lns = lerp(1.0, lns, _ShadowStrength);
 
     #ifdef _TOONSHADOW
         giOutput.directDiffuse += col;
