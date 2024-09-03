@@ -5,31 +5,62 @@ float lilTooningNoSaturateScale(float aascale, float value, float border, float 
     return (value - borderMin) / saturate(borderMax - borderMin + fwidth(value) * aascale);
 }
 
-#pragma skip_variants SHADOWS_SCREEN SHADOWS_CUBE SHADOWS_SOFT POINT_COOKIE SHADOWS_DEPTH
+#pragma skip_variants SHADOWS_CUBE SHADOWS_SOFT POINT_COOKIE SHADOWS_DEPTH LIGHTMAP_ON
 #define CUSTOM_LIGHT
 LIGHT_FUNC // args: light, fragData, giInput, surf, giOutput
 {
+    #if defined(UNITY_PASS_FORWARDBASE)
+    if (all(light.color == 0))
+    {
+        float3 sh9Dir = unity_SHAr.xyz + unity_SHAg.xyz + unity_SHAb.xyz;
+        float3 sh9DirAbs = float3(sh9Dir.x, abs(sh9Dir.y), sh9Dir.z);
+        half3 N = normalize(sh9DirAbs);
+        UNITY_FLATTEN
+        if (!any(unity_SHC.xyz))
+        {
+            N = 0;
+        }
+
+        light.direction = N;
+        light.color = float3(unity_SHAr.w, unity_SHAg.w, unity_SHAb.w);
+        light.attenuation = 1.0;
+    }
+    #endif
+
     half3 col = light.color * light.attenuation;
+    half defaultAtten = light.attenuation;
+    #ifdef SHADOWS_SCREEN
+        defaultAtten = 1;
+    #endif
 
     const float antialias = 1.0;
-
     half4 lns = 1.0;
-    
+
     // layer 1
     lns.x = saturate(dot(light.direction, giInput.normalWS) * 0.5 + 0.5);
-    // lns.x *= lerp(1, light.attenuation, _ShadowReceive);
+    lns.x *= lerp(defaultAtten, light.attenuation, _ShadowReceive);
     lns.x = saturate(lilTooningNoSaturateScale(antialias, lns.x, _ShadowBorder, _ShadowBlur));
     col = lerp(col * lerp(1.0, _ShadowColor.rgb, _ShadowColor.a), col, lns.x);
 
     //layer 2
     lns.y = saturate(dot(light.direction, giInput.normalWS) * 0.5 + 0.5);
-    // lns.y *= lerp(1, light.attenuation, _ShadowReceive);
+    lns.y *= lerp(defaultAtten, light.attenuation, _Shadow2ndReceive);
     lns.y = saturate(lilTooningNoSaturateScale(antialias, lns.y, _Shadow2ndBorder, _Shadow2ndBlur));
     col = lerp(col * lerp(1.0, _Shadow2ndColor.rgb, _Shadow2ndColor.a), col, lns.y);
 
-    // lns = lerp(1.0, lns, _ShadowStrength);
+    //layer 3
+    lns.z = saturate(dot(light.direction, giInput.normalWS) * 0.5 + 0.5);
+    lns.z *= lerp(defaultAtten, light.attenuation, _Shadow3rdReceive);
+    lns.z = saturate(lilTooningNoSaturateScale(antialias, lns.z, _Shadow3rdBorder, _Shadow3rdBlur));
+    col = lerp(col * lerp(1.0, _Shadow3rdColor.rgb, _Shadow3rdColor.a), col, lns.z);
 
-    giOutput.directDiffuse += col;
+    lns = lerp(1.0, lns, _ShadowStrength);
+
+    #ifdef _TOONSHADOW
+        giOutput.directDiffuse += col;
+    #else
+        giOutput.directDiffuse += light.color * defaultAtten;
+    #endif
 }
 
 float OpenLitGray(float3 rgb)
@@ -42,7 +73,7 @@ float OpenLitGray(float3 rgb)
 COLOR_FUNC // args: surf, fragData, giInput, giOutput
 {
     #if !defined(LIGHTMAP_ON) && defined(UNITY_PASS_FORWARDBASE)
-        float3 sh9Dir = (unity_SHAr.xyz + unity_SHAg.xyz + unity_SHAb.xyz);
+        float3 sh9Dir = unity_SHAr.xyz + unity_SHAg.xyz + unity_SHAb.xyz;
         float3 sh9DirAbs = float3(sh9Dir.x, abs(sh9Dir.y), sh9Dir.z);
         half3 N = normalize(sh9DirAbs);
         UNITY_FLATTEN
@@ -54,6 +85,7 @@ COLOR_FUNC // args: surf, fragData, giInput, giOutput
         half3 l2 = SHEvalLinearL2(float4(N, 1));
         giOutput.indirectDiffuse = l0l1 + l2;
         giOutput.indirectOcclusion = giOutput.indirectDiffuse;
+        // giOutput.indirectDiffuse = 0;
     #endif
 
     #ifndef LIGHTMAP_ON
