@@ -8,16 +8,14 @@ void GetTriplanarCoordinate_1(float3 position, out float2 uvXZ, out float2 uvXY,
     uvZY = float2(position.z, position.y);
 }
 
-
-void SampleTexture2DTripanar(Texture2D Texture, SamplerState Sampler, float3 Normal, float3 Position, out half4 Out, half Scale = 1, half Blend = 5)
+void SampleTexture2DTripanar(Texture2D Texture, SamplerState Sampler, float3 Normal, float3 Position, out half4 Out, half Blend = 5)
 {
     float3 weight = max(pow(abs(Normal), Blend), 0);
     weight /= (weight.x + weight.y + weight.z).xxx;
     weight = saturate(weight);
 
-    float3 scaledPosition = Scale * Position;
     float2 uvX, uvY, uvZ;
-    GetTriplanarCoordinate_1(Position * Scale, uvY, uvZ, uvX);
+    GetTriplanarCoordinate_1(Position, uvY, uvZ, uvX);
     uvY += (1.0 / 3.0);
     uvZ += (1.0 / 3.0) * 2.0;
 
