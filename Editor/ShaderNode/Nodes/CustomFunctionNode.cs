@@ -178,7 +178,9 @@ namespace Graphlit
             ResetPorts();
             Update();
 
+            CleanLooseEdges();
             GeneratePreviewForAffectedNodes();
+
         }
 
         bool IsVoidType()

@@ -170,6 +170,17 @@ namespace Graphlit
             }
         }
 
+        public void CleanLooseEdges()
+        {
+            var eges = GraphView.graphElements.OfType<Edge>();
+            foreach (var edge in eges)
+            {
+                if (!(edge.input.connected && edge.output.connected))
+                {
+                    edge.parent.Remove(edge);
+                }
+            }
+        }
         // serialize, disconnect then reconnect
         public void SafeModifyInputs(Action a)
         {
@@ -190,6 +201,8 @@ namespace Graphlit
             var sg = new SerializableGraph();
             sg.nodes.Add(node);
             sg.SetupNodeConnections(GraphView);
+
+            CleanLooseEdges();
         }
 
         // what the fuck does this do
