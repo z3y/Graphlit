@@ -4,6 +4,7 @@ namespace Graphlit
 {
     public enum PortBinding
     {
+        None = -1,
         UV0 = 0,
         UV1 = 1,
         UV2 = 2,

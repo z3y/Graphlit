@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using UnityEditor.UIElements;
+using System.Collections.Generic;
 
 namespace Graphlit
 {
@@ -16,7 +17,9 @@ namespace Graphlit
 
         public override string Name { get; } = "Lit";
         public override int[] VertexPorts => new int[] { POSITION, NORMAL_VERTEX, TANGENT };
-        public override int[] FragmentPorts => new int[] { ALBEDO, ALPHA, METALLIC, OCCLUSION, EMISSION, ROUGHNESS, REFLECTANCE, NORMAL_TS, CUTOFF };
+        public override int[] FragmentPorts => _fragmentPorts.ToArray();
+
+        private List<int> _fragmentPorts = new() { ALBEDO, ALPHA, METALLIC, OCCLUSION, EMISSION, ROUGHNESS, REFLECTANCE, NORMAL_TS, CUTOFF };
 
         const int POSITION = 0;
         const int NORMAL_VERTEX = 1;
@@ -68,6 +71,49 @@ namespace Graphlit
             DefaultValues[OCCLUSION] = "1.0";
             DefaultValues[EMISSION] = "float3(0.0, 0.0, 0.0)";
             DefaultValues[NORMAL_TS] = "float3(0.0, 0.0, 1.0)";
+
+            InitializeCustomLightingPorts();
+        }
+
+        const int customPortOffset = 100;
+        void InitializeCustomLightingPorts()
+        {
+            if (string.IsNullOrEmpty(_customLighting))
+            {
+                return;
+            }
+
+            var asset = Helpers.SerializableReferenceToObject<CustomLightingAsset>(_customLighting);
+
+            var ports = asset.outputs;
+
+            foreach (var port in ports)
+            {
+                int id = port.id + customPortOffset;
+                AddPort(new(PortDirection.Input, new Float(port.dimension, false), id, port.name));
+
+                _fragmentPorts.Add(id);
+
+                if (port.binding != PortBinding.None)
+                {
+                    Bind(id, port.binding);
+                }
+                else
+                {
+                    DefaultValues[id] = port.value;
+                }
+            }
+        }
+        void FlagCustomLightingPorts(List<int> ports, CustomLightingAsset asset) 
+        {
+            if (asset is null)
+            {
+                return;
+            }
+            foreach (var port in asset.outputs)
+            {
+                ports.Add(port.id + customPortOffset);
+            }
         }
 
         [SerializeField] bool _cbirp = false;
@@ -105,7 +151,11 @@ namespace Graphlit
             {
                 customLighting.value = Helpers.SerializableReferenceToObject<CustomLightingAsset>(_customLighting);
             }
-            customLighting.RegisterValueChangedCallback(x => _customLighting = Helpers.AssetSerializableReference(x.newValue));
+            customLighting.RegisterValueChangedCallback(x => {
+
+                _customLighting = Helpers.AssetSerializableReference(x.newValue);
+
+            });
             root.Add(customLighting);
 
             var normal = new EnumField("Normal", _normal);
@@ -223,7 +273,9 @@ namespace Graphlit
             builder.properties.Add(_properties);
 
             {
-                var pass = new PassBuilder("FORWARD", Vertex, FragmentForward, POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, EMISSION, NORMAL_TS);
+                var portFlags = new List<int>() { POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, EMISSION, NORMAL_TS };
+                FlagCustomLightingPorts(portFlags, customLightingInclude);
+                var pass = new PassBuilder("FORWARD", Vertex, FragmentForward, portFlags.ToArray());
                 pass.tags["LightMode"] = "ForwardBase";
 
                 pass.renderStates["Cull"] = "[_Cull]";
@@ -300,7 +352,9 @@ namespace Graphlit
 
             }
             {
-                var pass = new PassBuilder("FORWARD_DELTA", Vertex, FragmentForward, POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, EMISSION, NORMAL_TS);
+                var portFlags = new List<int>() { POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, NORMAL_TS };
+                FlagCustomLightingPorts(portFlags, customLightingInclude);
+                var pass = new PassBuilder("FORWARD_DELTA", Vertex, FragmentForward, portFlags.ToArray());
                 pass.tags["LightMode"] = "ForwardAdd";
 
                 pass.renderStates["Fog"] = "{ Color (0,0,0,0) }";

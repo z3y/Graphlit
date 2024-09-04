@@ -14,5 +14,6 @@
   },
   "dependencies": {
     "com.unity.render-pipelines.core": "14.0.8"
-  }
+  },
+  "description": "A Node shader editor"
 }

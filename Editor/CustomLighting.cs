@@ -15,11 +15,32 @@ namespace Graphlit
 
         public List<PropertyDescriptor> properties = new();
 
+        [Serializable]
+        public class CustomPort
+        {
+            public string name;
+            public string value;
+            [Range(1, 4)] public int dimension;
+            public int id;
+            public PortBinding binding;
+
+            public CustomPort()
+            {
+                id = 0;
+                value = "1.0";
+                binding = PortBinding.None;
+                dimension = 1;
+            }
+        }
+
+        public List<CustomPort> outputs = new();
+
         public override void OnImportAsset(AssetImportContext ctx)
         {
             var file = ScriptableObject.CreateInstance<CustomLightingAsset>();
 
             file.properties = properties;
+            file.outputs = outputs;
 
             ctx.AddObjectToAsset("main", file);
         }
@@ -37,6 +58,7 @@ namespace Graphlit
     public class CustomLightingEditor : ScriptedImporterEditor
     {
         private ReorderableList _reorderableList;
+        private SerializedProperty _outputs;
 
         //static Dictionary<int, int> _previousSelection = new ();
         public override void OnEnable()
@@ -46,6 +68,8 @@ namespace Graphlit
 
 
             var t = (CustomLighting)target;
+
+            _outputs = serializedObject.FindProperty("outputs");
 
             _reorderableList = PropertyDescriptor.CreateReordableList(t.properties, null);
 
@@ -65,6 +89,8 @@ namespace Graphlit
             EditorGUI.BeginChangeCheck();
 
             _reorderableList.DoLayoutList();
+
+            EditorGUILayout.PropertyField(_outputs);
 
             if (EditorGUI.EndChangeCheck())
             {
