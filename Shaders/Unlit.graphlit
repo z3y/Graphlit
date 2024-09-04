@@ -1,7 +1,33 @@
 {
     "data": {
-        "shaderName": "Default Shader",
+        "shaderName": "Graphlit/Unlit",
         "properties": [
+            {
+                "guid": "75870dec-983a-4ddd-9da2-8370764ba786",
+                "referenceName": "_Cutoff",
+                "displayName": "Alpha Cutoff",
+                "type": 1,
+                "customAttributes": "",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 1.0,
+                "_value": "0.5",
+                "_defaultTexture": "",
+                "declaration": 0
+            },
+            {
+                "guid": "e1ca94b3-4667-4599-958b-3255724b8029",
+                "referenceName": "_Color",
+                "displayName": "Color",
+                "type": 5,
+                "customAttributes": "",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "(1.00, 1.00, 1.00, 1.00)",
+                "_defaultTexture": "",
+                "declaration": 0
+            },
             {
                 "guid": "1def5047-ee96-4414-98df-73a3507eaedd",
                 "referenceName": "_MainTex",
@@ -33,8 +59,8 @@
         {
             "type": "Graphlit.SampleTexture2DNode",
             "guid": "60fab7be-41fa-4fcf-8d0b-4512bdb5ebc5",
-            "x": -300,
-            "y": 0,
+            "x": -449,
+            "y": 174,
             "connections": [
                 {
                     "a": 0,
@@ -50,8 +76,8 @@
         {
             "type": "Graphlit.Texture2DPropertyNode",
             "guid": "d9970745-7840-4628-807a-769940ca05ff",
-            "x": -500,
-            "y": 0,
+            "x": -649,
+            "y": 174,
             "connections": [],
             "precision": 1,
             "preview": 0,
@@ -61,12 +87,66 @@
         {
             "type": "Graphlit.UnlitTemplate",
             "guid": "31a6de1d-7e74-41cb-b79d-921e8cbf1dc4",
-            "x": 0,
-            "y": 0,
+            "x": 261,
+            "y": 12,
             "connections": [
                 {
-                    "a": 3,
+                    "a": 2,
                     "b": 3,
+                    "node": "3831f770-e979-4091-b948-48ea94d51d18"
+                },
+                {
+                    "a": 1,
+                    "b": 4,
+                    "node": "81e5dc01-a582-4b04-ad6e-7578ddaf5032"
+                },
+                {
+                    "a": 0,
+                    "b": 5,
+                    "node": "0840305d-5728-40c4-9ecc-c71cac954d75"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": false,
+            "data": ""
+        },
+        {
+            "type": "Graphlit.FloatPropertyNode",
+            "guid": "0840305d-5728-40c4-9ecc-c71cac954d75",
+            "x": 99,
+            "y": 307,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": false,
+            "data": "{\"_ref\":\"75870dec-983a-4ddd-9da2-8370764ba786\"}"
+        },
+        {
+            "type": "Graphlit.ColorPropertyNode",
+            "guid": "55b6b0f9-ecbd-46a5-a724-dc5b35da0afd",
+            "x": -353,
+            "y": 47,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": false,
+            "data": "{\"_ref\":\"e1ca94b3-4667-4599-958b-3255724b8029\"}"
+        },
+        {
+            "type": "Graphlit.MultiplyNode",
+            "guid": "3831f770-e979-4091-b948-48ea94d51d18",
+            "x": -228,
+            "y": 101,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 0,
+                    "node": "55b6b0f9-ecbd-46a5-a724-dc5b35da0afd"
+                },
+                {
+                    "a": 3,
+                    "b": 1,
                     "node": "60fab7be-41fa-4fcf-8d0b-4512bdb5ebc5"
                 }
             ],
@@ -74,6 +154,23 @@
             "preview": 0,
             "previewDisabled": false,
             "data": ""
+        },
+        {
+            "type": "Graphlit.SwizzleNode",
+            "guid": "81e5dc01-a582-4b04-ad6e-7578ddaf5032",
+            "x": -73,
+            "y": 211,
+            "connections": [
+                {
+                    "a": 2,
+                    "b": 0,
+                    "node": "3831f770-e979-4091-b948-48ea94d51d18"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"swizzle\":\"a\"}"
         }
     ],
     "groups": []
