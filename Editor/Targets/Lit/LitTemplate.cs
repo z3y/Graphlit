@@ -72,6 +72,8 @@ namespace Graphlit
 
         [SerializeField] bool _cbirp = false;
         [SerializeField] bool _specular = true;
+        [SerializeField] bool _fwdAddBlendOpMax = false;
+
         [SerializeField] string _customLighting = string.Empty;
 
         enum Normal
@@ -119,6 +121,10 @@ namespace Graphlit
             var spec = new Toggle("Specular") { value = _specular };
             spec.RegisterValueChangedCallback(x => _specular = x.newValue);
             root.Add(spec);
+
+            var fwdOpMax = new Toggle("BlendOp Max") { value = _fwdAddBlendOpMax, tooltip = "Use BlendOp Max, Add for the forward add pass to limit light for toon" };
+            fwdOpMax.RegisterValueChangedCallback(x => _fwdAddBlendOpMax = x.newValue);
+            root.Add(fwdOpMax);
         }
 
         static readonly PropertyDescriptor _surfaceOptionsStart = new(PropertyType.Float, "Surface Options", "_SurfaceOptions") { customAttributes = "[Foldout]" };
@@ -302,6 +308,11 @@ namespace Graphlit
                 pass.renderStates["Blend"] = "[_SrcBlend] One";
                 pass.renderStates["ZWrite"] = "Off";
                 pass.renderStates["ZTest"] = "LEqual";
+
+                if (_fwdAddBlendOpMax)
+                {
+                    pass.renderStates["BlendOp"] = "Max, Add";
+                }
 
                 pass.pragmas.Add("#pragma shader_feature_local _ _ALPHAFADE_ON _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
 

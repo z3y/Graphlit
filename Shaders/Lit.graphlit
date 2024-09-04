@@ -1193,7 +1193,7 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": false,
-            "data": "{\"_cbirp\":false,\"_specular\":true,\"_customLighting\":\"\",\"_normal\":0}"
+            "data": "{\"_cbirp\":false,\"_specular\":true,\"_fwdAddBlendOpMax\":false,\"_customLighting\":\"\",\"_normal\":0}"
         }
     ],
     "groups": [
