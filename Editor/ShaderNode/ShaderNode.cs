@@ -153,6 +153,21 @@ namespace Graphlit
 
             container.Add(port);
 
+            if (this is TemplateOutput)
+            {
+                port.style.height = 38;
+                port.style.SetBorderWidth(2);
+                port.style.SetBorderRadius(8);
+                port.style.SetBorderColor(new Color(0.15f, 0.15f, 0.15f));
+                port.style.marginTop = 8;
+                port.style.marginLeft = 8;
+                port.style.marginRight = 8;
+
+
+                port.Q<Label>().style.fontSize = 12;
+            }
+
+
             return port;
         }
         internal void Disconnect(Port port)

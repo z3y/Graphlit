@@ -110,6 +110,11 @@ namespace Graphlit
 
             var ports = asset.outputs;
 
+            var separator = new VisualElement();
+            separator.style.height = 16;
+            separator.style.backgroundColor = Color.clear;
+            inputContainer.Add(separator);
+
 
             foreach (var port in ports)
             {
@@ -124,7 +129,7 @@ namespace Graphlit
                 }
                 else
                 {
-                    DefaultValues[id] = port.value;
+                    DefaultValues[id] = port.ValueToString();
                 }
             }
         }

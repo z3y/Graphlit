@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using UnityEditor;
 using UnityEditor.AssetImporters;
@@ -19,10 +20,27 @@ namespace Graphlit
         public class CustomPort
         {
             public string name;
-            public string value;
+            public Vector4 value;
             [Range(1, 4)] public int dimension;
             public int id;
             public PortBinding binding;
+
+            public string ValueToString()
+            {
+                string x, y, z, w;
+                x = value.x.ToString(CultureInfo.InvariantCulture);
+                y = value.y.ToString(CultureInfo.InvariantCulture);
+                z = value.z.ToString(CultureInfo.InvariantCulture);
+                w = value.w.ToString(CultureInfo.InvariantCulture);
+
+                return dimension switch
+                {
+                    1 => $"float({x})",
+                    2 => $"float2({x}, {y})",
+                    3 => $"float3({x}, {y}, {z})",
+                    4 or _ => $"float4({x}, {y}, {z}, {w})",
+                };
+            }
         }
 
         public List<CustomPort> outputs = new();

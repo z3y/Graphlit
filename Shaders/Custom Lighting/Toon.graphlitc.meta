@@ -20,171 +20,6 @@ ScriptedImporter:
     _value: 
     _defaultTexture: 
     declaration: 0
-  - guid: 6872a50f-02a6-48cf-8c93-f74d17b57ddd
-    referenceName: _ShadowStrength
-    displayName: Strength
-    type: 1
-    customAttributes: 
-    defaultAttributes: 0
-    rangeX: 0
-    rangeY: 1
-    _value: 1
-    _defaultTexture: 
-    declaration: 0
-  - guid: 61088f2e-5324-4487-893d-7fe1b1747810
-    referenceName: _ShadowStrengthMask
-    displayName: Mask
-    type: 7
-    customAttributes: 
-    defaultAttributes: 32
-    rangeX: 0
-    rangeY: 0
-    _value: 
-    _defaultTexture: 
-    declaration: 0
-  - guid: 8be908d4-3036-40f4-8185-117409014dcc
-    referenceName: _ShadowColor
-    displayName: Color
-    type: 5
-    customAttributes: '[Header(Layer 1)]'
-    defaultAttributes: 0
-    rangeX: 0
-    rangeY: 0
-    _value: (0.82, 0.76, 0.85, 1.00)
-    _defaultTexture: 
-    declaration: 0
-  - guid: 810269fb-866a-4dca-9892-f921aabbae96
-    referenceName: _ShadowBorder
-    displayName: Border
-    type: 1
-    customAttributes: 
-    defaultAttributes: 0
-    rangeX: 0
-    rangeY: 1
-    _value: 0.5
-    _defaultTexture: 
-    declaration: 0
-  - guid: 4f86441a-de26-4bee-b0f1-dc01a2bfcfb3
-    referenceName: _ShadowBlur
-    displayName: Blur
-    type: 1
-    customAttributes: 
-    defaultAttributes: 0
-    rangeX: 0
-    rangeY: 1
-    _value: 0.1
-    _defaultTexture: 
-    declaration: 0
-  - guid: a6c36a22-3ede-4541-ab44-fa103f4df839
-    referenceName: _ShadowReceive
-    displayName: Receive Shadow
-    type: 1
-    customAttributes: 
-    defaultAttributes: 0
-    rangeX: 0
-    rangeY: 1
-    _value: 0
-    _defaultTexture: 
-    declaration: 0
-  - guid: a3dbbe5e-a1d3-44fa-a9f9-b69aac13d93d
-    referenceName: _Shadow2ndColor
-    displayName: Color
-    type: 5
-    customAttributes: '[Header(Layer 2)]'
-    defaultAttributes: 0
-    rangeX: 0
-    rangeY: 0
-    _value: (0.68, 0.66, 0.79, 1.00)
-    _defaultTexture: 
-    declaration: 0
-  - guid: f8b8bed4-220e-4a9a-8b83-6a0c936da547
-    referenceName: _Shadow2ndBorder
-    displayName: Border
-    type: 1
-    customAttributes: 
-    defaultAttributes: 0
-    rangeX: 0
-    rangeY: 1
-    _value: 0.15
-    _defaultTexture: 
-    declaration: 0
-  - guid: 215cf9a8-4db9-4723-99b1-8c917a560725
-    referenceName: _Shadow2ndBlur
-    displayName: Blur
-    type: 1
-    customAttributes: 
-    defaultAttributes: 0
-    rangeX: 0
-    rangeY: 1
-    _value: 0.1
-    _defaultTexture: 
-    declaration: 0
-  - guid: 7bfc7a46-a3ee-4dcc-a953-871b163c27a3
-    referenceName: _Shadow2ndReceive
-    displayName: Receive Shadow
-    type: 1
-    customAttributes: 
-    defaultAttributes: 0
-    rangeX: 0
-    rangeY: 1
-    _value: 0
-    _defaultTexture: 
-    declaration: 0
-  - guid: ae0ce9ce-f39e-44f1-8f85-6c745055982d
-    referenceName: _Shadow3rdColor
-    displayName: Color
-    type: 5
-    customAttributes: '[Header(Layer 3)]'
-    defaultAttributes: 0
-    rangeX: 0
-    rangeY: 0
-    _value: (0.00, 0.00, 0.00, 0.00)
-    _defaultTexture: 
-    declaration: 0
-  - guid: 7cb9510a-0e0c-49b3-aeee-e66c2c9602a8
-    referenceName: _Shadow3rdBorder
-    displayName: Border
-    type: 1
-    customAttributes: 
-    defaultAttributes: 0
-    rangeX: 0
-    rangeY: 1
-    _value: 0.5
-    _defaultTexture: 
-    declaration: 0
-  - guid: 408dce0e-a07e-4448-976e-a1a0ce6d8cd4
-    referenceName: _Shadow3rdBlur
-    displayName: Blur
-    type: 1
-    customAttributes: 
-    defaultAttributes: 0
-    rangeX: 0
-    rangeY: 1
-    _value: 0.1
-    _defaultTexture: 
-    declaration: 0
-  - guid: 7e7ea521-d3ef-44ea-aaaf-7562f757dcb4
-    referenceName: _Shadow3rdReceive
-    displayName: Receive Shadow
-    type: 1
-    customAttributes: 
-    defaultAttributes: 0
-    rangeX: 0
-    rangeY: 1
-    _value: 0
-    _defaultTexture: 
-    declaration: 0
-  - guid: ec2ccea4-876f-4af2-b255-96c980981131
-    referenceName: _ShadowBorderColor
-    displayName: Border
-    type: 5
-    customAttributes: '[Space(10)]'
-    defaultAttributes: 0
-    rangeX: 0
-    rangeY: 0
-    _value: (1.00, 0.10, 0.00, 1.00)
-    _defaultTexture: 
-    declaration: 0
   - guid: 8a32d4f8-5e67-479b-b212-5bb0abb14aaa
     referenceName: _ShadowBorderRange
     displayName: Border Range
@@ -240,3 +75,44 @@ ScriptedImporter:
     _value: 0
     _defaultTexture: 
     declaration: 0
+  outputs:
+  - name: ShadowMask
+    value: {x: 1, y: 1, z: 1, w: 1}
+    dimension: 1
+    id: 0
+    binding: -1
+  - name: Shadow1Color
+    value: {x: 0.82, y: 0.76, z: 0.85, w: 1}
+    dimension: 4
+    id: 1
+    binding: -1
+  - name: Shadow2Color
+    value: {x: 0.68, y: 0.66, z: 0.79, w: 1}
+    dimension: 4
+    id: 2
+    binding: -1
+  - name: Shadow3Color
+    value: {x: 0, y: 0, z: 0, w: 0}
+    dimension: 4
+    id: 3
+    binding: -1
+  - name: ShadowBlur
+    value: {x: 0.1, y: 0.1, z: 0.1, w: 0}
+    dimension: 3
+    id: 4
+    binding: -1
+  - name: ShadowBorder
+    value: {x: 0.5, y: 0.15, z: 0.1, w: 0}
+    dimension: 3
+    id: 5
+    binding: -1
+  - name: ShadowReceive
+    value: {x: 0, y: 0, z: 0, w: 0}
+    dimension: 3
+    id: 6
+    binding: -1
+  - name: ShadowBorderColor
+    value: {x: 1, y: 0.1, z: 0, w: 0}
+    dimension: 3
+    id: 7
+    binding: -1
