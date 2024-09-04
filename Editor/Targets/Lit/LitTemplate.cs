@@ -231,6 +231,7 @@ namespace Graphlit
                 pass.pragmas.Add("#pragma skip_variants LIGHTPROBE_SH");
                 pass.pragmas.Add("#pragma multi_compile_fog");
                 pass.pragmas.Add("#pragma multi_compile_instancing");
+                pass.pragmas.Add("#pragma shader_feature_fragment VERTEXLIGHT_ON");
 
                 pass.pragmas.Add("#pragma shader_feature_local _BAKERY_MONOSH");
                 pass.pragmas.Add("#pragma shader_feature_local _BICUBIC_LIGHTMAP");

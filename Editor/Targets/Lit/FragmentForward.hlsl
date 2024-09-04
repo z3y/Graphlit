@@ -22,6 +22,8 @@
     #define BAKERY_SHNONLINEAR
 #endif
 
+#include "NonImportantLights.hlsl"
+
 half4 frag(Varyings varyings) : SV_Target
 {
     UNITY_SETUP_INSTANCE_ID(varyings);
@@ -159,6 +161,10 @@ half4 frag(Varyings varyings) : SV_Target
 
     // unity lights
     LIGHT_IMPL(unityLight, fragData, giInput, surf, giOutput);
+
+    #ifdef VERTEXLIGHT_ON
+        NonImportantLightsPerPixel(fragData, giInput, surf, giOutput);
+    #endif
 
     // reflection probes
     #if !defined(_GLOSSYREFLECTIONS_OFF)
