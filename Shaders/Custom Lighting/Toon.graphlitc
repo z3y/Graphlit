@@ -62,12 +62,40 @@ float OpenLitGray(float3 rgb)
     return dot(rgb, float3(1.0/3.0, 1.0/3.0, 1.0/3.0));
 }
 
+void ShadeSH9ToonDouble(float3 lightDirection, out float3 shMax, out float3 shMin)
+{
+    #if !defined(LIGHTMAP_ON)
+        float3 N = lightDirection * 0.666666;
+        float4 vB = N.xyzz * N.yzzx;
+        // L0 L2
+        float3 res = float3(unity_SHAr.w,unity_SHAg.w,unity_SHAb.w);
+        res.r += dot(unity_SHBr, vB);
+        res.g += dot(unity_SHBg, vB);
+        res.b += dot(unity_SHBb, vB);
+        res += unity_SHC.rgb * (N.x * N.x - N.y * N.y);
+        // L1
+        float3 l1;
+        l1.r = dot(unity_SHAr.rgb, N);
+        l1.g = dot(unity_SHAg.rgb, N);
+        l1.b = dot(unity_SHAb.rgb, N);
+        shMax = res + l1;
+        shMin = res - l1;
+        #if defined(UNITY_COLORSPACE_GAMMA)
+            shMax = OpenLitLinearToSRGB(shMax);
+            shMin = OpenLitLinearToSRGB(shMin);
+        #endif
+    #else
+        shMax = 0.0;
+        shMin = 0.0;
+    #endif
+}
+
 // should be moved to another func for indirect diffuse when its added so it runs earlier
 #define CUSTOM_COLOR
 COLOR_FUNC // args: surf, fragData, giInput, giOutput
 {
     #if defined(UNITY_PASS_FORWARDBASE)
-        float3 sh9Dir = unity_SHAr.xyz + unity_SHAg.xyz + unity_SHAb.xyz;
+        float3 sh9Dir = unity_SHAr.xyz * 0.333333 + unity_SHAg.xyz * 0.333333 + unity_SHAb.xyz * 0.333333;
         float3 sh9DirAbs = float3(sh9Dir.x, abs(sh9Dir.y), sh9Dir.z);
         half3 N = normalize(sh9DirAbs);
         UNITY_FLATTEN
@@ -75,9 +103,11 @@ COLOR_FUNC // args: surf, fragData, giInput, giOutput
         {
             N = 0;
         }
-        half3 l0l1 = SHEvalLinearL0L1(float4(N, 1));
-        half3 l2 = SHEvalLinearL2(float4(N, 1));
-        half3 indirectColor = l0l1 + l2;
+
+        half3 shMin;
+        half3 shMax;
+        ShadeSH9ToonDouble(N, shMin, shMax);
+        half3 indirectColor = shMin;
 
         Light lightprobe = (Light)0;
         lightprobe.color = indirectColor;
@@ -90,11 +120,11 @@ COLOR_FUNC // args: surf, fragData, giInput, giOutput
 
     half3 lightColor = giOutput.directDiffuse;
 
-    // half lightRenorm = max(max(lightColor.r, lightColor.g), lightColor.b);
-    // if (lightRenorm > _LightMaxLimit)
-    // {
-    //     lightColor /= lightRenorm / _LightMaxLimit;
-    // }
+    half lightRenorm = max(max(lightColor.r, lightColor.g), lightColor.b);
+    if (lightRenorm > _LightMaxLimit)
+    {
+        lightColor /= lightRenorm / _LightMaxLimit;
+    }
     lightColor = min(_LightMaxLimit, lightColor);
     lightColor = max(_LightMinLimit, lightColor);
     lightColor = lerp(lightColor, OpenLitGray(lightColor), _MonochromeLighting);
