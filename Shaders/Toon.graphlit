@@ -1407,17 +1407,6 @@
             "data": "{\"_ref\":\"6dbcf349-554e-4ca3-af7e-d747b0e7793a\"}"
         },
         {
-            "type": "Graphlit.ColorPropertyNode",
-            "guid": "9d5e733b-cc29-4370-9c43-4b3280e2d808",
-            "x": 143,
-            "y": 828,
-            "connections": [],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": "{\"_ref\":\"6dbcf349-554e-4ca3-af7e-d747b0e7793a\"}"
-        },
-        {
             "type": "Graphlit.AppendNode",
             "guid": "b37c9700-a5b8-46f0-b02d-27778584f48f",
             "x": -15,
@@ -1661,7 +1650,7 @@
                 {
                     "a": 0,
                     "b": 103,
-                    "node": "9d5e733b-cc29-4370-9c43-4b3280e2d808"
+                    "node": "bc0b085d-c585-4196-93f8-639daed07df6"
                 },
                 {
                     "a": 5,
@@ -1693,6 +1682,17 @@
             "preview": 0,
             "previewDisabled": false,
             "data": "{\"_cbirp\":false,\"_specular\":false,\"_fwdAddBlendOpMax\":true,\"_customLighting\":\"-6750239444755058063|9505dc61a579ef349bb7f52c0a8b3d19\",\"_normal\":0}"
+        },
+        {
+            "type": "Graphlit.ColorPropertyNode",
+            "guid": "bc0b085d-c585-4196-93f8-639daed07df6",
+            "x": 146,
+            "y": 831,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"2aae07ab-721a-4742-a30f-b4dc252daad4\"}"
         }
     ],
     "groups": [
@@ -1785,7 +1785,6 @@
             "elements": [
                 "24b91d0c-c0d4-4823-b8bc-f8417dcc6cf5",
                 "cb1a5134-5794-433e-9eb9-d86c0dad602e",
-                "9d5e733b-cc29-4370-9c43-4b3280e2d808",
                 "15882195-c777-4288-88fb-c33e4d066584",
                 "838f4150-b5f2-4ef2-be18-8942db348f1f",
                 "3e87f979-0b80-4e5e-b091-6be87b24300c",
@@ -1800,7 +1799,8 @@
                 "b37c9700-a5b8-46f0-b02d-27778584f48f",
                 "81163ca3-2b2b-4acc-b528-560b2e52e76d",
                 "674fb4b6-f29d-49b6-83ec-917f2c27bde6",
-                "400846e9-4a01-4b71-b970-3c9623d2e54e"
+                "400846e9-4a01-4b71-b970-3c9623d2e54e",
+                "bc0b085d-c585-4196-93f8-639daed07df6"
             ]
         }
     ]
