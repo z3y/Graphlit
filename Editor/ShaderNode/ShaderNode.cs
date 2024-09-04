@@ -380,6 +380,11 @@ namespace Graphlit
             }
             titleContainer.Add(accentLine);
 
+
+            var divider = contentContainer.Q("divider");
+            divider.parent.Remove(divider);
+
+
             /*var border = this.Q("node-border");
             border.style.overflow = Overflow.Visible;
             {
@@ -388,19 +393,33 @@ namespace Graphlit
                 s.borderTopRightRadius = 6;
             }*/
         }
-        public Label TitleLabel;
+        public TextElement TitleLabel;
+
+        float _lastClickTime = 0;
         void AddTitleElement()
         {
             var nodeInfo = Info;
 
-            var titleLabel = (Label)titleContainer.Q("title-label");
-            titleLabel.text = DisplayName;
-            titleLabel.tooltip = nodeInfo.tooltip + "\n" + viewDataKey;
-            titleLabel.style.fontSize = 12;
-            titleLabel.style.marginRight = StyleKeyword.Auto;
-            titleLabel.style.marginLeft = StyleKeyword.Auto;
-            titleLabel.style.paddingLeft = 6;
-            titleLabel.style.paddingRight = 6;
+            var previousLabel = titleContainer.Q("title-label");
+            var parent = previousLabel.parent;
+            parent.Remove(previousLabel);
+
+            var titleLabel = new Label() {
+                text = DisplayName,
+                tooltip = nodeInfo.tooltip + "\n" + viewDataKey,
+                style = {
+                    fontSize = 12,
+                    marginRight = StyleKeyword.Auto,
+                    marginLeft = StyleKeyword.Auto,
+                    paddingLeft = 6,
+                    paddingRight = 6,
+                    paddingTop = 4,
+                    backgroundColor = Color.clear,
+                }
+            };
+
+            titleLabel.style.SetBorderWidth(0);
+
             titleContainer.Insert(0, titleLabel);
             TitleLabel = titleLabel;
 
@@ -828,6 +847,36 @@ namespace Graphlit
             {
                 previewDrawer.Disable();
             }
+
+            const string disabledText = "▲";
+            const string enabledText = "▼";
+
+
+            var previewToggle = new Button()
+            {
+                text = !_previewDisabled ? disabledText : enabledText,
+                style = {
+                    marginBottom = 0,
+                    marginLeft = 0,
+                    marginTop = 0,
+                    marginRight = 0,
+                    backgroundColor = Color.clear,
+                    borderBottomWidth = 0,
+                    borderLeftWidth = 0,
+                    borderRightWidth = 0,
+                    borderTopWidth = 0,
+                    height = 12,
+                    fontSize = 8,
+                    color = new Color(0.25f, 0.25f, 0.25f),
+                },
+            };
+            previewToggle.style.SetBorderRadius(0);
+            previewToggle.clicked += () =>
+            {
+                previewToggle.text = _previewDisabled ? disabledText : enabledText;
+                SetPreviewState(_previewDisabled);
+            };
+            extensionContainer.Add(previewToggle);
         }
 
         public Action<Material> onUpdatePreviewMaterial = (mat) => { };
