@@ -59,7 +59,7 @@
                 "referenceName": "_MaskMap",
                 "displayName": "Mask Map",
                 "type": 7,
-                "customAttributes": "",
+                "customAttributes": "[Tooltip(AO, Roughness, Metallic)]",
                 "defaultAttributes": 2080,
                 "rangeX": 0.0,
                 "rangeY": 0.0,
@@ -120,19 +120,6 @@
                 "declaration": 0
             },
             {
-                "guid": "e68b53ec-d1bb-4cf4-b8b1-76a34ae625ba",
-                "referenceName": "_BumpMap",
-                "displayName": "Normal Map",
-                "type": 7,
-                "customAttributes": "",
-                "defaultAttributes": 96,
-                "rangeX": 0.0,
-                "rangeY": 0.0,
-                "_value": "bump",
-                "_defaultTexture": "",
-                "declaration": 0
-            },
-            {
                 "guid": "297341ee-cfd4-44cb-86a1-103f79528965",
                 "referenceName": "_BumpScale",
                 "displayName": "Normal Scale",
@@ -142,6 +129,19 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "1",
+                "_defaultTexture": "",
+                "declaration": 0
+            },
+            {
+                "guid": "e68b53ec-d1bb-4cf4-b8b1-76a34ae625ba",
+                "referenceName": "_BumpMap",
+                "displayName": "Normal Map",
+                "type": 7,
+                "customAttributes": "[Tooltip(OpenGL Normal)]",
+                "defaultAttributes": 96,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "bump",
                 "_defaultTexture": "",
                 "declaration": 0
             },
@@ -200,7 +200,7 @@
             {
                 "guid": "ad88b379-8cb4-4172-8812-4137212be52e",
                 "referenceName": "_specularAntiAliasingVariance",
-                "displayName": "GSAA Variance",
+                "displayName": "Variance",
                 "type": 1,
                 "customAttributes": "[PowerSlider(2)]",
                 "defaultAttributes": 0,
@@ -213,7 +213,7 @@
             {
                 "guid": "2b369010-a1ad-49f3-965e-54e9380f9214",
                 "referenceName": "_specularAntiAliasingThreshold",
-                "displayName": "GSAA Threshold",
+                "displayName": "Threshold",
                 "type": 1,
                 "customAttributes": "[PowerSlider(2)]",
                 "defaultAttributes": 0,
@@ -1122,6 +1122,28 @@
             "data": "{\"_value\":{\"x\":0.0,\"y\":0.0,\"z\":1.0}}"
         },
         {
+            "type": "Graphlit.FloatPropertyNode",
+            "guid": "508cff6c-9246-4675-94ba-6831ba60cca9",
+            "x": -1540,
+            "y": 380,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"ad88b379-8cb4-4172-8812-4137212be52e\"}"
+        },
+        {
+            "type": "Graphlit.FloatPropertyNode",
+            "guid": "1944ff1e-dce5-46f3-95c2-6fd75ffc9b61",
+            "x": -1548,
+            "y": 445,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"2b369010-a1ad-49f3-965e-54e9380f9214\"}"
+        },
+        {
             "type": "Graphlit.LitTemplate",
             "guid": "a829ca21-17ba-4d50-b65d-d5c65e50b728",
             "x": 146,
@@ -1172,28 +1194,6 @@
             "preview": 0,
             "previewDisabled": false,
             "data": "{\"_cbirp\":true,\"_specular\":true,\"_customLighting\":\"\",\"_normal\":0}"
-        },
-        {
-            "type": "Graphlit.FloatPropertyNode",
-            "guid": "508cff6c-9246-4675-94ba-6831ba60cca9",
-            "x": -1540,
-            "y": 380,
-            "connections": [],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": "{\"_ref\":\"ad88b379-8cb4-4172-8812-4137212be52e\"}"
-        },
-        {
-            "type": "Graphlit.FloatPropertyNode",
-            "guid": "1944ff1e-dce5-46f3-95c2-6fd75ffc9b61",
-            "x": -1548,
-            "y": 445,
-            "connections": [],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": "{\"_ref\":\"2b369010-a1ad-49f3-965e-54e9380f9214\"}"
         }
     ],
     "groups": [
@@ -1251,7 +1251,7 @@
         },
         {
             "x": -1672,
-            "y": 1021,
+            "y": 1022,
             "title": "Normal",
             "elements": [
                 "349d5075-09b2-4746-b508-086f7f1c39d3",

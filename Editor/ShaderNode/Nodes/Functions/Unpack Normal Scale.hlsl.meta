@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: 85a00f5fef33e1449bd1f3c09192fcfd
 labels:
-- ZSGFunction
+- GraphlitFunction
 ShaderIncludeImporter:
   externalObjects: {}
   userData: 
