@@ -15,39 +15,39 @@ float lilTooningNoSaturateScale(float aascale, float value, float border, float 
 #define CUSTOM_LIGHT
 LIGHT_FUNC // args: light, fragData, giInput, surf, giOutput
 {
-    half3 col = light.color;
-    half defaultAtten = light.attenuation;
-    #if defined(SHADOWS_SCREEN)
+    half defaultAtten = saturate(light.attenuation);
+    #if defined(SHADOWS_SCREEN) && !defined(_CBIRP)
         defaultAtten = 1;
     #endif
 
+    half3 col = light.color * defaultAtten;
+    half3 defaultCol = col;
+
     const float antialias = 1.0;
+
     half4 lns = 1.0;
 
-    // layer 1
-    lns.x = saturate(dot(light.direction, giInput.normalWS) * 0.5 + 0.5);
-    lns.x *= lerp(defaultAtten, light.attenuation, _ShadowReceive);
+    half NoL2 = saturate(dot(light.direction, giInput.normalWS) * 0.5 + 0.5);
+    lns.x = NoL2;
+    lns.y = NoL2;
+    lns.z = NoL2;
+
+    lns.xyz *= lerp(defaultAtten, light.attenuation, float3(_ShadowReceive, _Shadow2ndReceive, _Shadow3rdReceive));
+
     lns.w = lns.x;
-    lns.w = saturate(lilTooningNoSaturateScale(antialias, lns.x, _ShadowBorder, _ShadowBlur, _ShadowBorderRange));
-    lns.x = saturate(lilTooningNoSaturateScale(antialias, lns.x, _ShadowBorder, _ShadowBlur));
+    lns.x = lilTooningNoSaturateScale(antialias, lns.x, _ShadowBorder, _ShadowBlur);
+    lns.y = lilTooningNoSaturateScale(antialias, lns.y, _Shadow2ndBorder, _Shadow2ndBlur);
+    lns.z = lilTooningNoSaturateScale(antialias, lns.z, _Shadow3rdBorder, _Shadow3rdBlur);
+    lns.w = lilTooningNoSaturateScale(antialias, lns.w, _ShadowBorder, _ShadowBlur, _ShadowBorderRange);
 
-    //layer 2
-    lns.y = saturate(dot(light.direction, giInput.normalWS) * 0.5 + 0.5);
-    lns.y *= lerp(defaultAtten, light.attenuation, _Shadow2ndReceive);
-    lns.y = saturate(lilTooningNoSaturateScale(antialias, lns.y, _Shadow2ndBorder, _Shadow2ndBlur));
-
-    //layer 3
-    lns.z = saturate(dot(light.direction, giInput.normalWS) * 0.5 + 0.5);
-    lns.z *= lerp(defaultAtten, light.attenuation, _Shadow3rdReceive);
-    lns.z = saturate(lilTooningNoSaturateScale(antialias, lns.z, _Shadow3rdBorder, _Shadow3rdBlur));
-
+    lns = saturate(lns);
 
     lns = lerp(1.0, lns, _ShadowStrength);
-    col = lerp(col, lerp(light.color * _ShadowColor.rgb, col, lns.x), _ShadowColor.a);
-    col = lerp(col, lerp(light.color * _Shadow2ndColor.rgb, col, lns.y), _Shadow2ndColor.a);
-    col = lerp(col, lerp(light.color * _Shadow3rdColor.rgb, col, lns.z), _Shadow3rdColor.a);
+    col = lerp(col, lerp(defaultCol * _ShadowColor.rgb, col, lns.x), _ShadowColor.a);
+    col = lerp(col, lerp(defaultCol * _Shadow2ndColor.rgb, col, lns.y), _Shadow2ndColor.a);
+    col = lerp(col, lerp(defaultCol * _Shadow3rdColor.rgb, col, lns.z), _Shadow3rdColor.a);
 
-    col = lerp(col, light.color, lns.w * _ShadowBorderColor.rgb);
+    col = lerp(col, defaultCol, lns.w * _ShadowBorderColor.rgb);
 
 
     #ifdef _TOONSHADOW

@@ -119,7 +119,7 @@ struct Light
     void ComputeData(FragmentData fragData, GIInput giInput)
     {
         NoL = saturate(dot(giInput.normalWS, direction));
-        halfVector = normalize(direction + fragData.viewDirectionWS);
+        halfVector = SafeNormalize(direction + fragData.viewDirectionWS);
         LoH = saturate(dot(direction, halfVector));
         NoH = saturate(dot(giInput.normalWS, halfVector));
     }
@@ -231,7 +231,7 @@ void LightDefault(Light light, FragmentData fragData, GIInput giInput, SurfaceDe
             half D = Filament::D_GGX(light.NoH, clampedRoughness);
             half V = Filament::V_SmithGGXCorrelated(giInput.NoV, light.NoL, clampedRoughness);
 
-            giOutput.directSpecular += max(0.0, (D * V) * F) * lightColor * UNITY_PI;
+            giOutput.directSpecular += max(0.0, (D * V) * F) * lightColor * UNITY_PI * giInput.energyCompensation;
         #endif
 
     }

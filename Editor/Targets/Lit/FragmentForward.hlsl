@@ -24,6 +24,11 @@
 
 #include "NonImportantLights.hlsl"
 
+#ifdef _CBIRP
+
+#include "ClusteredBIRP.hlsl"
+#endif
+
 half4 frag(Varyings varyings) : SV_Target
 {
     UNITY_SETUP_INSTANCE_ID(varyings);
@@ -189,17 +194,20 @@ half4 frag(Varyings varyings) : SV_Target
 
                     
     #ifdef _CBIRP
-            #ifdef LIGHTMAP_ON
+        #ifdef LIGHTMAP_ON
             half4 shadowmask = _Udon_CBIRP_ShadowMask.SampleLevel(custom_bilinear_clamp_sampler, lightmapUV, 0);
             // half4 shadowmask = 1;
         #else
             half4 shadowmask = 1;
-    #endif
+        #endif
         giOutput.directDiffuse = 0;
         giOutput.directSpecular = 0;
         uint3 cluster = CBIRP::GetCluster(fragData.positionWS);
-        CBIRP::ComputeLights(cluster, fragData.positionWS, giInput.normalWS, fragData.viewDirectionWS, giInput.f0, giInput.NoV, surf.Roughness, shadowmask, giOutput.directDiffuse, giOutput.directSpecular);
-        giOutput.directSpecular *= giInput.energyCompensation;
+        // CBIRP::ComputeLights(cluster, fragData.positionWS, giInput.normalWS, fragData.viewDirectionWS, giInput.f0, giInput.NoV, surf.Roughness, shadowmask, giOutput.directDiffuse, giOutput.directSpecular);
+        // giOutput.directSpecular *= giInput.energyCompensation;
+
+        ComputeCBIRPLights(cluster, shadowmask, fragData, giInput, surf, giOutput);
+
         giOutput.indirectSpecular = CBIRP::SampleProbes(cluster, giInput.reflectVector, fragData.positionWS, surf.Roughness).xyz;
     #endif
 
