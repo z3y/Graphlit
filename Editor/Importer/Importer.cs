@@ -103,46 +103,26 @@ namespace Graphlit
 
         public static void CreateEmptyTemplate(TemplateOutput template, Action<ShaderGraphView> onCreate = null)
         {
-            var graphView = new ShaderGraphView(null)
+
+            if (template is LitTemplate)
             {
-                graphData = new GraphData()
-            };
-            graphView.CreateNode(template, Vector2.zero, false);
-            var firstPort = template.Inputs.Where(x => x.GetPortID() == template.FragmentPorts[0]).First();
+                const string samplePath = "Packages/com.z3y.graphlit/Samples/Lit Sample.graphlit";
+                var graph = ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
+                graph.data.shaderName = "Default Shader";
 
-            var tex2d = new SampleTexture2DNode();
-            graphView.CreateNode(tex2d, new Vector2(-100, 0), false);
-            tex2d.Outputs.First().ConnectTo(firstPort);
-
-            var prop = new Texture2DPropertyNode();
-            graphView.CreateNode(prop, new Vector2(-200, 0), false);
-            var desc = prop.propertyDescriptor;
-            desc.displayName = "Main Texture";
-            desc.referenceName = "_MainTex";
-            prop.Outputs.First().ConnectTo(tex2d.Inputs.First());
-
-            onCreate?.Invoke(graphView);
-
-            // for some reason position is not applied
-            var data = SerializableGraph.StoreGraph(graphView);
-            for (int i = 0; i < data.nodes.Count(); i++)
+                var jsonData = JsonUtility.ToJson(graph, true);
+                ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.graphlit", jsonData);
+            }
+            else
             {
-                if (data.nodes[i].guid == prop.viewDataKey)
-                {
-                    var a = data.nodes[i];
-                    a.x = -500;
-                    data.nodes[i] = a;
-                }
-                else if (data.nodes[i].guid == tex2d.viewDataKey)
-                {
-                    var a = data.nodes[i];
-                    a.x = -300;
-                    data.nodes[i] = a;
-                }
+                const string samplePath = "Packages/com.z3y.graphlit/Samples/Unlit Sample.graphlit";
+                var graph = ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
+                graph.data.shaderName = "Default Shader";
+
+                var jsonData = JsonUtility.ToJson(graph, true);
+                ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.graphlit", jsonData);
             }
 
-            var jsonData = JsonUtility.ToJson(data, true);
-            ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.graphlit", jsonData);
         }
         public static void CreateEmptyTemplate<T>() where T : TemplateOutput, new()
         {

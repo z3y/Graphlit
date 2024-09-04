@@ -1,0 +1,80 @@
+{
+    "data": {
+        "shaderName": "Graphlit/Samples/Unlit",
+        "properties": [
+            {
+                "guid": "1def5047-ee96-4414-98df-73a3507eaedd",
+                "referenceName": "_MainTex",
+                "displayName": "Main Texture",
+                "type": 7,
+                "customAttributes": "",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "",
+                "_defaultTexture": "",
+                "declaration": 0
+            }
+        ],
+        "precision": 0,
+        "defaultPreviewState": 0,
+        "customEditor": "",
+        "fallback": "",
+        "include": "",
+        "outlinePass": 0,
+        "stencil": false,
+        "vrcFallbackTags": {
+            "type": 1,
+            "mode": 0,
+            "doubleSided": false
+        }
+    },
+    "nodes": [
+        {
+            "type": "Graphlit.SampleTexture2DNode",
+            "guid": "60fab7be-41fa-4fcf-8d0b-4512bdb5ebc5",
+            "x": -300,
+            "y": 0,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 1,
+                    "node": "d9970745-7840-4628-807a-769940ca05ff"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": false,
+            "data": ""
+        },
+        {
+            "type": "Graphlit.Texture2DPropertyNode",
+            "guid": "d9970745-7840-4628-807a-769940ca05ff",
+            "x": -500,
+            "y": 0,
+            "connections": [],
+            "precision": 1,
+            "preview": 0,
+            "previewDisabled": false,
+            "data": "{\"_ref\":\"1def5047-ee96-4414-98df-73a3507eaedd\"}"
+        },
+        {
+            "type": "Graphlit.UnlitTemplate",
+            "guid": "31a6de1d-7e74-41cb-b79d-921e8cbf1dc4",
+            "x": 0,
+            "y": 0,
+            "connections": [
+                {
+                    "a": 3,
+                    "b": 3,
+                    "node": "60fab7be-41fa-4fcf-8d0b-4512bdb5ebc5"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": false,
+            "data": ""
+        }
+    ],
+    "groups": []
+}
