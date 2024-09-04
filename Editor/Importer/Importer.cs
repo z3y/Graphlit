@@ -15,6 +15,8 @@ namespace Graphlit
         internal static Dictionary<string, ShaderGraphView> _graphViews = new();
         internal static string _lastImport;
 
+        private static Texture2D Thumbnail => AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.z3y.graphlit/Editor/icon.psd");
+
         public static SerializableGraph ReadGraphData(string guid)
         {
             var assetPath = AssetDatabase.GUIDToAssetPath(guid);
@@ -85,7 +87,7 @@ namespace Graphlit
                 ctx.DependsOnSourceAsset(dependency);
             }
 
-            ctx.AddObjectToAsset("Main Asset", shader);
+            ctx.AddObjectToAsset("Main Asset", shader, Thumbnail);
 
 
             /*var material = new Material(shader)
