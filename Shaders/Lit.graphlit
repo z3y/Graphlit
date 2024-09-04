@@ -1,6 +1,6 @@
 {
     "data": {
-        "shaderName": "Graphlit/Samples/Default",
+        "shaderName": "Graphlit/Lit",
         "properties": [
             {
                 "guid": "680d1962-c4ab-4a7e-8776-a104698eba52",
@@ -692,58 +692,6 @@
             "data": "{\"_name\":\"alpha\"}"
         },
         {
-            "type": "Graphlit.LitTemplate",
-            "guid": "a829ca21-17ba-4d50-b65d-d5c65e50b728",
-            "x": 146,
-            "y": 58,
-            "connections": [
-                {
-                    "a": 1,
-                    "b": 3,
-                    "node": "7b31e4d5-6a99-4d64-b9a1-4bcca6448069"
-                },
-                {
-                    "a": 1,
-                    "b": 4,
-                    "node": "29375d49-5df6-41ab-988a-c817ec490e27"
-                },
-                {
-                    "a": 1,
-                    "b": 6,
-                    "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
-                },
-                {
-                    "a": 2,
-                    "b": 7,
-                    "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
-                },
-                {
-                    "a": 0,
-                    "b": 8,
-                    "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
-                },
-                {
-                    "a": 0,
-                    "b": 11,
-                    "node": "bb4d0ceb-2d94-42d0-8a0f-e5193879077f"
-                },
-                {
-                    "a": 1,
-                    "b": 10,
-                    "node": "a96f5bd4-5447-4c91-a77f-fe5d610fe8b2"
-                },
-                {
-                    "a": 0,
-                    "b": 9,
-                    "node": "01892653-e808-4f9c-8954-f1f669a7c37b"
-                }
-            ],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": false,
-            "data": "{\"_cbirp\":true,\"_specular\":true,\"_customLighting\":\"\",\"_normal\":0}"
-        },
-        {
             "type": "Graphlit.SplitNode",
             "guid": "9115765f-9f73-4dda-bc1c-33f25e449159",
             "x": -83,
@@ -827,6 +775,58 @@
             "preview": 0,
             "previewDisabled": false,
             "data": "{}"
+        },
+        {
+            "type": "Graphlit.LitTemplate",
+            "guid": "a829ca21-17ba-4d50-b65d-d5c65e50b728",
+            "x": 146,
+            "y": 58,
+            "connections": [
+                {
+                    "a": 1,
+                    "b": 3,
+                    "node": "7b31e4d5-6a99-4d64-b9a1-4bcca6448069"
+                },
+                {
+                    "a": 1,
+                    "b": 4,
+                    "node": "29375d49-5df6-41ab-988a-c817ec490e27"
+                },
+                {
+                    "a": 1,
+                    "b": 6,
+                    "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
+                },
+                {
+                    "a": 2,
+                    "b": 7,
+                    "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
+                },
+                {
+                    "a": 0,
+                    "b": 8,
+                    "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
+                },
+                {
+                    "a": 0,
+                    "b": 11,
+                    "node": "bb4d0ceb-2d94-42d0-8a0f-e5193879077f"
+                },
+                {
+                    "a": 1,
+                    "b": 10,
+                    "node": "a96f5bd4-5447-4c91-a77f-fe5d610fe8b2"
+                },
+                {
+                    "a": 0,
+                    "b": 9,
+                    "node": "01892653-e808-4f9c-8954-f1f669a7c37b"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": false,
+            "data": "{\"_cbirp\":true,\"_specular\":true,\"_customLighting\":\"\",\"_normal\":0}"
         }
     ],
     "groups": [

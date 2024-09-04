@@ -47,7 +47,7 @@ namespace Graphlit
             var builder = new ShaderBuilder(GenerationMode.Final, graphView, target);
             if (string.IsNullOrEmpty(builder.shaderName) || builder.shaderName == "Default Shader")
             {
-                builder.shaderName = Path.GetFileNameWithoutExtension(ctx.assetPath);
+                builder.shaderName = "Graphlit/" + Path.GetFileNameWithoutExtension(ctx.assetPath);
             }
             builder.BuildTemplate();
 
@@ -106,7 +106,7 @@ namespace Graphlit
 
             if (template is LitTemplate)
             {
-                const string samplePath = "Packages/com.z3y.graphlit/Samples/Lit Sample.graphlit";
+                const string samplePath = "Packages/com.z3y.graphlit/Shaders/Lit.graphlit";
                 var graph = ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
                 graph.data.shaderName = "Default Shader";
 
@@ -115,7 +115,7 @@ namespace Graphlit
             }
             else
             {
-                const string samplePath = "Packages/com.z3y.graphlit/Samples/Unlit Sample.graphlit";
+                const string samplePath = "Packages/com.z3y.graphlit/Shaders/Unlit.graphlit";
                 var graph = ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
                 graph.data.shaderName = "Default Shader";
 

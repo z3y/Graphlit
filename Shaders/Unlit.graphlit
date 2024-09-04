@@ -1,6 +1,6 @@
 {
     "data": {
-        "shaderName": "Graphlit/Samples/Unlit",
+        "shaderName": "Graphlit/Unlit",
         "properties": [
             {
                 "guid": "1def5047-ee96-4414-98df-73a3507eaedd",

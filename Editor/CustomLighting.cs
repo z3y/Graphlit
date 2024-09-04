@@ -27,7 +27,7 @@ namespace Graphlit
         [MenuItem("Assets/Create/Graphlit/Custom Lighting Asset")]
         public static void CreateCustomLightingAsset()
         {
-            var text = File.ReadAllText("Packages/com.z3y.graphlit/Samples/Example.graphlitc");
+            var text = File.ReadAllText("Packages/com.z3y.graphlit/Shaders/Custom Lighting/Example.graphlitc");
             ProjectWindowUtil.CreateAssetWithContent($"New Custom Lighting.{EXTENSION}", text);
         }
     }
