@@ -45,9 +45,9 @@ namespace Graphlit
             AddPort(new(PortDirection.Input, new Float(3, false), ALBEDO, "Albedo"));
             AddPort(new(PortDirection.Input, new Float(1, false), ALPHA, "Alpha"));
 
+            AddPort(new(PortDirection.Input, new Float(1, false), OCCLUSION, "Occlusion"));
             AddPort(new(PortDirection.Input, new Float(1, false), ROUGHNESS, "Roughness"));
             AddPort(new(PortDirection.Input, new Float(1, false), METALLIC, "Metallic"));
-            AddPort(new(PortDirection.Input, new Float(1, false), OCCLUSION, "Occlusion"));
             AddPort(new(PortDirection.Input, new Float(1, false), REFLECTANCE, "Reflectance"));
 
             AddPort(new(PortDirection.Input, new Float(3, false), NORMAL_TS, "Normal"));
