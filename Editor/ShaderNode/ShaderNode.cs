@@ -169,6 +169,30 @@ namespace Graphlit
                 }
             }
         }
+
+        // serialize, disconnect then reconnect
+        public void SafeModifyInputs(Action a)
+        {
+            var node = new SerializableNode(this);
+
+
+            foreach (var port in Inputs.ToArray())
+            {
+                Disconnect(port);
+                port.parent.Remove(port);
+            }
+
+            portDescriptors.Clear();
+            _portBindings.Clear();
+
+            a.Invoke();
+
+            var sg = new SerializableGraph();
+            sg.nodes.Add(node);
+            sg.SetupNodeConnections(GraphView);
+        }
+
+        // what the fuck does this do
         public void ResetPorts()
         {
             foreach (var port in PortElements.ToArray())
@@ -209,6 +233,7 @@ namespace Graphlit
                 }
                 AddPort(desc.Value, false);
             }
+
 
             //UpdateGraphView();
             //RefreshPorts();

@@ -6,6 +6,7 @@ using UnityEditor;
 using System;
 using UnityEditor.UIElements;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Graphlit
 {
@@ -17,9 +18,11 @@ namespace Graphlit
 
         public override string Name { get; } = "Lit";
         public override int[] VertexPorts => new int[] { POSITION, NORMAL_VERTEX, TANGENT };
-        public override int[] FragmentPorts => _fragmentPorts.ToArray();
+        public override int[] FragmentPorts => _fragmentPorts.Union(_customFragmentPorts).ToArray();
 
         private List<int> _fragmentPorts = new() { ALBEDO, ALPHA, METALLIC, OCCLUSION, EMISSION, ROUGHNESS, REFLECTANCE, NORMAL_TS, CUTOFF };
+        private List<int> _customFragmentPorts = new();
+
 
         const int POSITION = 0;
         const int NORMAL_VERTEX = 1;
@@ -36,6 +39,7 @@ namespace Graphlit
 
         public override void Initialize()
         {
+            inputContainer.Clear();
             AddPort(new(PortDirection.Input, new Float(3, false), POSITION, "Position"));
             AddPort(new(PortDirection.Input, new Float(3, false), NORMAL_VERTEX, "Normal"));
             AddPort(new(PortDirection.Input, new Float(3, false), TANGENT, "Tangent"));
@@ -78,6 +82,8 @@ namespace Graphlit
         const int customPortOffset = 100;
         void InitializeCustomLightingPorts()
         {
+            _customFragmentPorts.Clear();
+
             if (string.IsNullOrEmpty(_customLighting))
             {
                 return;
@@ -87,12 +93,13 @@ namespace Graphlit
 
             var ports = asset.outputs;
 
+
             foreach (var port in ports)
             {
                 int id = port.id + customPortOffset;
                 AddPort(new(PortDirection.Input, new Float(port.dimension, false), id, port.name));
 
-                _fragmentPorts.Add(id);
+                _customFragmentPorts.Add(id);
 
                 if (port.binding != PortBinding.None)
                 {
@@ -155,6 +162,10 @@ namespace Graphlit
 
                 _customLighting = Helpers.AssetSerializableReference(x.newValue);
 
+                SafeModifyInputs(() =>
+                {
+                    Initialize();
+                });
             });
             root.Add(customLighting);
 
