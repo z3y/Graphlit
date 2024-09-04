@@ -171,8 +171,13 @@ namespace Graphlit
             builder.properties.Add(_bicubicLightmap);
             builder.properties.Add(_lmSpec);
             builder.properties.Add(_nonLinearLightprobeSh);
-            builder.properties.Add(_specularHighlights);
-            builder.properties.Add(_glossyReflections);
+
+            if (_specular)
+            {
+                builder.properties.Add(_specularHighlights);
+                builder.properties.Add(_glossyReflections);
+            }
+
 
 
 
