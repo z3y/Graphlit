@@ -228,7 +228,7 @@
         "defaultPreviewState": 1,
         "customEditor": "",
         "fallback": "",
-        "include": "#ifndef _NORMALMAP\n#define _NORMAL_DROPOFF_OFF\n#endif\n\n// enable monosh\n//#define _BAKERY_MONOSH",
+        "include": "#ifndef _NORMALMAP\n#define _NORMAL_DROPOFF_OFF\n#endif",
         "outlinePass": 0,
         "stencil": false,
         "vrcFallbackTags": {
@@ -1193,7 +1193,7 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": false,
-            "data": "{\"_cbirp\":false,\"_specular\":true,\"_fwdAddBlendOpMax\":false,\"_customLighting\":\"\",\"_normal\":0}"
+            "data": "{\"_cbirp\":false,\"_specular\":false,\"_fwdAddBlendOpMax\":true,\"_customLighting\":\"-6750239444755058063|9505dc61a579ef349bb7f52c0a8b3d19\",\"_normal\":0}"
         }
     ],
     "groups": [

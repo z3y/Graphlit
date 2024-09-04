@@ -16,6 +16,18 @@ namespace Graphlit
         [MenuItem("Assets/Create/Graphlit/Lit Graph")]
         public static void CreateVariantFile() => ShaderGraphImporter.CreateEmptyTemplate<LitTemplate>();
 
+        [MenuItem("Assets/Create/Graphlit/Toon Graph")]
+        public static void CreateToonVariant()
+        {
+            const string samplePath = "Packages/com.z3y.graphlit/Shaders/Toon.graphlit";
+            var graph = ShaderGraphImporter.ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
+            graph.data.shaderName = "Default Shader";
+
+            var jsonData = JsonUtility.ToJson(graph, true);
+            ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.graphlit", jsonData);
+        }
+
+
         public override string Name { get; } = "Lit";
         public override int[] VertexPorts => new int[] { POSITION, NORMAL_VERTEX, TANGENT };
         public override int[] FragmentPorts => _fragmentPorts.Union(_customFragmentPorts).ToArray();
