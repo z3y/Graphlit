@@ -91,6 +91,11 @@ namespace Graphlit
 
             var asset = Helpers.SerializableReferenceToObject<CustomLightingAsset>(_customLighting);
 
+            if (asset is null)
+            {
+                return;
+            }
+
             var ports = asset.outputs;
 
 

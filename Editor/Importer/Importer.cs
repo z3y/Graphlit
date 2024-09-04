@@ -36,15 +36,16 @@ namespace Graphlit
 
             string guid = AssetDatabase.AssetPathToGUID(assetPath);
 
-            if (_graphViews.TryGetValue(guid, out var graphView))
+            /*if (_graphViews.TryGetValue(guid, out var graphView))
             {
-            }
-            else if (graphView is null)
-            {
+                Debug.Log("cache");
+            }*/
+            //else if (graphView is null)
+            //{
                 var data = ReadGraphData(guid);
-                graphView = new ShaderGraphView(null);
+                var graphView = new ShaderGraphView(null);
                 data.PopulateGraph(graphView);
-            }
+            //}
 
             var builder = new ShaderBuilder(GenerationMode.Final, graphView, target);
             if (string.IsNullOrEmpty(builder.shaderName) || builder.shaderName == "Default Shader")

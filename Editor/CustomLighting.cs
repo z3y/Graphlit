@@ -23,14 +23,6 @@ namespace Graphlit
             [Range(1, 4)] public int dimension;
             public int id;
             public PortBinding binding;
-
-            public CustomPort()
-            {
-                id = 0;
-                value = "1.0";
-                binding = PortBinding.None;
-                dimension = 1;
-            }
         }
 
         public List<CustomPort> outputs = new();
@@ -72,7 +64,6 @@ namespace Graphlit
             _outputs = serializedObject.FindProperty("outputs");
 
             _reorderableList = PropertyDescriptor.CreateReordableList(t.properties, null);
-
         }
 
         public override void OnInspectorGUI()
