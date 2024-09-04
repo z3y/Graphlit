@@ -181,7 +181,7 @@ namespace Graphlit
                 string[] split = referenceName.Split(' ');
                 if (split.Length < 2)
                 {
-                    Debug.LogError("Wrong keyword declaration");
+                    Debug.LogError($"Wrong keyword declaration: {referenceName}");
                     return "_KEYWORD";
                 }
                 return split[1];

@@ -1007,6 +1007,50 @@
             "data": "{\"_name\":\"normal\"}"
         },
         {
+            "type": "Graphlit.RegisterVariableNode",
+            "guid": "bf4bf0fa-63ba-4c9d-8287-80b5a8cac080",
+            "x": -724,
+            "y": 414,
+            "connections": [
+                {
+                    "a": 5,
+                    "b": 0,
+                    "node": "e519f896-449b-444d-a802-4dedb5eada34"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_name\":\"ARM\"}"
+        },
+        {
+            "type": "Graphlit.AppendNode",
+            "guid": "e519f896-449b-444d-a802-4dedb5eada34",
+            "x": -907,
+            "y": 389,
+            "connections": [
+                {
+                    "a": 3,
+                    "b": 0,
+                    "node": "46a61731-5656-428a-b3aa-9ed30199b8ab"
+                },
+                {
+                    "a": 101,
+                    "b": 1,
+                    "node": "80f8bb10-9a4f-4ae5-9696-79104c02a2ae"
+                },
+                {
+                    "a": 2,
+                    "b": 2,
+                    "node": "f722ba12-f2ba-4311-9aaf-d6e7ab7b8965"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
+        },
+        {
             "type": "Graphlit.LitTemplate",
             "guid": "a829ca21-17ba-4d50-b65d-d5c65e50b728",
             "x": 146,
@@ -1057,50 +1101,6 @@
             "preview": 0,
             "previewDisabled": false,
             "data": "{\"_cbirp\":true,\"_specular\":true,\"_customLighting\":\"\",\"_normal\":0}"
-        },
-        {
-            "type": "Graphlit.RegisterVariableNode",
-            "guid": "bf4bf0fa-63ba-4c9d-8287-80b5a8cac080",
-            "x": -724,
-            "y": 414,
-            "connections": [
-                {
-                    "a": 5,
-                    "b": 0,
-                    "node": "e519f896-449b-444d-a802-4dedb5eada34"
-                }
-            ],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": "{\"_name\":\"ARM\"}"
-        },
-        {
-            "type": "Graphlit.AppendNode",
-            "guid": "e519f896-449b-444d-a802-4dedb5eada34",
-            "x": -907,
-            "y": 389,
-            "connections": [
-                {
-                    "a": 3,
-                    "b": 0,
-                    "node": "46a61731-5656-428a-b3aa-9ed30199b8ab"
-                },
-                {
-                    "a": 101,
-                    "b": 1,
-                    "node": "80f8bb10-9a4f-4ae5-9696-79104c02a2ae"
-                },
-                {
-                    "a": 2,
-                    "b": 2,
-                    "node": "f722ba12-f2ba-4311-9aaf-d6e7ab7b8965"
-                }
-            ],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": ""
         }
     ],
     "groups": [
