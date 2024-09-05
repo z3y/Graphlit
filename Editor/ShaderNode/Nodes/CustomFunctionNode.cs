@@ -21,7 +21,7 @@ namespace Graphlit
             var include = new ShaderInclude();
             AssetDatabase.SetLabels(include, new[] { Tag[0] });
         }
-        const string DefaultFunction = "void CustomFunction(float3 In, out float3 Out)\n{\n    Out = In;\n}";
+        const string DefaultFunction = "void CustomFunction(float3 in_0, out float3 out_1)\n{\n  out_1 = in_0;\n}";
         [SerializeField] string _code = DefaultFunction;
         private string _fileName;
         string _path;
