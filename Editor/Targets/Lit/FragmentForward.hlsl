@@ -235,17 +235,11 @@ half4 frag(Varyings varyings) : SV_Target
     fr = giInput.energyCompensation * giInput.brdf;
     giOutput.indirectSpecular *= fr;
 
-    half specularAO;
     #if defined(QUALITY_LOW)
-        specularAO = surf.Occlusion;
+        giInput.specularAO = surf.Occlusion;
     #else
-        specularAO = Filament::ComputeSpecularAO(giInput.NoV, surf.Occlusion, roughness2);
+       giInput.specularAO = Filament::ComputeSpecularAO(giInput.NoV, surf.Occlusion, roughness2);
     #endif
-    giOutput.directSpecular *= specularAO;
-
-    half indirectOcclusionIntensity = 1.0;
-    specularAO *= lerp(1.0, saturate(sqrt(dot(giOutput.indirectOcclusion + giOutput.directDiffuse, 1.0))), indirectOcclusionIntensity);
-    giOutput.indirectSpecular *= specularAO;
 
     AlphaTransparentBlend(surf.Alpha, surf.Albedo, surf.Metallic);
 

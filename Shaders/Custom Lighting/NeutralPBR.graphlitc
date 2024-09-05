@@ -22,20 +22,8 @@ float3 CommerceToneMapping(float3 color)
 #define CUSTOM_COLOR
 COLOR_FUNC // args: surf, fragData, giInput, giOutput
 {
-
-    half4 color = half4(surf.Albedo * (1.0 - surf.Metallic) * (giOutput.indirectDiffuse * surf.Occlusion + giOutput.directDiffuse), surf.Alpha);
-    color.rgb += giOutput.directSpecular;
-
-    
-    #if defined(UNITY_PASS_FORWARDBASE)
-        color.rgb += giOutput.indirectSpecular;
-    #endif
-
+    half4 color = COLOR_DEFAULT;
     color.rgb = CommerceToneMapping(color.rgb);
-    
-    #if defined(UNITY_PASS_FORWARDBASE)
-        color.rgb += surf.Emission;
-    #endif
     
     return color;
 }

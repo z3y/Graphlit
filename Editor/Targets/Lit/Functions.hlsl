@@ -15,7 +15,8 @@ struct GIInput
     half3 brdf;
     half3 energyCompensation;
     float3 normalWS; // this is the normal after the normal map is applied
-    
+    half specularAO;
+
     static GIInput New()
     {
         GIInput giInput = (GIInput)0;
@@ -241,6 +242,10 @@ void LightDefault(Light light, FragmentData fragData, GIInput giInput, SurfaceDe
 #define COLOR_DEFAULT ColorDefault(surf, fragData, giInput, giOutput)
 half4 ColorDefault(SurfaceDescription surf, FragmentData fragData, GIInput giInput, GIOutput giOutput)
 {
+    half indirectOcclusionIntensity = 1.0;
+    giOutput.indirectSpecular *= giInput.specularAO * lerp(1.0, saturate(sqrt(dot(giOutput.indirectOcclusion + giOutput.directDiffuse, 1.0))), indirectOcclusionIntensity);
+    giOutput.directSpecular *= giInput.specularAO;
+
     half4 color = half4(surf.Albedo * (1.0 - surf.Metallic) * (giOutput.indirectDiffuse * surf.Occlusion + giOutput.directDiffuse), surf.Alpha);
     color.rgb += giOutput.directSpecular;
 
