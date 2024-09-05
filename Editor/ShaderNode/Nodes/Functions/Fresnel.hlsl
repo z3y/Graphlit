@@ -1,5 +1,5 @@
-void Fresnel(out half Fresnel, float3 NormalWS, float3 ViewDirectionWS, half Power = 1)
+void Fresnel(out half fresnel_0, float3 viewDirectionWS_2, float3 normalWS_1, half power_3 = 1)
 {
-    half Dot = 1.0 - saturate(dot(NormalWS, ViewDirectionWS));
-    Fresnel = pow(Dot, Power);
+    half Dot = 1.0 - saturate(dot(normalWS_1, viewDirectionWS_2));
+    fresnel_0 = pow(Dot, power_3);
 }

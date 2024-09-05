@@ -78,7 +78,7 @@ namespace Graphlit
             {
                 Bind(item.Key, item.Value);
             }
-            TitleLabel.text = _useFile ? _fileName : _functionParser.methodName;
+            TitleLabel.text = _useFile ? _fileName : FunctionParser.AddSpacesBeforeCapitals(_functionParser.methodName);
         }
 
         public override void AdditionalElements(VisualElement root)

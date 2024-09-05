@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Graphlit.Nodes.PortType;
+using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace Graphlit
 {
@@ -116,21 +118,28 @@ namespace Graphlit
                         }
 
                         int id = i;
+                        var nameSplit = name.Split("_");
+                        if (nameSplit.Length > 1 && int.TryParse(nameSplit[1], out int newId))
+                        {
+                            id = newId;
+                        }
+                        var displayName = nameSplit[0];
                         if (direction == PortDirection.Output) id += 100;
-                        descriptors.Add(new(direction, StringToPortType(type, isArray), id, name));
-                        if (Enum.TryParse(name, true, out PortBinding binding))
+                        descriptors.Add(new(direction, StringToPortType(type, isArray), id, AddSpacesBeforeCapitals(displayName)));
+
+                        if (Enum.TryParse(displayName, true, out PortBinding binding))
                         {
                             bindings[id] = binding;
                         }
-                        else if (name.Equals("uv", StringComparison.OrdinalIgnoreCase))
+                        else if (displayName.Equals("uv", StringComparison.OrdinalIgnoreCase))
                         {
                             bindings[id] = PortBinding.UV0;
                         }
-                        else if (name.Equals("position", StringComparison.OrdinalIgnoreCase))
+                        else if (displayName.Equals("position", StringComparison.OrdinalIgnoreCase))
                         {
                             bindings[id] = PortBinding.PositionWS;
                         }
-                        else if (name.Equals("normal", StringComparison.OrdinalIgnoreCase))
+                        else if (displayName.Equals("normal", StringComparison.OrdinalIgnoreCase))
                         {
                             bindings[id] = PortBinding.NormalWS;
                         }
@@ -161,6 +170,14 @@ namespace Graphlit
 
             return false;
 
+        }
+
+        public static string AddSpacesBeforeCapitals(string input)
+        {
+            string reuslt =  Regex.Replace(input, "(?<!^)([A-Z][a-z]|(?<=[a-z])[A-Z])", " $1");
+
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            return textInfo.ToTitleCase(reuslt);
         }
     }
 }
