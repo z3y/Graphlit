@@ -3,7 +3,6 @@ using Graphlit.Nodes.PortType;
 using Graphlit.Nodes;
 using UnityEngine;
 using UnityEditor;
-using UnityEngine.Rendering;
 
 namespace Graphlit
 {

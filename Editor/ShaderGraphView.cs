@@ -46,7 +46,7 @@ namespace Graphlit
                 _searchWindow = ScriptableObject.CreateInstance<ShaderNodeSearchWindow>();
                 _searchWindow.Initialize(this);
             }
-            nodeCreationRequest = context => SearchWindow.Open(new SearchWindowContext(context.screenMousePosition, 250, 350), _searchWindow);
+            nodeCreationRequest = context => SearchWindow.Open(new SearchWindowContext(context.screenMousePosition, 350, 450), _searchWindow);
 
             RegisterCallback<KeyDownEvent>(NodeHotkeyKeyDown);
             RegisterCallback<KeyUpEvent>(NodeHotkeyUpDown);

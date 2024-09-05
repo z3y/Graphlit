@@ -41,11 +41,17 @@ namespace Graphlit
             };
 
 
+
             tree.Add(new SearchTreeGroupEntry(new GUIContent("Properties"), 1));
             for (int i = 0; i < _graphView.graphData.properties.Count; i++)
             {
                 PropertyDescriptor property = _graphView.graphData.properties[i];
-                tree.Add(new SearchTreeEntry(new GUIContent(property.type.ToString() + ": " + property.displayName, _nodeIndentationIcon)) { level = 2, userData = i });
+                string text = $"Prop: {property.displayName}";
+                if (property.type != PropertyType.KeywordToggle && !string.IsNullOrEmpty(property.referenceName))
+                {
+                    text += $" [{property.GetReferenceName(GenerationMode.Final)}]";
+                }
+                tree.Add(new SearchTreeEntry(new GUIContent(text, _nodeIndentationIcon)) { level = 2, userData = i });
             }
 
 
