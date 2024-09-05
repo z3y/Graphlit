@@ -150,6 +150,18 @@ namespace Graphlit
                 newGraph.nodes[i] = node;
             }
 
+            for (int i = 0; i < groups.Count; i++)
+            {
+                var g = groups[i];
+
+                for (int j = 0; j < g.elements.Count; j++)
+                {
+                    if (guidMap.TryGetValue(groups[i].elements[j], out string newInputGuid))
+                    {
+                        groups[i].elements[j] = newInputGuid;
+                    }
+                }
+            }
             return newGraph;
         }
 
@@ -164,7 +176,6 @@ namespace Graphlit
 
                 if (existingProperty is null && existingPropertyGuid is null)
                 {
-                    Debug.Log($"creating prop {copiedProp.referenceName}, {copiedProp.guid}");
                     graphView.graphData.properties.Add(copiedProp);
                 }
             }
