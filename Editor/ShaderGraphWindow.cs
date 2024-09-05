@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -34,7 +35,12 @@ namespace Graphlit
 
             AddBar(rootVisualElement);
             conainer.Add(GetNodePropertiesElement());
+
             titleContent = new GUIContent(data.data.shaderName);
+            if (string.IsNullOrEmpty(data.data.shaderName) || data.data.shaderName == "Default Shader")
+            {
+                titleContent = new GUIContent(data.data.shaderName = "Graphlit/" + Path.GetFileNameWithoutExtension(AssetDatabase.GUIDToAssetPath(importerGuid)));
+            }
 
             if (focus)
             {

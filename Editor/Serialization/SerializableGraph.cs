@@ -156,17 +156,33 @@ namespace Graphlit
         public List<ShaderNode> PasteElementsAndOverwiteGuids(ShaderGraphView graphView, Vector2? positionOffset = null)
         {
             var newElements = GenerateNewGUIDs();
+
+            foreach (var copiedProp in data.properties)
+            {
+                var existingProperty = graphView.graphData.properties.Find(x => x.GetReferenceName(GenerationMode.Final) == copiedProp.GetReferenceName(GenerationMode.Final));
+                var existingPropertyGuid = graphView.graphData.properties.Find(x => x.guid == copiedProp.guid);
+
+                if (existingProperty is null && existingPropertyGuid is null)
+                {
+                    Debug.Log($"creating prop {copiedProp.referenceName}, {copiedProp.guid}");
+                    graphView.graphData.properties.Add(copiedProp);
+                }
+            }
+
             var graphElements = new List<ShaderNode>();
 
             foreach (var serializableNode in newElements.nodes)
             {
                 var graphElement = graphView.AddNode(serializableNode);
+
                 if (positionOffset is Vector2 offset)
                 {
                     var previousPosition = serializableNode.Position;
                     graphElement.SetPosition(new Rect(previousPosition + offset, Vector2.one));
                 }
                 graphElements.Add(graphElement);
+
+
             }
 
             newElements.SetupNodeConnections(graphView);

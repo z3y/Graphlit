@@ -126,12 +126,12 @@ namespace Graphlit
 
         public void SetDirty() => _editorWindow.SetDirty();
 
-        private SerializableGraph _lastCopyGraph;
+        //private static string _lastCopyGraph;
         public string SerializeGraphElementsImpl(IEnumerable<GraphElement> elements)
         {
             var data = new SerializableGraph
             {
-                nodes = SerializableGraph.ElementsToSerializableNode(elements).ToList()
+                nodes = SerializableGraph.ElementsToSerializableNode(elements).ToList(),
             };
 
             foreach (var element in elements)
@@ -140,20 +140,23 @@ namespace Graphlit
                 {
                     data.groups.Add(new SerializableGraph.SerializableGroup(group));
                 }
+                else if (element is PropertyNode prop)
+                {
+                    data.data.properties.Add(prop.propertyDescriptor);
+                }
             }
 
-            _lastCopyGraph = data;
 
-            //var jsonData = JsonUtility.ToJson(data, false);
-            return " ";
+            //_lastCopyGraph = JsonUtility.ToJson(data, false);
+            return JsonUtility.ToJson(data, false);
         }
 
         public void UnserializeAndPasteImpl(string operationName, string jsonData)
         {
             //RecordUndo();
 
-            //var data = JsonUtility.FromJson<SerializableGraph>(jsonData);
-            var data = _lastCopyGraph;
+            var data = JsonUtility.FromJson<SerializableGraph>(jsonData);
+            //var data = _lastCopyGraph;
 
             //Vector2 mousePosition = new Vector2(-200, -200);
             //ShaderGraphImporter.DeserializeNodesToGraph(data, this, mousePosition);
