@@ -26,7 +26,10 @@ namespace Graphlit
         GrabScreenPosition = 18,
         ScreenPosition = 19,
         TangentSpaceTransform = 20,
+        LightmapUV = 21,
+        ShadowCoord = 22,
     }
+
 
     public enum BindingSpace
     {
@@ -115,6 +118,7 @@ namespace Graphlit
                     PortBinding.BitangentWS => RequireBitangentWSVertex(pass),
                     PortBinding.BitangentOS => RequireBitangentOSVertex(pass),
                     PortBinding.FrontFace => "data.frontFace",
+                    PortBinding.LightmapUV => "data.lightmapUV",
                     PortBinding.PositionCSRaw => RequirePositionCSRawVertex(pass),
                     PortBinding.GrabScreenPosition => throw new NotImplementedException(),
                     PortBinding.ScreenPosition => throw new NotImplementedException(),
@@ -148,6 +152,8 @@ namespace Graphlit
                     PortBinding.GrabScreenPosition => RequireGrabScrenPositionFragment(pass),
                     PortBinding.ScreenPosition => RequireScrenPositionFragment(pass),
                     PortBinding.TangentSpaceTransform => RequireTangentSpaceTransformFragment(pass),
+                    PortBinding.LightmapUV => "data.lightmapUV",
+                    PortBinding.ShadowCoord => "data.shadowCoords",
                     _ => throw new NotImplementedException(),
                 }; ;
             }
@@ -343,5 +349,16 @@ namespace Graphlit
             var bitangentWS = RequireBitangentWSVertex(pass);
             return "data.bitangentOS";
         }
+
+
+        public static readonly PortBinding[] nonOverridableBindings = new[]
+        {
+            PortBinding.FrontFace,
+            PortBinding.LightmapUV,
+            PortBinding.ShadowCoord,
+            PortBinding.TangentSpaceTransform,
+            PortBinding.VertexColor,
+            PortBinding.PositionCSRaw
+        };
     }
 }

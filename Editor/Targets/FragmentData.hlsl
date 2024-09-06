@@ -18,6 +18,7 @@ struct FragmentData
     float2 grabScreenPosition;
     float2 screenPosition;
     float2 lightmapUV;
+    float4 shadowCoords;
 
     static FragmentData Create(Varyings varyings)
     {
@@ -72,6 +73,10 @@ struct FragmentData
 
         #ifdef LIGHTMAP_ON
             output.lightmapUV = varyings.lightmapUV;
+        #endif
+
+        #if defined(UNITY_PASS_FORWARDBASE) || defined(UNITY_PASS_FORWARDADD)
+            output.shadowCoords = READ_SHADOW_COORDS(varyings);
         #endif
 
         return output;

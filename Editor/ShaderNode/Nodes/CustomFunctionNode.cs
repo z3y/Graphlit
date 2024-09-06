@@ -67,7 +67,7 @@ namespace Graphlit
 
             foreach (var descriptor in _functionParser.descriptors)
             {
-                AddPort(descriptor);
+                var port = AddPort(descriptor);
             }
             Update();
         }
@@ -77,6 +77,15 @@ namespace Graphlit
             foreach (var item in _functionParser.bindings)
             {
                 Bind(item.Key, item.Value);
+
+                if (PortBindings.nonOverridableBindings.Contains(item.Value))
+                {
+                    var p = Inputs.First(x => x.GetPortID() == item.Key);
+                    if (p != null)
+                    {
+                        p.style.display = DisplayStyle.None;
+                    }
+                }
             }
             TitleLabel.text = _useFile ? _fileName : FunctionParser.AddSpacesBeforeCapitals(_functionParser.methodName);
         }

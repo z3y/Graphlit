@@ -15,6 +15,7 @@ struct VertexData
     float3x3 tangentSpaceTransform;
     bool frontFace;
     float4 positionCSR;
+    float2 lightmapUV;
 
     static VertexData Create(Attributes attributes)
     {
@@ -57,6 +58,10 @@ struct VertexData
             output.positionCSR = UnityMetaVertexPosition(float4(TransformWorldToObject(output.positionWS), 0), attributes.uv1, attributes.uv2, unity_LightmapST, unity_DynamicLightmapST);
         #else
             output.positionCSR = TransformWorldToHClip(output.positionWS);
+        #endif
+
+        #ifdef LIGHTMAP_ON
+            output.lightmapUV = mad(attributes.uv1.xy, unity_LightmapST.xy, unity_LightmapST.zw);
         #endif
 
         return output;

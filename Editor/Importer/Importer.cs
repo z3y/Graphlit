@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Graphlit
 {
-    [ScriptedImporter(3, new[] { "graphlit", "zsg" }, 0)]
+    [ScriptedImporter(4, new[] { "graphlit", "zsg" }, 0)]
     public class ShaderGraphImporter : ScriptedImporter
     {
         internal static Dictionary<string, ShaderGraphView> _graphViews = new();

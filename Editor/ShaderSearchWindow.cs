@@ -33,6 +33,11 @@ namespace Graphlit
                 .OrderBy(x => x.GetCustomAttribute<NodeInfo>().name)
                 .ToArray();
 
+        public class CreateVarContext
+        {
+            public string name;
+        }
+
         public List<SearchTreeEntry> CreateSearchTree(SearchWindowContext context)
         {
             var tree = new List<SearchTreeEntry>
@@ -72,6 +77,21 @@ namespace Graphlit
 
                 tree.Add(new SearchTreeEntry(new GUIContent(shaderInclude.name, _nodeIndentationIcon)) { level = 2, userData = shaderInclude });
             }
+
+            var existingVars = _graphView.graphElements.OfType<RegisterVariableNode>().ToArray();
+
+            if (existingVars.Length > 0)
+            {
+                tree.Add(new SearchTreeGroupEntry(new GUIContent("Variables"), 1));
+
+                foreach (var var in existingVars)
+                {
+                    var name = var._name;
+                    var ctx = new CreateVarContext() { name = name };
+                    tree.Add(new SearchTreeEntry(new GUIContent($"Get: {name}", _nodeIndentationIcon)) { level = 2, userData = ctx });
+                }
+            }
+
 
 
             List<string> groups = new();
@@ -144,6 +164,13 @@ namespace Graphlit
             {
                 var node = Activator.CreateInstance<CustomFunctionNode>();
                 node.UseFile(shaderInclude);
+                _graphView.CreateNode(node, context.screenMousePosition);
+                return true;
+            }
+            else if (userData is CreateVarContext var)
+            {
+                var node = (FetchVariableNode)Activator.CreateInstance(typeof(FetchVariableNode));
+                node._name = var.name;
                 _graphView.CreateNode(node, context.screenMousePosition);
                 return true;
             }

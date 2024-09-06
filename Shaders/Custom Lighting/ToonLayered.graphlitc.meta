@@ -9,22 +9,11 @@ ScriptedImporter:
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 827475b98c62cbe40a87475805eb6d0b, type: 3}
   properties:
-  - guid: 13d8f934-d86f-4e36-b1db-190a6022eb24
-    referenceName: shader_feature_local _TOONSHADOW
-    displayName: Enable
-    type: 13
-    customAttributes: '[Header(Shadow)]'
-    defaultAttributes: 0
-    rangeX: 0
-    rangeY: 0
-    _value: 
-    _defaultTexture: 
-    declaration: 0
   - guid: 3d87976f-88a4-4fa7-843c-d6da8a5fe537
     referenceName: _LightMinLimit
     displayName: Light Min
     type: 1
-    customAttributes: '[Header(Adjustments)]'
+    customAttributes: 
     defaultAttributes: 0
     rangeX: 0
     rangeY: 1

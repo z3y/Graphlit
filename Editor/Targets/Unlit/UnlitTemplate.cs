@@ -3,10 +3,11 @@ using Graphlit.Nodes.PortType;
 using Graphlit.Nodes;
 using UnityEngine;
 using UnityEditor;
+using System;
 
 namespace Graphlit
 {
-    [NodeInfo("Targets/Unlit Target")]
+    [NodeInfo("Targets/Unlit Target"), Serializable]
     public class UnlitTemplate : TemplateOutput
     {
         [MenuItem("Assets/Create/Graphlit/Unlit Graph")]
@@ -46,15 +47,17 @@ namespace Graphlit
             DefaultValues[CUTOFF] = "0.5";
         }
 
-        static readonly PropertyDescriptor _surfaceOptionsStart = new(PropertyType.Float, "SurfaceOptions", "_SurfaceOptions") { customAttributes = "[Foldout]" };
-        static readonly PropertyDescriptor _mode = new(PropertyType.Float, "Rendering Mode", "_Mode") { customAttributes = "[Enum(Opaque, 0, Cutout, 1, Fade, 2, Transparent, 3, Additive, 4, Multiply, 5)]" };
-        static readonly PropertyDescriptor _srcBlend = new(PropertyType.Float, "Source Blend", "_SrcBlend") { FloatValue = 1, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
-        static readonly PropertyDescriptor _dstBlend = new(PropertyType.Float, "Destination Blend", "_DstBlend") { FloatValue = 0, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
-        static readonly PropertyDescriptor _zwrite = new(PropertyType.Float, "ZWrite", "_ZWrite") { FloatValue = 1, customAttributes = "[Enum(Off, 0, On, 1)]" };
-        static readonly PropertyDescriptor _cull = new(PropertyType.Float, "Cull", "_Cull") { FloatValue = 2, customAttributes = "[Enum(UnityEngine.Rendering.CullMode)]" };
-        static readonly PropertyDescriptor _properties = new(PropertyType.Float, "Properties", "_Properties") { customAttributes = "[Foldout]" };
+        [SerializeField] bool _customLighting = false;
+        public override void AdditionalElements(VisualElement root)
+        {
+            base.AdditionalElements(root);
 
-        const string Vertex = "Packages/com.z3y.graphlit/Editor/Targets/Unlit/Vertex.hlsl";
+            var toggle1 = new Toggle("Custom Lighting") { value = _customLighting };
+            toggle1.RegisterValueChangedCallback(x => _customLighting = x.newValue);
+            root.Add(toggle1);
+        }
+
+        const string Vertex = "Packages/com.z3y.graphlit/Editor/Targets/Vertex.hlsl";
         const string FragmentForward = "Packages/com.z3y.graphlit/Editor/Targets/Unlit/FragmentForward.hlsl";
         const string FragmentShadow = "Packages/com.z3y.graphlit/Editor/Targets/Unlit/FragmentShadow.hlsl";
 
@@ -67,7 +70,6 @@ namespace Graphlit
             builder.properties.Add(_zwrite);
             builder.properties.Add(_cull);
             builder.properties.Add(_properties);
-
 
             builder.subshaderTags["RenderType"] = "Opaque";
             builder.subshaderTags["Queue"] = "Geometry";
@@ -84,7 +86,12 @@ namespace Graphlit
 
                 pass.pragmas.Add("#pragma shader_feature_local _ _ALPHAFADE_ON _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
 
-                //pass.pragmas.Add("#pragma multi_compile_fwdbase");
+                if (_customLighting)
+                {
+                    pass.pragmas.Add("#pragma multi_compile_fwdbase");
+                    pass.pragmas.Add("#pragma skip_variants LIGHTPROBE_SH");
+                    pass.pragmas.Add("#pragma shader_feature_fragment VERTEXLIGHT_ON");
+                }
                 pass.pragmas.Add("#pragma multi_compile_fog");
                 pass.pragmas.Add("#pragma multi_compile_instancing");
 
@@ -93,7 +100,43 @@ namespace Graphlit
 
                 pass.varyings.RequirePositionCS();
                 pass.varyings.RequireCustomString("UNITY_FOG_COORDS(*)");
-                //pass.varyings.RequireCustomString("#ifdef LIGHTMAP_ON\ncentroid float2 lightmapUV : LIGHTMAPUV\n#endif");
+                if (_customLighting)
+                {
+                    pass.attributes.RequireUV(1, 2);
+                    pass.varyings.RequireCustomString("UNITY_SHADOW_COORDS(*)");
+                    pass.varyings.RequireCustomString("#ifdef LIGHTMAP_ON\ncentroid float2 lightmapUV : LIGHTMAPUV;\n#endif");
+                }
+                pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
+                pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
+
+                pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                builder.AddPass(pass);
+            }
+
+            if (_customLighting)
+            {
+                var pass = new PassBuilder("FORWARD_DELTA", Vertex, FragmentForward, POSITION, NORMAL, TANGENT, COLOR, ALPHA, CUTOFF);
+                pass.tags["LightMode"] = "ForwardAdd";
+
+                pass.renderStates["Fog"] = "{ Color (0,0,0,0) }";
+                pass.renderStates["Cull"] = "[_Cull]";
+                pass.renderStates["Blend"] = "[_SrcBlend] One";
+                pass.renderStates["ZWrite"] = "Off";
+                pass.renderStates["ZTest"] = "LEqual";
+
+                pass.pragmas.Add("#pragma shader_feature_local _ _ALPHAFADE_ON _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
+
+                pass.pragmas.Add("#pragma multi_compile_fwdadd_fullshadows");
+                pass.pragmas.Add("#pragma multi_compile_fog");
+                pass.pragmas.Add("#pragma multi_compile_instancing");
+
+                pass.attributes.RequirePositionOS();
+                pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
+
+                pass.varyings.RequirePositionCS();
+
+                pass.varyings.RequireCustomString("UNITY_FOG_COORDS(*)");
+                pass.varyings.RequireCustomString("UNITY_SHADOW_COORDS(*)");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 

@@ -409,6 +409,7 @@ namespace Graphlit
                     string cull = pass.renderStates["Cull"];
                     pass.outlinePass = true;
                     pass.renderStates["Cull"] = "Front";
+                    //pass.tags["LightMode"] = "Always";
                     AppendPass(pass);
                     pass.outlinePass = false;
                     pass.renderStates["Cull"] = cull;
@@ -420,6 +421,7 @@ namespace Graphlit
                 {
                     pass.outlinePass = true;
                     pass.renderStates["Cull"] = "Front";
+                    //pass.tags["LightMode"] = "Always";
                     AppendPass(pass);
                 }
             }

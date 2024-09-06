@@ -921,6 +921,8 @@ namespace Graphlit
                     height = 12,
                     fontSize = 8,
                     color = new Color(0.25f, 0.25f, 0.25f),
+
+
                 },
             };
             previewToggle.style.SetBorderRadius(0);
