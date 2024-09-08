@@ -602,6 +602,7 @@ namespace Graphlit
                 {
                     var type = (PropertyType)data;
                     properties.Add(new PropertyDescriptor(type));
+                    list.Select(properties.Count - 1);
                 }
 
                 var menu = new GenericMenu();

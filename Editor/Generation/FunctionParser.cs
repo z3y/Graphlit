@@ -118,12 +118,13 @@ namespace Graphlit
                         }
 
                         int id = i;
-                        var nameSplit = name.Split("_");
+                        /*var nameSplit = name.Split("_");
                         if (nameSplit.Length > 1 && int.TryParse(nameSplit[1], out int newId))
                         {
                             id = newId;
-                        }
-                        var displayName = nameSplit[0];
+                        }*/
+                        //var displayName = nameSplit[0];
+                        var displayName = name;
                         if (direction == PortDirection.Output) id += 100;
                         descriptors.Add(new(direction, StringToPortType(type, isArray), id, AddSpacesBeforeCapitals(displayName)));
 
@@ -174,10 +175,12 @@ namespace Graphlit
 
         public static string AddSpacesBeforeCapitals(string input)
         {
-            string reuslt =  Regex.Replace(input, "(?<!^)([A-Z][a-z]|(?<=[a-z])[A-Z])", " $1");
+            // Add spaces before capital letters and numbers, but not between consecutive numbers
+            string spaced = Regex.Replace(input, "(?<!^)([A-Z][a-z]|(?<=[a-z])[A-Z]|(?<=[a-zA-Z])\\d)", " $1");
 
+            // Capitalize each word
             TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-            return textInfo.ToTitleCase(reuslt);
+            return textInfo.ToTitleCase(spaced);
         }
     }
 }

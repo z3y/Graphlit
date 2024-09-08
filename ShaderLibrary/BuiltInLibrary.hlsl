@@ -1,10 +1,8 @@
-#ifdef UNITY_PBS_USE_BRDF1
-    #ifdef UNITY_SAMPLE_FULL_SH_PER_PIXEL
-    #undef UNITY_SAMPLE_FULL_SH_PER_PIXEL
-    #endif
-
-    #define UNITY_SAMPLE_FULL_SH_PER_PIXEL 1
+#ifdef UNITY_SAMPLE_FULL_SH_PER_PIXEL
+#undef UNITY_SAMPLE_FULL_SH_PER_PIXEL
 #endif
+
+#define UNITY_SAMPLE_FULL_SH_PER_PIXEL 1
 
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Packing.hlsl"
@@ -39,6 +37,7 @@ half4 _SpecColor;
 
 #include "UnityCG/UnityCG.hlsl"
 #include "AutoLight.cginc"
+#include "LightAttenuation.hlsl"
 
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
 
