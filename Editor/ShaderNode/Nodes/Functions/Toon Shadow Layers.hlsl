@@ -16,7 +16,13 @@ float lilTooningNoSaturateScale_local(float aascale, float value, float border, 
 
 void ToonShadowsLayers(out float3 Out, float3 LightColor, float3 LightDirection, float DistanceAttenuation, float ShadowAttenuation, float4 ShadowColor1, float4 ShadowColor2, float4 ShadowColor3, float3 ShadowsBorder, float3 ShadowsReceive, float3 ShadowsBlur, float3 ShadowBorderColor, float ShadowBorderRange, float3 NormalWS)
 {
-    half3 col = LightColor * DistanceAttenuation;
+    half attenuation = DistanceAttenuation * ShadowAttenuation;
+
+    #ifdef UNITY_PASS_FORWARDBASE
+        half3 col = LightColor * DistanceAttenuation;
+    #else
+        half3 col = LightColor * attenuation;
+    #endif
     half3 defaultCol = col;
 
 
@@ -37,7 +43,7 @@ void ToonShadowsLayers(out float3 Out, float3 LightColor, float3 LightDirection,
 
     lns = saturate(lns);
 
-    col = lerp(col, lerp(defaultCol * ShadowColor1, col, lns.x), 1.0);
+    col = lerp(col, lerp(defaultCol * ShadowColor1, col, lns.x), ShadowColor1.a);
     col = lerp(col, lerp(defaultCol * ShadowColor2, col, lns.y), ShadowColor2.a);
     col = lerp(col, lerp(defaultCol * ShadowColor3, col, lns.z), ShadowColor3.a);
 

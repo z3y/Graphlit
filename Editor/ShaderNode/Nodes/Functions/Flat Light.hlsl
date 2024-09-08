@@ -78,7 +78,14 @@ void FlatLightNode(float3 PositionWS, out float3 Color, out float3 Direction, fl
 
 		Color = shMax + lightCol * sqrt(0.5);
 
+        half lightRenorm = max(max(Color.r, Color.g), Color.b);
+        if (lightRenorm > Max)
+        {
+            Color /= lightRenorm / Max;
+        }
+
 		Color = min(Max, Color);
 		Color = max(Min, Color);
+        // Color = lerp(Color, OpenLitGray(Color), _MonochromeLighting);
 	#endif
 }
