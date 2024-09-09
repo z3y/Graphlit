@@ -14,7 +14,7 @@ namespace Graphlit
     public class CustomFunctionNode : ShaderNode
     {
         public static readonly string[] Tag = new[] { "GraphlitFunction", "ZSGFunction" };
-        [MenuItem("Assets/Create/Graphlit/Shader Include")]
+        [MenuItem("Assets/Create/Graphlit/Shader Include", priority = -1)]
         public static void CreateVariantFile()
         {
             ProjectWindowUtil.CreateAssetWithContent("CustomFunction.hlsl", DefaultFunction);

@@ -380,6 +380,21 @@ namespace Graphlit
                 }
                 CreateNode(type, p, false);
             }
+
+            var customFunctions = AssetDatabase.FindAssets("l:GraphlitFunction");
+            foreach (var guid in customFunctions)
+            {
+                var path = AssetDatabase.GUIDToAssetPath(guid);
+                p = new Vector2(p.x + 200, p.y);
+                if (p.x > 2000)
+                {
+                    p.x = 0;
+                    p.y += 400;
+                }
+                var node = new CustomFunctionNode();
+                node.UseFile(AssetDatabase.LoadAssetAtPath<ShaderInclude>(path));
+                CreateNode(node, p, false);
+            }
         }
     }
 }

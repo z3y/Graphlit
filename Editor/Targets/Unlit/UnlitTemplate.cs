@@ -52,7 +52,7 @@ namespace Graphlit
         {
             base.AdditionalElements(root);
 
-            var toggle1 = new Toggle("Custom Lighting") { value = _customLighting };
+            var toggle1 = new Toggle("Custom Lighting") { value = _customLighting, tooltip = "Enable to add all the required keywords and passes for full lighting inside the unlit shader" };
             toggle1.RegisterValueChangedCallback(x => _customLighting = x.newValue);
             root.Add(toggle1);
         }
