@@ -20,6 +20,7 @@ namespace Graphlit
         protected override void Generate(NodeVisitor visitor)
         {
             visitor.RequireGrabpass();
+            //visitor.AddProperty()
             Output(visitor, OUT, $"SampleSceneColor({PortData[UV].Name})");
         }
     }

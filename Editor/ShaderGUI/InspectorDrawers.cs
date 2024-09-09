@@ -121,6 +121,26 @@ namespace Graphlit
             }
         }
 
+        public void OutlinePassToggle(MaterialEditor editor, MaterialProperty property, GUIContent label)
+        {
+            EditorGUI.BeginChangeCheck();
+            editor.ShaderProperty(property, label);
+            foreach (var mat in editor.targets.Cast<Material>())
+            {
+                mat.SetShaderPassEnabled("ALWAYS", property.floatValue > 0);
+            }
+        }
+
+        public void GrabpassToggle(MaterialEditor editor, MaterialProperty property, GUIContent label)
+        {
+            EditorGUI.BeginChangeCheck();
+            editor.ShaderProperty(property, label);
+            foreach (var mat in editor.targets.Cast<Material>())
+            {
+                mat.SetShaderPassEnabled("GrabPass", property.floatValue > 0);
+            }
+        }
+
 
     }
 

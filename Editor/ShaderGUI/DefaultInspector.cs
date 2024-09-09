@@ -131,6 +131,14 @@ namespace Graphlit
                 {
                     p.onGui = (e, p, g) => RenderingModeProperty(e, p, g);
                 }
+                else if (referenceName == "_OutlineToggle")
+                {
+                    p.onGui = (e, p, g) => OutlinePassToggle(e, p, g);
+                }
+                else if (referenceName == "_GrabpassToggle")
+                {
+                    p.onGui = (e, p, g) => GrabpassToggle(e, p, g);
+                }
                 else if (materialProperty.type == MaterialProperty.PropType.Texture)
                 {
                     p.onGui = (e, p, g) => TextureProperty(e, p, g);
