@@ -1,5 +1,7 @@
 // open lit
 
+#include "Main Light.hlsl"
+
 void ShadeSH9ToonDouble(float3 lightDirection, out float3 shMax, out float3 shMin)
 {
     #if !defined(LIGHTMAP_ON)
@@ -36,10 +38,15 @@ float OpenLitLuminance(float3 rgb)
         return dot(rgb, float3(0.0396819152, 0.458021790, 0.00609653955));
     #endif
 }
-
-void ComputeLightDirection(float3 mainLightDir, out float3 lightDirection, out float3 lightDirectionForSH9)
+float OpenLitGray(float3 rgb)
 {
-    float3 mainDir = mainLightDir * OpenLitLuminance(_LightColor0.rgb);
+    return dot(rgb, float3(1.0/3.0, 1.0/3.0, 1.0/3.0));
+}
+
+
+void ComputeLightDirection(float3 mainLightDir, float3 mainLightCol, out float3 lightDirection, out float3 lightDirectionForSH9)
+{
+    float3 mainDir = mainLightDir * OpenLitLuminance(mainLightCol);
     #if !defined(LIGHTMAP_ON)
         float3 sh9Dir = unity_SHAr.xyz * 0.333333 + unity_SHAg.xyz * 0.333333 + unity_SHAb.xyz * 0.333333;
         float3 sh9DirAbs = float3(sh9Dir.x, abs(sh9Dir.y), sh9Dir.z);
@@ -55,28 +62,41 @@ void ComputeLightDirection(float3 mainLightDir, out float3 lightDirection, out f
     #endif
 
     lightDirection = normalize(sh9DirAbs + mainDir);
-    lightDirectionForSH9 = sh9Dir + mainDir;
-    lightDirectionForSH9 = dot(lightDirectionForSH9,lightDirectionForSH9) < 0.000001 ? 0 : normalize(lightDirectionForSH9);
+    // lightDirectionForSH9 = sh9Dir + mainDir;
+    lightDirectionForSH9 = sh9Dir;
+    lightDirectionForSH9 = dot(lightDirectionForSH9, lightDirectionForSH9) < 0.000001 ? 0 : normalize(lightDirectionForSH9);
 }
 
-void FlatLightNode(float3 PositionWS, out float3 Color, out float3 Direction, float Min = 0, float Max = 1)
+void FlatLightNode(float4 ShadowCoord, float2 LightmapUV, float3 PositionWS, out float3 Color, out float3 Direction, out float DistanceAttenuation, out float ShadowAttenuation, out float3 shMin, out float3 shMax, float Min = 0, float Max = 1, float MonochromeLighting = 0, bool applyShadow = true)
 {
+    shMin = 0;
+    shMax = 0;
 	#ifdef PREVIEW
 		Color = 1.0;
 		Direction = normalize(float3(1,1,1));
+        DistanceAttenuation = 1;
+        ShadowAttenuation = 1;
 	#else
-		float3 lightCol = _LightColor0.rgb;
-		float3 lightDir = SafeNormalize(UnityWorldSpaceLightDir(PositionWS));
+		float3 lightCol;
+		float3 lightDir;
+        MainLightData(ShadowCoord, LightmapUV, PositionWS, lightCol, lightDir, DistanceAttenuation, ShadowAttenuation);
 		float3 lightDirectionForSH9;
-		ComputeLightDirection(lightDir, Direction, lightDirectionForSH9);
+		ComputeLightDirection(lightDir, lightCol, Direction, lightDirectionForSH9);
 
-		half3 shMin = 0;
-		half3 shMax = 0;
 		#ifdef UNITY_PASS_FORWARDBASE
 			ShadeSH9ToonDouble(lightDirectionForSH9, shMax, shMin);
 		#endif
 
-		Color = shMax + lightCol * sqrt(0.5);
+        if (applyShadow)
+        {
+            lightCol *= DistanceAttenuation * ShadowAttenuation;
+        }
+        else
+        {
+            lightCol *= DistanceAttenuation;
+        }
+
+		Color = shMax + (lightCol * sqrt(0.5));
 
         half lightRenorm = max(max(Color.r, Color.g), Color.b);
         if (lightRenorm > Max)
@@ -86,6 +106,6 @@ void FlatLightNode(float3 PositionWS, out float3 Color, out float3 Direction, fl
 
 		Color = min(Max, Color);
 		Color = max(Min, Color);
-        // Color = lerp(Color, OpenLitGray(Color), _MonochromeLighting);
+        Color = lerp(Color, OpenLitGray(Color), MonochromeLighting);
 	#endif
 }

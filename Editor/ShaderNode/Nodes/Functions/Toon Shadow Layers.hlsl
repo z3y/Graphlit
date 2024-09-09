@@ -14,17 +14,9 @@ float lilTooningNoSaturateScale_local(float aascale, float value, float border, 
 }
 
 
-void ToonShadowsLayers(out float3 Out, float3 LightColor, float3 LightDirection, float DistanceAttenuation, float ShadowAttenuation, float4 ShadowColor1, float4 ShadowColor2, float4 ShadowColor3, float3 ShadowsBorder, float3 ShadowsReceive, float3 ShadowsBlur, float3 ShadowBorderColor, float ShadowBorderRange, float3 NormalWS)
+void ToonShadowsLayers(out float3 Out, float3 LightColor, float3 LightDirection, float ShadowAttenuation, float4 ShadowColor1, float4 ShadowColor2, float4 ShadowColor3, float3 ShadowsBorder, float3 ShadowsBlur, float3 ShadowBorderColor, float ShadowBorderRange, float3 NormalWS)
 {
-    half attenuation = DistanceAttenuation * ShadowAttenuation;
-
-    #ifdef UNITY_PASS_FORWARDBASE
-        half3 col = LightColor * DistanceAttenuation;
-    #else
-        half3 col = LightColor * attenuation;
-    #endif
-    half3 defaultCol = col;
-
+    half3 col = LightColor;
 
     const float antialias = 1.0;
 
@@ -33,7 +25,7 @@ void ToonShadowsLayers(out float3 Out, float3 LightColor, float3 LightDirection,
     lns.y = saturate(dot(LightDirection, NormalWS) * 0.5 + 0.5);
     lns.z = saturate(dot(LightDirection, NormalWS) * 0.5 + 0.5);
 
-    lns.xyz *= lerp(DistanceAttenuation, ShadowAttenuation, ShadowsReceive);
+    lns.xyz *= ShadowAttenuation;
     lns.w = lns.x;
 
     lns.x = lilTooningNoSaturateScale_local(antialias, lns.x, ShadowsBorder.x, ShadowsBlur.x);
@@ -43,11 +35,11 @@ void ToonShadowsLayers(out float3 Out, float3 LightColor, float3 LightDirection,
 
     lns = saturate(lns);
 
-    col = lerp(col, lerp(defaultCol * ShadowColor1, col, lns.x), ShadowColor1.a);
-    col = lerp(col, lerp(defaultCol * ShadowColor2, col, lns.y), ShadowColor2.a);
-    col = lerp(col, lerp(defaultCol * ShadowColor3, col, lns.z), ShadowColor3.a);
+    col = lerp(col, lerp(LightColor * ShadowColor1, col, lns.x), ShadowColor1.a);
+    col = lerp(col, lerp(LightColor * ShadowColor2, col, lns.y), ShadowColor2.a);
+    col = lerp(col, lerp(LightColor * ShadowColor3, col, lns.z), ShadowColor3.a);
 
-    col = lerp(col, defaultCol, lns.w * ShadowBorderColor.rgb);
+    col = lerp(col, LightColor, lns.w * ShadowBorderColor.rgb);
 
     Out = col;
 }
