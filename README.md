@@ -1,17 +1,20 @@
-A node shader editor with primary focus on the built-in pipeline and VRChat. Early in development, but fully functional.
+A node shader editor with primary focus on the built-in pipeline and VRChat
 
-Install with [VCC](https://z3y.github.io/vpm-package-listing/) or add the git url.
+Install with [VCC](https://z3y.github.io/vpm-package-listing/) or add the git url
 
-### [Documentation](https://z3y.github.io/graphlit)
+## [Documentation](https://z3y.github.io/graphlit)
 
 ## Templates
 
-- Unlit
-- Lit (Flat and PBR)
+- Unlit, Lit and Toon
 
 ## Features
 
 - Easily customizable custom function nodes
+
+- Full custom lighting possible with the Unlit graph
+
+- Access to the Light Color, Direction, Shadow Attenuation and Distance Attenuation
 
 - Highest quality node previews - Previews rendered directly into the rect of the shader node. 3D previews are spheres rendered on a quad with all mesh data created in the fragment shader for highest quality.
 
@@ -47,18 +50,14 @@ https://github.com/z3y/MyShaderGraph/assets/33181641/ae523917-56ee-420d-90ac-a3f
 
 ## Currently not implemented
 
-- Might lack some basic nodes
 - Lacks validation (Same nodes shouldn't be allowed to connect to both shader stages, etc.)
 - Undo not fully implemented
 - Default textures sometimes dont apply in the preview
 - Not all inputs available in all transform spaces
-- It doesn't really have a good name
 - Custom varyings
 - Custom function parser is not very advanced
 - Changing inputs or outputs on custom function nodes can leave some edges disconnected
 - Sharing sampler states between textures will result in failed to compile previews
 - Previews can lead to high CPU usage if the interaction mode is set to default. Set `Preferences -> General -> Interaction Mode` to monitor refresh rate or custom
 
-[Patreon](https://www.patreon.com/z3y) |
-[Bug Reports](https://github.com/z3y/graphlit/issues) |
-[Discord Support](https://discord.gg/bw46tKgRFT)
+## [Discord](https://discord.gg/bw46tKgRFT)
