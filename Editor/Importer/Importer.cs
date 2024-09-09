@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Graphlit
 {
-    [ScriptedImporter(4, new[] { "graphlit", "zsg" }, 0)]
+    [ScriptedImporter(4, new[] { "graphlit", "subgraphlit", "zsg" }, 0)]
     public class ShaderGraphImporter : ScriptedImporter
     {
         internal static Dictionary<string, ShaderGraphView> _graphViews = new();
@@ -35,6 +35,15 @@ namespace Graphlit
             var target = ctx.selectedBuildTarget;
 
             string guid = AssetDatabase.AssetPathToGUID(assetPath);
+
+            bool isSubgraph = assetPath.EndsWith("subgraphlit");
+
+            if (isSubgraph)
+            {
+                var asset = ScriptableObject.CreateInstance<Subgraph>();
+                ctx.AddObjectToAsset("Subgraph Asset", asset);
+                return;
+            }
 
             /*if (_graphViews.TryGetValue(guid, out var graphView))
             {

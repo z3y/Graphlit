@@ -2,6 +2,7 @@ using Graphlit.Nodes.PortType;
 
 namespace Graphlit
 {
+    [System.Serializable]
     public class PortDescriptor
     {
         public PortDescriptor(PortDirection direction, IPortType type, int id, string name = "")

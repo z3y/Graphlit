@@ -817,23 +817,6 @@
         },
         {
             "type": "Graphlit.FetchVariableNode",
-            "guid": "fd5c95d7-b2fb-4a1d-9d1e-222772e82295",
-            "x": 1730,
-            "y": 601,
-            "connections": [
-                {
-                    "a": 1,
-                    "b": 0,
-                    "node": "522ea996-6c8e-474b-a6b6-7286ad4c464a"
-                }
-            ],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": "{\"_name\":\"albedo\"}"
-        },
-        {
-            "type": "Graphlit.FetchVariableNode",
             "guid": "e1fe3349-2b07-42d6-ae78-f2f988c56317",
             "x": 1730,
             "y": 484,
@@ -1503,6 +1486,23 @@
             "preview": 0,
             "previewDisabled": false,
             "data": "{\"_customLighting\":true}"
+        },
+        {
+            "type": "Graphlit.FetchVariableNode",
+            "guid": "fd5c95d7-b2fb-4a1d-9d1e-222772e82295",
+            "x": 1716,
+            "y": 616,
+            "connections": [
+                {
+                    "a": 1,
+                    "b": 0,
+                    "node": "522ea996-6c8e-474b-a6b6-7286ad4c464a"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_name\":\"albedo\"}"
         }
     ],
     "groups": [
@@ -1576,7 +1576,7 @@
             ]
         },
         {
-            "x": 1705,
+            "x": 1691,
             "y": 378,
             "title": "Final Color",
             "elements": [

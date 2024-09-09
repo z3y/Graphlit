@@ -30,11 +30,7 @@ namespace Graphlit
 
         public override string Name { get; } = "Lit";
         public override int[] VertexPorts => new int[] { POSITION, NORMAL_VERTEX, TANGENT };
-        public override int[] FragmentPorts => _fragmentPorts.Union(_customFragmentPorts).ToArray();
-
-        private List<int> _fragmentPorts = new() { ALBEDO, ALPHA, METALLIC, OCCLUSION, EMISSION, ROUGHNESS, REFLECTANCE, NORMAL_TS, CUTOFF };
-        private List<int> _customFragmentPorts = new();
-
+        public override int[] FragmentPorts => new int[] { ALBEDO, ALPHA, METALLIC, OCCLUSION, EMISSION, ROUGHNESS, REFLECTANCE, NORMAL_TS, CUTOFF };
 
         const int POSITION = 0;
         const int NORMAL_VERTEX = 1;
@@ -87,69 +83,13 @@ namespace Graphlit
             DefaultValues[OCCLUSION] = "1.0";
             DefaultValues[EMISSION] = "float3(0.0, 0.0, 0.0)";
             DefaultValues[NORMAL_TS] = "float3(0.0, 0.0, 1.0)";
-
-            InitializeCustomLightingPorts();
         }
 
         const int customPortOffset = 100;
-        void InitializeCustomLightingPorts()
-        {
-            _customFragmentPorts.Clear();
-
-            if (string.IsNullOrEmpty(_customLighting))
-            {
-                return;
-            }
-
-            var asset = Helpers.SerializableReferenceToObject<CustomLightingAsset>(_customLighting);
-
-            if (asset is null)
-            {
-                return;
-            }
-
-            var ports = asset.outputs;
-
-            var separator = new VisualElement();
-            separator.style.height = 16;
-            separator.style.backgroundColor = Color.clear;
-            inputContainer.Add(separator);
-
-
-            foreach (var port in ports)
-            {
-                int id = port.id + customPortOffset;
-                AddPort(new(PortDirection.Input, new Float(port.dimension, false), id, port.name));
-
-                _customFragmentPorts.Add(id);
-
-                if (port.binding != PortBinding.None)
-                {
-                    Bind(id, port.binding);
-                }
-                else
-                {
-                    DefaultValues[id] = port.ValueToString();
-                }
-            }
-        }
-        void FlagCustomLightingPorts(List<int> ports, CustomLightingAsset asset) 
-        {
-            if (asset is null)
-            {
-                return;
-            }
-            foreach (var port in asset.outputs)
-            {
-                ports.Add(port.id + customPortOffset);
-            }
-        }
 
         [SerializeField] bool _cbirp = false;
         [SerializeField] bool _specular = true;
         [SerializeField] bool _fwdAddBlendOpMax = false;
-
-        [SerializeField] string _customLighting = string.Empty;
 
         enum Normal
         {
@@ -172,25 +112,6 @@ namespace Graphlit
         {
             base.AdditionalElements(root);
 
-            var customLighting = new ObjectField("Custom Lighting")
-            {
-                objectType = typeof(CustomLightingAsset)
-            };
-            if (!string.IsNullOrEmpty(_customLighting))
-            {
-                customLighting.value = Helpers.SerializableReferenceToObject<CustomLightingAsset>(_customLighting);
-            }
-            customLighting.RegisterValueChangedCallback(x => {
-
-                _customLighting = Helpers.AssetSerializableReference(x.newValue);
-
-                SafeModifyInputs(() =>
-                {
-                    Initialize();
-                });
-            });
-            root.Add(customLighting);
-
             var normal = new EnumField("Normal", _normal);
             normal.RegisterValueChangedCallback(x => _normal = (Normal)x.newValue);
             root.Add(normal);
@@ -204,10 +125,6 @@ namespace Graphlit
             var spec = new Toggle("Specular") { value = _specular };
             spec.RegisterValueChangedCallback(x => _specular = x.newValue);
             root.Add(spec);
-
-            var fwdOpMax = new Toggle("BlendOp Max") { value = _fwdAddBlendOpMax, tooltip = "Use BlendOp Max, Add for the forward add pass to limit light for toon" };
-            fwdOpMax.RegisterValueChangedCallback(x => _fwdAddBlendOpMax = x.newValue);
-            root.Add(fwdOpMax);
         }
 
         static readonly PropertyDescriptor _monosh = new(PropertyType.Float, "Mono SH", "_MonoSH") { customAttributes = "[Toggle(_BAKERY_MONOSH)]" };
@@ -274,32 +191,10 @@ namespace Graphlit
             builder.subshaderTags["RenderType"] = "Opaque";
             builder.subshaderTags["Queue"] = "Geometry";
 
-            string customLightingPath = string.Empty;
-            CustomLightingAsset customLightingInclude = null;
-            if (!string.IsNullOrEmpty(_customLighting))
-            {
-                customLightingInclude = Helpers.SerializableReferenceToObject<CustomLightingAsset>(_customLighting);
-                customLightingPath = AssetDatabase.GetAssetPath(customLightingInclude);
-                if (!string.IsNullOrEmpty(customLightingPath))
-                {
-                    builder.dependencies.Add(customLightingPath);
-
-                    if (customLightingInclude.properties.Count > 0)
-                    {
-                        builder.properties.Add(new PropertyDescriptor(PropertyType.Float, "Custom Lighting", "_CustomLighting") { customAttributes = "[Foldout]" });
-                    }
-                    foreach (var p in customLightingInclude.properties)
-                    {
-                        builder.properties.Add(p);
-                    }
-                }
-            }
-
             builder.properties.Add(_properties);
 
             {
                 var portFlags = new List<int>() { POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, EMISSION, NORMAL_TS };
-                FlagCustomLightingPorts(portFlags, customLightingInclude);
                 var pass = new PassBuilder("FORWARD", Vertex, FragmentForward, portFlags.ToArray());
                 pass.tags["LightMode"] = "ForwardBase";
 
@@ -362,23 +257,12 @@ namespace Graphlit
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
 
                 pass.preincludes.Add("Packages/com.z3y.graphlit/Editor/Targets/Lit/Functions.hlsl");
-                if (customLightingInclude != null)
-                {
-                    pass.pragmas.Add("#define CUSTOM_LIGHTING_INCLUDED");
-                    pass.preincludes.Add(customLightingPath);
-
-                    foreach (var p in customLightingInclude.properties)
-                    {
-                        pass.properties.Add(p);
-                    }
-                }
 
                 builder.AddPass(pass);
 
             }
             {
                 var portFlags = new List<int>() { POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, NORMAL_TS };
-                FlagCustomLightingPorts(portFlags, customLightingInclude);
                 var pass = new PassBuilder("FORWARD_DELTA", Vertex, FragmentForward, portFlags.ToArray());
                 pass.tags["LightMode"] = "ForwardAdd";
 
@@ -425,16 +309,6 @@ namespace Graphlit
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
                 pass.preincludes.Add("Packages/com.z3y.graphlit/Editor/Targets/Lit/Functions.hlsl");
-                if (customLightingInclude != null)
-                {
-                    pass.pragmas.Add("#define CUSTOM_LIGHTING_INCLUDED");
-                    pass.preincludes.Add(customLightingPath);
-
-                    foreach (var p in customLightingInclude.properties)
-                    {
-                        pass.properties.Add(p);
-                    }
-                }
 
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 if (!(_cbirpExists && _cbirp))
