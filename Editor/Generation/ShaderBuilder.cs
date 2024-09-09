@@ -406,11 +406,11 @@ namespace Graphlit
                 pass.pragmas.AddRange(ShaderGraphView.graphData.include.Split('\n'));
                 if (outline == GraphData.OutlinePassMode.EnabledEarly && i == 0)
                 {
-                    pass.name = "FORWARD_OUTLINE";
+                    //pass.name = "FORWARD_OUTLINE";
                     string cull = pass.renderStates["Cull"];
                     pass.outlinePass = true;
                     pass.renderStates["Cull"] = "Front";
-                    pass.tags["LightMode"] = "Always";
+                    //pass.tags["LightMode"] = "Always";
                     AppendPass(pass);
                     pass.outlinePass = false;
                     pass.renderStates["Cull"] = cull;
@@ -420,10 +420,10 @@ namespace Graphlit
 
                 if (outline == GraphData.OutlinePassMode.Enabled && i == 0)
                 {
-                    pass.name = "FORWARD_OUTLINE";
+                    //pass.name = "FORWARD_OUTLINE";
                     pass.outlinePass = true;
                     pass.renderStates["Cull"] = "Front";
-                    pass.tags["LightMode"] = "Always";
+                    //pass.tags["LightMode"] = "Always";
                     AppendPass(pass);
                 }
             }

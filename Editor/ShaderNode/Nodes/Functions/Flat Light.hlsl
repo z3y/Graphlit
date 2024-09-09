@@ -83,7 +83,7 @@ void FlatLightNode(float4 ShadowCoord, float2 LightmapUV, float3 PositionWS, out
 		float3 lightDirectionForSH9;
 		ComputeLightDirection(lightDir, lightCol, Direction, lightDirectionForSH9);
 
-		#ifdef UNITY_PASS_FORWARDBASE
+		#if defined(UNITY_PASS_FORWARDBASE) || defined(OUTLINE_PASS)
 			ShadeSH9ToonDouble(lightDirectionForSH9, shMax, shMin);
 		#endif
 

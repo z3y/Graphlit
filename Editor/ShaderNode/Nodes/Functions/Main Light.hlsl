@@ -17,7 +17,7 @@ void MainLightData(float4 ShadowCoord, float2 LightmapUV, float3 PositionWS, out
 	#ifdef PREVIEW
 		Direction = normalize(float3(1,1,0));
 		Color = 1.0;
-		#else 
+	#else 
 		{
 			ShadowAttenuation = UNITY_SHADOW_ATTENUATION(i, PositionWS.xyz);
 		}
@@ -41,9 +41,5 @@ void MainLightData(float4 ShadowCoord, float2 LightmapUV, float3 PositionWS, out
 		#if defined(LIGHTMAP_SHADOW_MIXING) && defined(LIGHTMAP_ON)
 			Color *= UnityComputeForwardShadows(LightmapUV.xy, PositionWS, i._ShadowCoord);
 		#endif
-	#endif
-
-	#ifdef OUTLINE_PASS
-		ShadowAttenuation = 1.0;
 	#endif
 }
