@@ -636,6 +636,7 @@ namespace Graphlit
                     {
                         node.Disconnect(port);
                     }
+                    node.CleanLooseEdges();
                     graphView.RemoveElement(node);
                 }
             };
