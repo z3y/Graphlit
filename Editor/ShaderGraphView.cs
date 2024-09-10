@@ -7,6 +7,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Graphlit.Nodes;
+using static TreeEditor.TextureAtlas;
 
 namespace Graphlit
 {
@@ -57,6 +58,9 @@ namespace Graphlit
 
             serializeGraphElements = SerializeGraphElementsImpl;
             unserializeAndPaste = UnserializeAndPasteImpl;
+
+            RegisterCallback<DragUpdatedEvent>(OnDragUpdated);
+            RegisterCallback<DragPerformEvent>(OnDragPerform);
         }
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange change)
@@ -395,6 +399,60 @@ namespace Graphlit
                 node.UseFile(AssetDatabase.LoadAssetAtPath<ShaderInclude>(path));
                 CreateNode(node, p, false);
             }
+        }
+
+        void OnDragUpdated(DragUpdatedEvent evt)
+        {
+            if (DragAndDrop.objectReferences.Length > 0)
+            {
+                if (DragAndDrop.objectReferences[0] is Texture2D)
+                {
+                    DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+                    evt.StopPropagation();
+                }
+            }
+        }
+
+        void OnDragPerform(DragPerformEvent evt)
+        {
+            DragAndDrop.AcceptDrag();
+
+            foreach (var obj in DragAndDrop.objectReferences)
+            {
+                if (obj is Texture2D texture)
+                {
+                    // Create a new node
+
+                    var node = new Texture2DPropertyNode();
+                    var desc = new PropertyDescriptor(PropertyType.Texture2D, obj.name);
+                    graphData.properties.Add(desc);
+                    node.SetReference(desc.guid);
+
+                    desc.DefaultTextureValue = texture;
+
+                    var asset = AssetDatabase.GetAssetPath(texture);
+                    var importer = AssetImporter.GetAtPath(asset);
+                    
+                    if (importer is TextureImporter textureImporter)
+                    {
+                        if (textureImporter.textureType == TextureImporterType.NormalMap)
+                        {
+                            desc.defaultAttributes |= MaterialPropertyAttribute.Normal;
+                            desc.DefaultTextureEnum = DefaultTextureName.bump; 
+                        }
+                    }
+                    else if (!texture.isDataSRGB)
+                    {
+                        desc.customAttributes = "[Linear]";
+                    }
+
+                    var pos = evt.localMousePosition;
+                    TransformMousePositionToLocalSpace(ref pos, false);
+                    CreateNode(node, pos, false);
+                }
+            }
+
+            evt.StopPropagation();
         }
     }
 }
