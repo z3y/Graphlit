@@ -427,6 +427,7 @@ namespace Graphlit
                     var desc = new PropertyDescriptor(PropertyType.Texture2D, obj.name);
                     graphData.properties.Add(desc);
                     node.SetReference(desc.guid);
+                    node.propertyDescriptor = desc;
 
                     desc.DefaultTextureValue = texture;
 
@@ -440,10 +441,11 @@ namespace Graphlit
                             desc.defaultAttributes |= MaterialPropertyAttribute.Normal;
                             desc.DefaultTextureEnum = DefaultTextureName.bump; 
                         }
-                    }
-                    else if (!texture.isDataSRGB)
-                    {
-                        desc.customAttributes = "[Linear]";
+                        else if (!textureImporter.sRGBTexture)
+                        {
+                            desc.defaultAttributes |= MaterialPropertyAttribute.Linear;
+                        }
+
                     }
 
                     var pos = evt.localMousePosition;
