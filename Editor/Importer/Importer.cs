@@ -100,11 +100,11 @@ namespace Graphlit
             ctx.AddObjectToAsset("Main Asset", shader, Thumbnail);
 
 
-            /*var material = new Material(shader)
+            var material = new Material(shader)
             {
                 name = "Material"
-            };*/
-            //ctx.AddObjectToAsset("Material", material);
+            };
+            ctx.AddObjectToAsset("Material", material);
 
             //ctx.AddObjectToAsset("generation", new TextAsset(result));
 

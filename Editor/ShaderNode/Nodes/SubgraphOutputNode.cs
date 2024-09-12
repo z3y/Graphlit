@@ -1,4 +1,4 @@
-/*using System;
+using System;
 using UnityEngine.UIElements;
 using UnityEngine;
 using Graphlit.Nodes;
@@ -6,21 +6,25 @@ using System.Collections.Generic;
 using UnityEditorInternal;
 using UnityEditor;
 using System.Globalization;
+using Graphlit.Nodes.PortType;
+using System.Reflection;
+using System.Linq;
 
 namespace Graphlit
 {
 
-    [NodeInfo("Target/Subgraph Output"), Serializable]
+    [NodeInfo("Target/Subgraph"), Serializable]
     public class SubgraphOutputNode : ShaderNode
     {
         [Serializable]
-        public class CustomPort
+        public class SerializablePortDescriptor
         {
-            public string name = "Port ";
+            public string name = "Port";
             public Vector4 value;
             [Range(1, 4)] public int dimension = 1;
             public int id = 0;
-            public PortBinding binding = PortBinding.None;
+
+            public string type;
 
             public string ValueToString()
             {
@@ -43,11 +47,28 @@ namespace Graphlit
         public override bool DisablePreview => true;
         public override Color Accent => new Color(0.2f, 0.4f, 0.8f);
 
-        [SerializeField] public List<CustomPort> outputs;
-        [SerializeField] public List<CustomPort> inputs;
+        [SerializeField] public List<SerializablePortDescriptor> outputs;
+        [SerializeField] public List<SerializablePortDescriptor> inputs;
+        [SerializeField] int outputId = 0;
 
         public override void Initialize()
         {
+            foreach (var output in outputs)
+            {
+                if (output.type == "Float")
+                {
+                    var desc = new PortDescriptor(PortDirection.Input, new Float(output.dimension), output.id, output.name);
+                    portDescriptors.Add(output.id, desc);
+                }
+                else
+                {
+                    var type = Type.GetType("Graphlit.Nodes.PortType." + output.type);
+                    var instance = (IPortType)Activator.CreateInstance(type);
+                    var desc = new PortDescriptor(PortDirection.Input, instance, output.id, output.name);
+                    portDescriptors.Add(output.id, desc);
+                }
+            }
+            ResetPorts();
         }
 
         public override void AdditionalElements(VisualElement root)
@@ -63,7 +84,7 @@ namespace Graphlit
         {
         }
 
-        public static VisualElement CreateReordableListElement(List<CustomPort> ports, ShaderGraphView graphView, string label)
+        public VisualElement CreateReordableListElement(List<SerializablePortDescriptor> ports, ShaderGraphView graphView, string label)
         {
             var e = new IMGUIContainer();
             var list = CreateReordableList(ports, graphView, label);
@@ -76,9 +97,9 @@ namespace Graphlit
             return e;
         }
 
-        public static ReorderableList CreateReordableList(List<CustomPort> ports, ShaderGraphView graphView, string label)
+        public ReorderableList CreateReordableList(List<SerializablePortDescriptor> ports, ShaderGraphView graphView, string label)
         {
-            var reorderableList = new ReorderableList(ports, typeof(CustomPort), true, true, true, true);
+            var reorderableList = new ReorderableList(ports, typeof(SerializablePortDescriptor), true, true, true, true);
 
             reorderableList.drawHeaderCallback = (Rect rect) =>
             {
@@ -90,17 +111,36 @@ namespace Graphlit
                 var p = ports[index];
                 var style = new GUIStyle(GUI.skin.label) { richText = true };
 
+                EditorGUI.BeginChangeCheck();
                 EditorGUI.LabelField(rect, $"<b>{p.name}</b>", style);
-                //rect.x += 120;
-                //rect.width -= 120;
-                //EditorGUI.LabelField(rect, $"{p.displayName}", style);
+                rect.x += 120;
+                rect.width -= 120;
+                if (p.type == "Float" && p.dimension > 1)
+                {
+                    EditorGUI.LabelField(rect, $"Float{p.dimension}", style);
+                }
+                else
+                {
+                    EditorGUI.LabelField(rect, $"{p.type}", style);
+                }
 
                 if (isActive)
                 {
                     EditorGUILayout.BeginVertical(new GUIStyle("GroupBox"));
-                    //ports[index].PropertyEditorGUI();
+                    p.name = EditorGUILayout.TextField(new GUIContent("Name"), p.name);
+
+                    if (p.type == "Float")
+                    {
+                        p.dimension = EditorGUILayout.IntSlider(new GUIContent("Dimension"), p.dimension, 1, 4);
+                    }
+
                     EditorGUILayout.EndVertical();
                     EditorGUILayout.Space();
+                }
+
+                if (EditorGUI.EndChangeCheck())
+                {
+                    Update();
                 }
             };
 
@@ -108,15 +148,22 @@ namespace Graphlit
             {
                 void OnTypeSelected(object data)
                 {
-                    var type = (PropertyType)data;
-                    ports.Add(new CustomPort() { });
+                    var type = (Type)data;
+                    ports.Add(new SerializablePortDescriptor() {
+                        id = outputId++, type = type.Name
+                    });
                     list.Select(ports.Count - 1);
+
+                    Update();
                 }
 
                 var menu = new GenericMenu();
-                foreach (PropertyType value in Enum.GetValues(typeof(PropertyType)))
+                var types = Assembly.GetExecutingAssembly().GetTypes().Where(t => typeof(IPortType).IsAssignableFrom(t) && !t.IsClass)
+                    .ToArray()[1..];
+
+                foreach (var t in types)
                 {
-                    menu.AddItem(new GUIContent(Enum.GetName(typeof(PropertyType), value)), false, OnTypeSelected, value);
+                    menu.AddItem(new GUIContent(t.Name), false, OnTypeSelected, t);
                 }
 
                 menu.ShowAsContext();
@@ -126,29 +173,25 @@ namespace Graphlit
             {
                 ReorderableList.defaultBehaviours.DoRemoveButton(list);
 
-                if (graphView == null)
-                {
-                    return;
-                }
+                Update();
+            };
 
-                var propertyNodes = graphView.graphElements.OfType<PropertyNode>();
-                foreach (var node in propertyNodes)
-                {
-                    if (ports.Any(x => x.guid == node.propertyDescriptor.guid))
-                    {
-                        continue;
-                    }
-
-                    // remove for now, convert later when avaliable
-                    foreach (var port in node.PortElements)
-                    {
-                        node.Disconnect(port);
-                    }
-                    graphView.RemoveElement(node);
-                }
+            reorderableList.onReorderCallback = (ReorderableList list) =>
+            {
+                Update();
             };
 
             return reorderableList;
         }
+
+        void Update()
+        {
+            _portBindings.Clear();
+            portDescriptors.Clear();
+
+            Initialize();
+
+            CleanLooseEdges();
+        }
     }
-}*/
+}

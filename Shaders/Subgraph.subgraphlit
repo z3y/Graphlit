@@ -1,0 +1,100 @@
+{
+    "data": {
+        "shaderName": "Graphlit/Unlit",
+        "properties": [
+            {
+                "guid": "53bd1d76-944d-4904-8453-4578ae934265",
+                "referenceName": "",
+                "displayName": "Texture2D",
+                "type": 7,
+                "customAttributes": "",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "",
+                "_defaultTexture": "",
+                "declaration": 0
+            }
+        ],
+        "precision": 0,
+        "defaultPreviewState": 0,
+        "customEditor": "",
+        "fallback": "",
+        "include": "",
+        "outlinePass": 0,
+        "stencil": false,
+        "vrcFallbackTags": {
+            "type": 1,
+            "mode": 0,
+            "doubleSided": false
+        }
+    },
+    "nodes": [
+        {
+            "type": "Graphlit.FloatNode",
+            "guid": "8f96379b-5089-4126-97a7-6311cafff5d7",
+            "x": 532,
+            "y": 398,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": false,
+            "data": "{\"_value\":0.0}"
+        },
+        {
+            "type": "Graphlit.FloatNode",
+            "guid": "2f7e0f06-8f62-4f0d-89b5-e33158a9afd7",
+            "x": 532,
+            "y": 522,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": false,
+            "data": "{\"_value\":0.0}"
+        },
+        {
+            "type": "Graphlit.SubgraphOutputNode",
+            "guid": "7145fe67-ecc2-4de0-91ec-45db691c5a3f",
+            "x": 730,
+            "y": 393,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 7,
+                    "node": "8f96379b-5089-4126-97a7-6311cafff5d7"
+                },
+                {
+                    "a": 0,
+                    "b": 15,
+                    "node": "ee1a1923-9e66-421b-9e8b-55814f65cece"
+                },
+                {
+                    "a": 0,
+                    "b": 10,
+                    "node": "8f96379b-5089-4126-97a7-6311cafff5d7"
+                },
+                {
+                    "a": 0,
+                    "b": 12,
+                    "node": "2f7e0f06-8f62-4f0d-89b5-e33158a9afd7"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": false,
+            "data": "{\"outputs\":[{\"name\":\"Out\",\"value\":{\"x\":0.0,\"y\":0.0,\"z\":0.0,\"w\":0.0},\"dimension\":3,\"id\":7,\"type\":\"Float\"},{\"name\":\"fdsg\",\"value\":{\"x\":0.0,\"y\":0.0,\"z\":0.0,\"w\":0.0},\"dimension\":3,\"id\":11,\"type\":\"Float\"},{\"name\":\"Texturee\",\"value\":{\"x\":0.0,\"y\":0.0,\"z\":0.0,\"w\":0.0},\"dimension\":1,\"id\":15,\"type\":\"Texture2DObject\"},{\"name\":\"E\",\"value\":{\"x\":0.0,\"y\":0.0,\"z\":0.0,\"w\":0.0},\"dimension\":1,\"id\":10,\"type\":\"Float\"},{\"name\":\"ee\",\"value\":{\"x\":0.0,\"y\":0.0,\"z\":0.0,\"w\":0.0},\"dimension\":3,\"id\":12,\"type\":\"Float\"}],\"inputs\":[{\"name\":\"In\",\"value\":{\"x\":0.0,\"y\":0.0,\"z\":0.0,\"w\":0.0},\"dimension\":3,\"id\":8,\"type\":\"Float\"}],\"outputId\":16}"
+        },
+        {
+            "type": "Graphlit.Texture2DPropertyNode",
+            "guid": "ee1a1923-9e66-421b-9e8b-55814f65cece",
+            "x": 338,
+            "y": 450,
+            "connections": [],
+            "precision": 1,
+            "preview": 0,
+            "previewDisabled": false,
+            "data": "{\"_ref\":\"53bd1d76-944d-4904-8453-4578ae934265\"}"
+        }
+    ],
+    "groups": []
+}

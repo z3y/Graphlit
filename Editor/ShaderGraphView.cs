@@ -7,7 +7,6 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Graphlit.Nodes;
-using static TreeEditor.TextureAtlas;
 
 namespace Graphlit
 {
