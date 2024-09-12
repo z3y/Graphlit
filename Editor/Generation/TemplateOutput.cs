@@ -114,7 +114,7 @@ namespace Graphlit
         protected sealed override void Generate(NodeVisitor visitor) { }
 
         internal static readonly PropertyDescriptor _surfaceOptionsStart = new(PropertyType.Float, "Surface Options", "_SurfaceOptions") { customAttributes = "[Foldout]" };
-        internal static readonly PropertyDescriptor _mode = new(PropertyType.Float, "Rendering Mode", "_Mode") { customAttributes = "[Enum(Opaque, 0, Cutout, 1, Fade, 2, Transparent, 3, Additive, 4, Multiply, 5)]" };
+        internal static readonly PropertyDescriptor _mode = new(PropertyType.Float, "Rendering Mode", "_Mode") { customAttributes = "[Enum(Opaque, 0, Cutout, 1, Fade, 2, Transparent, 3, Additive, 4, Multiply, 5, TransClipping, 6)]" };
         internal static readonly PropertyDescriptor _srcBlend = new(PropertyType.Float, "Source Blend", "_SrcBlend") { FloatValue = 1, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         internal static readonly PropertyDescriptor _dstBlend = new(PropertyType.Float, "Destination Blend", "_DstBlend") { FloatValue = 0, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         internal static readonly PropertyDescriptor _zwrite = new(PropertyType.Float, "ZWrite", "_ZWrite") { FloatValue = 1, customAttributes = "[Enum(Off, 0, On, 1)]" };

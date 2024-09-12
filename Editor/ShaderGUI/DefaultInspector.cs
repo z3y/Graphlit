@@ -274,7 +274,7 @@ namespace Graphlit
             }
             int mode = (int)material.GetFloat(Mode);
             ToggleKeyword(material, "_ALPHATEST_ON", mode == 1);
-            ToggleKeyword(material, "_ALPHAFADE_ON", mode == 2 || mode == 4);
+            ToggleKeyword(material, "_ALPHAFADE_ON", mode == 2 || mode == 4 || mode == 6);
             ToggleKeyword(material, "_ALPHAPREMULTIPLY_ON", mode == 3);
             ToggleKeyword(material, "_ALPHAMODULATE_ON", mode == 5);
 
@@ -315,6 +315,14 @@ namespace Graphlit
                     SetupTransparentMaterial(material);
                     material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.DstColor);
                     material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                    break;
+                case 6: // transclipping
+                    material.SetOverrideTag("RenderType", "TransparentCutout");
+                    material.SetInt("_AlphaToMask", 0);
+                    material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest + 10;
+                    material.SetInt("_ZWrite", 1);
+                    material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                    material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                     break;
             }
         }
