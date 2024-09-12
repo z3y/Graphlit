@@ -141,10 +141,46 @@ namespace Graphlit
                 }*/
                 else if (materialProperty.type == MaterialProperty.PropType.Texture)
                 {
-                    p.onGui = (e, p, g) => TextureProperty(e, p, g);
+                    bool textureToggle = attributes.Contains("AutoKeyword");
+
+                    string keywordName = PropertyDescriptor.GetAutoKeywordName(materialProperty.name);
+
+                    // run on start as well
+                    if (textureToggle)
+                    {
+                        foreach (Material target in editor.targets.Cast<Material>())
+                        {
+                            ToggleKeyword(target, keywordName, target.GetTexture(materialProperty.name) != null);
+                        }
+                    }
+
+                    p.onGui = (e, p, g) =>
+                    {   
+                        if (textureToggle)
+                        {
+                            EditorGUI.BeginChangeCheck();
+                        }
+                        TextureProperty(e, p, g);
+
+                        if (textureToggle)
+                        {
+                            if (EditorGUI.EndChangeCheck())
+                            {
+                                foreach (Material target in e.targets.Cast<Material>())
+                                {
+                                    ToggleKeyword(target, keywordName, target.GetTexture(p.name) != null);
+                                }
+                            }
+                        }
+                    };
                     if (attributes.Contains("Linear"))
                     {
                         p.onGui += (e, p, g) => LinearWarning(p);
+                    }
+
+                    if (attributes.Contains("TextureToggle"))
+                    { 
+
                     }
                 }
                 else if (materialProperty.type == MaterialProperty.PropType.Vector)

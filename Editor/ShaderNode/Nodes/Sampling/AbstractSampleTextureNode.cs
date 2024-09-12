@@ -2,9 +2,11 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using Graphlit.Nodes;
 using Graphlit.Nodes.PortType;
+using System.Linq;
 
 namespace Graphlit
 {
+    [System.Serializable]
     public abstract class SampleTextureNode : ShaderNode
     {
         protected const int UV = 0;
@@ -21,6 +23,7 @@ namespace Graphlit
         protected const int LOD = 9;
 
         public override Color Accent => new Color(0.8f, 0.2f, 0.2f);
+
 
         public override int PreviewResolution => 156;
 
@@ -61,9 +64,34 @@ namespace Graphlit
             SetVariable(OUT_RGBA, name);
 
 
+
+
             if (_texturePort.connected)
             {
+                bool hasKeyword = false;
+                if (visitor.GenerationMode == GenerationMode.Final && this is SampleTexture2DNode sample2d)
+                {
+                    var connectedProp = (Texture2DPropertyNode)_texturePort.connections.First().output.node;
+                    var desc = connectedProp.propertyDescriptor;
+                    if (sample2d.autoKeyword)
+                    {
+                        hasKeyword = true;
+                        var keyword = PropertyDescriptor.GetAutoKeywordName(desc.GetReferenceName(visitor.GenerationMode));
+                        var defaultValueStr = desc.DefaultTextureToValue();
+                        desc.autoKeyword = true;
+
+                        visitor.AddPragma($"#pragma shader_feature_local {keyword}");
+
+
+                        visitor.AppendLine($"#ifndef {keyword}");
+                        visitor.AppendLine($"{PrecisionString(4)} {PortData[OUT_RGBA].Name} = {defaultValueStr};");
+                        visitor.AppendLine($"#else");
+                    }
+                }
+
                 visitor.AppendLine($"{PrecisionString(4)} {PortData[OUT_RGBA].Name} = {SampleMethod};");
+
+                if (hasKeyword) visitor.AppendLine($"#endif");
             }
             else
             {

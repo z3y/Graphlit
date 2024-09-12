@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using UnityEditor;
 using UnityEditorInternal;
@@ -81,7 +82,7 @@ namespace Graphlit
         NonModifiableTextureData = 1 << 8,
         SingleLineTexture = 1 << 9,
         IntRange = 1 << 10,
-        Linear = 1 << 11,
+        Linear = 1 << 11
     }
 
     [Serializable]
@@ -98,6 +99,8 @@ namespace Graphlit
         [SerializeField] string _value;
         [SerializeField] string _defaultTexture;
         [SerializeField] public PropertyDeclaration declaration = PropertyDeclaration.Local;
+
+        [NonSerialized] public bool autoKeyword = false;
 
         [NonSerialized] public bool useReferenceName = false;
         public float FloatValue
@@ -326,6 +329,11 @@ namespace Graphlit
                     sb.Append($"[Vector3]");
                     break;
             }
+
+            if (autoKeyword)
+            {
+                sb.Append("[AutoKeyword]");
+            }    
 
             return sb.ToString();
         }
@@ -682,5 +690,7 @@ namespace Graphlit
                 _ => Texture2D.whiteTexture,
             };
         }
+
+        public static string GetAutoKeywordName(string referenceName) => "_ENABLE" + referenceName.ToUpper();
     }
 }

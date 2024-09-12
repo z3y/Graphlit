@@ -101,7 +101,10 @@ namespace Graphlit
         }
         public void AddPragma(string pragma)
         {
-            _pragmas.Add(pragma);
+            if (!_pragmas.Contains(pragma))
+            { 
+                _pragmas.Add(pragma);
+            }
         }
         public void AddProperty(PropertyDescriptor property)
         {
