@@ -497,7 +497,18 @@ namespace Graphlit
             if (type == PropertyType.Float || type == PropertyType.Bool) m.SetFloat(name, FloatValue);
             else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) m.SetVector(name, VectorValue);
             else if (type == PropertyType.Color) m.SetColor(name, VectorValue);
-            else if (IsTextureType) m.SetTexture(name, DefaultTextureValue);
+            else if (IsTextureType)
+            {
+                var tex = DefaultTextureValue;
+                if (tex == null)
+                {
+                    m.SetTexture(name, GetDefaultUnityTexture());
+                }
+                else
+                {
+                    m.SetTexture(name, tex);
+                }
+            }
 
             if (type == PropertyType.KeywordToggle)
             {
@@ -643,6 +654,33 @@ namespace Graphlit
 
             return reorderableList;
         }
-    }
 
+
+        public string DefaultTextureToValue()
+        {
+            return DefaultTextureEnum switch
+            {
+                DefaultTextureName.white => "float4(1, 1, 1, 1)",
+                DefaultTextureName.black => "float4(0, 0, 0, 0)",
+                DefaultTextureName.red => "float4(1, 0, 0, 0)",
+                DefaultTextureName.gray or DefaultTextureName.grey => "float4(LinearToSRGB(float3(0.5, 0.5, 0.5)), 0.5)",
+                DefaultTextureName.linearGray or DefaultTextureName.linearGrey => "float4(0.5, 0.5, 0.5, 0.5)",
+                DefaultTextureName.bump => "float4(0.5, 0.5, 1, 1)",
+                _ => "float4(1, 1, 1, 1)",
+            };
+        }
+        public Texture2D GetDefaultUnityTexture()
+        {
+            return DefaultTextureEnum switch
+            {
+                DefaultTextureName.white => Texture2D.whiteTexture,
+                DefaultTextureName.black => Texture2D.blackTexture,
+                DefaultTextureName.red => Texture2D.redTexture,
+                DefaultTextureName.gray or DefaultTextureName.grey => Texture2D.grayTexture,
+                DefaultTextureName.linearGray or DefaultTextureName.linearGrey => Texture2D.linearGrayTexture,
+                DefaultTextureName.bump => Texture2D.normalTexture,
+                _ => Texture2D.whiteTexture,
+            };
+        }
+    }
 }
