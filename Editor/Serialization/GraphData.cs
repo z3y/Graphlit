@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using static Graphlit.SubgraphOutputNode;
 
 namespace Graphlit
 {
@@ -15,6 +16,10 @@ namespace Graphlit
         public OutlinePassMode outlinePass = OutlinePassMode.Disabled;
         public bool stencil = false;
         public VRCFallbackTags vrcFallbackTags = new VRCFallbackTags();
+
+        public List<SerializablePortDescriptor> subgraphOutputs = new();
+        public List<SerializablePortDescriptor> subgraphInputs = new();
+        public int subgraphOutputIdCounter = 0;
 
         public enum GraphPrecision
         {

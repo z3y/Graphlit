@@ -9,6 +9,8 @@ namespace Graphlit
     using System.Reflection;
     using UnityEditor;
     using Graphlit.Nodes;
+    using Unity.Collections;
+
     public class ShaderNodeSearchWindow : ScriptableObject, ISearchWindowProvider
     {
         private ShaderGraphView _graphView;
@@ -38,6 +40,11 @@ namespace Graphlit
             public string name;
         }
 
+        public class CreateSubgraphInputContext
+        {
+            public int id;
+        }
+
         public List<SearchTreeEntry> CreateSearchTree(SearchWindowContext context)
         {
             var tree = new List<SearchTreeEntry>
@@ -46,8 +53,19 @@ namespace Graphlit
             };
 
 
+            if (_graphView.graphData.subgraphInputs.Count > 0)
+            {
+                tree.Add(new SearchTreeGroupEntry(new GUIContent("Subgraph Inputs"), 1));
 
-            tree.Add(new SearchTreeGroupEntry(new GUIContent("Properties"), 1));
+                foreach (var var in _graphView.graphData.subgraphInputs)
+                {
+                    var name = var.name;
+                    var ctx = new CreateSubgraphInputContext() { id = var.id };
+                    tree.Add(new SearchTreeEntry(new GUIContent($"Input: {name}", _nodeIndentationIcon)) { level = 2, userData = ctx });
+                }
+            }
+
+            tree.Add(new SearchTreeGroupEntry(new GUIContent("Material Properties"), 1));
             for (int i = 0; i < _graphView.graphData.properties.Count; i++)
             {
                 PropertyDescriptor property = _graphView.graphData.properties[i];
@@ -171,6 +189,13 @@ namespace Graphlit
             {
                 var node = (FetchVariableNode)Activator.CreateInstance(typeof(FetchVariableNode));
                 node._name = var.name;
+                _graphView.CreateNode(node, context.screenMousePosition);
+                return true;
+            }
+            else if (userData is CreateSubgraphInputContext var1)
+            {
+                var node = (SubgraphInputNode)Activator.CreateInstance(typeof(SubgraphInputNode));
+                node.SetReference(var1.id);
                 _graphView.CreateNode(node, context.screenMousePosition);
                 return true;
             }

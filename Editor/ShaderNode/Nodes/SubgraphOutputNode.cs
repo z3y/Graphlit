@@ -20,11 +20,12 @@ namespace Graphlit
         public class SerializablePortDescriptor
         {
             public string name = "Port";
-            public Vector4 value;
+            public Vector4 value = new Vector4();
             [Range(1, 4)] public int dimension = 1;
             public int id = 0;
 
             public string type;
+            public PortBinding binding = PortBinding.None;
 
             public string ValueToString()
             {
@@ -45,20 +46,28 @@ namespace Graphlit
         }
 
         public override bool DisablePreview => true;
-        public override Color Accent => new Color(0.2f, 0.4f, 0.8f);
+        public override Color Accent => Color.magenta;
 
-        [SerializeField] public List<SerializablePortDescriptor> outputs;
-        [SerializeField] public List<SerializablePortDescriptor> inputs;
-        [SerializeField] int outputId = 0;
 
         public override void Initialize()
         {
-            foreach (var output in outputs)
+            inputContainer.Add(new VisualElement());
+            var data = GraphView.graphData;
+            foreach (var output in data.subgraphOutputs)
             {
                 if (output.type == "Float")
                 {
                     var desc = new PortDescriptor(PortDirection.Input, new Float(output.dimension), output.id, output.name);
                     portDescriptors.Add(output.id, desc);
+
+                    if (output.binding != PortBinding.None)
+                    {
+                        Bind(output.id, output.binding);
+                    }
+                    else
+                    {
+                        DefaultValues[output.id] = output.ValueToString();
+                    }
                 }
                 else
                 {
@@ -76,18 +85,18 @@ namespace Graphlit
             var graphData = GraphView.graphData;
             root.Add(PropertyDescriptor.CreateReordableListElement(graphData.properties, GraphView));
 
-            root.Add(CreateReordableListElement(outputs, GraphView, "Outputs"));
-            root.Add(CreateReordableListElement(inputs, GraphView, "Inputs"));
+            root.Add(CreateReordableListElement(graphData.subgraphOutputs, true));
+            root.Add(CreateReordableListElement(graphData.subgraphInputs, false));
         }
 
         protected override void Generate(NodeVisitor visitor)
         {
         }
 
-        public VisualElement CreateReordableListElement(List<SerializablePortDescriptor> ports, ShaderGraphView graphView, string label)
+        public VisualElement CreateReordableListElement(List<SerializablePortDescriptor> ports, bool isOutput)
         {
             var e = new IMGUIContainer();
-            var list = CreateReordableList(ports, graphView, label);
+            var list = CreateReordableList(ports, isOutput);
 
             e.onGUIHandler += () =>
             {
@@ -97,13 +106,13 @@ namespace Graphlit
             return e;
         }
 
-        public ReorderableList CreateReordableList(List<SerializablePortDescriptor> ports, ShaderGraphView graphView, string label)
+        public ReorderableList CreateReordableList(List<SerializablePortDescriptor> ports, bool isOutput)
         {
             var reorderableList = new ReorderableList(ports, typeof(SerializablePortDescriptor), true, true, true, true);
 
             reorderableList.drawHeaderCallback = (Rect rect) =>
             {
-                EditorGUI.LabelField(rect, label);
+                EditorGUI.LabelField(rect, isOutput ? "Output" : "Input");
             };
 
             reorderableList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
@@ -132,6 +141,14 @@ namespace Graphlit
                     if (p.type == "Float")
                     {
                         p.dimension = EditorGUILayout.IntSlider(new GUIContent("Dimension"), p.dimension, 1, 4);
+                        if (!isOutput)
+                        {
+                            p.binding = (PortBinding)EditorGUILayout.EnumPopup(new GUIContent("Binding"), p.binding);
+                            if (p.binding == PortBinding.None)
+                            {
+                                p.value = EditorGUILayout.Vector4Field(new GUIContent("Default Value"), p.value);
+                            }
+                        }
                     }
 
                     EditorGUILayout.EndVertical();
@@ -150,7 +167,7 @@ namespace Graphlit
                 {
                     var type = (Type)data;
                     ports.Add(new SerializablePortDescriptor() {
-                        id = outputId++, type = type.Name
+                        id = GraphView.graphData.subgraphOutputIdCounter++, type = type.Name
                     });
                     list.Select(ports.Count - 1);
 

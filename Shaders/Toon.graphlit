@@ -486,7 +486,7 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": true,
-            "data": ""
+            "data": "{\"autoKeyword\":false}"
         },
         {
             "type": "Graphlit.Texture2DPropertyNode",
@@ -675,7 +675,7 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": true,
-            "data": ""
+            "data": "{\"autoKeyword\":false}"
         },
         {
             "type": "Graphlit.KeywordPropertyNode",
@@ -730,7 +730,7 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": true,
-            "data": ""
+            "data": "{\"autoKeyword\":false}"
         },
         {
             "type": "Graphlit.MultiplyNode",
@@ -1634,7 +1634,7 @@
     ],
     "groups": [
         {
-            "x": 461,
+            "x": 460,
             "y": -906,
             "title": "Lighting",
             "elements": [
@@ -1690,7 +1690,7 @@
         },
         {
             "x": -1784,
-            "y": 156,
+            "y": 155,
             "title": "Normal Map",
             "elements": [
                 "09fe1566-a69d-4c29-b41d-5132e1616d9c",
@@ -1707,7 +1707,7 @@
         },
         {
             "x": 1617,
-            "y": 983,
+            "y": 982,
             "title": "Final Color",
             "elements": [
                 "03b97b16-d387-49c6-b2d4-973381c090f4",
@@ -1722,7 +1722,7 @@
         },
         {
             "x": -1604,
-            "y": 627,
+            "y": 626,
             "title": "Emission",
             "elements": [
                 "a43e0b1e-c369-4f17-8f38-f6676e5bb7d3",
