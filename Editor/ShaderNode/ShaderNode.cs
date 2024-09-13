@@ -511,7 +511,7 @@ namespace Graphlit
 
         internal protected Dictionary<int, PortBinding> _portBindings = new();
 
-        protected void Bind(int id, PortBinding binding)
+        internal void Bind(int id, PortBinding binding)
         {
             _portBindings[id] = binding;
         }

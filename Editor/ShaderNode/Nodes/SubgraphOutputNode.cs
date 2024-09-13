@@ -13,7 +13,7 @@ using System.Linq;
 namespace Graphlit
 {
 
-    [NodeInfo("Target/Subgraph"), Serializable]
+    [NodeInfo("Targets/Subgraph"), Serializable]
     public class SubgraphOutputNode : ShaderNode
     {
         [Serializable]
@@ -26,6 +26,8 @@ namespace Graphlit
 
             public string type;
             public PortBinding binding = PortBinding.None;
+
+            public Type ToSystemType() => Type.GetType("Graphlit.Nodes.PortType." + type);
 
             public string ValueToString()
             {
@@ -43,6 +45,31 @@ namespace Graphlit
                     4 or _ => $"float4({x}, {y}, {z}, {w})",
                 };
             }
+
+            public void AddPropertyDescriptor(ShaderNode node, PortDirection direction)
+            {
+                if (type == "Float")
+                {
+                    var desc = new PortDescriptor(direction, new Float(dimension), id, name);
+                    node.portDescriptors.Add(id, desc);
+
+                    if (binding != PortBinding.None)
+                    {
+                        node.Bind(id, binding);
+                    }
+                    else
+                    {
+                        node.DefaultValues[id] = ValueToString();
+                    }
+                }
+                else
+                {
+                    var type = Type.GetType("Graphlit.Nodes.PortType." + this.type);
+                    var instance = (IPortType)Activator.CreateInstance(type);
+                    var desc = new PortDescriptor(direction, instance, id, name);
+                    node.portDescriptors.Add(id, desc);
+                }
+            }
         }
 
         public override bool DisablePreview => true;
@@ -55,27 +82,7 @@ namespace Graphlit
             var data = GraphView.graphData;
             foreach (var output in data.subgraphOutputs)
             {
-                if (output.type == "Float")
-                {
-                    var desc = new PortDescriptor(PortDirection.Input, new Float(output.dimension), output.id, output.name);
-                    portDescriptors.Add(output.id, desc);
-
-                    if (output.binding != PortBinding.None)
-                    {
-                        Bind(output.id, output.binding);
-                    }
-                    else
-                    {
-                        DefaultValues[output.id] = output.ValueToString();
-                    }
-                }
-                else
-                {
-                    var type = Type.GetType("Graphlit.Nodes.PortType." + output.type);
-                    var instance = (IPortType)Activator.CreateInstance(type);
-                    var desc = new PortDescriptor(PortDirection.Input, instance, output.id, output.name);
-                    portDescriptors.Add(output.id, desc);
-                }
+                output.AddPropertyDescriptor(this, PortDirection.Input);
             }
             ResetPorts();
         }
@@ -83,14 +90,24 @@ namespace Graphlit
         public override void AdditionalElements(VisualElement root)
         {
             var graphData = GraphView.graphData;
+            var defaultPreviewState = new EnumField("Default Preview", graphData.defaultPreviewState);
+            defaultPreviewState.RegisterValueChangedCallback(x => graphData.defaultPreviewState = (GraphData.DefaultPreviewState)x.newValue);
+            root.Add(defaultPreviewState);
+
             root.Add(PropertyDescriptor.CreateReordableListElement(graphData.properties, GraphView));
 
-            root.Add(CreateReordableListElement(graphData.subgraphOutputs, true));
             root.Add(CreateReordableListElement(graphData.subgraphInputs, false));
+            root.Add(CreateReordableListElement(graphData.subgraphOutputs, true));
         }
 
         protected override void Generate(NodeVisitor visitor)
         {
+            var data = GraphView.graphData;
+            foreach (var output in data.subgraphOutputs)
+            {
+                visitor.AppendLine($"{output.name} = {PortData[output.id].Name};");
+
+            };
         }
 
         public VisualElement CreateReordableListElement(List<SerializablePortDescriptor> ports, bool isOutput)

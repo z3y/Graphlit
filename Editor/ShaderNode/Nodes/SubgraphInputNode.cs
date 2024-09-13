@@ -4,7 +4,6 @@ using UnityEngine;
 using System.Linq;
 using Graphlit.Nodes.PortType;
 using Graphlit.Nodes;
-using System.ComponentModel;
 
 namespace Graphlit
 {
@@ -83,8 +82,13 @@ namespace Graphlit
 
         protected override void Generate(NodeVisitor visitor)
         {
-            //visitor.AddProperty(propertyDescriptor);
-            //PortData[OUT] = new GeneratedPortData(portDescriptors[OUT].Type, propertyDescriptor.GetReferenceName(visitor.GenerationMode));
+            if (visitor.GenerationMode == GenerationMode.Preview)
+            {
+                return;
+            }
+
+            var output = GraphView.graphData.subgraphInputs.Where(x => x.id == _ref).FirstOrDefault();
+            PortData[OUT] = new GeneratedPortData(portDescriptors[OUT].Type, output.name);
         }
     }
 }

@@ -126,6 +126,35 @@ namespace Graphlit
             target.OnAfterBuild(this);
         }
 
+        public static Subgraph BuildSubgraph(ShaderGraphView graphView, string assetName)
+        {
+            var shaderBuilder = new ShaderBuilder(GenerationMode.Final, graphView);
+
+
+
+            var shaderNodes = graphView.graphElements.Where(x => x is ShaderNode).Cast<ShaderNode>().ToList();
+            var target = (SubgraphOutputNode)graphView.graphElements.First(x => x is SubgraphOutputNode);
+            graphView.graphData.precision = target.DefaultPrecision == Precision.Float ? GraphData.GraphPrecision.Float : GraphData.GraphPrecision.Half;
+
+            var graphData = graphView.graphData;
+
+            var pass = new PassBuilder("FORWARD", VertexPreview, FragmentPreview);
+            shaderBuilder.AddPass(pass);
+
+            shaderBuilder.Build(target);
+
+
+            var function = string.Join("\n", pass.surfaceDescription.ToArray());
+
+            var asset = ScriptableObject.CreateInstance<Subgraph>();
+            asset.inputs = graphView.graphData.subgraphInputs;
+            asset.outputs = graphView.graphData.subgraphOutputs;
+            asset.functionName = assetName.Replace(" ", "_").Replace("/", "_");
+            asset.function = function;
+
+            return asset;
+        }
+
         public void Build(ShaderNode shaderNode)
         {
             //ShaderNode.UniqueVariableID = 0;
@@ -161,7 +190,6 @@ namespace Graphlit
                     break; // only first port for preview
                 }
             }
-
         }
 
         const string VertexPreview = "Packages/com.z3y.graphlit/Editor/Targets/Preview/Vertex.hlsl";

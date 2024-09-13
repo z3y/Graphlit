@@ -36,14 +36,7 @@ namespace Graphlit
 
             string guid = AssetDatabase.AssetPathToGUID(assetPath);
 
-            bool isSubgraph = assetPath.EndsWith("subgraphlit");
 
-            if (isSubgraph)
-            {
-                var asset = ScriptableObject.CreateInstance<Subgraph>();
-                ctx.AddObjectToAsset("Subgraph Asset", asset);
-                return;
-            }
 
             /*if (_graphViews.TryGetValue(guid, out var graphView))
             {
@@ -56,10 +49,20 @@ namespace Graphlit
                 data.PopulateGraph(graphView);
             //}
 
+            var filename = Path.GetFileNameWithoutExtension(ctx.assetPath);
+
+            bool isSubgraph = assetPath.EndsWith("subgraphlit");
+            if (isSubgraph)
+            {
+                var asset = ShaderBuilder.BuildSubgraph(graphView, filename);
+                ctx.AddObjectToAsset("Subgraph Asset", asset);
+                return;
+            }
+
             var builder = new ShaderBuilder(GenerationMode.Final, graphView, target);
             if (string.IsNullOrEmpty(builder.shaderName) || builder.shaderName == "Default Shader")
             {
-                builder.shaderName = "Graphlit/" + Path.GetFileNameWithoutExtension(ctx.assetPath);
+                builder.shaderName = "Graphlit/" + filename;
             }
             builder.BuildTemplate();
 
@@ -102,7 +105,7 @@ namespace Graphlit
 
             var material = new Material(shader)
             {
-                name = "Material"
+                name = $"{builder.shaderName.Replace("/", "_")} Material"
             };
             ctx.AddObjectToAsset("Material", material);
 
