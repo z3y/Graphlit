@@ -35,6 +35,7 @@ namespace Graphlit
 
         private HashSet<string> visitedNodes = new HashSet<string>();
         public List<PropertyDescriptor> properties = new();
+        public List<PropertyDescriptor> subgraphProperties = new();
 
         public GenerationMode GenerationMode { get; private set; }
         public SerializableGraph SerializableGraph { get; }
@@ -128,7 +129,7 @@ namespace Graphlit
             target.OnAfterBuild(this);
         }
 
-        public Dictionary<int, GeneratedPortData> BuildSubgraph(ShaderGraphView subgraphView, NodeVisitor vistor)
+        public Dictionary<int, GeneratedPortData> BuildSubgraph(ShaderGraphView subgraphView, NodeVisitor vistor, string assetPath)
         {
             var sb = new ShaderBuilder(GenerationMode.Final, subgraphView, BuildTarget);
             sb.AddPass(passBuilders[vistor.Pass]);
@@ -136,6 +137,25 @@ namespace Graphlit
             var target = (SubgraphOutputNode)subgraphView.graphElements.First(x => x is SubgraphOutputNode);
             subgraphView.graphData.precision = target.DefaultPrecision == Precision.Float ? GraphData.GraphPrecision.Float : GraphData.GraphPrecision.Half;
 
+            var filename = Path.GetFileNameWithoutExtension(assetPath);
+
+            string subgraphName = filename;
+            var subgraphRefName = "_Subgraph_" + subgraphName.Replace(" ", "_").Replace("/", "_");
+            if (subgraphView.graphData.properties.Count > 0 && !subgraphProperties.Exists(x => x.GetReferenceName(GenerationMode.Final) == subgraphRefName))
+            {
+                subgraphProperties.Add(new PropertyDescriptor(PropertyType.Float, subgraphName, subgraphRefName) { customAttributes = "[Foldout]"});
+            }
+
+            foreach ( var p in subgraphView.graphData.properties)
+            {
+                var toAdd = p.GetReferenceName(GenerationMode.Final);
+                if (!(subgraphProperties.Exists(x => x.GetReferenceName(GenerationMode.Final) == toAdd) ||
+                      properties.Exists(x => x.GetReferenceName(GenerationMode.Final) == toAdd)
+                    ))
+                {
+                    subgraphProperties.Add(p);
+                }
+            }
             //subgraphView.uniqueID = ShaderGraphView.uniqueID;
             sb.Build(target);
             //ShaderGraphView.uniqueID = subgraphView.uniqueID;
@@ -381,7 +401,7 @@ namespace Graphlit
             }
             else
             {
-                foreach (var property in properties.Union(ShaderGraphView.graphData.properties))
+                foreach (var property in properties.Union(ShaderGraphView.graphData.properties).Union(subgraphProperties))
                 {
                     if (property.ShouldDeclare())
                         _sb.AppendLine(property.GetPropertyDeclaration(GenerationMode.Final));

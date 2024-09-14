@@ -30,17 +30,17 @@ namespace Graphlit
 
         public override Color Accent => new Color(0.2f, 0.4f, 0.8f);
 
-        ShaderGraphView GetSubgraphGraph()
+        (ShaderGraphView graph, string path) GetSubgraphGraph()
         {
             if (string.IsNullOrEmpty(subgraphRef))
             {
-                return null;
+                return (null, string.Empty);
             }
             var asset = Helpers.SerializableReferenceToObject<Subgraph>(subgraphRef);
             var assetPath = AssetDatabase.GetAssetPath(asset);
             if (string.IsNullOrEmpty(assetPath))
             {
-                return null;
+                return (null, string.Empty);
             }
             string guid = AssetDatabase.AssetPathToGUID(assetPath);
             var data = ShaderGraphImporter.ReadGraphData(guid);
@@ -50,7 +50,7 @@ namespace Graphlit
             };
             data.PopulateGraph(graphView);
 
-            return graphView;
+            return (graphView, assetPath);
         }
 
 
@@ -61,13 +61,13 @@ namespace Graphlit
 
             var subgraph = GetSubgraphGraph();
 
-            if (subgraph == null)
+            if (subgraph.graph == null)
             {
                 return;
             }
 
-            var outputs = subgraph.graphData.subgraphOutputs;
-            var inputs = subgraph.graphData.subgraphInputs;
+            var outputs = subgraph.graph.graphData.subgraphOutputs;
+            var inputs = subgraph.graph.graphData.subgraphInputs;
 
             foreach ( var output in outputs )
             {
@@ -106,12 +106,12 @@ namespace Graphlit
 
             var sub = GetSubgraphGraph();
 
-            if (sub is null)
+            if (sub.graph is null)
             {
                 return;
             }
 
-            var subOut = sub.graphElements.OfType<SubgraphOutputNode>().First();
+            var subOut = sub.graph.graphElements.OfType<SubgraphOutputNode>().First();
 
 
             string uniqueID = UniqueVariableID;
@@ -131,7 +131,7 @@ namespace Graphlit
                 subOut.subgraphResults[id] = new GeneratedPortData(item.Type, name);
             }
 
-            var subgraphResults = visitor._shaderBuilder.BuildSubgraph(sub, visitor);
+            var subgraphResults = visitor._shaderBuilder.BuildSubgraph(sub.graph, visitor, sub.path);
 
             foreach (var item in Outputs)
             {
