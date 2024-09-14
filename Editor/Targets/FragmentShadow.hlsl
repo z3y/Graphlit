@@ -16,7 +16,7 @@ void frag(Varyings varyings)
 
     #if defined(_ALPHAPREMULTIPLY_ON) || defined(_ALPHAMODULATE_ON) || defined(_ALPHAFADE_ON)
         #if defined(SHADOWS_DEPTH)
-            if(UNITY_MATRIX_P._m33 != 0.0)
+            if(UNITY_MATRIX_P._m33 != 0.0) // thanks liltoon
         #endif
         {
         half dither = Unity_Dither(surfaceDescription.Alpha, varyings.positionCS.xy / _ScreenParams.xy);

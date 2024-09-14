@@ -236,8 +236,6 @@
             "mode": 0,
             "doubleSided": false
         },
-        "subgraphOutputs": [],
-        "subgraphInputs": [],
         "subgraphOutputIdCounter": 0
     },
     "nodes": [

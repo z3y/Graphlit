@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using UnityEngine.UIElements;
 using UnityEngine;
 using Graphlit.Nodes;
@@ -12,14 +12,14 @@ namespace Graphlit
     [NodeInfo("Input/Subgraph"), Serializable]
     public class SubgraphNode : ShaderNode
     {
-        /*public static readonly string[] Tag = new[] { "GraphlitFunction", "ZSGFunction" };
+        *//*public static readonly string[] Tag = new[] { "GraphlitFunction", "ZSGFunction" };
         [MenuItem("Assets/Create/Graphlit/Shader Include", priority = -1)]
         public static void CreateVariantFile()
         {
             ProjectWindowUtil.CreateAssetWithContent("CustomFunction.hlsl", DefaultFunction);
             var include = new ShaderInclude();
             AssetDatabase.SetLabels(include, new[] { Tag[0] });
-        }*/
+        }*//*
 
         [SerializeField] public string subgraphRef;
         public void UseFile(ShaderInclude include)
@@ -144,7 +144,7 @@ namespace Graphlit
             visitor._shaderBuilder.dependencies.Add(assetPath);
         }
 
-        /*public override IEnumerable<Port> Outputs
+        *//*public override IEnumerable<Port> Outputs
         {
             get
             {
@@ -166,6 +166,6 @@ namespace Graphlit
                     }
                 }
             }
-        }*/
+        }*//*
     }
-}
+}*/

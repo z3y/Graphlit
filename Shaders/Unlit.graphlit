@@ -53,7 +53,8 @@
             "type": 1,
             "mode": 0,
             "doubleSided": false
-        }
+        },
+        "subgraphOutputIdCounter": 0
     },
     "nodes": [
         {
@@ -71,7 +72,7 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": false,
-            "data": ""
+            "data": "{\"autoKeyword\":false}"
         },
         {
             "type": "Graphlit.Texture2DPropertyNode",
@@ -109,7 +110,7 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": false,
-            "data": ""
+            "data": "{\"_customLighting\":false}"
         },
         {
             "type": "Graphlit.FloatPropertyNode",

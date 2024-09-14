@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using UnityEngine.UIElements;
 using UnityEngine;
 using System.Linq;
@@ -44,7 +44,7 @@ namespace Graphlit
 
             ResetPorts();
 
-            /*propertyDescriptor.onValueChange += () =>
+            *//*propertyDescriptor.onValueChange += () =>
             {
                 if (TitleLabel is null || propertyDescriptor is null)
                 {
@@ -52,17 +52,17 @@ namespace Graphlit
                 }
                 TitleLabel.text = propertyDescriptor.displayName;
             };
-            TitleLabel.text = propertyDescriptor.displayName;*/
+            TitleLabel.text = propertyDescriptor.displayName;*//*
         }
 
         public override void AdditionalElements(VisualElement root)
         {
-            /*var imgui = new IMGUIContainer();
+            *//*var imgui = new IMGUIContainer();
             imgui.onGUIHandler = () =>
             {
                 propertyDescriptor.PropertyEditorGUI();
             };
-            root.Add(imgui);*/
+            root.Add(imgui);*//*
         }
 
         protected override void Generate(NodeVisitor visitor)
@@ -92,4 +92,4 @@ namespace Graphlit
             //PortData[OUT] = new GeneratedPortData(portDescriptors[OUT].Type, output.name);
         }
     }
-}
+}*/

@@ -129,7 +129,7 @@ namespace Graphlit
             target.OnAfterBuild(this);
         }
 
-        public Dictionary<int, GeneratedPortData> BuildSubgraph(ShaderGraphView subgraphView, NodeVisitor vistor, string assetPath)
+      /*  public Dictionary<int, GeneratedPortData> BuildSubgraph(ShaderGraphView subgraphView, NodeVisitor vistor, string assetPath)
         {
             var sb = new ShaderBuilder(GenerationMode.Final, subgraphView, BuildTarget);
             sb.AddPass(passBuilders[vistor.Pass]);
@@ -160,14 +160,7 @@ namespace Graphlit
             sb.Build(target);
             //ShaderGraphView.uniqueID = subgraphView.uniqueID;
             return target.subgraphResults;
-
-
-    /*        var function = string.Join("\n", pass.surfaceDescription.ToArray());
-
-            //var asset = ScriptableObject.CreateInstance<Subgraph>();
-
-            return function;*/
-        }
+        }*/
 
         public void Build(ShaderNode shaderNode)
         {

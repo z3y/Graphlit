@@ -126,8 +126,8 @@ namespace Graphlit
             var selectMasterNode = new Button() { text = "Master Node", style = { height = 24 } };
             selectMasterNode.clicked += () =>
             {
-                var masterNode = graphView.graphElements.Where(x => x is TemplateOutput || x is SubgraphOutputNode).First();
-                //var masterNode = graphView.graphElements.Where(x => x is TemplateOutput).First();
+                //var masterNode = graphView.graphElements.Where(x => x is TemplateOutput || x is SubgraphOutputNode).First();
+                var masterNode = graphView.graphElements.Where(x => x is TemplateOutput).First();
 
                 bool contained = graphView.selection.Contains(masterNode);
 
