@@ -576,6 +576,26 @@ namespace Graphlit
 
             e.onGUIHandler += () =>
             {
+                var warnings = new List<string>();
+                if (!properties.Exists(x => x.referenceName == "_MainTex"))
+                {
+                    warnings.Add("Missing property _MainTex");
+                }
+                if (!properties.Exists(x => x.referenceName == "_Color"))
+                {
+                    warnings.Add("Missing property _Color");
+                }
+
+                if (!properties.Exists(x => x.referenceName == "_BumpMap") && properties.Exists(x => x.defaultAttributes.HasFlag(MaterialPropertyAttribute.Normal)))
+                {
+                    warnings.Add("Rename Normal Map to _BumpMap");
+                }
+
+                if (warnings.Count > 0)
+                {
+                    EditorGUILayout.HelpBox(string.Join("\n", warnings), MessageType.Warning);
+                }
+
                 foreach (var p in properties)
                 {
                     p.graphView = graphView;

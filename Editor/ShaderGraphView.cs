@@ -416,6 +416,10 @@ namespace Graphlit
         {
             DragAndDrop.AcceptDrag();
 
+
+            var pos = evt.localMousePosition;
+            TransformMousePositionToLocalSpace(ref pos, false);
+
             foreach (var obj in DragAndDrop.objectReferences)
             {
                 if (obj is Texture2D texture)
@@ -423,6 +427,8 @@ namespace Graphlit
                     // Create a new node
 
                     var node = new Texture2DPropertyNode();
+                    var sample = new SampleTexture2DNode();
+
                     var desc = new PropertyDescriptor(PropertyType.Texture2D, obj.name);
                     graphData.properties.Add(desc);
                     node.SetReference(desc.guid);
@@ -447,9 +453,15 @@ namespace Graphlit
 
                     }
 
-                    var pos = evt.localMousePosition;
-                    TransformMousePositionToLocalSpace(ref pos, false);
                     CreateNode(node, pos, false);
+                    CreateNode(sample, new Vector2(pos.x + 200, pos.y), false);
+
+                    var texPort = node.Outputs.First(x => x.GetPortID() == 0);
+                    var inPort = sample.Inputs.First(x => x.GetPortID() == 1);
+                    var newEdge = texPort.ConnectTo(inPort);
+                    AddElement(newEdge);
+                    node.GeneratePreviewForAffectedNodes();
+                    pos.y += 400;
                 }
             }
 
