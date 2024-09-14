@@ -5,6 +5,8 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using Graphlit.Nodes.PortType;
+using System.IO;
+using UnityEditor.Hardware;
 
 namespace Graphlit
 {
@@ -34,7 +36,7 @@ namespace Graphlit
         private HashSet<string> visitedNodes = new HashSet<string>();
         public List<PropertyDescriptor> properties = new();
 
-        public GenerationMode GenerationMode { get; }
+        public GenerationMode GenerationMode { get; private set; }
         public SerializableGraph SerializableGraph { get; }
         public ShaderGraphView ShaderGraphView { get; }
 
@@ -126,33 +128,25 @@ namespace Graphlit
             target.OnAfterBuild(this);
         }
 
-        public static Subgraph BuildSubgraph(ShaderGraphView graphView, string assetName)
+        public Dictionary<int, GeneratedPortData> BuildSubgraph(ShaderGraphView subgraphView, NodeVisitor vistor)
         {
-            var shaderBuilder = new ShaderBuilder(GenerationMode.Final, graphView);
+            var sb = new ShaderBuilder(GenerationMode.Final, subgraphView, BuildTarget);
+            sb.AddPass(passBuilders[vistor.Pass]);
+            //var shaderNodes = subgraphView.graphElements.OfType<ShaderNode>();
+            var target = (SubgraphOutputNode)subgraphView.graphElements.First(x => x is SubgraphOutputNode);
+            subgraphView.graphData.precision = target.DefaultPrecision == Precision.Float ? GraphData.GraphPrecision.Float : GraphData.GraphPrecision.Half;
+
+            //subgraphView.uniqueID = ShaderGraphView.uniqueID;
+            sb.Build(target);
+            //ShaderGraphView.uniqueID = subgraphView.uniqueID;
+            return target.subgraphResults;
 
 
+    /*        var function = string.Join("\n", pass.surfaceDescription.ToArray());
 
-            var shaderNodes = graphView.graphElements.Where(x => x is ShaderNode).Cast<ShaderNode>().ToList();
-            var target = (SubgraphOutputNode)graphView.graphElements.First(x => x is SubgraphOutputNode);
-            graphView.graphData.precision = target.DefaultPrecision == Precision.Float ? GraphData.GraphPrecision.Float : GraphData.GraphPrecision.Half;
+            //var asset = ScriptableObject.CreateInstance<Subgraph>();
 
-            var graphData = graphView.graphData;
-
-            var pass = new PassBuilder("FORWARD", VertexPreview, FragmentPreview);
-            shaderBuilder.AddPass(pass);
-
-            shaderBuilder.Build(target);
-
-
-            var function = string.Join("\n", pass.surfaceDescription.ToArray());
-
-            var asset = ScriptableObject.CreateInstance<Subgraph>();
-            asset.inputs = graphView.graphData.subgraphInputs;
-            asset.outputs = graphView.graphData.subgraphOutputs;
-            asset.functionName = assetName.Replace(" ", "_").Replace("/", "_");
-            asset.function = function;
-
-            return asset;
+            return function;*/
         }
 
         public void Build(ShaderNode shaderNode)

@@ -99,14 +99,15 @@ namespace Graphlit
             root.Add(CreateReordableListElement(graphData.subgraphInputs, false));
             root.Add(CreateReordableListElement(graphData.subgraphOutputs, true));
         }
-
+        [NonSerialized] public Dictionary<int, GeneratedPortData> subgraphResults = new();
         protected override void Generate(NodeVisitor visitor)
         {
+            subgraphResults.Clear();
             var data = GraphView.graphData;
             foreach (var output in data.subgraphOutputs)
             {
-                visitor.AppendLine($"{output.name} = {PortData[output.id].Name};");
-
+                //Debug.Log(PortData[output.id].Name);
+                subgraphResults[output.id] = PortData[output.id];
             };
         }
 

@@ -32,11 +32,17 @@ namespace Graphlit
 
         public override void OnImportAsset(AssetImportContext ctx)
         {
+
+            bool isSubgraph = assetPath.EndsWith("subgraphlit");
+            if (isSubgraph)
+            {
+                var asset = ScriptableObject.CreateInstance<Subgraph>();
+                ctx.AddObjectToAsset("Subgraph Asset", asset);
+                return;
+            }
+
             var target = ctx.selectedBuildTarget;
-
             string guid = AssetDatabase.AssetPathToGUID(assetPath);
-
-
 
             /*if (_graphViews.TryGetValue(guid, out var graphView))
             {
@@ -50,15 +56,6 @@ namespace Graphlit
             //}
 
             var filename = Path.GetFileNameWithoutExtension(ctx.assetPath);
-
-            bool isSubgraph = assetPath.EndsWith("subgraphlit");
-            if (isSubgraph)
-            {
-                var asset = ShaderBuilder.BuildSubgraph(graphView, filename);
-                ctx.AddObjectToAsset("Subgraph Asset", asset);
-                return;
-            }
-
             var builder = new ShaderBuilder(GenerationMode.Final, graphView, target);
             if (string.IsNullOrEmpty(builder.shaderName) || builder.shaderName == "Default Shader")
             {
@@ -185,7 +182,7 @@ namespace Graphlit
             }
             catch (Exception ex)
             {
-                Debug.LogError("Serialization failed " + ex);
+                Debug.LogError(ex);
             }
         }
 

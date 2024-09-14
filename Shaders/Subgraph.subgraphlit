@@ -63,58 +63,19 @@
     "nodes": [
         {
             "type": "Graphlit.MultiplyNode",
-            "guid": "da8a6dfc-3cb3-4220-bf44-e64274468753",
-            "x": 458,
-            "y": 844,
+            "guid": "dac81681-f5d2-498c-821a-b6d3634d75d9",
+            "x": 596,
+            "y": 777,
             "connections": [
                 {
                     "a": 0,
                     "b": 0,
-                    "node": "2f7e0f06-8f62-4f0d-89b5-e33158a9afd7"
+                    "node": "49fee5f4-0719-4d0b-8935-928fdb3ade95"
                 },
-                {
-                    "a": 0,
-                    "b": 1,
-                    "node": "2754de52-e8ec-47fc-a654-c1a8da70b980"
-                }
-            ],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": false,
-            "data": ""
-        },
-        {
-            "type": "Graphlit.FloatNode",
-            "guid": "2f7e0f06-8f62-4f0d-89b5-e33158a9afd7",
-            "x": 311,
-            "y": 812,
-            "connections": [],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": false,
-            "data": "{\"_value\":2.0}"
-        },
-        {
-            "type": "Graphlit.SubgraphInputNode",
-            "guid": "2754de52-e8ec-47fc-a654-c1a8da70b980",
-            "x": 311,
-            "y": 893,
-            "connections": [],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": false,
-            "data": "{\"_ref\":0}"
-        },
-        {
-            "type": "Graphlit.AddNode",
-            "guid": "83842e0b-03cf-4b31-b1e5-c3db6be6dca8",
-            "x": 635,
-            "y": 794,
-            "connections": [
                 {
                     "a": 2,
                     "b": 1,
-                    "node": "da8a6dfc-3cb3-4220-bf44-e64274468753"
+                    "node": "98f5fe83-8a88-42cb-9879-25e4561aa806"
                 }
             ],
             "precision": 0,
@@ -125,19 +86,63 @@
         {
             "type": "Graphlit.SubgraphOutputNode",
             "guid": "617b6f1a-8f5f-46be-97e1-50abe0bfd4c3",
-            "x": 791,
-            "y": 825,
+            "x": 809,
+            "y": 790,
             "connections": [
                 {
                     "a": 2,
                     "b": 1,
-                    "node": "83842e0b-03cf-4b31-b1e5-c3db6be6dca8"
+                    "node": "dac81681-f5d2-498c-821a-b6d3634d75d9"
                 }
             ],
             "precision": 2,
             "preview": 0,
             "previewDisabled": false,
             "data": "{}"
+        },
+        {
+            "type": "Graphlit.SubgraphInputNode",
+            "guid": "2754de52-e8ec-47fc-a654-c1a8da70b980",
+            "x": 249,
+            "y": 814,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": false,
+            "data": "{\"_ref\":0}"
+        },
+        {
+            "type": "Graphlit.FloatNode",
+            "guid": "49fee5f4-0719-4d0b-8935-928fdb3ade95",
+            "x": 247,
+            "y": 724,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_value\":12345.0}"
+        },
+        {
+            "type": "Graphlit.AddNode",
+            "guid": "98f5fe83-8a88-42cb-9879-25e4561aa806",
+            "x": 490,
+            "y": 828,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 0,
+                    "node": "2754de52-e8ec-47fc-a654-c1a8da70b980"
+                },
+                {
+                    "a": 0,
+                    "b": 1,
+                    "node": "49fee5f4-0719-4d0b-8935-928fdb3ade95"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
         }
     ],
     "groups": []

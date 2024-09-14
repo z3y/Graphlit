@@ -4,14 +4,9 @@ using UnityEngine;
 using Graphlit.Nodes;
 using UnityEditor.UIElements;
 using UnityEditor;
-using System.Reflection;
-using System.Linq;
-using Graphlit.Nodes.PortType;
-
 
 namespace Graphlit
 {
-
     [NodeInfo("Input/Subgraph"), Serializable]
     public class SubgraphNode : ShaderNode
     {
@@ -33,16 +28,29 @@ namespace Graphlit
 
         public override Color Accent => new Color(0.2f, 0.4f, 0.8f);
 
-        Subgraph GetSubgraphGraph()
+        ShaderGraphView GetSubgraphGraph()
         {
             if (string.IsNullOrEmpty(subgraphRef))
             {
                 return null;
             }
             var asset = Helpers.SerializableReferenceToObject<Subgraph>(subgraphRef);
+            var assetPath = AssetDatabase.GetAssetPath(asset);
+            if (string.IsNullOrEmpty(assetPath))
+            {
+                return null;
+            }
+            string guid = AssetDatabase.AssetPathToGUID(assetPath);
+            var data = ShaderGraphImporter.ReadGraphData(guid);
+            var graphView = new ShaderGraphView(null)
+            {
+                uniqueID = GraphView.uniqueID++
+            };
+            data.PopulateGraph(graphView);
 
-            return asset;
+            return graphView;
         }
+
 
         public override void Initialize()
         {
@@ -56,8 +64,8 @@ namespace Graphlit
                 return;
             }
 
-            var outputs = subgraph.outputs;
-            var inputs = subgraph.inputs;
+            var outputs = subgraph.graphData.subgraphOutputs;
+            var inputs = subgraph.graphData.subgraphInputs;
 
             foreach ( var output in outputs )
             {
@@ -90,50 +98,43 @@ namespace Graphlit
             root.Add(file);
         }
 
-        string MethodParams()
-        {
-            string param = "";
-
-            PortDescriptor[] array = portDescriptors.Values.ToArray();
-            int lastParam = array.Length - 1;
-            for (int i = 0; i < array.Length; i++)
-            {
-                PortDescriptor port = array[i];
-
-                var data = PortData[port.ID];
-                param += data.Name;
-                if (i != lastParam) param += ", ";
-            }
-
-            return param;
-        }
-
         protected override void Generate(NodeVisitor visitor)
         {
-            var subgraph = GetSubgraphGraph();
+            //var subgraphOutput = (ShaderNode)SubgraphView.graphElements.First(x => x is SubgraphOutputNode);
 
-            if (subgraph == null)
+            var sub = GetSubgraphGraph();
+
+            var subgraphResults = visitor._shaderBuilder.BuildSubgraph(sub, visitor);
+
+            foreach (var item in Outputs)
             {
-                return;
+                int id = item.GetPortID();
+                PortData[id] = subgraphResults[id];
             }
-
-            visitor.AddFunction(subgraph.function);
-
-            string uniqueID = UniqueVariableID;
-
-            foreach (var port in portDescriptors.Values)
-            {
-                if (port.Direction == PortDirection.Input)
-                {
-                    continue;
-                }
-
-                string outName = $"{port.Name}_{port.ID}_{uniqueID}";
-                visitor.AppendLine($"{port.Type} {outName};");
-                SetVariable(port.ID, outName);
-            }
-
-            visitor.AppendLine($"{subgraph.functionName}({MethodParams()}, data);");
         }
+
+        /*public override IEnumerable<Port> Outputs
+        {
+            get
+            {
+                var subInputs = SubgraphView.graphElements.OfType<SubgraphOutputNode>().First().Inputs.ToArray();
+
+               // Debug.Log(base.Outputs.Count());
+
+                foreach (var baseOutput in base.Outputs)
+                {
+                    var retargetPort = subInputs.First(x => x.GetPortID() == baseOutput.GetPortID());
+                    if (retargetPort.connected)
+                    {
+                        var retargetOutput = retargetPort.connections.First().output;
+                        yield return retargetOutput;
+                    }
+                    else
+                    {
+                        yield return baseOutput;
+                    }
+                }
+            }
+        }*/
     }
 }

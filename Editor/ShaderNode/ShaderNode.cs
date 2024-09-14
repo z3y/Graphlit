@@ -493,7 +493,6 @@ namespace Graphlit
             {
                 var incomingPort = port.connections.First().output;
                 var incomingNode = (ShaderNode)incomingPort.node;
-
                 return incomingNode.PortData[incomingPort.GetPortID()];
             }
             else

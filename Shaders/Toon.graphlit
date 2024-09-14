@@ -365,7 +365,10 @@
             "type": 3,
             "mode": 0,
             "doubleSided": false
-        }
+        },
+        "subgraphOutputs": [],
+        "subgraphInputs": [],
+        "subgraphOutputIdCounter": 0
     },
     "nodes": [
         {
@@ -1634,7 +1637,7 @@
     ],
     "groups": [
         {
-            "x": 460,
+            "x": 461,
             "y": -906,
             "title": "Lighting",
             "elements": [
@@ -1690,7 +1693,7 @@
         },
         {
             "x": -1784,
-            "y": 155,
+            "y": 156,
             "title": "Normal Map",
             "elements": [
                 "09fe1566-a69d-4c29-b41d-5132e1616d9c",
@@ -1707,7 +1710,7 @@
         },
         {
             "x": 1617,
-            "y": 982,
+            "y": 983,
             "title": "Final Color",
             "elements": [
                 "03b97b16-d387-49c6-b2d4-973381c090f4",
@@ -1722,7 +1725,7 @@
         },
         {
             "x": -1604,
-            "y": 626,
+            "y": 627,
             "title": "Emission",
             "elements": [
                 "a43e0b1e-c369-4f17-8f38-f6676e5bb7d3",
