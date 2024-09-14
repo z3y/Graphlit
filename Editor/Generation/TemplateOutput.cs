@@ -55,6 +55,14 @@ namespace Graphlit
             stencil.RegisterValueChangedCallback(x => graphData.stencil = x.newValue);
             root.Add(stencil);
 
+            var mode = new EnumField("Mode", defaultMode);
+            mode.RegisterValueChangedCallback(x => defaultMode = (MaterialRenderMode)x.newValue);
+            root.Add(mode);
+
+            var cull = new EnumField("Cull", defaultCull);
+            cull.RegisterValueChangedCallback(x => defaultCull = (UnityEngine.Rendering.CullMode)x.newValue);
+            root.Add(cull);
+
             AddVRCTagsElements(root, graphData);
 
             root.Add(PropertyDescriptor.CreateReordableListElement(graphData.properties, GraphView));
@@ -114,13 +122,24 @@ namespace Graphlit
         protected sealed override void Generate(NodeVisitor visitor) { }
 
         internal static readonly PropertyDescriptor _surfaceOptionsStart = new(PropertyType.Float, "Surface Options", "_SurfaceOptions") { customAttributes = "[Foldout]" };
-        internal static readonly PropertyDescriptor _mode = new(PropertyType.Float, "Rendering Mode", "_Mode") { customAttributes = "[Enum(Opaque, 0, Cutout, 1, Fade, 2, Transparent, 3, Additive, 4, Multiply, 5, TransClipping, 6)]" };
+        internal PropertyDescriptor _mode => new(PropertyType.Float, "Rendering Mode", "_Mode") { FloatValue = (int)defaultMode, customAttributes = "[Enum(Opaque, 0, Cutout, 1, Fade, 2, Transparent, 3, Additive, 4, Multiply, 5, TransClipping, 6)]" };
         internal static readonly PropertyDescriptor _srcBlend = new(PropertyType.Float, "Source Blend", "_SrcBlend") { FloatValue = 1, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         internal static readonly PropertyDescriptor _dstBlend = new(PropertyType.Float, "Destination Blend", "_DstBlend") { FloatValue = 0, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         internal static readonly PropertyDescriptor _zwrite = new(PropertyType.Float, "ZWrite", "_ZWrite") { FloatValue = 1, customAttributes = "[Enum(Off, 0, On, 1)]" };
-        internal static readonly PropertyDescriptor _cull = new(PropertyType.Float, "Cull", "_Cull") { FloatValue = 2, customAttributes = "[Enum(UnityEngine.Rendering.CullMode)]" };
-        internal static readonly PropertyDescriptor _outlineToggle = new(PropertyType.Float, "Outline Pass", "_OutlineToggle") { FloatValue = 0, customAttributes = "[ToggleUI]" };
-
+        internal PropertyDescriptor _cull => new(PropertyType.Float, "Cull", "_Cull") { FloatValue = (int)defaultCull, customAttributes = "[Enum(UnityEngine.Rendering.CullMode)]" };
         internal static readonly PropertyDescriptor _properties = new(PropertyType.Float, "Properties", "_Properties") { customAttributes = "[Foldout]" };
+
+        [SerializeField] public MaterialRenderMode defaultMode = MaterialRenderMode.Opaque;
+        [SerializeField] public UnityEngine.Rendering.CullMode defaultCull = UnityEngine.Rendering.CullMode.Back;
+        public enum MaterialRenderMode
+        {
+            Opaque = 0,
+            Cutout = 1,
+            Fade = 2,
+            Transparent = 3,
+            Additive = 4,
+            Multiply = 5,
+            TransClipping = 6,
+        }
     }
 }

@@ -568,23 +568,6 @@
             "data": "{\"_name\":\"alpha\"}"
         },
         {
-            "type": "Graphlit.FetchVariableNode",
-            "guid": "03b97b16-d387-49c6-b2d4-973381c090f4",
-            "x": 2109,
-            "y": 1285,
-            "connections": [
-                {
-                    "a": 1,
-                    "b": 0,
-                    "node": "81e5dc01-a582-4b04-ad6e-7578ddaf5032"
-                }
-            ],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": "{\"_name\":\"alpha\"}"
-        },
-        {
             "type": "Graphlit.FloatPropertyNode",
             "guid": "0840305d-5728-40c4-9ecc-c71cac954d75",
             "x": 2071,
@@ -1630,7 +1613,24 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": false,
-            "data": "{\"_customLighting\":true}"
+            "data": "{\"defaultMode\":0,\"defaultCull\":2,\"_customLighting\":true}"
+        },
+        {
+            "type": "Graphlit.FetchVariableNode",
+            "guid": "03b97b16-d387-49c6-b2d4-973381c090f4",
+            "x": 2094,
+            "y": 1291,
+            "connections": [
+                {
+                    "a": 1,
+                    "b": 0,
+                    "node": "81e5dc01-a582-4b04-ad6e-7578ddaf5032"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_name\":\"alpha\"}"
         }
     ],
     "groups": [

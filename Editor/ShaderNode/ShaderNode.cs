@@ -572,7 +572,15 @@ namespace Graphlit
             return PrecisionString(4) + "(0,0,0,0)";
         }
 
-        public Dictionary<int, string> DefaultValues { get; set; } = new Dictionary<int, string>();
+        Dictionary<int, string> _defaultValues = new();
+        public Dictionary<int, string> DefaultValues
+        {
+            get => _defaultValues;
+            set
+            {
+                _defaultValues = value;
+            }
+        }
 
         internal void BuilderVisit(NodeVisitor visitor, int[] portsMask = null)
         {

@@ -321,7 +321,7 @@ namespace Graphlit
                     material.SetInt("_AlphaToMask", 0);
                     material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest + 10;
                     material.SetInt("_ZWrite", 1);
-                    material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                    material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
                     material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
                     break;
             }

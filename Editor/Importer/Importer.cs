@@ -104,6 +104,7 @@ namespace Graphlit
             {
                 name = $"{builder.shaderName.Replace("/", "_")} Material"
             };
+            DefaultInspector.SetupRenderingMode(material);
             ctx.AddObjectToAsset("Material", material);
 
             //ctx.AddObjectToAsset("generation", new TextAsset(result));
