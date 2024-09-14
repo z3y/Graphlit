@@ -4,6 +4,8 @@ using UnityEngine;
 using System.Linq;
 using Graphlit.Nodes.PortType;
 using Graphlit.Nodes;
+using System.Collections.Generic;
+using static UnityEditor.Rendering.CameraUI;
 
 namespace Graphlit
 {
@@ -22,40 +24,24 @@ namespace Graphlit
 
         public override bool DisablePreview => true;
 
+        [NonSerialized] SubgraphOutputNode _subgraphOut;
+
         public override void Initialize()
         {
             var output = GraphView.graphData.subgraphInputs.Where(x => x.id == _ref).FirstOrDefault();
+
+            _subgraphOut = GraphView.graphElements.OfType<SubgraphOutputNode>().FirstOrDefault();
 
             if (output is null)
             {
                 return;
             }
 
-            PortDescriptor desc;
-            if (output.type == "Float")
-            {
-                desc = new PortDescriptor(PortDirection.Output, new Float(output.dimension), output.id, output.name);
-                portDescriptors.Add(output.id, desc);
-
-                if (output.binding != PortBinding.None)
-                {
-                    Bind(output.id, output.binding);
-                }
-                else
-                {
-                    DefaultValues[output.id] = output.ValueToString();
-                }
-            }
-            else
-            {
-                var type = Type.GetType("Graphlit.Nodes.PortType." + output.type);
-                var instance = (IPortType)Activator.CreateInstance(type);
-                desc = new PortDescriptor(PortDirection.Output, instance, output.id, output.name);
-                portDescriptors.Add(output.id, desc);
-            }
+            //PortDescriptor desc;
+            output.AddPropertyDescriptor(this, PortDirection.Output);
 
 
-            TitleLabel.text = desc.Name;
+            //TitleLabel.text = desc.Name;
 
             ResetPorts();
 
@@ -87,8 +73,22 @@ namespace Graphlit
                 return;
             }
 
-            var output = GraphView.graphData.subgraphInputs.Where(x => x.id == _ref).FirstOrDefault();
-            PortData[OUT] = new GeneratedPortData(portDescriptors[OUT].Type, output.name);
+            string uniqueID = UniqueVariableID;
+
+            var subOut = GraphView.graphData.subgraphInputs.Where(x => x.id == _ref).FirstOrDefault();
+
+            foreach (PortDescriptor port in portDescriptors.Values)
+            {
+                string name = $"SubgraphInput_{port.ID}_{uniqueID}";
+
+                int id = port.ID;
+                SetVariable(id, name);
+
+                PortData[id] = _subgraphOut.subgraphResults[id];
+            }
+
+            //var output = GraphView.graphData.subgraphInputs.Where(x => x.id == _ref).FirstOrDefault();
+            //PortData[OUT] = new GeneratedPortData(portDescriptors[OUT].Type, output.name);
         }
     }
 }

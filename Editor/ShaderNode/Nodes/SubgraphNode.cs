@@ -4,6 +4,8 @@ using UnityEngine;
 using Graphlit.Nodes;
 using UnityEditor.UIElements;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
+using System.Linq;
 
 namespace Graphlit
 {
@@ -104,6 +106,26 @@ namespace Graphlit
 
             var sub = GetSubgraphGraph();
 
+            var subOut = sub.graphElements.OfType<SubgraphOutputNode>().First();
+
+
+            string uniqueID = UniqueVariableID;
+
+            foreach (var item in portDescriptors.Values)
+            {
+                if (item.Direction == PortDirection.Output)
+                {
+                    continue;
+                }
+
+                int id = item.ID;
+                string name = $"SubgraphInput_{id}_{uniqueID}";
+                //Debug.Log(subgraphResults[id].Name);
+                //PortData[id] = subgraphResults[id];
+                visitor.AppendLine($"{item.Type} {name} = {PortData[id].Name};");
+                subOut.subgraphResults[id] = new GeneratedPortData(item.Type, name);
+            }
+
             var subgraphResults = visitor._shaderBuilder.BuildSubgraph(sub, visitor);
 
             foreach (var item in Outputs)
@@ -111,6 +133,7 @@ namespace Graphlit
                 int id = item.GetPortID();
                 PortData[id] = subgraphResults[id];
             }
+
         }
 
         /*public override IEnumerable<Port> Outputs

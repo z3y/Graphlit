@@ -92,7 +92,7 @@
                 {
                     "a": 2,
                     "b": 1,
-                    "node": "dac81681-f5d2-498c-821a-b6d3634d75d9"
+                    "node": "03ccba71-bd00-4cd3-9825-2aa3e7c0bb34"
                 }
             ],
             "precision": 2,
@@ -143,6 +143,39 @@
             "preview": 0,
             "previewDisabled": true,
             "data": ""
+        },
+        {
+            "type": "Graphlit.MultiplyNode",
+            "guid": "03ccba71-bd00-4cd3-9825-2aa3e7c0bb34",
+            "x": 691,
+            "y": 689,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 0,
+                    "node": "381cc094-2675-4d46-aec6-ffcc93b7d76f"
+                },
+                {
+                    "a": 2,
+                    "b": 1,
+                    "node": "dac81681-f5d2-498c-821a-b6d3634d75d9"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
+        },
+        {
+            "type": "Graphlit.FloatNode",
+            "guid": "381cc094-2675-4d46-aec6-ffcc93b7d76f",
+            "x": 500,
+            "y": 669,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_value\":1.0}"
         }
     ],
     "groups": []

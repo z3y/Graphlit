@@ -102,7 +102,7 @@ namespace Graphlit
         [NonSerialized] public Dictionary<int, GeneratedPortData> subgraphResults = new();
         protected override void Generate(NodeVisitor visitor)
         {
-            subgraphResults.Clear();
+            //subgraphResults.Clear();
             var data = GraphView.graphData;
             foreach (var output in data.subgraphOutputs)
             {
