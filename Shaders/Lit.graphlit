@@ -235,7 +235,10 @@
             "type": 0,
             "mode": 0,
             "doubleSided": false
-        }
+        },
+        "subgraphOutputs": [],
+        "subgraphInputs": [],
+        "subgraphOutputIdCounter": 0
     },
     "nodes": [
         {
@@ -280,7 +283,7 @@
             "precision": 1,
             "preview": 0,
             "previewDisabled": true,
-            "data": ""
+            "data": "{\"autoKeyword\":false}"
         },
         {
             "type": "Graphlit.FloatPropertyNode",
@@ -380,7 +383,7 @@
             "precision": 2,
             "preview": 0,
             "previewDisabled": true,
-            "data": ""
+            "data": "{\"autoKeyword\":false}"
         },
         {
             "type": "Graphlit.MultiplyNode",
@@ -537,7 +540,7 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": true,
-            "data": ""
+            "data": "{\"autoKeyword\":false}"
         },
         {
             "type": "Graphlit.MultiplyNode",
@@ -609,7 +612,7 @@
             "precision": 2,
             "preview": 0,
             "previewDisabled": true,
-            "data": ""
+            "data": "{\"autoKeyword\":false}"
         },
         {
             "type": "Graphlit.Texture2DPropertyNode",
@@ -1080,7 +1083,7 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": false,
-            "data": "{\"_cbirp\":false,\"_specular\":true,\"_fwdAddBlendOpMax\":false,\"_customLighting\":\"\",\"_normal\":0}"
+            "data": "{\"_cbirp\":false,\"_specular\":true,\"_fwdAddBlendOpMax\":false,\"_normal\":0}"
         },
         {
             "type": "Graphlit.FetchVariableNode",

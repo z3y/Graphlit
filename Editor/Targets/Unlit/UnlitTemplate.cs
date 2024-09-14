@@ -59,7 +59,7 @@ namespace Graphlit
 
         const string Vertex = "Packages/com.z3y.graphlit/Editor/Targets/Vertex.hlsl";
         const string FragmentForward = "Packages/com.z3y.graphlit/Editor/Targets/Unlit/FragmentForward.hlsl";
-        const string FragmentShadow = "Packages/com.z3y.graphlit/Editor/Targets/Unlit/FragmentShadow.hlsl";
+        const string FragmentShadow = "Packages/com.z3y.graphlit/Editor/Targets/FragmentShadow.hlsl";
 
         public override void OnBeforeBuild(ShaderBuilder builder)
         {

@@ -131,7 +131,7 @@ namespace Graphlit
         static readonly PropertyDescriptor _bicubicLightmap = new(PropertyType.Float, "Bicubic Lightmap", "_BicubicLightmap") { customAttributes = "[Toggle(_BICUBIC_LIGHTMAP)]" };
         static readonly PropertyDescriptor _nonLinearLightprobeSh = new(PropertyType.Float, "Non Linear Light Probe SH", "_NonLinearLightProbeSH") { customAttributes = "[Toggle(_NONLINEAR_LIGHTPROBESH)]" };
         static readonly PropertyDescriptor _specularHighlights = new(PropertyType.Float, "Specular Highlights", "_SpecularHighlights") { customAttributes = "[ToggleOff]", FloatValue = 1 };
-        static readonly PropertyDescriptor _glossyReflections = new(PropertyType.Float, "Glossy Reflections", "_GlossyReflections") { customAttributes = "[ToggleOff]", FloatValue = 1 };
+        static readonly PropertyDescriptor _glossyReflections = new(PropertyType.Float, "Environment Reflections", "_GlossyReflections") { customAttributes = "[ToggleOff]", FloatValue = 1 };
 
 
         static readonly PropertyDescriptor _lmSpec = new(PropertyType.Float, "Lightmapped Specular", "_LightmappedSpecular") { customAttributes = "[Toggle(_LIGHTMAPPED_SPECULAR)]" };
@@ -144,7 +144,7 @@ namespace Graphlit
 
         const string Vertex = "Packages/com.z3y.graphlit/Editor/Targets/Vertex.hlsl";
         const string FragmentForward = "Packages/com.z3y.graphlit/Editor/Targets/Lit/FragmentForward.hlsl";
-        const string FragmentShadow = "Packages/com.z3y.graphlit/Editor/Targets/Lit/FragmentShadow.hlsl";
+        const string FragmentShadow = "Packages/com.z3y.graphlit/Editor/Targets/FragmentShadow.hlsl";
         const string FragmentMeta = "Packages/com.z3y.graphlit/Editor/Targets/Lit/FragmentMeta.hlsl";
 
 
