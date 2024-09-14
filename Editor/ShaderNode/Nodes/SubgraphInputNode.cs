@@ -24,13 +24,12 @@ namespace Graphlit
 
         public override bool DisablePreview => true;
 
-        [NonSerialized] SubgraphOutputNode _subgraphOut;
+        //[NonSerialized] SubgraphOutputNode _subgraphOut;
 
         public override void Initialize()
         {
             var output = GraphView.graphData.subgraphInputs.Where(x => x.id == _ref).FirstOrDefault();
 
-            _subgraphOut = GraphView.graphElements.OfType<SubgraphOutputNode>().FirstOrDefault();
 
             if (output is null)
             {
@@ -75,7 +74,9 @@ namespace Graphlit
 
             string uniqueID = UniqueVariableID;
 
-            var subOut = GraphView.graphData.subgraphInputs.Where(x => x.id == _ref).FirstOrDefault();
+            //var subOut = GraphView.graphData.subgraphInputs.Where(x => x.id == _ref).FirstOrDefault();
+
+            var subOut = GraphView.graphElements.OfType<SubgraphOutputNode>().FirstOrDefault();
 
             foreach (PortDescriptor port in portDescriptors.Values)
             {
@@ -84,7 +85,7 @@ namespace Graphlit
                 int id = port.ID;
                 SetVariable(id, name);
 
-                PortData[id] = _subgraphOut.subgraphResults[id];
+                PortData[id] = subOut.subgraphResults[id];
             }
 
             //var output = GraphView.graphData.subgraphInputs.Where(x => x.id == _ref).FirstOrDefault();

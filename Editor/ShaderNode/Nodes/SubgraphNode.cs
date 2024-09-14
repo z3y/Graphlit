@@ -106,6 +106,11 @@ namespace Graphlit
 
             var sub = GetSubgraphGraph();
 
+            if (sub is null)
+            {
+                return;
+            }
+
             var subOut = sub.graphElements.OfType<SubgraphOutputNode>().First();
 
 
@@ -134,6 +139,9 @@ namespace Graphlit
                 PortData[id] = subgraphResults[id];
             }
 
+            var asset = Helpers.SerializableReferenceToObject<Subgraph>(subgraphRef);
+            var assetPath = AssetDatabase.GetAssetPath(asset);
+            visitor._shaderBuilder.dependencies.Add(assetPath);
         }
 
         /*public override IEnumerable<Port> Outputs
