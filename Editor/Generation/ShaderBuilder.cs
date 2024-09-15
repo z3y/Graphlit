@@ -388,12 +388,17 @@ namespace Graphlit
             {
                 var allProperties = passBuilders.SelectMany(x => x.properties).ToList();
 
+                var addedProps = new List<string>();
+
                 if (unlocked)
                 {
                     foreach (var property in properties.Union(ShaderGraphView.graphData.properties).Union(subgraphProperties).Distinct())
                     {
                         if (property.ShouldDeclare())
+                        {
                             _sb.AppendLine(property.GetPropertyDeclaration(GenerationMode.Final));
+                            addedProps.Add(property.GetReferenceName(GenerationMode.Final));
+                        }
                     }
                 }
 
@@ -403,8 +408,15 @@ namespace Graphlit
                     {
                         continue;
                     }
+                    if (unlocked && addedProps.Contains(property.GetReferenceName(GenerationMode.Preview)))
+                    {
+                        continue;
+                    }
                     if (property.ShouldDeclare())
+                    {
                         _sb.AppendLine(property.GetPropertyDeclaration(GenerationMode.Preview));
+                        addedProps.Add(property.GetReferenceName(GenerationMode.Preview));
+                    }
                 }
             }
             else
