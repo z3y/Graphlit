@@ -32,7 +32,6 @@ namespace Graphlit
             {
                 if (_importedMaterial == null)
                 {
-                    Debug.Log("search");
                     _importedMaterial = AssetDatabase.LoadAllAssetRepresentationsAtPath(_assetPath).OfType<Material>().FirstOrDefault();
                 }
                 return _importedMaterial;
