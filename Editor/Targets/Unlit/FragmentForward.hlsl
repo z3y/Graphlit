@@ -1,5 +1,7 @@
 #pragma fragment frag
 
+uniform uint _Mode;
+
 half4 frag(Varyings varyings) : SV_Target
 {
     UNITY_SETUP_INSTANCE_ID(varyings);
@@ -26,6 +28,10 @@ half4 frag(Varyings varyings) : SV_Target
 
     #if !defined(_ALPHATEST_ON) && !defined(_ALPHAPREMULTIPLY_ON) && !defined(_ALPHAMODULATE_ON) && !defined(_ALPHAFADE_ON)
         col.a = 1.0;
+    #endif
+
+    #if defined(_ALPHAFADE_ON)
+        col.rgb *= (uint)_Mode == 6 ? col.a : 1.0;
     #endif
 
     UNITY_APPLY_FOG(varyings.fogCoord, col);
