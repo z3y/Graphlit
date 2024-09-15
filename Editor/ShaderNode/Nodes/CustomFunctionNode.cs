@@ -222,6 +222,7 @@ namespace Graphlit
                     if (!portElement.connected)
                     {
                         data.Name = _functionParser.defaultValues[port.ID];
+                        UpdateDefaultValueTooltip(port.ID, data.Name);
                     }
                 }
 

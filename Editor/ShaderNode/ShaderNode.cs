@@ -9,6 +9,7 @@ using UnityEngine.UIElements;
 using Graphlit.Nodes;
 using Graphlit.Nodes.PortType;
 using static UnityEditor.Experimental.GraphView.Port;
+using static Graphlit.VRCFallbackTags;
 
 namespace Graphlit
 {
@@ -130,6 +131,10 @@ namespace Graphlit
             var capacity = portDescriptor.Direction == PortDirection.Input ? Capacity.Single : Capacity.Multi;
 
             var port = Port.Create<Edge>(Orientation.Horizontal, (Direction)portDescriptor.Direction, capacity, type);
+
+            var label = port.Q<Label>("type");
+            label.pickingMode = PickingMode.Position;
+
 
             /*            if (port.direction == Direction.Input)
                         {
@@ -281,6 +286,7 @@ namespace Graphlit
                     }
                 }
             }
+
         }
 
         public abstract void Initialize();
@@ -505,6 +511,9 @@ namespace Graphlit
         {
             var descriptor = portDescriptors[portID];
             string value = SetDefaultBinding(descriptor, visitor);
+
+            UpdateDefaultValueTooltip(portID, value);
+
             return new GeneratedPortData(descriptor.Type, value);
         }
 
@@ -572,13 +581,16 @@ namespace Graphlit
             return PrecisionString(4) + "(0,0,0,0)";
         }
 
-        Dictionary<int, string> _defaultValues = new();
-        public Dictionary<int, string> DefaultValues
+
+        public Dictionary<int, string> DefaultValues { get; set; } = new ();
+
+        public void UpdateDefaultValueTooltip(int id, string tooltip)
         {
-            get => _defaultValues;
-            set
+            var port = PortElements.Where(x => x.GetPortID() == id).FirstOrDefault();
+            if (port is not null)
             {
-                _defaultValues = value;
+                var label = port.Q<Label>("type");
+                label.tooltip = tooltip;
             }
         }
 
@@ -631,6 +643,7 @@ namespace Graphlit
                     PortData[id] = new GeneratedPortData(type, name);
                 }
             }
+
 
             Generate(visitor);
         }

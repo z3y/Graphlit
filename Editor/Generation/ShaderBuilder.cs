@@ -197,6 +197,7 @@ namespace Graphlit
                     break; // only first port for preview
                 }
             }
+
         }
 
         const string VertexPreview = "Packages/com.z3y.graphlit/Editor/Targets/Preview/Vertex.hlsl";
