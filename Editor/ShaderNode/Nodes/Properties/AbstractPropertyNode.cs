@@ -46,8 +46,10 @@ namespace Graphlit
                     return;
                 }
                 TitleLabel.text = propertyDescriptor.displayName;
+                TitleLabel.tooltip = GetTitleTooltip() + "\n" + propertyDescriptor.GetReferenceName(GenerationMode.Final);
             };
             TitleLabel.text = propertyDescriptor.displayName;
+            TitleLabel.tooltip = GetTitleTooltip() + "\n" + propertyDescriptor.GetReferenceName(GenerationMode.Final);
         }
 
         public override void AdditionalElements(VisualElement root)

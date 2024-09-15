@@ -455,6 +455,8 @@ namespace Graphlit
         public TextElement TitleLabel;
 
         float _lastClickTime = 0;
+
+        public string GetTitleTooltip() => GetType().Name + "\n" + viewDataKey;
         void AddTitleElement()
         {
             var nodeInfo = Info;
@@ -465,7 +467,7 @@ namespace Graphlit
 
             var titleLabel = new Label() {
                 text = DisplayName,
-                tooltip = nodeInfo.tooltip + "\n" + viewDataKey,
+                tooltip = GetTitleTooltip(),
                 style = {
                     fontSize = 12,
                     marginRight = StyleKeyword.Auto,
