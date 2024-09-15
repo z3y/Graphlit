@@ -29,8 +29,6 @@
 #include "ClusteredBIRP.hlsl"
 #endif
 
-uniform uint _Mode;
-
 half4 frag(Varyings varyings) : SV_Target
 {
     UNITY_SETUP_INSTANCE_ID(varyings);
@@ -246,10 +244,6 @@ half4 frag(Varyings varyings) : SV_Target
     AlphaTransparentBlend(surf.Alpha, surf.Albedo, surf.Metallic);
 
     half4 color = COLOR_IMPL(surf, fragData, giInput, giOutput);
-
-    #if defined(_ALPHAFADE_ON)
-        color.rgb *= (uint)_Mode == 6 ? color.a : 1.0;
-    #endif
 
     UNITY_APPLY_FOG(varyings.fogCoord, color);
 

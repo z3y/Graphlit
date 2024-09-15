@@ -274,8 +274,8 @@ namespace Graphlit
             }
             int mode = (int)material.GetFloat(Mode);
             ToggleKeyword(material, "_ALPHATEST_ON", mode == 1);
-            ToggleKeyword(material, "_ALPHAFADE_ON", mode == 2 || mode == 4 || mode == 6);
-            ToggleKeyword(material, "_ALPHAPREMULTIPLY_ON", mode == 3);
+            ToggleKeyword(material, "_ALPHAFADE_ON", mode == 2 || mode == 4);
+            ToggleKeyword(material, "_ALPHAPREMULTIPLY_ON", mode == 3 || mode == 6);
             ToggleKeyword(material, "_ALPHAMODULATE_ON", mode == 5);
 
             switch (mode)
