@@ -14,7 +14,7 @@ namespace Graphlit
     {
 
 
-        public ShaderBuilder(GenerationMode generationMode, ShaderGraphView shaderGraphView, BuildTarget target = BuildTarget.StandaloneWindows64)
+        public ShaderBuilder(GenerationMode generationMode, ShaderGraphView shaderGraphView, BuildTarget target = BuildTarget.StandaloneWindows64, bool unlocked = false)
         {
             GenerationMode = generationMode;
             ShaderGraphView = shaderGraphView;
@@ -22,10 +22,11 @@ namespace Graphlit
             var data = shaderGraphView.graphData;
             shaderName = data.shaderName;
             BuildTarget = target;
+            this.unlocked = unlocked;
         }
 
         private ShaderStringBuilder _sb;
-
+        public bool unlocked = false;
         public BuildTarget BuildTarget { get; private set; }
         public string shaderName;
         public string fallback;
@@ -385,10 +386,23 @@ namespace Graphlit
         {
             if (GenerationMode == GenerationMode.Preview)
             {
-                var allProperties = passBuilders.SelectMany(x => x.properties);
+                var allProperties = passBuilders.SelectMany(x => x.properties).ToList();
+
+                if (unlocked)
+                {
+                    foreach (var property in properties.Union(ShaderGraphView.graphData.properties).Union(subgraphProperties).Distinct())
+                    {
+                        if (property.ShouldDeclare())
+                            _sb.AppendLine(property.GetPropertyDeclaration(GenerationMode.Final));
+                    }
+                }
 
                 foreach (var property in allProperties)
                 {
+                    if (unlocked && property.IsTextureType)
+                    {
+                        continue;
+                    }
                     if (property.ShouldDeclare())
                         _sb.AppendLine(property.GetPropertyDeclaration(GenerationMode.Preview));
                 }

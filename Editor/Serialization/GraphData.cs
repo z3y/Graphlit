@@ -16,6 +16,7 @@ namespace Graphlit
         public OutlinePassMode outlinePass = OutlinePassMode.Disabled;
         public bool stencil = false;
         public VRCFallbackTags vrcFallbackTags = new VRCFallbackTags();
+        public bool unlocked = false;
 
         //public List<SerializablePortDescriptor> subgraphOutputs = new();
         //public List<SerializablePortDescriptor> subgraphInputs = new();

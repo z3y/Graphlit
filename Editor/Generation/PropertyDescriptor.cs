@@ -501,6 +501,15 @@ namespace Graphlit
                 return;
             }
             Material m = graphView.PreviewMaterial;
+            UpdatePreviewMaterial(m);
+
+            if (graphView.ImportedMaterial != null)
+            {
+                UpdatePreviewMaterial(graphView.ImportedMaterial);
+            }
+        }
+        public void UpdatePreviewMaterial(Material m)
+        {
             string name = GetReferenceName(GenerationMode.Preview);
             if (type == PropertyType.Float || type == PropertyType.Bool) m.SetFloat(name, FloatValue);
             else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) m.SetVector(name, VectorValue);

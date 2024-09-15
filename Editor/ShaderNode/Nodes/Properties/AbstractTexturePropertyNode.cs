@@ -33,6 +33,8 @@ namespace Graphlit
         }
         async void InitializeTexture()
         {
+            await Task.Delay(100);
+            propertyDescriptor.UpdatePreviewMaterial();
             await Task.Delay(2000);
             propertyDescriptor.UpdatePreviewMaterial();
         }

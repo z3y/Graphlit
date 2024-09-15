@@ -14,7 +14,8 @@ namespace Graphlit
         const int OUT = 0;
         [SerializeField] private bool _value = false;
 
-        PropertyDescriptor _descriptor = new(PropertyType.Bool);
+        PropertyDescriptor _descriptor;
+        PropertyDescriptor Descriptor => _descriptor ??= new(PropertyType.Bool) { guid = viewDataKey };
 
         public override bool DisablePreview => true;
         public override void Initialize()
@@ -23,7 +24,7 @@ namespace Graphlit
 
             onUpdatePreviewMaterial += (mat) =>
             {
-                mat.SetFloat(_descriptor.GetReferenceName(GenerationMode.Preview), _value ? 1 : 0);
+                mat.SetFloat(Descriptor.GetReferenceName(GenerationMode.Preview), _value ? 1 : 0);
             };
 
             var f = new Toggle() { value = _value };
@@ -41,9 +42,9 @@ namespace Graphlit
         {
             if (visitor.GenerationMode == GenerationMode.Preview)
             {
-                _descriptor.FloatValue = _value ? 1 : 0;
-                visitor.AddProperty(_descriptor);
-                PortData[OUT] = new GeneratedPortData(new Bool(), _descriptor.GetReferenceName(GenerationMode.Preview));
+                Descriptor.FloatValue = _value ? 1 : 0;
+                visitor.AddProperty(Descriptor);
+                PortData[OUT] = new GeneratedPortData(new Bool(), Descriptor.GetReferenceName(GenerationMode.Preview));
             }
             else
             {

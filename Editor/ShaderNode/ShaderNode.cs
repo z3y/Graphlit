@@ -966,6 +966,11 @@ namespace Graphlit
                 onUpdatePreviewMaterial(material);
             }*/
             onUpdatePreviewMaterial(GraphView.PreviewMaterial);
+
+            if (GraphView.ImportedMaterial != null)
+            {
+                onUpdatePreviewMaterial(GraphView.ImportedMaterial);
+            }
             //PreviewDrawer.SetProperties -= (mat) => onUpdatePreviewMaterial(mat);
             //PreviewDrawer.SetProperties += (mat) => onUpdatePreviewMaterial(mat);
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -21,6 +22,8 @@ namespace Graphlit
 
         public void Initialize(string importerGuid, bool focus = true)
         {
+            this.importerGuid = importerGuid;
+
             //_importer = (ShaderGraphImporter)AssetImporter.GetAtPath(AssetDatabase.AssetPathToGUID(importerGuid));
 
             AddStyleVariables();
@@ -54,7 +57,6 @@ namespace Graphlit
             };
 
             editorInstances[importerGuid] = this;
-            this.importerGuid = importerGuid;
             hasUnsavedChanges = false;
 
             //rootVisualElement.Add(conainer);
@@ -92,11 +94,11 @@ namespace Graphlit
 
         public void AddBar(VisualElement visualElement)
         {
-            var toolbar = new VisualElement()
+            /*var toolbar = new VisualElement()
             {
                 style = {
                     flexDirection = FlexDirection.Column,
-                    width = 100,
+                    width = 120,
                     backgroundColor  = new Color(0.1f, 0.1f, 0.1f),
                     marginTop = 4,
                     marginLeft = 4
@@ -105,25 +107,39 @@ namespace Graphlit
             toolbar.style.SetBorderRadius(8);
             toolbar.style.SetPadding(2);
             toolbar.style.paddingTop = 4;
-            toolbar.style.paddingBottom = 4;
+            toolbar.style.paddingBottom = 4;*/
+
+            var toolbar = new Toolbar()
+            {
+                style = {
+                    justifyContent = Justify.SpaceBetween,
+                    alignItems = Align.Center,
+                    height = 22,
+                }
+            };
+
+            var left = new VisualElement() { style = { flexDirection = FlexDirection.Row } };
+            toolbar.Add(left);
+            var right = new VisualElement() { style = { flexDirection = FlexDirection.Row } };
+            toolbar.Add(right);
 
 
-            var saveButton = new Button() { text = "Save", style = { height = 32 } };
+            var saveButton = new ToolbarButton() { text = "Save Asset", style = { marginRight = 4 } };
             saveButton.clicked += SaveChanges;
-            toolbar.Add(saveButton);
+            left.Add(saveButton);
 
 
-            var pingAsset = new Button() { text = "Select Asset", style = { height = 24 } };
+            var pingAsset = new ToolbarButton() { text = "Select Asset", style = { marginRight = 4 } };
             pingAsset.clicked += () =>
             {
                 var assetPath = AssetDatabase.GUIDToAssetPath(importerGuid);
                 var obj = AssetDatabase.LoadAssetAtPath(assetPath, typeof(UnityEngine.Object));
-                //EditorGUIUtility.PingObject(obj);
+                EditorGUIUtility.PingObject(obj);
                 Selection.activeObject = obj;
             };
-            toolbar.Add(pingAsset);
+            right.Add(pingAsset);
 
-            var selectMasterNode = new Button() { text = "Master Node", style = { height = 24 } };
+            var selectMasterNode = new ToolbarButton() { text = "Master Node", style = { marginRight = 4 } };
             selectMasterNode.clicked += () =>
             {
                 //var masterNode = graphView.graphElements.Where(x => x is TemplateOutput || x is SubgraphOutputNode).First();
@@ -139,7 +155,20 @@ namespace Graphlit
                     masterNode.Focus();
                 }
             };
-            toolbar.Add(selectMasterNode);
+            right.Add(selectMasterNode);
+
+            var unlocked = new Toggle("Live Preview") {
+                value = graphView.graphData.unlocked,
+                tooltip = "Temporarly convert constants to properties and update them live on the imported material",
+            };
+            var unlockedLabel = unlocked.Q<Label>();
+            unlockedLabel.style.minWidth = 60;
+
+            unlocked.RegisterValueChangedCallback(x =>
+            {
+                graphView.graphData.unlocked = x.newValue;
+            });
+            left.Add(unlocked);
 
             visualElement.Add(toolbar);
         }
@@ -149,7 +178,7 @@ namespace Graphlit
             var properties = new VisualElement();
             var style = properties.style;
             style.width = 400;
-            style.paddingTop = 6;
+            style.paddingTop = 25;
             //style.paddingLeft = 5;
             //style.paddingRight = 6;
 
@@ -168,7 +197,7 @@ namespace Graphlit
 
         public void AddGraphView(VisualElement visualElement)
         {
-            var graphView = new ShaderGraphView(this);
+            var graphView = new ShaderGraphView(this, AssetDatabase.GUIDToAssetPath(importerGuid));
             graphView.StretchToParentSize();
 
             var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ROOT + "Styles/GraphViewStyles.uss");

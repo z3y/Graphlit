@@ -13,7 +13,8 @@ namespace Graphlit
         const int OUT = 0;
         [SerializeField] private Vector2 _value;
 
-        PropertyDescriptor _descriptor = new(PropertyType.Float2);
+        PropertyDescriptor _descriptor;
+        PropertyDescriptor Descriptor => _descriptor ??= new(PropertyType.Float2) { guid = viewDataKey };
 
         public override bool DisablePreview => true;
         public override void Initialize()
@@ -22,7 +23,7 @@ namespace Graphlit
 
             onUpdatePreviewMaterial += (mat) =>
             {
-                mat.SetVector(_descriptor.GetReferenceName(GenerationMode.Preview), _value);
+                mat.SetVector(Descriptor.GetReferenceName(GenerationMode.Preview), _value);
             };
 
             var f = new Vector2Field() { value = _value };
@@ -39,9 +40,9 @@ namespace Graphlit
         {
             if (visitor.GenerationMode == GenerationMode.Preview)
             {
-                _descriptor.VectorValue = _value;
-                visitor.AddProperty(_descriptor);
-                PortData[OUT] = new GeneratedPortData(new Float(2), _descriptor.GetReferenceName(GenerationMode.Preview));
+                Descriptor.VectorValue = _value;
+                visitor.AddProperty(Descriptor);
+                PortData[OUT] = new GeneratedPortData(new Float(2), Descriptor.GetReferenceName(GenerationMode.Preview));
             }
             else
             {

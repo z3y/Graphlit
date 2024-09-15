@@ -51,12 +51,13 @@ namespace Graphlit
             //else if (graphView is null)
             //{
                 var data = ReadGraphData(guid);
-                var graphView = new ShaderGraphView(null);
+                var graphView = new ShaderGraphView(null, assetPath);
                 data.PopulateGraph(graphView);
             //}
 
             var filename = Path.GetFileNameWithoutExtension(ctx.assetPath);
-            var builder = new ShaderBuilder(GenerationMode.Final, graphView, target);
+            bool unlocked = graphView.graphData.unlocked;
+            var builder = new ShaderBuilder(unlocked ? GenerationMode.Preview : GenerationMode.Final, graphView, target, unlocked);
             if (string.IsNullOrEmpty(builder.shaderName) || builder.shaderName == "Default Shader")
             {
                 builder.shaderName = "Graphlit/" + filename;

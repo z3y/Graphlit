@@ -25,9 +25,25 @@ namespace Graphlit
             hideFlags = HideFlags.HideAndDontSave
         };
 
-        public ShaderGraphView(ShaderGraphWindow editorWindow)
+        Material _importedMaterial;
+        public Material ImportedMaterial
+        {
+            get
+            {
+                if (_importedMaterial == null)
+                {
+                    Debug.Log("search");
+                    _importedMaterial = AssetDatabase.LoadAllAssetRepresentationsAtPath(_assetPath).OfType<Material>().FirstOrDefault();
+                }
+                return _importedMaterial;
+            }
+        }
+
+        string _assetPath;
+        public ShaderGraphView(ShaderGraphWindow editorWindow, string assetPath)
         {
             _editorWindow = editorWindow;
+            _assetPath = assetPath;
             // manipulators
             SetupZoom(0.1f, 10.0f);
             this.AddManipulator(new ContentDragger());
@@ -60,6 +76,13 @@ namespace Graphlit
 
             RegisterCallback<DragUpdatedEvent>(OnDragUpdated);
             RegisterCallback<DragPerformEvent>(OnDragPerform);
+
+            if (!string.IsNullOrEmpty(assetPath))
+            {
+                var assets = AssetDatabase.LoadAllAssetRepresentationsAtPath(assetPath);
+                //i//mportedMaterial = assets.OfType<Material>().FirstOrDefault();
+                //Debug.Log(importedMaterial);
+            }
         }
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange change)
