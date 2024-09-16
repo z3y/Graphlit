@@ -13,10 +13,8 @@ float lilTooningNoSaturateScale_local(float aascale, float value, float border, 
     return (value - borderMin) / saturate(borderMax - borderMin);
 }
 
-#define defaultShadowBorderColor float3(1,0,0) // temp until parser is better
-#define defaultShadowColor2 float4(0.68, 0.66, 0.79, 1)
-#define defaultShadowColor1 float4(0.82, 0.76, 0.85, 1)
-void ToonShadowsLayers(out float3 Out, float3 LightColor, float3 LightDirection, float ShadowAttenuation, float3 NormalWS, float4 ShadowColor1 = defaultShadowColor1, float ShadowBorder1 = 0.5, float ShadowBlur1 = 0.1, float4 ShadowColor2 = defaultShadowColor2, float ShadowBorder2 = 0.15, float ShadowBlur2 = 0.1, float4 ShadowColor3 = 0, float ShadowBorder3 = 0.1, float ShadowBlur3 = 0.1, float3 ShadowBorderColor = defaultShadowBorderColor, float ShadowBorderRange = 0.08, bool applyShadow = true)
+
+void ToonShadowsLayers(out float3 Out, float3 LightColor, float3 LightDirection, float ShadowAttenuation, float4 ShadowColor1, float4 ShadowColor2, float4 ShadowColor3, float3 ShadowsBorder, float3 ShadowsBlur, float3 ShadowBorderColor, float ShadowBorderRange, float3 NormalWS)
 {
     half3 col = LightColor;
 
@@ -27,16 +25,13 @@ void ToonShadowsLayers(out float3 Out, float3 LightColor, float3 LightDirection,
     lns.y = saturate(dot(LightDirection, NormalWS) * 0.5 + 0.5);
     lns.z = saturate(dot(LightDirection, NormalWS) * 0.5 + 0.5);
 
-    if (applyShadow)
-    {
-        lns.xyz *= ShadowAttenuation;
-    }
+    lns.xyz *= ShadowAttenuation;
     lns.w = lns.x;
 
-    lns.x = lilTooningNoSaturateScale_local(antialias, lns.x, ShadowBorder1, ShadowBlur1);
-    lns.y = lilTooningNoSaturateScale_local(antialias, lns.y, ShadowBorder2, ShadowBlur2);
-    lns.z = lilTooningNoSaturateScale_local(antialias, lns.z, ShadowBorder3, ShadowBlur3);
-    lns.w = lilTooningNoSaturateScale_local(antialias, lns.w, ShadowBorder1, ShadowBlur1, ShadowBorderRange);
+    lns.x = lilTooningNoSaturateScale_local(antialias, lns.x, ShadowsBorder.x, ShadowsBlur.x);
+    lns.y = lilTooningNoSaturateScale_local(antialias, lns.y, ShadowsBorder.y, ShadowsBlur.y);
+    lns.z = lilTooningNoSaturateScale_local(antialias, lns.z, ShadowsBorder.z, ShadowsBlur.z);
+    lns.w = lilTooningNoSaturateScale_local(antialias, lns.w, ShadowsBorder.x, ShadowsBlur.x, ShadowBorderRange);
 
     lns = saturate(lns);
 

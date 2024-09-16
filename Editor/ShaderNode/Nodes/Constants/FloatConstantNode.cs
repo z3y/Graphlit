@@ -9,7 +9,7 @@ namespace Graphlit
 {
 
     [NodeInfo("Constants/Float"), Serializable]
-    public class FloatNode : ShaderNode
+    public class FloatNode : ShaderNode, IConvertablePropertyNode
     {
         const int OUT = 0;
         [SerializeField] private float _value;
@@ -49,6 +49,11 @@ namespace Graphlit
             {
                 SetVariable(OUT, $"{PrecisionString(1)}({_value.ToString(System.Globalization.CultureInfo.InvariantCulture)})");
             }
+        }
+
+        public void CopyConstant(PropertyDescriptor propertyDescriptor)
+        {
+            _value = propertyDescriptor.FloatValue;
         }
     }
 }

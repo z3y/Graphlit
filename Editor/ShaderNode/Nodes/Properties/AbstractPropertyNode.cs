@@ -4,6 +4,16 @@ using UnityEngine;
 
 namespace Graphlit
 {
+    public interface IConvertablePropertyNode
+    {
+        public void CopyConstant(PropertyDescriptor propertyDescriptor);
+        //public PropertyDescriptor ToProperty(PropertyNode node);
+    }
+
+    public interface IConstantToProperty
+    {
+        public ShaderNode ToProperty();
+    }
     public abstract class PropertyNode : ShaderNode
     {
         public void SetReference(string guid)
@@ -67,5 +77,6 @@ namespace Graphlit
             visitor.AddProperty(propertyDescriptor);
             PortData[OUT] = new GeneratedPortData(portDescriptors[OUT].Type, propertyDescriptor.GetReferenceName(visitor.GenerationMode));
         }
+
     }
 }

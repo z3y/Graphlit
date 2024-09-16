@@ -9,7 +9,7 @@ using UnityEditor.UIElements;
 namespace Graphlit
 {
     [NodeInfo("Constants/Bool"), Serializable]
-    public class BooleanConstantNode : ShaderNode
+    public class BooleanConstantNode : ShaderNode, IConvertablePropertyNode
     {
         const int OUT = 0;
         [SerializeField] private bool _value = false;
@@ -50,6 +50,11 @@ namespace Graphlit
             {
                 SetVariable(OUT, $"{_value.ToString(System.Globalization.CultureInfo.InvariantCulture).ToLower()}");
             }
+        }
+
+        public void CopyConstant(PropertyDescriptor propertyDescriptor)
+        {
+            _value = propertyDescriptor.FloatValue > 0;
         }
     }
 }

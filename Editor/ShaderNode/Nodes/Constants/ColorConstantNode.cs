@@ -9,7 +9,7 @@ using UnityEditor.UIElements;
 namespace Graphlit
 {
     [NodeInfo("Constants/Color"), Serializable]
-    public class ColorNode : ShaderNode
+    public class ColorNode : ShaderNode, IConvertablePropertyNode
     {
         const int OUT = 0;
         [SerializeField] private Vector4 _value = Vector4.one;
@@ -56,6 +56,11 @@ namespace Graphlit
 
                 SetVariable(OUT, $"{PrecisionString(4)}{v}");
             }
+        }
+
+        public void CopyConstant(PropertyDescriptor propertyDescriptor)
+        {
+            _value = propertyDescriptor.VectorValue;
         }
     }
 }

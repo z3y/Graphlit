@@ -1,8 +1,7 @@
 fileFormatVersion: 2
-guid: 42fecaeeebecd4a449f4c88a7df51734
-labels:
-- GraphlitFunction
-ShaderIncludeImporter:
+guid: 7b12e0b5133361e40b23edbf38edd42d
+folderAsset: yes
+DefaultImporter:
   externalObjects: {}
   userData: 
   assetBundleName: 

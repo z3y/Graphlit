@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -679,18 +680,43 @@ namespace Graphlit
                         continue;
                     }
 
-                    // remove for now, convert later when avaliable
+                    var position = node.GetPosition();
+                    var propertyDescriptor = node.propertyDescriptor;
+                    var convertedNode = propertyDescriptor.ToConstantNode();
                     foreach (var port in node.PortElements)
                     {
                         node.Disconnect(port);
                     }
                     node.CleanLooseEdges();
+
                     graphView.RemoveElement(node);
+
+                    if (convertedNode is ShaderNode newNode)
+                    {
+                        convertedNode.CopyConstant(propertyDescriptor);
+                        graphView.CreateNode(newNode, position.position, false);
+                    }
                 }
             };
 
             return reorderableList;
         }
+        
+
+        IConvertablePropertyNode ToConstantNode()
+        {
+            return type switch
+            {
+                PropertyType.Float => new FloatNode(),
+                PropertyType.Float2 => new Float2Node(),
+                PropertyType.Float3 => new Float3Node(),
+                PropertyType.Float4 => new Float4Node(),
+                PropertyType.Color => new ColorNode(),
+                PropertyType.KeywordToggle or PropertyType.Bool => new BooleanConstantNode(),
+                _ => null,
+            };
+        }
+
 
 
         public string DefaultTextureToValue()

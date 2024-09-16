@@ -388,7 +388,7 @@ namespace Graphlit
             {
                 var allProperties = passBuilders.SelectMany(x => x.properties).ToList();
 
-                var addedProps = new List<string>();
+                var addedProps = new HashSet<string>();
 
                 if (unlocked)
                 {
