@@ -384,6 +384,10 @@ namespace Graphlit
 
         private void AppendProperties()
         {
+            if (unlocked)
+            {
+                _sb.AppendLine("_GraphlitPreviewEnabled(\"LIVE PREVIEW ENABLED\", Float) = 1");
+            }
             if (GenerationMode == GenerationMode.Preview)
             {
                 var allProperties = passBuilders.SelectMany(x => x.properties).ToList();

@@ -100,10 +100,10 @@ namespace Graphlit
 
             ctx.AddObjectToAsset("Main Asset", shader, Thumbnail);
 
-
+            string prefix = unlocked ? "Unlocked " : "";
             var material = new Material(shader)
             {
-                name = $"{builder.shaderName.Replace("/", "_")} Material"
+                name = $"{prefix}{builder.shaderName.Replace("/", "_")}"
             };
             DefaultInspector.SetupRenderingMode(material);
             ctx.AddObjectToAsset("Material", material);

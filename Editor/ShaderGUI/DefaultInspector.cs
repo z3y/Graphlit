@@ -27,6 +27,12 @@ namespace Graphlit
         public static void Reinitialize() => _reinitialize = true;
         public override void OnGUI(MaterialEditor editor, MaterialProperty[] properties)
         {
+            if (Array.Exists(properties, x => x.name == "_GraphlitPreviewEnabled"))
+            {
+                EditorGUILayout.LabelField("LIVE PREVIEW ENABLED");
+                return;
+            }
+
             var style = GUI.skin.customStyles;
             bool[] richTextState = new bool[style.Length];
             for (int i = 0; i < style.Length; i++)

@@ -236,6 +236,7 @@
             "mode": 0,
             "doubleSided": false
         },
+        "unlocked": false,
         "subgraphOutputIdCounter": 0
     },
     "nodes": [
@@ -1081,7 +1082,7 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": false,
-            "data": "{\"_cbirp\":false,\"_specular\":true,\"_fwdAddBlendOpMax\":false,\"_normal\":0}"
+            "data": "{\"defaultMode\":0,\"defaultCull\":2,\"_cbirp\":false,\"_specular\":true,\"_fwdAddBlendOpMax\":false,\"_normal\":0}"
         },
         {
             "type": "Graphlit.FetchVariableNode",
