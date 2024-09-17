@@ -1,7 +1,7 @@
-void EnvironmentReflectionNode(out half3 Out, float3 normalWS, float3 positionWS, float3 viewDirectionWS, half roughness, half3 BRDF = 1, half energyCompensation = 1)
+void EnvironmentReflectionNode(out half3 Specular, float3 normalWS, float3 positionWS, float3 viewDirectionWS, half roughness, half3 BRDF = 1, half energyCompensation = 1)
 {
 	#ifdef PREVIEW
-	Out = .15;
+	Specular = .15;
 	return;
 	#endif
 
@@ -30,15 +30,15 @@ void EnvironmentReflectionNode(out half3 Out, float3 normalWS, float3 positionWS
 					reflectionSpecular = lerp(probe1, probe0, unity_SpecCube0_BoxMin.w);
 				}
 			#endif
-			Out = reflectionSpecular;
+			Specular = reflectionSpecular;
 			#if !defined(QUALITY_LOW)
 				float horizon = min(1.0 + dot(reflectVector, normalWS), 1.0);
-				Out *= horizon * horizon;
+				Specular *= horizon * horizon;
 			#endif
 
-			Out *= BRDF * energyCompensation;
+			Specular *= BRDF * energyCompensation;
 		#endif
 	#else
-		Out = 0;
+		Specular = 0;
 	#endif
 }

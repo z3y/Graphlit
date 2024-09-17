@@ -302,6 +302,12 @@ namespace Graphlit
 
         public void TraverseGraph(ShaderNode shaderNode, NodeVisitor visitor, int[] ports = null)
         {
+            // skip unneded ports for shadowcaster
+            if (visitor._shaderBuilder.passBuilders[visitor.Pass].name == "SHADOWCASTER" && shaderNode is BlendFinalColorNode)
+            {
+                ports = new int[] { BlendFinalColorNode.METALLIC, BlendFinalColorNode.IN_ALPHA };
+            }
+
             foreach (var port in shaderNode.Inputs)
             {
                 if (ports is not null && !ports.Contains(port.GetPortID()))
