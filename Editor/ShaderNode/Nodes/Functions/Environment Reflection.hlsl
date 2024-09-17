@@ -1,4 +1,4 @@
-void CustomFunction(out half3 Out, float3 normalWS, float3 positionWS, float3 viewDirectionWS, half roughness)
+void EnvironmentReflectionNode(out half3 Out, float3 normalWS, float3 positionWS, float3 viewDirectionWS, half roughness)
 {
 	#ifdef UNITY_PASS_FORWARDBASE
 		half roughness2 = roughness * roughness;

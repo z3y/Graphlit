@@ -1,6 +1,3 @@
-Texture2D<float4> _DFG;
-SamplerState custom_bilinear_clamp_sampler;
-
 #ifndef UNITY_PBS_USE_BRDF1
     #define QUALITY_LOW
 #endif

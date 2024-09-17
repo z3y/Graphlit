@@ -69,6 +69,13 @@ namespace Graphlit
             builder.properties.Add(_dstBlend);
             builder.properties.Add(_zwrite);
             builder.properties.Add(_cull);
+
+            if (_customLighting)
+            {
+                builder.properties.Add(_dfgProperty);
+                builder._defaultTextures["_DFG"] = _dfg;
+            }
+
             //if (GraphView.graphData.outlinePass != GraphData.OutlinePassMode.Disabled) builder.properties.Add(_outlineToggle);
             builder.properties.Add(_properties);
 

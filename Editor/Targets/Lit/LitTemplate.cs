@@ -4,9 +4,7 @@ using Graphlit.Nodes;
 using UnityEngine;
 using UnityEditor;
 using System;
-using UnityEditor.UIElements;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Graphlit
 {
@@ -147,10 +145,6 @@ namespace Graphlit
         const string FragmentShadow = "Packages/com.z3y.graphlit/Editor/Targets/FragmentShadow.hlsl";
         const string FragmentMeta = "Packages/com.z3y.graphlit/Editor/Targets/Lit/FragmentMeta.hlsl";
 
-
-        Texture2D _dfg = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.z3y.graphlit/Editor/Targets/Lit/dfg-multiscatter.exr");
-        static readonly PropertyDescriptor _dfgProperty = new(PropertyType.Texture2D, "", "_DFG")
-        { defaultAttributes = MaterialPropertyAttribute.HideInInspector | MaterialPropertyAttribute.NonModifiableTextureData };
 
         public override void OnBeforeBuild(ShaderBuilder builder)
         {

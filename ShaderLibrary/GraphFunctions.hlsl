@@ -76,3 +76,6 @@ float SampleSceneDepth(float2 uv)
     #endif
     return SAMPLE_TEXTURE2D_X(_CameraDepthTexture, sampler_CameraDepthTexture, uv).r;
 }
+
+Texture2D<float4> _DFG;
+SamplerState custom_bilinear_clamp_sampler;

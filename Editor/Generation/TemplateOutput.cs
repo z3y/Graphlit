@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Graphlit.Nodes.PortType;
+using UnityEditor;
 
 namespace Graphlit
 {
@@ -141,5 +142,9 @@ namespace Graphlit
             Multiply = 5,
             TransClipping = 6,
         }
+
+        protected Texture2D _dfg = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.z3y.graphlit/Editor/Targets/Lit/dfg-multiscatter.exr");
+        protected static readonly PropertyDescriptor _dfgProperty = new(PropertyType.Texture2D, "", "_DFG")
+        { defaultAttributes = MaterialPropertyAttribute.HideInInspector | MaterialPropertyAttribute.NonModifiableTextureData };
     }
 }
