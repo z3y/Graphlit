@@ -1,4 +1,4 @@
-void EnvironmentReflectionNode(out half3 Out, float3 normalWS, float3 positionWS, float3 viewDirectionWS, half roughness)
+void EnvironmentReflectionNode(out half3 Out, float3 normalWS, float3 positionWS, float3 viewDirectionWS, half roughness, half3 BRDF = 1, half energyCompensation = 1)
 {
 	#ifdef PREVIEW
 	Out = .15;
@@ -35,6 +35,8 @@ void EnvironmentReflectionNode(out half3 Out, float3 normalWS, float3 positionWS
 				float horizon = min(1.0 + dot(reflectVector, normalWS), 1.0);
 				Out *= horizon * horizon;
 			#endif
+
+			Out *= BRDF * energyCompensation;
 		#endif
 	#else
 		Out = 0;
