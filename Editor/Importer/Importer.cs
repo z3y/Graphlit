@@ -6,7 +6,6 @@ using System.IO;
 using System;
 using UnityEditor.Callbacks;
 using System.Linq;
-using UnityEngine.Profiling;
 
 namespace Graphlit
 {
@@ -33,7 +32,6 @@ namespace Graphlit
 
         public override void OnImportAsset(AssetImportContext ctx)
         {
-            Profiler.BeginSample("Graphlit Shader Import", this);
             bool isSubgraph = assetPath.EndsWith("subgraphlit");
             if (isSubgraph)
             {
@@ -113,8 +111,6 @@ namespace Graphlit
             //var text = File.ReadAllText(assetPath);
             //ctx.AddObjectToAsset("json", new TextAsset(text));
             DefaultInspector.Reinitialize();
-
-            Profiler.EndSample();
         }
 
         public static void CreateEmptyTemplate(TemplateOutput template, Action<ShaderGraphView> onCreate = null)
