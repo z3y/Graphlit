@@ -1070,23 +1070,6 @@
             "data": "{\"_value\":0.0}"
         },
         {
-            "type": "Graphlit.FetchVariableNode",
-            "guid": "03b97b16-d387-49c6-b2d4-973381c090f4",
-            "x": 739,
-            "y": 563,
-            "connections": [
-                {
-                    "a": 1,
-                    "b": 0,
-                    "node": "81e5dc01-a582-4b04-ad6e-7578ddaf5032"
-                }
-            ],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": "{\"_name\":\"alpha\"}"
-        },
-        {
             "type": "Graphlit.CustomFunctionNode",
             "guid": "fb66b3f1-9077-49a9-a96a-bfcf84ec8d2e",
             "x": 1345,
@@ -1463,10 +1446,27 @@
             "data": "{\"defaultMode\":0,\"defaultCull\":2,\"_customLighting\":true}"
         },
         {
+            "type": "Graphlit.FetchVariableNode",
+            "guid": "1a442b7f-3ff3-463e-8547-73680ae9e745",
+            "x": 535,
+            "y": 611,
+            "connections": [
+                {
+                    "a": 1,
+                    "b": 0,
+                    "node": "81e5dc01-a582-4b04-ad6e-7578ddaf5032"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_name\":\"alpha\"}"
+        },
+        {
             "type": "Graphlit.CustomFunctionNode",
             "guid": "b860d303-1b14-485d-8d26-d6d41bfcec1d",
-            "x": 697,
-            "y": 439,
+            "x": 687,
+            "y": 375,
             "connections": [
                 {
                     "a": 1,
@@ -1493,28 +1493,11 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n\\tOut = In;\\n}\",\"_file\":\"10900000|da49d09b2bde0ee4395c3bf034da1b9b\",\"_useFile\":true}"
-        },
-        {
-            "type": "Graphlit.FetchVariableNode",
-            "guid": "1a442b7f-3ff3-463e-8547-73680ae9e745",
-            "x": 535,
-            "y": 611,
-            "connections": [
-                {
-                    "a": 1,
-                    "b": 0,
-                    "node": "81e5dc01-a582-4b04-ad6e-7578ddaf5032"
-                }
-            ],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": "{\"_name\":\"alpha\"}"
         }
     ],
     "groups": [
         {
-            "x": 460,
+            "x": 461,
             "y": -906,
             "title": "Lighting",
             "elements": [
@@ -1585,7 +1568,6 @@
             "y": 200,
             "title": "Final Color",
             "elements": [
-                "03b97b16-d387-49c6-b2d4-973381c090f4",
                 "0840305d-5728-40c4-9ecc-c71cac954d75",
                 "e1fe3349-2b07-42d6-ae78-f2f988c56317",
                 "fd5c95d7-b2fb-4a1d-9d1e-222772e82295",

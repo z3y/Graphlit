@@ -1,6 +1,6 @@
 void FinalColorNode(out half3 Color, out half Alpha, half3 diffuse = 1, half specular = 0, half3 emission = 0, half3 albedo = 1, half metallic = 0, half alpha = 1)
 {
-
+    Color = diffuse;
     #ifndef UNITY_PASS_SHADOWCASTER
 
         #if defined(_ALPHAPREMULTIPLY_ON)
@@ -16,11 +16,11 @@ void FinalColorNode(out half3 Color, out half Alpha, half3 diffuse = 1, half spe
             alpha = 1.0f;
         #endif
 
-        Color = half4(albedo * (1.0 - metallic) * diffuse, alpha);
-        Color.rgb += specular;
+        Color = albedo * (1.0 - metallic) * diffuse;
+        Color += specular;
 
         #if defined(UNITY_PASS_FORWARDBASE)
-            Color.rgb += emission;
+            Color += emission;
         #endif
     #endif
     Alpha = alpha;

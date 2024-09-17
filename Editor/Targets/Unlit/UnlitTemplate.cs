@@ -153,7 +153,7 @@ namespace Graphlit
             }
 
             {
-                var pass = new PassBuilder("SHADOWCASTER", Vertex, FragmentShadow, POSITION, NORMAL, ALPHA, CUTOFF);
+                var pass = new PassBuilder("SHADOWCASTER", Vertex, FragmentShadow, POSITION, NORMAL, TANGENT, ALPHA, CUTOFF);
                 pass.tags["LightMode"] = "ShadowCaster";
                 pass.renderStates["ZWrite"] = "On";
                 pass.renderStates["ZTest"] = "LEqual";
