@@ -6,6 +6,7 @@ using System.IO;
 using System;
 using UnityEditor.Callbacks;
 using System.Linq;
+using UnityEngine.Profiling;
 
 namespace Graphlit
 {
@@ -32,7 +33,7 @@ namespace Graphlit
 
         public override void OnImportAsset(AssetImportContext ctx)
         {
-
+            Profiler.BeginSample("Graphlit Shader Import", this);
             bool isSubgraph = assetPath.EndsWith("subgraphlit");
             if (isSubgraph)
             {
@@ -44,16 +45,15 @@ namespace Graphlit
             var target = ctx.selectedBuildTarget;
             string guid = AssetDatabase.AssetPathToGUID(assetPath);
 
-            /*if (_graphViews.TryGetValue(guid, out var graphView))
+            if (_graphViews.TryGetValue(guid, out var graphView))
             {
-                Debug.Log("cache");
-            }*/
-            //else if (graphView is null)
-            //{
+            }
+            else if (graphView is null)
+            {
                 var data = ReadGraphData(guid);
-                var graphView = new ShaderGraphView(null, assetPath);
+                graphView = new ShaderGraphView(null, assetPath);
                 data.PopulateGraph(graphView);
-            //}
+            }
 
             var filename = Path.GetFileNameWithoutExtension(ctx.assetPath);
             bool unlocked = graphView.graphData.unlocked;
@@ -113,6 +113,8 @@ namespace Graphlit
             //var text = File.ReadAllText(assetPath);
             //ctx.AddObjectToAsset("json", new TextAsset(text));
             DefaultInspector.Reinitialize();
+
+            Profiler.EndSample();
         }
 
         public static void CreateEmptyTemplate(TemplateOutput template, Action<ShaderGraphView> onCreate = null)

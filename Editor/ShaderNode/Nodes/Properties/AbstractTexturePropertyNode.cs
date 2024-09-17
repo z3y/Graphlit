@@ -77,6 +77,8 @@ namespace Graphlit
 
                 PortData[TexelSizeID] = new GeneratedPortData(portDescriptors[TexelSizeID].Type, texelSize.GetReferenceName(GenerationMode.Final));
             }
+
+            InitializeTexture();
         }
     }
 }
