@@ -52,7 +52,8 @@ namespace Graphlit
                 v.x = MathF.Pow(_value.x, 2.2f);
                 v.y = MathF.Pow(_value.y, 2.2f);
                 v.z = MathF.Pow(_value.z, 2.2f);
-                v.w = MathF.Pow(_value.w, 2.2f);
+                //v.w = MathF.Pow(_value.w, 2.2f);
+                v.w = _value.w;
 
                 SetVariable(OUT, $"{PrecisionString(4)}{v}");
             }
