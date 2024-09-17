@@ -1,5 +1,10 @@
 void EnvironmentReflectionNode(out half3 Out, float3 normalWS, float3 positionWS, float3 viewDirectionWS, half roughness)
 {
+	#ifdef PREVIEW
+	Out = .15;
+	return;
+	#endif
+
 	#ifdef UNITY_PASS_FORWARDBASE
 		half roughness2 = roughness * roughness;
 		float3 reflectVector = reflect(-viewDirectionWS, normalWS);
@@ -26,6 +31,10 @@ void EnvironmentReflectionNode(out half3 Out, float3 normalWS, float3 positionWS
 				}
 			#endif
 			Out = reflectionSpecular;
+			#if !defined(QUALITY_LOW)
+				float horizon = min(1.0 + dot(reflectVector, normalWS), 1.0);
+				Out *= horizon * horizon;
+			#endif
 		#endif
 	#else
 		Out = 0;

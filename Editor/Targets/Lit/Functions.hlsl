@@ -42,22 +42,6 @@ struct GIOutput
     }
 };
 
-void AlphaTransparentBlend(inout half alpha, inout half3 albedo, half metallic)
-{
-    #if defined(_ALPHAPREMULTIPLY_ON)
-        albedo.rgb *= alpha;
-        alpha = lerp(alpha, 1.0, metallic);
-    #endif
-
-    #if defined(_ALPHAMODULATE_ON)
-        albedo = lerp(1.0, albedo, alpha);
-    #endif
-
-    #if !defined(_ALPHAFADE_ON) && !defined(_ALPHATEST_ON) && !defined(_ALPHAPREMULTIPLY_ON) && !defined(_ALPHAMODULATE_ON)
-        alpha = 1.0f;
-    #endif
-}
-
 void ApplyAlphaClip(inout half alpha, half clipThreshold)
 {
     #if defined(_ALPHATEST_ON)

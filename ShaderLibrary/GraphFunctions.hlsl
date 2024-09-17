@@ -79,3 +79,19 @@ float SampleSceneDepth(float2 uv)
 
 Texture2D<float4> _DFG;
 SamplerState custom_bilinear_clamp_sampler;
+
+void AlphaTransparentBlend(inout half alpha, inout half3 albedo, half metallic)
+{
+    #if defined(_ALPHAPREMULTIPLY_ON)
+        albedo.rgb *= alpha;
+        alpha = lerp(alpha, 1.0, metallic);
+    #endif
+
+    #if defined(_ALPHAMODULATE_ON)
+        albedo = lerp(1.0, albedo, alpha);
+    #endif
+
+    #if !defined(_ALPHAFADE_ON) && !defined(_ALPHATEST_ON) && !defined(_ALPHAPREMULTIPLY_ON) && !defined(_ALPHAMODULATE_ON)
+        alpha = 1.0f;
+    #endif
+}

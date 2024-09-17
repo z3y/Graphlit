@@ -11,14 +11,14 @@ half4 frag(Varyings varyings) : SV_Target
         if (surfaceDescription.Alpha < surfaceDescription.Cutoff) discard;
     #endif
 
-    #if defined(_ALPHAPREMULTIPLY_ON)
-        surfaceDescription.Color *= surfaceDescription.Alpha;
+    // #if defined(_ALPHAPREMULTIPLY_ON)
+        // surfaceDescription.Color *= surfaceDescription.Alpha;
         // surfaceDescription.Alpha = lerp(surfaceDescription.Alpha, 1.0, surfaceDescription.Metallic);
-    #endif
+    // #endif
 
-    #if defined(_ALPHAMODULATE_ON)
-        surfaceDescription.Color = lerp(1.0, surfaceDescription.Color, surfaceDescription.Alpha);
-    #endif
+    // #if defined(_ALPHAMODULATE_ON)
+        // surfaceDescription.Color = lerp(1.0, surfaceDescription.Color, surfaceDescription.Alpha);
+    // #endif
 
     half4 col;
     col.rgb = surfaceDescription.Color;

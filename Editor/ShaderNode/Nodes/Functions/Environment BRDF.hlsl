@@ -15,7 +15,7 @@ void EnvironmentBRDFNode(out float3 BRDF, out half energyCompensation, float3 no
 	half NoV = abs(dot(normalWS, viewDirectionWS)) + 1e-5f;
   	half3 f0 = 0.16 * reflectance * reflectance * (1.0 - metallic) + albedo * metallic;
 
-    #if defined(QUALITY_LOW)
+    #if defined(QUALITY_LOW) || defined(PREVIEW)
 		energyCompensation = 1.0;
 		BRDF = EnvironmentBRDFApproximation_1(roughness, NoV, f0);
 	#else
