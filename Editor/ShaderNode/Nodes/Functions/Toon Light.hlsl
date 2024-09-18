@@ -73,7 +73,7 @@ void FlatLightNode(float4 ShadowCoord, float2 LightmapUV, float3 PositionWS, out
     shMax = 0;
 	#ifdef PREVIEW
 		Color = 1.0;
-		Direction = normalize(float3(1,1,1));
+		Direction = normalize(float3(1,1,0));
         DistanceAttenuation = 1;
         ShadowAttenuation = 1;
 	#else
