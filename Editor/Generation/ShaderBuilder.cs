@@ -7,12 +7,12 @@ using UnityEngine;
 using Graphlit.Nodes.PortType;
 using System.IO;
 using UnityEditor.Hardware;
+using UnityEditor.Rendering;
 
 namespace Graphlit
 {
     public class ShaderBuilder
     {
-
 
         public ShaderBuilder(GenerationMode generationMode, ShaderGraphView shaderGraphView, BuildTarget target = BuildTarget.StandaloneWindows64, bool unlocked = false)
         {
@@ -23,8 +23,11 @@ namespace Graphlit
             shaderName = data.shaderName;
             BuildTarget = target;
             this.unlocked = unlocked;
+
+            autoWireNodes = ShaderGraphView.graphElements.OfType<RegisterVariableNode>().Where(x => x._autoWire).ToArray();
         }
 
+        private RegisterVariableNode[] autoWireNodes;
         private ShaderStringBuilder _sb;
         public bool unlocked = false;
         public BuildTarget BuildTarget { get; private set; }
@@ -308,6 +311,9 @@ namespace Graphlit
                 ports = new int[] { BlendFinalColorNode.METALLIC, BlendFinalColorNode.IN_ALPHA };
             }
 
+
+
+
             foreach (var port in shaderNode.Inputs)
             {
                 if (ports is not null && !ports.Contains(port.GetPortID()))
@@ -315,13 +321,30 @@ namespace Graphlit
                     continue;
                 }
 
+                Edge input = null;
                 if (!port.connections.Any())
                 {
-                    continue;
+                    foreach (var node in autoWireNodes)
+                    {
+                        if (node._name.ToLower() == port.portName.ToLower())
+                        {
+                            input = node.Inputs.First().connections.FirstOrDefault();
+                            break;
+                        }
+                    }
+
+                    if (input is null)
+                    {
+                        continue;
+                    }
                 }
-                var input = port.connections.First();
+                else
+                {
+                    input = port.connections.First();
+                }
 
                 var inputNode = (ShaderNode)input.output.node;
+
                 if (visitedNodes.Contains(inputNode.viewDataKey))
                 {
                     continue;

@@ -459,7 +459,7 @@ namespace Graphlit
         public string GetTitleTooltip() => GetType().Name + "\n" + viewDataKey;
         void AddTitleElement()
         {
-            var nodeInfo = Info;
+            //var nodeInfo = Info;
 
             var previousLabel = titleContainer.Q("title-label");
             var parent = previousLabel.parent;
@@ -509,10 +509,29 @@ namespace Graphlit
             }
         }
 
+
         GeneratedPortData GetDefaultInput(int portID, NodeVisitor visitor)
         {
             var descriptor = portDescriptors[portID];
             string value = SetDefaultBinding(descriptor, visitor);
+
+            var autoWireNodes = GraphView.graphElements.OfType<RegisterVariableNode>().Where(x => x._autoWire).ToArray();
+
+            foreach (var node in autoWireNodes)
+            {
+                if (node._name.ToLower() == descriptor.Name.ToLower())
+                {
+                    var input = node.Inputs.First();
+                    if (!input.connected)
+                    {
+                        break;
+                    }
+                    var incomingPort = input.connections.First().output;
+                    var incomingNode = (ShaderNode)incomingPort.node;
+                    value = incomingNode.PortData[incomingPort.GetPortID()].Name;
+                    break;
+                }
+            }
 
             UpdateDefaultValueTooltip(portID, value);
 

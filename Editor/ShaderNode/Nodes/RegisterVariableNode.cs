@@ -13,6 +13,8 @@ namespace Graphlit
     public class RegisterVariableNode : ShaderNode
     {
         [SerializeField] internal string _name = "";
+        [SerializeField] internal bool _autoWire = false;
+
         public override bool DisablePreview => true;
         const int IN = 0;
         const int OUT = 1;
@@ -50,6 +52,10 @@ namespace Graphlit
                 TitleLabel.text = x.newValue;
             });
             root.Add(text);
+
+            var auto = new Toggle("Auto Wire") { value = _autoWire };
+            auto.RegisterValueChangedCallback(x => _autoWire = x.newValue);
+            root.Add(auto);
 
             var update = new Button() { text = "Update Preview" };
             update.clicked += GeneratePreviewForAffectedNodes;
