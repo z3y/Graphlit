@@ -24,10 +24,10 @@ namespace Graphlit
             BuildTarget = target;
             this.unlocked = unlocked;
 
-            autoWireNodes = ShaderGraphView.graphElements.OfType<RegisterVariableNode>().Where(x => x._autoWire).ToArray();
+            //autoWireNodes = ShaderGraphView.graphElements.OfType<RegisterVariableNode>().Where(x => x._autoWire).ToArray();
         }
 
-        private RegisterVariableNode[] autoWireNodes;
+        //private RegisterVariableNode[] autoWireNodes;
         private ShaderStringBuilder _sb;
         public bool unlocked = false;
         public BuildTarget BuildTarget { get; private set; }
@@ -324,14 +324,14 @@ namespace Graphlit
                 Edge input = null;
                 if (!port.connections.Any())
                 {
-                    foreach (var node in autoWireNodes)
+                    /*foreach (var node in autoWireNodes)
                     {
                         if (node._name.ToLower() == port.portName.ToLower())
                         {
                             input = node.Inputs.First().connections.FirstOrDefault();
                             break;
                         }
-                    }
+                    }*/
 
                     if (input is null)
                     {

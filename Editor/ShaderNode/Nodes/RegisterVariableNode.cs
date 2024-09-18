@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Graphlit.Nodes;
 using Graphlit.Nodes.PortType;
+using static UnityEditor.Rendering.CameraUI;
 
 namespace Graphlit
 {
@@ -13,7 +14,7 @@ namespace Graphlit
     public class RegisterVariableNode : ShaderNode
     {
         [SerializeField] internal string _name = "";
-        [SerializeField] internal bool _autoWire = false;
+        //[SerializeField] internal bool _autoWire = false;
 
         public override bool DisablePreview => true;
         const int IN = 0;
@@ -53,14 +54,31 @@ namespace Graphlit
             });
             root.Add(text);
 
-            var auto = new Toggle("Auto Wire") { value = _autoWire };
+            /*var auto = new Toggle("Auto Wire") { value = _autoWire };
             auto.RegisterValueChangedCallback(x => _autoWire = x.newValue);
-            root.Add(auto);
+            root.Add(auto);*/
 
             var update = new Button() { text = "Update Preview" };
             update.clicked += GeneratePreviewForAffectedNodes;
+            //update.clicked += GeneratePreviewForAutoWiredNodes;
+
             root.Add(update);
         }
+
+        /*void GeneratePreviewForAutoWiredNodes()
+        {
+            var nodes = GraphView.graphElements.OfType<ShaderNode>();
+            foreach (var node in nodes)
+            {
+                if (node is RegisterVariableNode)
+                {
+                    continue;
+                }
+
+                ShaderBuilder.GeneratePreview(GraphView, this);
+                node.GeneratePreviewForAffectedNodes();
+            }
+        }*/
 
         protected override void Generate(NodeVisitor visitor)
         {

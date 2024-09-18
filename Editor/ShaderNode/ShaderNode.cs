@@ -515,9 +515,9 @@ namespace Graphlit
             var descriptor = portDescriptors[portID];
             string value = SetDefaultBinding(descriptor, visitor);
 
-            var autoWireNodes = GraphView.graphElements.OfType<RegisterVariableNode>().Where(x => x._autoWire).ToArray();
+            //var autoWireNodes = GraphView.graphElements.OfType<RegisterVariableNode>().Where(x => x._autoWire).ToArray();
 
-            foreach (var node in autoWireNodes)
+            /*foreach (var node in autoWireNodes)
             {
                 if (node._name.ToLower() == descriptor.Name.ToLower())
                 {
@@ -531,7 +531,7 @@ namespace Graphlit
                     value = incomingNode.PortData[incomingPort.GetPortID()].Name;
                     break;
                 }
-            }
+            }*/
 
             UpdateDefaultValueTooltip(portID, value);
 

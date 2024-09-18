@@ -2,7 +2,7 @@ A node shader editor with primary focus on the built-in pipeline and VRChat
 
 Install with [VCC](https://z3y.github.io/vpm-package-listing/) or add the git url
 
-## [Documentation](https://z3y.github.io/graphlit)
+## [Documentation](https://z3y.github.io/Graphlit)
 
 ## Templates
 
