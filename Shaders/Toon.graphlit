@@ -274,45 +274,6 @@
                 "_value": "",
                 "_defaultTexture": "",
                 "declaration": 0
-            },
-            {
-                "guid": "f8b03e08-5666-4901-ad53-ce8014a9d0b6",
-                "referenceName": "_",
-                "displayName": "Outline Width",
-                "type": 1,
-                "customAttributes": "",
-                "defaultAttributes": 0,
-                "rangeX": 0.0,
-                "rangeY": 5.0,
-                "_value": "1",
-                "_defaultTexture": "",
-                "declaration": 0
-            },
-            {
-                "guid": "4589c613-f158-430c-a573-1cb8d6a398a9",
-                "referenceName": "_OutlineWidthMask",
-                "displayName": "Outline Mask",
-                "type": 7,
-                "customAttributes": "",
-                "defaultAttributes": 32,
-                "rangeX": 0.0,
-                "rangeY": 0.0,
-                "_value": "",
-                "_defaultTexture": "",
-                "declaration": 0
-            },
-            {
-                "guid": "8045a6f4-7ad3-485f-8eef-ecab52a71769",
-                "referenceName": "_",
-                "displayName": "Outline Color",
-                "type": 5,
-                "customAttributes": "",
-                "defaultAttributes": 0,
-                "rangeX": 0.0,
-                "rangeY": 0.0,
-                "_value": "(1.00, 1.00, 1.00, 1.00)",
-                "_defaultTexture": "",
-                "declaration": 0
             }
         ],
         "precision": 0,
@@ -953,17 +914,6 @@
             "data": "{\"_name\":\"World Normal\"}"
         },
         {
-            "type": "Graphlit.ColorPropertyNode",
-            "guid": "5d663f61-f9eb-48f2-8089-d8b4256efe92",
-            "x": -892,
-            "y": -555,
-            "connections": [],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": "{\"_ref\":\"8045a6f4-7ad3-485f-8eef-ecab52a71769\"}"
-        },
-        {
             "type": "Graphlit.OutlinePassBranchNode",
             "guid": "4e377b21-5a5e-4cb0-b7c7-6f4e2289daae",
             "x": -755,
@@ -972,7 +922,7 @@
                 {
                     "a": 0,
                     "b": 1,
-                    "node": "5d663f61-f9eb-48f2-8089-d8b4256efe92"
+                    "node": "4edeb8b8-26e6-4e74-a968-054a05179975"
                 },
                 {
                     "a": 2,
@@ -1368,65 +1318,6 @@
             "data": "{\"_name\":\"diffuse\"}"
         },
         {
-            "type": "Graphlit.UnlitTemplate",
-            "guid": "31a6de1d-7e74-41cb-b79d-921e8cbf1dc4",
-            "x": 947,
-            "y": 259,
-            "connections": [
-                {
-                    "a": 0,
-                    "b": 3,
-                    "node": "da46e9b6-3298-466b-8772-d9a62d17ce19"
-                },
-                {
-                    "a": 1,
-                    "b": 4,
-                    "node": "da46e9b6-3298-466b-8772-d9a62d17ce19"
-                },
-                {
-                    "a": 0,
-                    "b": 5,
-                    "node": "0840305d-5728-40c4-9ecc-c71cac954d75"
-                }
-            ],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": false,
-            "data": "{\"defaultMode\":0,\"defaultCull\":2,\"_customLighting\":true}"
-        },
-        {
-            "type": "Graphlit.BlendFinalColorNode",
-            "guid": "da46e9b6-3298-466b-8772-d9a62d17ce19",
-            "x": 616,
-            "y": 348,
-            "connections": [
-                {
-                    "a": 1,
-                    "b": 5,
-                    "node": "fd5c95d7-b2fb-4a1d-9d1e-222772e82295"
-                },
-                {
-                    "a": 1,
-                    "b": 8,
-                    "node": "1a442b7f-3ff3-463e-8547-73680ae9e745"
-                },
-                {
-                    "a": 1,
-                    "b": 4,
-                    "node": "2a22653a-c58c-4404-804e-8ecfd84b7df7"
-                },
-                {
-                    "a": 1,
-                    "b": 2,
-                    "node": "e1fe3349-2b07-42d6-ae78-f2f988c56317"
-                }
-            ],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": ""
-        },
-        {
             "type": "Graphlit.FetchVariableNode",
             "guid": "fd5c95d7-b2fb-4a1d-9d1e-222772e82295",
             "x": 452,
@@ -1493,6 +1384,76 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_name\":\"emission\"}"
+        },
+        {
+            "type": "Graphlit.BlendFinalColorNode",
+            "guid": "da46e9b6-3298-466b-8772-d9a62d17ce19",
+            "x": 616,
+            "y": 348,
+            "connections": [
+                {
+                    "a": 1,
+                    "b": 5,
+                    "node": "fd5c95d7-b2fb-4a1d-9d1e-222772e82295"
+                },
+                {
+                    "a": 1,
+                    "b": 8,
+                    "node": "1a442b7f-3ff3-463e-8547-73680ae9e745"
+                },
+                {
+                    "a": 1,
+                    "b": 4,
+                    "node": "2a22653a-c58c-4404-804e-8ecfd84b7df7"
+                },
+                {
+                    "a": 1,
+                    "b": 2,
+                    "node": "e1fe3349-2b07-42d6-ae78-f2f988c56317"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
+        },
+        {
+            "type": "Graphlit.UnlitTemplate",
+            "guid": "31a6de1d-7e74-41cb-b79d-921e8cbf1dc4",
+            "x": 947,
+            "y": 259,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 3,
+                    "node": "da46e9b6-3298-466b-8772-d9a62d17ce19"
+                },
+                {
+                    "a": 1,
+                    "b": 4,
+                    "node": "da46e9b6-3298-466b-8772-d9a62d17ce19"
+                },
+                {
+                    "a": 0,
+                    "b": 5,
+                    "node": "0840305d-5728-40c4-9ecc-c71cac954d75"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": false,
+            "data": "{\"defaultMode\":0,\"defaultCull\":2,\"_customLighting\":true}"
+        },
+        {
+            "type": "Graphlit.ColorNode",
+            "guid": "4edeb8b8-26e6-4e74-a968-054a05179975",
+            "x": -892,
+            "y": -555,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_value\":{\"x\":1.0,\"y\":1.0,\"z\":1.0,\"w\":1.0}}"
         }
     ],
     "groups": [
@@ -1530,7 +1491,7 @@
         },
         {
             "x": -1338,
-            "y": -614,
+            "y": -582,
             "title": "Main Texture",
             "elements": [
                 "60fab7be-41fa-4fcf-8d0b-4512bdb5ebc5",
@@ -1542,8 +1503,7 @@
                 "393c96ec-1493-4676-a2f8-2d4128db625c",
                 "522ea996-6c8e-474b-a6b6-7286ad4c464a",
                 "f5c9ce10-56fc-4bc9-9fb5-242ea1cedf7b",
-                "4e377b21-5a5e-4cb0-b7c7-6f4e2289daae",
-                "5d663f61-f9eb-48f2-8089-d8b4256efe92"
+                "4e377b21-5a5e-4cb0-b7c7-6f4e2289daae"
             ]
         },
         {
