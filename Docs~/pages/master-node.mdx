@@ -1,4 +1,4 @@
-import { Callout } from 'nextra/components'
+import { Callout } from "nextra/components"
 
 # Master Node
 
@@ -7,6 +7,7 @@ This is the main node where all settings, properties and target features can be 
 All vertex ports (Position, Normal, Tangent) are in absolute World Space, to avoid unnecessary conversion from world, to object, back to world again. Use a transform node to convert from object to world when needed.
 
 ## Target Options
+
 - `Shader Name` Name used for the generated shader
 - `Custom Editor` Set a [Custom Editor](https://docs.unity3d.com/Manual/SL-CustomEditor.html). Default editor used when empty
 - `Fallback` Set a [Fallback](https://docs.unity3d.com/Manual/SL-Fallback.html)
@@ -21,14 +22,14 @@ All vertex ports (Position, Normal, Tangent) are in absolute World Space, to avo
 Use `+/-` to add or remove properties.
 
 <Callout>
-Created properties appear in the Create Node menu under the `Properties` section
+  Created properties appear in the Create Node menu under the
+  `MaterialProperties` section
 </Callout>
 
 ## Lit Target
 
 ### Graph Options
 
-- `Shading` Set PBR or Flat Lit shading
 - `Normal` Set Normal dropoff for the fragment shader
 - `Specular` Disable Specular Highlighs and Reflections
 
@@ -40,4 +41,4 @@ Created properties appear in the Create Node menu under the `Properties` section
 
 ## Unlit Target
 
-The Unlit target also generates a shadowcaster.
+- Enable `Custom Lighting` toggle on the master node to generate passes and all required keywords for lighting

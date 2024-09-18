@@ -43,15 +43,15 @@ namespace Graphlit
             var target = ctx.selectedBuildTarget;
             string guid = AssetDatabase.AssetPathToGUID(assetPath);
 
-            if (_graphViews.TryGetValue(guid, out var graphView))
+            /*if (_graphViews.TryGetValue(guid, out var graphView))
             {
             }
             else if (graphView is null)
-            {
+            {*/
                 var data = ReadGraphData(guid);
-                graphView = new ShaderGraphView(null, assetPath);
+                var graphView = new ShaderGraphView(null, assetPath);
                 data.PopulateGraph(graphView);
-            }
+            //}
 
             var filename = Path.GetFileNameWithoutExtension(ctx.assetPath);
             bool unlocked = graphView.graphData.unlocked;
