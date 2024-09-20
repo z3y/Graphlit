@@ -20,6 +20,10 @@ namespace Graphlit
         public VisualElement additionalNodeElements;
         public int uniqueID = 0;
 
+        public Vector2 lastMousePos;
+        public Vector2 copyMousePos;
+
+
         public Material PreviewMaterial = new(Shader.Find("Unlit/Color"))
         {
             hideFlags = HideFlags.HideAndDontSave
@@ -48,6 +52,7 @@ namespace Graphlit
             this.AddManipulator(new ContentDragger());
             this.AddManipulator(new SelectionDragger());
             this.AddManipulator(new RectangleSelector());
+            RegisterCallback<MouseMoveEvent>(OnMouseMoveEvent);
             this.AddManipulator(CreateGroupContextualMenu());
 
             // background
@@ -123,6 +128,11 @@ namespace Graphlit
             }
         }
 
+        void OnMouseMoveEvent(MouseMoveEvent evt)
+        {
+            lastMousePos = contentViewContainer.WorldToLocal(evt.mousePosition);
+        }
+
         bool LoopDetection(string startGUID, Edge edge)
         {
             var connectedNode = (ShaderNode)edge.input.node;
@@ -171,7 +181,7 @@ namespace Graphlit
                 }
             }
 
-
+            copyMousePos = lastMousePos;
             //_lastCopyGraph = JsonUtility.ToJson(data, false);
             return JsonUtility.ToJson(data, false);
         }
@@ -181,11 +191,11 @@ namespace Graphlit
             //RecordUndo();
 
             var data = JsonUtility.FromJson<SerializableGraph>(jsonData);
-            //var data = _lastCopyGraph;
 
-            //Vector2 mousePosition = new Vector2(-200, -200);
-            //ShaderGraphImporter.DeserializeNodesToGraph(data, this, mousePosition);
-            var graphElements = data.PasteElementsAndOverwiteGuids(this, new Vector2(100, -100));
+            var offset = lastMousePos - copyMousePos;
+            //TransformMousePositionToLocalSpace(ref offset, true);
+
+            var graphElements = data.PasteElementsAndOverwiteGuids(this, offset);
 
             ClearSelection();
 
