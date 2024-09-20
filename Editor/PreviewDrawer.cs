@@ -1,6 +1,6 @@
-using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
 using UnityEditor;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -41,7 +41,14 @@ namespace Graphlit
                 cachedShader = _defaultShader;
                 return;
             }
-            cachedShader = ShaderUtil.CreateShaderAsset(shaderLabString, false);
+            if (cachedShader != null)
+            {
+                ShaderUtil.UpdateShaderAsset(cachedShader, shaderLabString, false);
+            }
+            else
+            {
+                cachedShader = ShaderUtil.CreateShaderAsset(shaderLabString, false);
+            }
         }
 
         PreviewDrawer _extensionPreviewDrawer;
@@ -137,6 +144,12 @@ namespace Graphlit
             _material.SetVector(_graphTimeId, time);
             Graphics.DrawTexture(contentRect, Texture2D.whiteTexture, _material, 0);
 
+            Repaint();
+        }
+
+        async void Repaint()
+        {
+            await Task.Delay(16);
             MarkDirtyRepaint();
         }
     }

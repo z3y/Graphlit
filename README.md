@@ -30,6 +30,4 @@ https://github.com/user-attachments/assets/eb1c1830-54ef-4cad-aa5b-961fc721ded8
 
 https://github.com/z3y/MyShaderGraph/assets/33181641/ae523917-56ee-420d-90ac-a3f3afdecf82
 
-- Previews can lead to high CPU usage if the interaction mode is set to default. Set `Preferences -> General -> Interaction Mode` to monitor refresh rate or custom
-
 ### [Discord](https://discord.gg/bw46tKgRFT)
