@@ -2,9 +2,10 @@
 
 #include "Main Light.hlsl"
 
+#define OPENLIT_FALLBACK_DIRECTION  float4(0.001,0.002,0.001,0)
 void ShadeSH9ToonDouble(float3 lightDirection, out float3 shMax, out float3 shMin)
 {
-    #if !defined(LIGHTMAP_ON)
+    #if !defined(LIGHTMAP_ON) && UNITY_SHOULD_SAMPLE_SH
         float3 N = lightDirection * 0.666666;
         float4 vB = N.xyzz * N.yzzx;
         // L0 L2
@@ -43,27 +44,27 @@ float OpenLitGray(float3 rgb)
     return dot(rgb, float3(1.0/3.0, 1.0/3.0, 1.0/3.0));
 }
 
+float3 ComputeCustomLightDirection(float4 lightDirectionOverride)
+{
+    float3 customDir = length(lightDirectionOverride.xyz) * normalize(mul((float3x3)UNITY_MATRIX_M, lightDirectionOverride.xyz));
+    return lightDirectionOverride.w ? customDir : lightDirectionOverride.xyz;
+}
 
 void ComputeLightDirection(float3 mainLightDir, float3 mainLightCol, out float3 lightDirection, out float3 lightDirectionForSH9)
 {
     float3 mainDir = mainLightDir * OpenLitLuminance(mainLightCol);
-    #if !defined(LIGHTMAP_ON)
+    #if !defined(LIGHTMAP_ON) && UNITY_SHOULD_SAMPLE_SH
         float3 sh9Dir = unity_SHAr.xyz * 0.333333 + unity_SHAg.xyz * 0.333333 + unity_SHAb.xyz * 0.333333;
         float3 sh9DirAbs = float3(sh9Dir.x, abs(sh9Dir.y), sh9Dir.z);
-		UNITY_FLATTEN
-        if (!any(unity_SHC.xyz))
-        {
-            sh9Dir = 0;
-            sh9DirAbs = 0;
-        }
     #else
         float3 sh9Dir = 0;
         float3 sh9DirAbs = 0;
     #endif
+    float3 customDir = ComputeCustomLightDirection(OPENLIT_FALLBACK_DIRECTION);
 
-    lightDirection = normalize(sh9DirAbs + mainDir);
-    // lightDirectionForSH9 = sh9Dir + mainDir;
-    lightDirectionForSH9 = sh9Dir;
+    lightDirection = normalize(sh9DirAbs + mainDir + customDir);
+    lightDirectionForSH9 = sh9Dir + mainDir;
+    // lightDirectionForSH9 = sh9Dir;
     lightDirectionForSH9 = dot(lightDirectionForSH9, lightDirectionForSH9) < 0.000001 ? 0 : normalize(lightDirectionForSH9);
 }
 

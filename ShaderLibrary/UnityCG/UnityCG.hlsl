@@ -22,6 +22,13 @@
 #define USING_LIGHT_MULTI_COMPILE
 #endif
 
+// Should SH (light probe / ambient) calculations be performed?
+// - When both static and dynamic lightmaps are available, no SH evaluation is performed
+// - When static and dynamic lightmaps are not available, SH evaluation is always performed
+// - For low level LODs, static lightmap and real-time GI from light probes can be combined together
+// - Passes that don't do ambient (additive, shadowcaster etc.) should not do SH either.
+#define UNITY_SHOULD_SAMPLE_SH (defined(LIGHTPROBE_SH) && !defined(UNITY_PASS_FORWARDADD) && !defined(UNITY_PASS_PREPASSBASE) && !defined(UNITY_PASS_SHADOWCASTER) && !defined(UNITY_PASS_META))
+
 #if defined(SHADER_API_D3D11) || defined(SHADER_API_PSSL) || defined(SHADER_API_METAL) || defined(SHADER_API_GLCORE) || defined(SHADER_API_GLES3) || defined(SHADER_API_VULKAN) || defined(SHADER_API_SWITCH) // D3D11, D3D12, XB1, PS4, iOS, macOS, tvOS, glcore, gles3, webgl2.0, Switch
 // Real-support for depth-format cube shadow map.
 #define SHADOWS_CUBE_IN_DEPTH_TEX
