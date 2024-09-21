@@ -12,13 +12,14 @@ namespace Graphlit
     public class FloatNode : ShaderNode, IConvertablePropertyNode
     {
         const int OUT = 0;
-        [SerializeField] private float _value;
+        [SerializeField] protected float _value;
 
         PropertyDescriptor _descriptor;
         PropertyDescriptor Descriptor => _descriptor ??= new(PropertyType.Float) { guid = viewDataKey };
 
         public override bool DisablePreview => true;
-        public override void Initialize()
+
+        public void InitializeFloatNode()
         {
             AddPort(new(PortDirection.Output, new Float(1), OUT));
 
@@ -26,6 +27,11 @@ namespace Graphlit
             {
                 mat.SetFloat(Descriptor.GetReferenceName(GenerationMode.Preview), _value);
             };
+        }
+
+        public override void Initialize()
+        {
+            InitializeFloatNode();
 
             var f = new FloatField("X") { value = _value };
             f.Children().First().style.minWidth = 0;
