@@ -1,6 +1,6 @@
 # Graphlit
 
-Create Toon and PBR shaders without limits. Experience complete flexibility with shader features, use a variety of included nodes or create custom ones, and blend them however you like. Gain full control over your materials to achieve the exact look you want
+Create Toon and PBR shaders without limits. Use a variety of included nodes or create custom ones, and blend them however you like. Gain full control over your materials to achieve the exact look you want.
 
 ## Installation
 
@@ -19,6 +19,8 @@ Create Toon and PBR shaders without limits. Experience complete flexibility with
 - [Hotkeys](https://z3y.github.io/Graphlit/hotkeys)
 
 ## Screenshots
+
+![Image](/Docs~/public/shader-ball.jpg)
 
 ![Image](/Docs~/public/Unity_iGcR8rpLM9.png)
 
