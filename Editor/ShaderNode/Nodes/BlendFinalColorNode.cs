@@ -30,7 +30,7 @@ namespace Graphlit
             AddPort(new(PortDirection.Input, new Float(1), IN_ALPHA, "Alpha"));
             AddPort(new(PortDirection.Input, new Float(1), ROUGHNESS, "Roughness"));
             AddPort(new(PortDirection.Input, new Float(1), METALLIC, "Metallic"));
-            AddPort(new(PortDirection.Input, new Float(1), EMISSION, "Emission"));
+            AddPort(new(PortDirection.Input, new Float(3), EMISSION, "Emission"));
             AddPort(new(PortDirection.Input, new Float(3), DIFFUSE, "Diffuse"));
             AddPort(new(PortDirection.Input, new Float(3), SPECULAR, "Specular"));
         }
