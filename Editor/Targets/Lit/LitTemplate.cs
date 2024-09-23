@@ -25,6 +25,17 @@ namespace Graphlit
             ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.graphlit", jsonData);
         }
 
+        [MenuItem("Assets/Create/Graphlit/Custom Graph")]
+        public static void CreateCustomVariant()
+        {
+            const string samplePath = "Packages/com.z3y.graphlit/Shaders/Custom.graphlit";
+            var graph = ShaderGraphImporter.ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
+            graph.data.shaderName = "Default Shader";
+
+            var jsonData = JsonUtility.ToJson(graph, true);
+            ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.graphlit", jsonData);
+        }
+
 
         public override string Name { get; } = "Lit";
         public override int[] VertexPorts => new int[] { POSITION, NORMAL_VERTEX, TANGENT };

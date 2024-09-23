@@ -1,0 +1,35 @@
+# Custom Lighting
+
+## Creation
+
+To implement custom lighting Right Click `Create -> Graphlit -> Custom Graph`.
+
+- This creates a new Unlit graph with `Custom Lighting` option enabled which allows you to access light data using the `Main Light` Node, Lightmap UVs, and generates all the requred passes
+- The created `Blend Final Color` node is used to correctly handle transparency, output required data to the meta pass and provide an easy way to blend everything
+
+![Image](/custom-lighting.png)
+
+## Implementation
+
+Included nodes allow for easy creation of custom lighting. Theres only a few things that need to be implemented to fully support Unity lighting:
+
+- Realtime Lights
+- Baked Lightmaps
+- Lightprobes
+- Reflection Probes
+
+The diffuse or specular outputs can be simply added together with an Add node and connected to the Blend Final Color node.
+
+## Examples
+
+- You can check out the included Toon Example at `Packages/com.z3y.graphlit/Shaders/Toon.graphlit`, which implements realtime lights and lightprobes in a way that allows it to look good in all worlds
+- For a PBR example check out CustomPBR at `Packages/com.z3y.graphlit/Shaders/Samples/CustomPBR.graphlit` which implmenets almost everything Unity supports
+
+## Normal Maps
+
+Many nodes have the `Normal WS` Input (World Space Normal).
+To apply a normal map you simply need to transform it from tangent space to world space and override those inputs.
+
+![Image](/tangenttoworld.png)
+
+![Image](/world-normal.png)

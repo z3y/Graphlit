@@ -1,6 +1,6 @@
 {
     "data": {
-        "shaderName": "Graphlit/Lit",
+        "shaderName": "Graphlit/Samples/Lit",
         "properties": [
             {
                 "guid": "33453acb-825e-4ca2-8e90-24b60130cec9",
@@ -1033,58 +1033,6 @@
             "data": "{\"_ref\":\"2b369010-a1ad-49f3-965e-54e9380f9214\"}"
         },
         {
-            "type": "Graphlit.LitTemplate",
-            "guid": "a829ca21-17ba-4d50-b65d-d5c65e50b728",
-            "x": 200,
-            "y": -35,
-            "connections": [
-                {
-                    "a": 1,
-                    "b": 3,
-                    "node": "7b31e4d5-6a99-4d64-b9a1-4bcca6448069"
-                },
-                {
-                    "a": 1,
-                    "b": 4,
-                    "node": "29375d49-5df6-41ab-988a-c817ec490e27"
-                },
-                {
-                    "a": 0,
-                    "b": 8,
-                    "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
-                },
-                {
-                    "a": 1,
-                    "b": 6,
-                    "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
-                },
-                {
-                    "a": 2,
-                    "b": 7,
-                    "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
-                },
-                {
-                    "a": 1,
-                    "b": 10,
-                    "node": "a96f5bd4-5447-4c91-a77f-fe5d610fe8b2"
-                },
-                {
-                    "a": 1,
-                    "b": 9,
-                    "node": "168c9776-dc61-4ad8-868a-9c64f5162f95"
-                },
-                {
-                    "a": 0,
-                    "b": 5,
-                    "node": "f78ffb9c-64cb-4ecf-8da9-dfc30d9c896a"
-                }
-            ],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": false,
-            "data": "{\"defaultMode\":0,\"defaultCull\":2,\"_cbirp\":false,\"_specular\":true,\"_fwdAddBlendOpMax\":false,\"_normal\":0}"
-        },
-        {
             "type": "Graphlit.FetchVariableNode",
             "guid": "29375d49-5df6-41ab-988a-c817ec490e27",
             "x": 76,
@@ -1196,6 +1144,58 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_name\":\"ARM\"}"
+        },
+        {
+            "type": "Graphlit.LitTemplate",
+            "guid": "a829ca21-17ba-4d50-b65d-d5c65e50b728",
+            "x": 200,
+            "y": -35,
+            "connections": [
+                {
+                    "a": 1,
+                    "b": 3,
+                    "node": "7b31e4d5-6a99-4d64-b9a1-4bcca6448069"
+                },
+                {
+                    "a": 1,
+                    "b": 4,
+                    "node": "29375d49-5df6-41ab-988a-c817ec490e27"
+                },
+                {
+                    "a": 0,
+                    "b": 8,
+                    "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
+                },
+                {
+                    "a": 1,
+                    "b": 6,
+                    "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
+                },
+                {
+                    "a": 2,
+                    "b": 7,
+                    "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
+                },
+                {
+                    "a": 1,
+                    "b": 10,
+                    "node": "a96f5bd4-5447-4c91-a77f-fe5d610fe8b2"
+                },
+                {
+                    "a": 1,
+                    "b": 9,
+                    "node": "168c9776-dc61-4ad8-868a-9c64f5162f95"
+                },
+                {
+                    "a": 0,
+                    "b": 5,
+                    "node": "f78ffb9c-64cb-4ecf-8da9-dfc30d9c896a"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": false,
+            "data": "{\"defaultMode\":0,\"defaultCull\":2,\"_cbirp\":false,\"_specular\":true,\"_fwdAddBlendOpMax\":false,\"_normal\":0}"
         }
     ],
     "groups": [

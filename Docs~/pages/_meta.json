@@ -1,9 +1,11 @@
-
 {
-    "index": "Getting Started",
-    "features": "Features",
-    "master-node": "Master Node",
-    "hotkeys": "Hotkeys",
-    "custom-nodes": "Custom Nodes",
-    "changelog": "Change Log"
+  "index": "Getting Started",
+  "features": "Features",
+  "master-node": "Master Node",
+  "toon": "Toon",
+  "live-preview": "Live Preview",
+  "hotkeys": "Hotkeys",
+  "custom-nodes": "Custom Nodes",
+  "custom-lighting": "Custom Lighting",
+  "changelog": "Change Log"
 }
