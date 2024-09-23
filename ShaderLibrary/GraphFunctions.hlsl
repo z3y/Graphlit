@@ -96,7 +96,7 @@ void AlphaTransparentBlend(inout half alpha, inout half3 albedo, half metallic)
     #endif
 }
 
-void BlendFinalColor(out half3 Color, out half Alpha, half3 diffuse = 1, half specular = 0, half3 emission = 0, half3 albedo = 1, half roughness = 0, half metallic = 0, half alpha = 1)
+void BlendFinalColor(out half3 Color, out half Alpha, half3 diffuse = 1, half3 specular = 0, half3 emission = 0, half3 albedo = 1, half roughness = 0, half metallic = 0, half alpha = 1)
 {
     Color = diffuse;
 
