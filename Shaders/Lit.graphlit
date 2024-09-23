@@ -222,6 +222,19 @@
                 "_value": "0.1",
                 "_defaultTexture": "",
                 "declaration": 0
+            },
+            {
+                "guid": "5f8209ef-212b-402d-a6b2-711010d988d9",
+                "referenceName": "_",
+                "displayName": "Specular Occlusion",
+                "type": 1,
+                "customAttributes": "",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 5.0,
+                "_value": "1",
+                "_defaultTexture": "",
+                "declaration": 0
             }
         ],
         "precision": 0,
@@ -1146,6 +1159,17 @@
             "data": "{\"_name\":\"ARM\"}"
         },
         {
+            "type": "Graphlit.FloatPropertyNode",
+            "guid": "5ae82148-3cb2-4e1e-8cb4-56964c81e200",
+            "x": 25,
+            "y": 629,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"5f8209ef-212b-402d-a6b2-711010d988d9\"}"
+        },
+        {
             "type": "Graphlit.LitTemplate",
             "guid": "a829ca21-17ba-4d50-b65d-d5c65e50b728",
             "x": 200,
@@ -1190,6 +1214,11 @@
                     "a": 0,
                     "b": 5,
                     "node": "f78ffb9c-64cb-4ecf-8da9-dfc30d9c896a"
+                },
+                {
+                    "a": 0,
+                    "b": 12,
+                    "node": "5ae82148-3cb2-4e1e-8cb4-56964c81e200"
                 }
             ],
             "precision": 0,
