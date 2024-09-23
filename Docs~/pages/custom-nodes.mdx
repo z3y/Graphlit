@@ -10,7 +10,8 @@ The last declared function in the file is used.
 
 <Callout type="warning">
   Custom function parser is currently not very advanced. Some inputs and outputs
-  might fail to parse, like using arrays etc.
+  might fail to parse, like using arrays etc. The function definition also has
+  to be on one line.
 </Callout>
 
 To add custom function nodes to the graph search tree menu create an .hlsl and add a `GraphlitFunction` tag.
@@ -30,3 +31,4 @@ void UVScaleCenter(float2 UV, float Scale, out float2 Out)
 ```
 
 The list of binding names can be found in the [PortBinding](https://github.com/z3y/ShaderGraphZ/blob/master/Editor/Generation/PortBindings.cs) enum.
+Some non-overridable bindings are not visible on the node.

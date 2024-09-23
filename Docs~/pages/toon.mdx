@@ -1,0 +1,41 @@
+# Toon
+
+Toon shaders are implmented using [Custom Lighting](./custom-lighting.mdx) instead having predetermined outputs like the PBR Lit graph.
+This allows for much more control which is generally needed with toon.
+
+For the most optimized shaders and more control over the material it is recommended to use one shader per material by using the generated material.
+This also works well with [Live Previews](./live-preview.mdx).
+Options like outlines can't be controlled on the material so this way you can also enable them at the shader generation level.
+![Image](/generated-material.png)
+
+## Sample Shader
+
+You can start by modifying the sample `Create -> Graphlit -> Toon Graph` or fully implmenet it from scratch
+
+## Flat Lit
+
+Use the Color output of the `Toon Light` node.
+This node is based on Open Lit and returns averaged color of light probes and lights, which can be used as a base for toon shading.
+This is already a fully functioning shader.
+![Image](/flat-lit.png)
+
+## Toon Shadow Layers
+
+Add the `Toon Shadow Layers` node.
+![Image](/toon-shadow.png)
+
+## Outlines
+
+Enable outlines on the master node and use the `Outline Scale` node to scale them based on vertex normals.
+Use the `Outline Pass Branch` to customize the outputs of the outline pass.
+This can be used for example to set a different color for outlines from the base pass.
+![Image](/outlines.png)
+
+## Audio Link
+
+Use it to adjust any variable.
+
+<video width="1920" height="1080" controls preload="auto">
+  <source src="/audiolink.webm" type="video/webm" />
+  Your browser does not support the video tag
+</video>
