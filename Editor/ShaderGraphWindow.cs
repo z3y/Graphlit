@@ -28,16 +28,16 @@ namespace Graphlit
 
             AddStyleVariables();
 
-            var conainer = new VisualElement();
-            conainer.StretchToParentSize();
-            conainer.style.flexDirection = FlexDirection.RowReverse;
-            rootVisualElement.Add(conainer);
-            AddGraphView(conainer);
+            var container = new VisualElement();
+            container.StretchToParentSize();
+            container.style.flexDirection = FlexDirection.RowReverse;
+            rootVisualElement.Add(container);
+            AddGraphView(container);
             var data = ShaderGraphImporter.ReadGraphData(importerGuid);
             data.PopulateGraph(graphView);
 
             AddBar(rootVisualElement);
-            conainer.Add(GetNodePropertiesElement());
+            container.Add(GetNodePropertiesElement());
 
             titleContent = new GUIContent(data.data.shaderName);
             if (string.IsNullOrEmpty(data.data.shaderName) || data.data.shaderName == "Default Shader")
@@ -157,7 +157,8 @@ namespace Graphlit
             };
             right.Add(selectMasterNode);
 
-            var unlocked = new Toggle("Live Preview") {
+            var unlocked = new Toggle("Live Preview")
+            {
                 value = graphView.graphData.unlocked,
                 tooltip = "Temporarly convert constants to properties and update them live on the imported material",
             };
