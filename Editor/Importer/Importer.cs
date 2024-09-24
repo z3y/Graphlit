@@ -1,3 +1,5 @@
+//#define USE_CACHE
+
 using System.Collections.Generic;
 using UnityEditor.AssetImporters;
 using UnityEngine;
@@ -43,15 +45,16 @@ namespace Graphlit
             var target = ctx.selectedBuildTarget;
             string guid = AssetDatabase.AssetPathToGUID(assetPath);
 
-            /*if (_graphViews.TryGetValue(guid, out var graphView))
+            ShaderGraphView graphView = null;
+#if USE_CACHE
+            _graphViews.TryGetValue(guid, out graphView);
+#endif
+            if (graphView is null)
             {
-            }
-            else if (graphView is null)
-            {*/
                 var data = ReadGraphData(guid);
-                var graphView = new ShaderGraphView(null, assetPath);
+                graphView = new ShaderGraphView(null, assetPath);
                 data.PopulateGraph(graphView);
-            //}
+            }
 
             var filename = Path.GetFileNameWithoutExtension(ctx.assetPath);
             bool unlocked = graphView.graphData.unlocked;
@@ -159,6 +162,8 @@ namespace Graphlit
                 }
             }
             win = EditorWindow.CreateWindow<ShaderGraphWindow>(typeof(ShaderGraphWindow), typeof(ShaderGraphWindow));
+
+            win.minSize = new Vector2(1000, 600);
             win.Initialize(guid);
 
             _graphViews[guid] = win.graphView;
