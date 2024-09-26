@@ -356,7 +356,7 @@ namespace Graphlit
                 inputNode.BuilderVisit(visitor);
                 visitedNodes.Add(inputNode.viewDataKey);
 
-                if (GenerationMode == GenerationMode.Preview)
+                if (GenerationMode == GenerationMode.Preview && !unlocked)
                 {
                     inputNode.UpdateGraphView();
                 }
