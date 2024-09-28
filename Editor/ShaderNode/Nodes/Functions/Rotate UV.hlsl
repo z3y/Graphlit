@@ -1,10 +1,12 @@
-void RotateUV(out float2 Out, float2 UV, float2 pivot, float degrees)
+void RotateUVNode(out float2 Out, float2 UV, float2 pivot, float degrees)
 {
 	float angle = radians(degrees);
     float2 translatedUV = UV - pivot;
     
-    float cosAngle = cos(angle);
-    float sinAngle = sin(angle);
+    float cosAngle;
+    float sinAngle;
+	sincos(angle, sinAngle, cosAngle);
+
     float2x2 rotationMatrix = float2x2(
         cosAngle, -sinAngle,
         sinAngle,  cosAngle
