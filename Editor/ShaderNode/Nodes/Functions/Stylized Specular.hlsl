@@ -15,7 +15,7 @@ void StylizedSpecularNode(out float3 specular, half3 lightColor, float3 lightDir
 
 	roughness = max((roughness * roughness), 0.002);
 
-	specular = saturate(lilTooningNoSaturateScale_Specular(antiAlias, pow(NoH, 1.0 / roughness), border, blur)) * lightColor * PI;
+	specular = saturate(lilTooningNoSaturateScale_Specular(antiAlias, pow(NoH, 1.0 / roughness), border, blur)) * lightColor;
 }
 
 /*
