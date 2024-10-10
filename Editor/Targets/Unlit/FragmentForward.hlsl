@@ -28,6 +28,10 @@ half4 frag(Varyings varyings) : SV_Target
         col.a = 1.0;
     #endif
 
+    #ifdef _ALPHATEST_ON
+        col.a = 1.0;
+    #endif
+
     UNITY_APPLY_FOG(varyings.fogCoord, col);
 
     return col;

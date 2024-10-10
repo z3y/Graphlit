@@ -241,7 +241,7 @@
         "defaultPreviewState": 1,
         "customEditor": "",
         "fallback": "",
-        "include": "#ifndef _NORMALMAP\n#define _NORMAL_DROPOFF_OFF\n#endif\n\n// enable monosh\n//#define _BAKERY_MONOSH",
+        "include": "//#define _BAKERY_MONOSH",
         "outlinePass": 0,
         "stencil": false,
         "vrcFallbackTags": {

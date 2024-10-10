@@ -245,6 +245,10 @@ half4 frag(Varyings varyings) : SV_Target
 
     half4 color = COLOR_IMPL(surf, fragData, giInput, giOutput);
 
+    #ifdef _ALPHATEST_ON
+        color.a = 1.0;
+    #endif
+
     UNITY_APPLY_FOG(varyings.fogCoord, color);
 
     return color;
