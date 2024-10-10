@@ -16,7 +16,7 @@ float lilTooningNoSaturateScale_local(float aascale, float value, float border, 
 #define defaultShadowBorderColor float3(1,0,0) // temp until parser is better
 #define defaultShadowColor2 float4(0.68, 0.66, 0.79, 1)
 #define defaultShadowColor1 float4(0.82, 0.76, 0.85, 1)
-void ToonShadowsLayers(out float3 Out, float3 LightColor, float3 LightDirection, float ShadowAttenuation, float3 NormalWS, float4 ShadowColor1 = defaultShadowColor1, float ShadowBorder1 = 0.5, float ShadowBlur1 = 0.1, float4 ShadowColor2 = defaultShadowColor2, float ShadowBorder2 = 0.15, float ShadowBlur2 = 0.1, float4 ShadowColor3 = 0, float ShadowBorder3 = 0.1, float ShadowBlur3 = 0.1, float3 ShadowBorderColor = defaultShadowBorderColor, float ShadowBorderRange = 0.08, bool applyShadow = true)
+void ToonShadowsLayers(out float3 Diffuse, float3 LightColor, float3 LightDirection, float ShadowAttenuation, float3 NormalWS, float4 ShadowColor1 = defaultShadowColor1, float ShadowBorder1 = 0.5, float ShadowBlur1 = 0.1, float4 ShadowColor2 = defaultShadowColor2, float ShadowBorder2 = 0.15, float ShadowBlur2 = 0.1, float4 ShadowColor3 = 0, float ShadowBorder3 = 0.1, float ShadowBlur3 = 0.1, float3 ShadowBorderColor = defaultShadowBorderColor, float ShadowBorderRange = 0.08, bool applyShadow = true)
 {
     half3 col = LightColor;
 
@@ -46,7 +46,7 @@ void ToonShadowsLayers(out float3 Out, float3 LightColor, float3 LightDirection,
 
     col = lerp(col, LightColor, lns.w * ShadowBorderColor.rgb);
 
-    Out = col;
+    Diffuse = col;
 }
 
 // MIT License
