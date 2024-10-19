@@ -398,23 +398,40 @@ namespace Graphlit
             EditorGUILayout.LabelField("Custom Attributes", GUILayout.Width(149));
             customAttributes = EditorGUILayout.TextArea(customAttributes);
             GUILayout.EndHorizontal();
+
+            if (type == PropertyType.Float)
+            {
+                GUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField("Range", GUILayout.Width(149));
+                Range = EditorGUILayout.Vector2Field("", Range);
+                GUILayout.EndHorizontal();
+            }
+            if (IsTextureType)
+            {
+                EditorGUI.BeginChangeCheck();
+
+                var defaultTex = EditorGUILayout.EnumPopup("Default Value", DefaultTextureEnum);
+
+                if (EditorGUI.EndChangeCheck())
+                {
+                    DefaultTextureEnum = (DefaultTextureName)defaultTex;
+                    UpdatePreviewMaterial();
+                }
+            }
         }
 
-        void OnGUIFloat()
+        void OnGUIFloat(Rect rect)
         {
             EditorGUI.BeginChangeCheck();
-            GUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("Range", GUILayout.Width(149));
-            Range = EditorGUILayout.Vector2Field("", Range);
-            GUILayout.EndHorizontal();
+            
             float newValue;
             if (HasRange)
             {
-                newValue = EditorGUILayout.Slider("Value", FloatValue, rangeX, rangeY);
+                newValue = EditorGUI.Slider(rect, ShouldDisplayName(rect) ? "Value" : "", FloatValue, rangeX, rangeY);
             }
             else
             {
-                newValue = EditorGUILayout.FloatField("Value", FloatValue);
+                newValue = EditorGUI.FloatField(rect, ShouldDisplayName(rect) ? "Value" : "", FloatValue);
             }
             if (EditorGUI.EndChangeCheck())
             {
@@ -422,25 +439,25 @@ namespace Graphlit
                 UpdatePreviewMaterial();
             }
         }
-        void OnGUIBool()
+        void OnGUIBool(Rect rect)
         {
             EditorGUI.BeginChangeCheck();
-            bool newValue = EditorGUILayout.Toggle("Toggle", FloatValue == 1);
+            bool newValue = EditorGUI.Toggle(rect, ShouldDisplayName(rect) ? "Value" : "", FloatValue == 1);
             if (EditorGUI.EndChangeCheck())
             {
                 FloatValue = newValue ? 1 : 0;
                 UpdatePreviewMaterial();
             }
         }
-        void OnGUIVector()
+        void OnGUIVector(Rect rect)
         {
             EditorGUI.BeginChangeCheck();
             Vector4 newValue;
             newValue = type switch
             {
-                PropertyType.Float2 => EditorGUILayout.Vector2Field("", VectorValue),
-                PropertyType.Float3 => EditorGUILayout.Vector3Field("", VectorValue),
-                PropertyType.Float4 => EditorGUILayout.Vector4Field("", VectorValue),
+                PropertyType.Float2 => EditorGUI.Vector2Field(rect, "", VectorValue),
+                PropertyType.Float3 => EditorGUI.Vector3Field(rect, "", VectorValue),
+                PropertyType.Float4 => EditorGUI.Vector4Field(rect, "", VectorValue),
                 _ => throw new NotImplementedException(),
             };
             if (EditorGUI.EndChangeCheck())
@@ -463,29 +480,25 @@ namespace Graphlit
             };
         }
 
-        void OnGUITexture()
+        void OnGUITexture(Rect rect)
         {
             EditorGUI.BeginChangeCheck();
 
-            GUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("Default Texture", GUILayout.Width(149));
-            Texture newValue = (Texture)EditorGUILayout.ObjectField(DefaultTextureValue, TextureType(type), false);
-            GUILayout.EndHorizontal();
-
-            var defaultTex = EditorGUILayout.EnumPopup("Default Value", DefaultTextureEnum);
+            Texture newValue = (Texture)EditorGUI.ObjectField(rect, DefaultTextureValue, TextureType(type), false);
 
             if (EditorGUI.EndChangeCheck())
             {
                 DefaultTextureValue = newValue;
-                DefaultTextureEnum = (DefaultTextureName)defaultTex;
                 UpdatePreviewMaterial();
             }
         }
 
-        void OnGUIColor()
+        bool ShouldDisplayName(Rect rect) => rect.width > 220;
+
+        void OnGUIColor(Rect rect)
         {
             EditorGUI.BeginChangeCheck();
-            Color newValue = EditorGUILayout.ColorField("Color", VectorValue);
+            Color newValue = EditorGUI.ColorField(rect, ShouldDisplayName(rect) ? "Color" : "", VectorValue);
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -547,11 +560,18 @@ namespace Graphlit
         {
             OnDefaultGUI();
 
-            if (type == PropertyType.Float) OnGUIFloat();
-            else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) OnGUIVector();
-            else if (type == PropertyType.Color) OnGUIColor();
-            else if (type == PropertyType.Bool || type == PropertyType.KeywordToggle) OnGUIBool();
-            else if (IsTextureType) OnGUITexture();
+            var rect = EditorGUILayout.GetControlRect();
+
+            MaterialPropertyGUI(rect);
+        }
+
+        public void MaterialPropertyGUI(Rect rect)
+        {
+            if (type == PropertyType.Float) OnGUIFloat(rect);
+            else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) OnGUIVector(rect);
+            else if (type == PropertyType.Color) OnGUIColor(rect);
+            else if (type == PropertyType.Bool || type == PropertyType.KeywordToggle) OnGUIBool(rect);
+            else if (IsTextureType) OnGUITexture(rect);
         }
 
         public Type GetNodeType()
@@ -631,10 +651,13 @@ namespace Graphlit
                 var p = properties[index];
                 var style = new GUIStyle(GUI.skin.label) { richText = true };
 
-                EditorGUI.LabelField(rect, $"<b>{p.type}</b>", style);
-                rect.x += 120;
-                rect.width -= 120;
+                //EditorGUI.LabelField(rect, $"<b>{p.type}</b>", style);
                 EditorGUI.LabelField(rect, $"{p.displayName}", style);
+                rect.x += 140;
+                rect.width -= 140;
+                rect.y += 2;
+                rect.height = EditorGUIUtility.singleLineHeight;
+                p.MaterialPropertyGUI(rect);
 
                 if (isActive)
                 {
