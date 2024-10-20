@@ -493,7 +493,7 @@ namespace Graphlit
             }
         }
 
-        bool ShouldDisplayName(Rect rect) => rect.width > 220;
+        bool ShouldDisplayName(Rect rect) => rect.width > 230;
 
         void OnGUIColor(Rect rect)
         {
