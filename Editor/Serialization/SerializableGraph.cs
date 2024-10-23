@@ -63,6 +63,8 @@ namespace Graphlit
         public void PopulateGraph(ShaderGraphView graphView)
         {
             graphView.graphData = data;
+            var sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
 
             // try catch node connections arent lost
             try
@@ -76,14 +78,22 @@ namespace Graphlit
             {
                 Debug.LogError(e);
             }
+            Debug.Log("Add Nodes: " + sw.ElapsedMilliseconds);
+            sw.Restart();
 
             SetupNodeConnections(graphView);
+            Debug.Log("Setup Connections: " + sw.ElapsedMilliseconds);
+            sw.Restart();
 
             SetupGroups(graphView);
+            Debug.Log("Setup Groups: " + sw.ElapsedMilliseconds);
+            sw.Stop();
         }
 
         void SetupGroups(ShaderGraphView graphView)
         {
+            var groupGuids = graphView.GetElementsGuidDictionary<Node>();
+
             foreach (var group in groups)
             {
                 var g = new Group();
@@ -92,8 +102,7 @@ namespace Graphlit
 
                 foreach (var guid in group.elements)
                 {
-                    var element = graphView.GetElementByGuid(guid);
-                    if (element is not null)
+                    if (groupGuids.TryGetValue(guid, out Node element))
                     {
                         g.AddElement(element);
                     }
@@ -207,16 +216,20 @@ namespace Graphlit
 
         public void SetupNodeConnections(ShaderGraphView graphView)
         {
+            var nodeGuids = graphView.GetElementsGuidDictionary<Node>();
             foreach (var node in nodes)
             {
                 foreach (var connection in node.connections)
                 {
-                    var graphNode = graphView.GetNodeByGuid(node.guid);
+                    if (!nodeGuids.TryGetValue(node.guid, out Node graphNode))
+                    {
+                        continue;
+                    }
+
                     var currentNodeInputID = connection.GetInputIDForThisNode();
                     var inputNodeOutputID = connection.GetOutputIDForInputNode();
-                    var inputNode = graphView.GetNodeByGuid(connection.GetInputNodeGuid());
 
-                    if (graphNode is null)
+                    if (!nodeGuids.TryGetValue(connection.GetInputNodeGuid(), out Node inputNode))
                     {
                         continue;
                     }

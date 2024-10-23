@@ -89,6 +89,8 @@ namespace Graphlit
         public void BuildTemplate()
         {
             //ShaderNode.UniqueVariableID = 0; parallel import might not work with this
+            var sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
 
             var shaderNodes = ShaderGraphView.graphElements.Where(x => x is ShaderNode).Cast<ShaderNode>().ToList();
             var target = (TemplateOutput)ShaderGraphView.graphElements.First(x => x is TemplateOutput);
@@ -131,6 +133,9 @@ namespace Graphlit
             }
 
             target.OnAfterBuild(this);
+
+            Debug.Log("Build Tempalte: " + sw.ElapsedMilliseconds);
+            sw.Stop();
         }
 
       /*  public Dictionary<int, GeneratedPortData> BuildSubgraph(ShaderGraphView subgraphView, NodeVisitor vistor, string assetPath)

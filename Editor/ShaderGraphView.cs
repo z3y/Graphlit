@@ -7,6 +7,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Graphlit.Nodes;
+using System.Linq.Expressions;
 
 namespace Graphlit
 {
@@ -276,7 +277,7 @@ namespace Graphlit
 
         public void CreateNode(Type type, Vector2 position, bool transform = true)
         {
-            var node = (ShaderNode)Activator.CreateInstance(type);
+            var node = (ShaderNode)GetActivatorCached(type).Invoke();
             CreateNode(node, position, transform);
         }
 
@@ -498,6 +499,28 @@ namespace Graphlit
             }
 
             evt.StopPropagation();
+        }
+
+        public Dictionary<string, T> GetElementsGuidDictionary<T>() where T : GraphElement, new()
+        {
+            var acceleratedGetNode = new Dictionary<string, T>();
+            foreach (var item in graphElements.OfType<T>())
+            {
+                acceleratedGetNode[item.viewDataKey] = item;
+            }
+            return acceleratedGetNode;
+        }
+
+        static Dictionary<string, Func<object>> _activatorCache = new();
+        public static Func<object> GetActivatorCached(Type type)
+        {
+            var typeName = type.FullName;
+            if (!_activatorCache.TryGetValue(typeName, out Func<object> act))
+            {
+                act = Expression.Lambda<Func<object>>(Expression.New(type)).Compile();
+                _activatorCache.Add(typeName, act);
+            }
+            return act;
         }
     }
 }

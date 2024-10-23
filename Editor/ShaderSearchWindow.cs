@@ -180,14 +180,14 @@ namespace Graphlit
             }
             else if (userData is ShaderInclude shaderInclude)
             {
-                var node = Activator.CreateInstance<CustomFunctionNode>();
+                var node = new CustomFunctionNode();
                 node.UseFile(shaderInclude);
                 _graphView.CreateNode(node, context.screenMousePosition);
                 return true;
             }
             else if (userData is CreateVarContext var)
             {
-                var node = (FetchVariableNode)Activator.CreateInstance(typeof(FetchVariableNode));
+                var node = new FetchVariableNode();
                 node._name = var.name;
                 _graphView.CreateNode(node, context.screenMousePosition);
                 return true;

@@ -46,9 +46,17 @@ namespace Graphlit
             }
         }
 
+        static Dictionary<string, Type> _typeCache = new();
+
         public readonly bool TryDeserialize(ShaderGraphView graphView, out ShaderNode shaderNode)
         {
-            Type type = Type.GetType(this.type.Replace("ZSG", "Graphlit"));
+            string typeName = this.type.Replace("ZSG", "Graphlit");
+            if (!_typeCache.TryGetValue(typeName, out Type type))
+            {
+                type = Type.GetType(typeName);
+                _typeCache[typeName] = type;
+            }
+            
             if (type is null)
             {
                 Debug.LogError($"Node of type {this.type} not found");
@@ -56,7 +64,8 @@ namespace Graphlit
                 return false;
             }
 
-            var instance = Activator.CreateInstance(type);
+            var instance = ShaderGraphView.GetActivatorCached(type).Invoke();
+            //var instance = Activator.CreateInstance(type);
 
             if (!string.IsNullOrEmpty(data))
             {
