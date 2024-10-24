@@ -11,7 +11,7 @@ namespace Graphlit
     {
         const int IN = 0;
         const int OUT = 1;
-        [SerializeField] string swizzle = "x";
+        [SerializeField] internal string swizzle = "x";
 
         public override void Initialize()
         {

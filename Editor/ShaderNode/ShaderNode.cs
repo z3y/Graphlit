@@ -9,7 +9,7 @@ using UnityEngine.UIElements;
 using Graphlit.Nodes;
 using Graphlit.Nodes.PortType;
 using static UnityEditor.Experimental.GraphView.Port;
-using static Graphlit.VRCFallbackTags;
+using System.Xml.Linq;
 
 namespace Graphlit
 {
@@ -332,6 +332,115 @@ namespace Graphlit
         public virtual Precision DefaultPrecisionOverride => Precision.Inherit;
         protected internal bool _inheritedPrecision;
 
+        public Dictionary<int, int> evaluatedOutputDimensions = new Dictionary<int, int>();
+        public void EvaluateDimensionsForGraphView()
+        {
+            if (this is FetchVariableNode)
+            {
+                return;
+            }
+            if (this is SwizzleNode swizzle)
+            {
+                evaluatedOutputDimensions[1] = Mathf.Clamp(swizzle.swizzle.Length, 1, 4);
+                return;
+            }
+
+            var inputDimensions = new Dictionary<int, int>();
+
+            foreach (var port in Inputs)
+            {
+                int id = port.GetPortID();
+                if (!port.connected)
+                {
+                    if (portDescriptors[id].Type is Float @float)
+                    {
+                        inputDimensions[id] = @float.dimensions;
+                        SetPortColor(port, Float.GetPortColor(@float.dimensions));
+                    }
+                    continue;
+                }
+
+                foreach (var edge in port.connections)
+                {
+                    var node = (ShaderNode)edge.output.node;
+                    if (node is null)
+                    {
+                        continue;
+                    }
+
+                    if (node.evaluatedOutputDimensions.TryGetValue(edge.output.GetPortID(), out int value))
+                    {
+                        inputDimensions[id] = value;
+                        //SetPortColor(port, Float.GetPortColor(value));
+                    }
+                    break;
+                }
+            }
+
+            int trunc = 4;
+            int max = 1;
+
+            foreach (var dimension in inputDimensions.Values)
+            {
+                if (dimension == 1)
+                {
+                    continue;
+                }
+                max = Mathf.Max(max, dimension);
+                trunc = Mathf.Min(trunc, dimension);
+            }
+            trunc = Mathf.Min(trunc, max);
+            //Debug.Log(trunc);
+
+            foreach (var desc in portDescriptors.Values)
+            {
+                if (desc.Direction == PortDirection.Input)
+                {
+                    if (desc.Type is Float @float)
+                    {
+                        if (@float.dynamic)
+                        {
+                            var port = Inputs.First(x => x.GetPortID() == desc.ID);
+                            if (port.connected)
+                            {
+                                SetPortColor(port, Float.GetPortColor(trunc));
+                            }
+                            else
+                            {
+                                SetPortColor(port, Float.GetPortColor(@float.dimensions));
+                            }
+                        }
+                    }
+                }
+                else
+                {
+
+                    if (desc.Type is Float @float)
+                    {
+                        if (!@float.dynamic)
+                        {
+                            evaluatedOutputDimensions[desc.ID] = @float.dimensions;
+                        }
+                        else
+                        {
+                            evaluatedOutputDimensions[desc.ID] = trunc;
+                            SetPortColor(Outputs.First(x => x.GetPortID() == desc.ID), Float.GetPortColor(trunc));
+                        }
+                    }
+                }
+            }
+
+            if (this is RegisterVariableNode reg)
+            {
+                var fetches = GraphView.graphElements.OfType<FetchVariableNode>().Where(x => x._name == reg._name);
+                foreach (var fetch in fetches)
+                {
+                    fetch.evaluatedOutputDimensions[1] = trunc;
+                    SetPortColor(fetch.outputContainer.Children().OfType<Port>().First(), Float.GetPortColor(trunc));
+                }
+            }
+        }
+
         public virtual void InheritPreviewAndPrecision()
         {
             int is3D = 0;
@@ -341,8 +450,11 @@ namespace Graphlit
 
             bool inheritedPrecisionIsFloat = false;
 
+
+
             foreach (var port in Inputs)
             {
+                int id = port.GetPortID();
                 if (!port.connected)
                 {
                     continue;
@@ -731,6 +843,8 @@ namespace Graphlit
 
             return new Float(trunc);
         }
+
+
         public int GetDimensions(int id)
         {
             var type = (Float)PortData[id].Type;
@@ -806,18 +920,23 @@ namespace Graphlit
                 if (generatedData.Type is Float @float)
                 {
                     var color = @float.GetPortColor();
-                    port.portColor = color;
-
-                    // caps not getting updated
-                    var caps = port.Q("connector");
-                    if (caps is not null)
-                    {
-                        caps.style.borderBottomColor = color;
-                        caps.style.borderTopColor = color;
-                        caps.style.borderLeftColor = color;
-                        caps.style.borderRightColor = color;
-                    }
+                    SetPortColor(port, color);
                 }
+            }
+        }
+
+        public static void SetPortColor(Port port, Color color)
+        {
+            port.portColor = color;
+
+            // caps not getting updated
+            var caps = port.Q("connector");
+            if (caps is not null)
+            {
+                caps.style.borderBottomColor = color;
+                caps.style.borderTopColor = color;
+                caps.style.borderLeftColor = color;
+                caps.style.borderRightColor = color;
             }
         }
 

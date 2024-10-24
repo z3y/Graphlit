@@ -173,6 +173,7 @@ namespace Graphlit
 
         public void Build(ShaderNode shaderNode)
         {
+
             //ShaderNode.UniqueVariableID = 0;
             //var vertexVisitor = new NodeVisitor(this, ShaderStage.Vertex, passIndex);
             var fragmentVisitor = new NodeVisitor(this, ShaderStage.Fragment, 0);
@@ -214,6 +215,12 @@ namespace Graphlit
 
         public static void GeneratePreview(ShaderGraphView graphView, ShaderNode shaderNode, bool log = false)
         {
+            if (shaderNode._previewDisabled || shaderNode.DisablePreview)
+            {
+                shaderNode.EvaluateDimensionsForGraphView();
+                return;
+            }
+
             var shaderBuilder = new ShaderBuilder(GenerationMode.Preview, graphView);
             shaderBuilder.shaderName = "Hidden/GraphlitPreviews/" + shaderNode.viewDataKey;
             var pass = new PassBuilder("FORWARD", VertexPreview, FragmentPreview);
@@ -264,6 +271,17 @@ namespace Graphlit
                 if (graphElement is ShaderNode shaderNode)
                 {
                     GeneratePreview(graphView, shaderNode);
+                }
+            }
+
+            foreach (var graphElement in graphView.graphElements)
+            {
+                if (graphElement is ShaderNode shaderNode)
+                {
+                    if (shaderNode._previewDisabled || shaderNode.DisablePreview)
+                    {
+                        shaderNode.EvaluateDimensionsForGraphView();
+                    }
                 }
             }
         }

@@ -39,6 +39,10 @@ namespace Graphlit.Nodes.PortType
         public static Color Float4Color = new Color(226 / 255.0f, 160 / 255.0f, 255 / 255.0f); // magenta
         public Color GetPortColor()
         {
+            return GetPortColor(dimensions);
+        }
+        public static Color GetPortColor(int dimensions)
+        {
             return dimensions switch
             {
                 1 => Float1Color,

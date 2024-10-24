@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Experimental.GraphView;
@@ -6,11 +5,10 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Graphlit.Nodes;
 using Graphlit.Nodes.PortType;
-using static UnityEditor.Rendering.CameraUI;
 
 namespace Graphlit
 {
-    [NodeInfo("Utility/Register Variable"), Serializable]
+    [NodeInfo("Utility/Register Variable"), System.Serializable]
     public class RegisterVariableNode : ShaderNode
     {
         [SerializeField] internal string _name = "";

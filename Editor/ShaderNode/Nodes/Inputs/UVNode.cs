@@ -21,7 +21,7 @@ namespace Graphlit
 
         public override void Initialize()
         {
-            AddPort(new(PortDirection.Output, new Float(2, true), OUT));
+            AddPort(new(PortDirection.Output, new Float(2), OUT));
             Bind(OUT, ChannelToBinding());
 
             var dropdown = new EnumField(_uv);
