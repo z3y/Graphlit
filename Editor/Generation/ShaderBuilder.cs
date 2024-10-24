@@ -215,9 +215,9 @@ namespace Graphlit
 
         public static void GeneratePreview(ShaderGraphView graphView, ShaderNode shaderNode, bool log = false)
         {
+            shaderNode.EvaluateDimensionsForGraphView();
             if (shaderNode._previewDisabled || shaderNode.DisablePreview)
             {
-                shaderNode.EvaluateDimensionsForGraphView();
                 return;
             }
 
