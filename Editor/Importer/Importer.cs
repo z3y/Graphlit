@@ -55,6 +55,7 @@ namespace Graphlit
             if (graphView is null)
             {
                 var data = ReadGraphData(guid);
+                data.data.unlocked = false;
                 graphView = new ShaderGraphView(null, assetPath);
                 data.PopulateGraph(graphView);
             }
