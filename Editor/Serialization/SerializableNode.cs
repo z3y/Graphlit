@@ -63,23 +63,21 @@ namespace Graphlit
                 shaderNode = null;
                 return false;
             }
+            var instance = (ShaderNode)Activator.CreateInstance(type);
 
-            var instance = ShaderGraphView.GetActivatorCached(type).Invoke();
-            //var instance = Activator.CreateInstance(type);
 
             if (!string.IsNullOrEmpty(data))
             {
                 JsonUtility.FromJsonOverwrite(data, instance);
             }
 
-            shaderNode = (ShaderNode)instance;
+            shaderNode = instance;
 
             shaderNode._defaultPrecision = this.precision;
             shaderNode._defaultPreview = this.preview;
             shaderNode._previewDisabled = this.previewDisabled;
 
             shaderNode.InitializeInternal(graphView, Position, guid);
-
             return true;
         }
     }

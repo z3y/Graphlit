@@ -73,20 +73,20 @@ namespace Graphlit
                 {
                     graphView.AddNode(node);
                 }
+                //Debug.Log("Add Nodes: " + sw.ElapsedMilliseconds);
             }
             catch (Exception e)
             {
                 Debug.LogError(e);
             }
-            //Debug.Log("Add Nodes: " + sw.ElapsedMilliseconds);
             sw.Restart();
-
             SetupNodeConnections(graphView);
             //Debug.Log("Setup Connections: " + sw.ElapsedMilliseconds);
             sw.Restart();
 
             SetupGroups(graphView);
             //Debug.Log("Setup Groups: " + sw.ElapsedMilliseconds);
+
             sw.Stop();
         }
 

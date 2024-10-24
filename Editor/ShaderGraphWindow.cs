@@ -83,6 +83,7 @@ namespace Graphlit
             {
                 Initialize(importerGuid, false);
                 ShaderBuilder.GenerateAllPreviews(graphView);
+                ShaderGraphImporter._graphViews[importerGuid] = graphView;
             }
         }
 

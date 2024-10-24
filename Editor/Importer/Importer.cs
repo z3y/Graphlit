@@ -1,4 +1,4 @@
-//#define USE_CACHE
+#define USE_CACHE
 
 using System.Collections.Generic;
 using UnityEditor.AssetImporters;
@@ -34,6 +34,8 @@ namespace Graphlit
 
         public override void OnImportAsset(AssetImportContext ctx)
         {
+            var sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
             bool isSubgraph = assetPath.EndsWith("subgraphlit");
             if (isSubgraph)
             {
@@ -49,12 +51,14 @@ namespace Graphlit
 #if USE_CACHE
             _graphViews.TryGetValue(guid, out graphView);
 #endif
+            sw.Restart();
             if (graphView is null)
             {
                 var data = ReadGraphData(guid);
                 graphView = new ShaderGraphView(null, assetPath);
                 data.PopulateGraph(graphView);
             }
+            //Debug.Log("Populate Graph: " + sw.ElapsedMilliseconds);
 
             var filename = Path.GetFileNameWithoutExtension(ctx.assetPath);
             bool unlocked = graphView.graphData.unlocked;
@@ -63,8 +67,9 @@ namespace Graphlit
             {
                 builder.shaderName = "Graphlit/" + filename;
             }
+            sw.Restart();
             builder.BuildTemplate();
-
+            //Debug.Log("Build : " + sw.ElapsedMilliseconds);
             var scriptingDefines = PlayerSettings.GetScriptingDefineSymbols(UnityEditor.Build.NamedBuildTarget.Standalone);
             foreach (var pass in builder.passBuilders)
             {
@@ -114,6 +119,10 @@ namespace Graphlit
             //var text = File.ReadAllText(assetPath);
             //ctx.AddObjectToAsset("json", new TextAsset(text));
             DefaultInspector.Reinitialize();
+
+            
+
+            sw.Stop();
         }
 
         public static void CreateEmptyTemplate(TemplateOutput template, Action<ShaderGraphView> onCreate = null)

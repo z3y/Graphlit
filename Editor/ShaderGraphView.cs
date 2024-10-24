@@ -28,12 +28,9 @@ namespace Graphlit
 
         public void UpdateCachedNodesForBuilder()
         {
-            //var sw = new System.Diagnostics.Stopwatch();
-            //sw.Start();
             cachedNodesForBuilder = graphElements.OfType<ShaderNode>().ToList();
             cachedRegisterVariablesForBuilder = cachedNodesForBuilder.OfType<RegisterVariableNode>().ToList();
-            //sw.Stop();
-            //Debug.Log($"{sw.ElapsedMilliseconds} ms");
+            //Debug.Log($"UpdateCachedNodesForBuilder");
         }
 
         public Material PreviewMaterial = new(Shader.Find("Unlit/Color"))
@@ -290,7 +287,7 @@ namespace Graphlit
 
         public void CreateNode(Type type, Vector2 position, bool transform = true)
         {
-            var node = (ShaderNode)GetActivatorCached(type).Invoke();
+            var node = (ShaderNode)Activator.CreateInstance(type);
             CreateNode(node, position, transform);
         }
 
@@ -524,18 +521,6 @@ namespace Graphlit
                 acceleratedGetNode[item.viewDataKey] = item;
             }
             return acceleratedGetNode;
-        }
-
-        static Dictionary<string, Func<object>> _activatorCache = new();
-        public static Func<object> GetActivatorCached(Type type)
-        {
-            var typeName = type.FullName;
-            if (!_activatorCache.TryGetValue(typeName, out Func<object> act))
-            {
-                act = Expression.Lambda<Func<object>>(Expression.New(type)).Compile();
-                _activatorCache.Add(typeName, act);
-            }
-            return act;
         }
     }
 }
