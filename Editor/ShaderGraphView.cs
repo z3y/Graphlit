@@ -114,6 +114,15 @@ namespace Graphlit
             }
 
             _editorWindow.SetDirty();
+
+            /*EditorApplication.delayCall += () =>
+            {
+                if (graphData.unlocked && (change.edgesToCreate is not null || change.elementsToRemove is not null))
+                {
+                    AssetDatabase.ImportAsset(AssetDatabase.GUIDToAssetPath(_editorWindow.importerGuid), ImportAssetOptions.ForceUpdate);
+                };
+            };*/
+            
             return change;
         }
 
@@ -352,7 +361,7 @@ namespace Graphlit
         {
             if (e.ctrlKey && e.keyCode == KeyCode.S)
             {
-                _editorWindow.SaveChanges();
+                _editorWindow.SaveChangesImpl(false);
                 return;
             }
             var key = e.keyCode;

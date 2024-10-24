@@ -64,17 +64,30 @@ namespace Graphlit
 
         public new void SetDirty()
         {
+            saveChangesMessage = "Graph has unsaved changes.";
             hasUnsavedChanges = true;
         }
 
-        public override void SaveChanges()
+        public override void SaveChanges() => SaveChangesImpl(true);
+        public void SaveChangesUser() => SaveChangesImpl(false);
+        public void SaveChangesImpl(bool isEditor = false)
         {
+            if (isEditor)
+            {
+                graphView.graphData.unlocked = false;
+            }
             var previousSelection = Selection.activeObject;
             Selection.activeObject = null;
             ShaderGraphImporter.SaveGraphAndReimport(graphView, importerGuid);
             base.SaveChanges();
 
             Selection.activeObject = previousSelection;
+
+            if (!isEditor && graphView.graphData.unlocked)
+            {
+                saveChangesMessage = "Disable live preview.";
+                hasUnsavedChanges = true;
+            }
         }
 
         public void OnEnable()
@@ -127,7 +140,7 @@ namespace Graphlit
 
 
             var saveButton = new ToolbarButton() { text = "Save Asset", style = { marginRight = 4 } };
-            saveButton.clicked += SaveChanges;
+            saveButton.clicked += SaveChangesUser;
             left.Add(saveButton);
 
 
