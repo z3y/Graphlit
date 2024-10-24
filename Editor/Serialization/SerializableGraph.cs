@@ -78,15 +78,15 @@ namespace Graphlit
             {
                 Debug.LogError(e);
             }
-            Debug.Log("Add Nodes: " + sw.ElapsedMilliseconds);
+            //Debug.Log("Add Nodes: " + sw.ElapsedMilliseconds);
             sw.Restart();
 
             SetupNodeConnections(graphView);
-            Debug.Log("Setup Connections: " + sw.ElapsedMilliseconds);
+            //Debug.Log("Setup Connections: " + sw.ElapsedMilliseconds);
             sw.Restart();
 
             SetupGroups(graphView);
-            Debug.Log("Setup Groups: " + sw.ElapsedMilliseconds);
+            //Debug.Log("Setup Groups: " + sw.ElapsedMilliseconds);
             sw.Stop();
         }
 

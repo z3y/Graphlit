@@ -134,7 +134,7 @@ namespace Graphlit
 
             target.OnAfterBuild(this);
 
-            Debug.Log("Build Tempalte: " + sw.ElapsedMilliseconds);
+            //Debug.Log("Build Tempalte: " + sw.ElapsedMilliseconds);
             sw.Stop();
         }
 

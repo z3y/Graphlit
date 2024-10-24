@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Graphlit
 {
-    [ScriptedImporter(8, new[] { "graphlit", "subgraphlit", "zsg" }, 0)]
+    [ScriptedImporter(9, new[] { "graphlit", "subgraphlit", "zsg" }, 0)]
     public class ShaderGraphImporter : ScriptedImporter
     {
         internal static Dictionary<string, ShaderGraphView> _graphViews = new();
