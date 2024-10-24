@@ -23,8 +23,6 @@ namespace Graphlit
             shaderName = data.shaderName;
             BuildTarget = target;
             this.unlocked = unlocked;
-
-            //autoWireNodes = ShaderGraphView.graphElements.OfType<RegisterVariableNode>().Where(x => x._autoWire).ToArray();
         }
 
         //private RegisterVariableNode[] autoWireNodes;
@@ -44,6 +42,7 @@ namespace Graphlit
         public GenerationMode GenerationMode { get; private set; }
         public SerializableGraph SerializableGraph { get; }
         public ShaderGraphView ShaderGraphView { get; }
+
 
         public Dictionary<string, Texture> _nonModifiableTextures = new();
         public Dictionary<string, Texture> _defaultTextures = new();
@@ -92,8 +91,9 @@ namespace Graphlit
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
-            var shaderNodes = ShaderGraphView.graphElements.Where(x => x is ShaderNode).Cast<ShaderNode>().ToList();
-            var target = (TemplateOutput)ShaderGraphView.graphElements.First(x => x is TemplateOutput);
+            ShaderGraphView.UpdateCachedNodesForBuilder();
+            var shaderNodes = ShaderGraphView.cachedNodesForBuilder;
+            var target = (TemplateOutput)shaderNodes.First(x => x is TemplateOutput);
 
             var graphData = ShaderGraphView.graphData;
             customEditor = graphData.customEditor;
@@ -107,6 +107,9 @@ namespace Graphlit
 
 
             target.OnBeforeBuild(this);
+
+            
+            var ns = new List<ShaderNode>(1000);
 
             for (int i = 0; i < passBuilders.Count; i++)
             {
@@ -138,44 +141,8 @@ namespace Graphlit
             sw.Stop();
         }
 
-      /*  public Dictionary<int, GeneratedPortData> BuildSubgraph(ShaderGraphView subgraphView, NodeVisitor vistor, string assetPath)
-        {
-            var sb = new ShaderBuilder(GenerationMode.Final, subgraphView, BuildTarget);
-            sb.AddPass(passBuilders[vistor.Pass]);
-            //var shaderNodes = subgraphView.graphElements.OfType<ShaderNode>();
-            var target = (SubgraphOutputNode)subgraphView.graphElements.First(x => x is SubgraphOutputNode);
-            subgraphView.graphData.precision = target.DefaultPrecision == Precision.Float ? GraphData.GraphPrecision.Float : GraphData.GraphPrecision.Half;
-
-            var filename = Path.GetFileNameWithoutExtension(assetPath);
-
-            string subgraphName = filename;
-            var subgraphRefName = "_Subgraph_" + subgraphName.Replace(" ", "_").Replace("/", "_");
-            if (subgraphView.graphData.properties.Count > 0 && !subgraphProperties.Exists(x => x.GetReferenceName(GenerationMode.Final) == subgraphRefName))
-            {
-                subgraphProperties.Add(new PropertyDescriptor(PropertyType.Float, subgraphName, subgraphRefName) { customAttributes = "[Foldout]"});
-            }
-
-            foreach ( var p in subgraphView.graphData.properties)
-            {
-                var toAdd = p.GetReferenceName(GenerationMode.Final);
-                if (!(subgraphProperties.Exists(x => x.GetReferenceName(GenerationMode.Final) == toAdd) ||
-                      properties.Exists(x => x.GetReferenceName(GenerationMode.Final) == toAdd)
-                    ))
-                {
-                    subgraphProperties.Add(p);
-                }
-            }
-            //subgraphView.uniqueID = ShaderGraphView.uniqueID;
-            sb.Build(target);
-            //ShaderGraphView.uniqueID = subgraphView.uniqueID;
-            return target.subgraphResults;
-        }*/
-
         public void Build(ShaderNode shaderNode)
         {
-
-            //ShaderNode.UniqueVariableID = 0;
-            //var vertexVisitor = new NodeVisitor(this, ShaderStage.Vertex, passIndex);
             var fragmentVisitor = new NodeVisitor(this, ShaderStage.Fragment, 0);
             TraverseGraph(shaderNode, fragmentVisitor);
             shaderNode.BuilderVisit(fragmentVisitor);
@@ -266,35 +233,32 @@ namespace Graphlit
 
         public static void GenerateAllPreviews(ShaderGraphView graphView)
         {
-            foreach (var graphElement in graphView.graphElements)
+            graphView.UpdateCachedNodesForBuilder();
+
+            var nodes = graphView.cachedNodesForBuilder;
+            foreach (var shaderNode in nodes)
             {
-                if (graphElement is ShaderNode shaderNode)
-                {
-                    GeneratePreview(graphView, shaderNode);
-                }
+                GeneratePreview(graphView, shaderNode);
             }
 
-            foreach (var graphElement in graphView.graphElements)
+            foreach (var shaderNode in nodes)
             {
-                if (graphElement is ShaderNode shaderNode)
+                bool skip = false;
+                foreach (var input in shaderNode.Inputs)
                 {
-                    bool skip = false;
-                    foreach (var input in shaderNode.Inputs)
+                    if (input.connected)
                     {
-                        if (input.connected)
-                        {
-                            skip = true;
-                            continue;
-                        }
-                    }
-                    if (skip)
-                    {
+                        skip = true;
                         continue;
                     }
-                    if (shaderNode._previewDisabled || shaderNode.DisablePreview)
-                    {
-                        shaderNode.GeneratePreviewForAffectedNodes();
-                    }
+                }
+                if (skip)
+                {
+                    continue;
+                }
+                if (shaderNode._previewDisabled || shaderNode.DisablePreview)
+                {
+                    shaderNode.GeneratePreviewForAffectedNodes();
                 }
             }
 
@@ -347,9 +311,6 @@ namespace Graphlit
             {
                 ports = new int[] { BlendFinalColorNode.METALLIC, BlendFinalColorNode.IN_ALPHA };
             }
-
-
-
 
             foreach (var port in shaderNode.Inputs)
             {

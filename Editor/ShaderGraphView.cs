@@ -23,7 +23,15 @@ namespace Graphlit
 
         public Vector2 lastMousePos;
         public Vector2 copyMousePos;
-
+        public List<ShaderNode> cachedNodesForBuilder;
+        public void UpdateCachedNodesForBuilder()
+        {
+            //var sw = new System.Diagnostics.Stopwatch();
+            //sw.Start();
+            cachedNodesForBuilder = graphElements.OfType<ShaderNode>().ToList();
+            //sw.Stop();
+            //Debug.Log($"{sw.ElapsedMilliseconds} ms");
+        }
 
         public Material PreviewMaterial = new(Shader.Find("Unlit/Color"))
         {
@@ -92,6 +100,8 @@ namespace Graphlit
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange change)
         {
+            UpdateCachedNodesForBuilder();
+
             LoopDetection(change);
             if (change.elementsToRemove is not null)
             {

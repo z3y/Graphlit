@@ -430,7 +430,7 @@ namespace Graphlit
 
             if (this is RegisterVariableNode reg)
             {
-                var fetches = GraphView.graphElements.OfType<FetchVariableNode>().Where(x => x._name == reg._name);
+                var fetches = GraphView.cachedNodesForBuilder.OfType<FetchVariableNode>().Where(x => x._name == reg._name);
                 foreach (var fetch in fetches)
                 {
                     fetch.evaluatedOutputDimensions[1] = trunc;
@@ -439,7 +439,7 @@ namespace Graphlit
             }
         }
 
-        public virtual void InheritPreviewAndPrecision()
+        public void InheritPreviewAndPrecision()
         {
             int is3D = 0;
             int is2D = 0;
@@ -774,7 +774,6 @@ namespace Graphlit
                     PortData[id] = new GeneratedPortData(type, name);
                 }
             }
-
 
             Generate(visitor);
         }

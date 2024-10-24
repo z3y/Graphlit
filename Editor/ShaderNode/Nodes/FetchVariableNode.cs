@@ -28,14 +28,19 @@ namespace Graphlit
             }
         }
 
+        RegisterVariableNode _reg = null;
         public override IEnumerable<Port> Inputs
         {
             get
             {
-                var reg = GraphView.graphElements.OfType<RegisterVariableNode>().Where(x => x._name == _name).FirstOrDefault();
-                if (reg is not null)
+                if (_reg is null)
                 {
-                    return reg.Inputs;
+                    // this is slow
+                    _reg = (RegisterVariableNode)GraphView.cachedNodesForBuilder.FirstOrDefault(x => x is RegisterVariableNode reg && reg._name == _name);
+                }
+                if (_reg is not null)
+                {
+                    return _reg.Inputs;
                 }
                 return Enumerable.Empty<Port>();
             }
@@ -48,6 +53,7 @@ namespace Graphlit
             {
                 _name = x.newValue;
                 TitleLabel.text = x.newValue;
+                _reg = null;
             });
             root.Add(text);
 
