@@ -29,18 +29,17 @@ namespace Graphlit
             }
         }
 
-        FetchVariableNode _fetch = null;
+
         public override IEnumerable<Port> Outputs
         {
             get
             {
-                if (_fetch is null)
+                var fetches = GraphView.cachedNodesForBuilder.OfType<FetchVariableNode>().Where(x => x._name == _name);
+
+                var list = fetches.ToList();
+                if (fetches.Count() > 0)
                 {
-                    _fetch = GraphView.cachedNodesForBuilder.OfType<FetchVariableNode>().FirstOrDefault(x => x._name == _name);
-                }
-                if (_fetch is not null)
-                {
-                    return _fetch.Outputs;
+                    return fetches.SelectMany(x => x.Outputs);
                 }
                 return Enumerable.Empty<Port>();
             }
@@ -53,7 +52,6 @@ namespace Graphlit
             {
                 _name = x.newValue;
                 TitleLabel.text = x.newValue;
-                _fetch = null;
             });
             root.Add(text);
 

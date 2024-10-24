@@ -24,11 +24,14 @@ namespace Graphlit
         public Vector2 lastMousePos;
         public Vector2 copyMousePos;
         public List<ShaderNode> cachedNodesForBuilder;
+        public List<RegisterVariableNode> cachedRegisterVariablesForBuilder;
+
         public void UpdateCachedNodesForBuilder()
         {
             //var sw = new System.Diagnostics.Stopwatch();
             //sw.Start();
             cachedNodesForBuilder = graphElements.OfType<ShaderNode>().ToList();
+            cachedRegisterVariablesForBuilder = cachedNodesForBuilder.OfType<RegisterVariableNode>().ToList();
             //sw.Stop();
             //Debug.Log($"{sw.ElapsedMilliseconds} ms");
         }
