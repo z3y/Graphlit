@@ -292,37 +292,39 @@ namespace Graphlit
             return null;
         }
 
+
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
         {
-            var compatiblePorts = new List<Port>();
+            var allPort = ports.ToArray();
+            var compatiblePorts = new List<Port>(allPort.Length);
             var node = startPort.node;
             var direction = startPort.direction;
             var type = startPort.portType;
 
-            ports.ForEach(port =>
+            foreach (var port in allPort)
             {
                 if (startPort == port)
                 {
-                    return;
+                    continue;
                 }
 
                 if (node == port.node)
                 {
-                    return;
+                    continue;
                 }
 
                 if (direction == port.direction)
                 {
-                    return;
+                    continue;
                 }
 
                 if (type != port.portType)
                 {
-                    return;
+                    continue;
                 }
 
                 compatiblePorts.Add(port);
-            });
+            }
 
             return compatiblePorts;
         }
