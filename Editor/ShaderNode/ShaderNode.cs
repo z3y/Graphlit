@@ -10,6 +10,7 @@ using Graphlit.Nodes;
 using Graphlit.Nodes.PortType;
 using static UnityEditor.Experimental.GraphView.Port;
 using System.Xml.Linq;
+using System.Security.Cryptography;
 
 namespace Graphlit
 {
@@ -339,11 +340,6 @@ namespace Graphlit
             {
                 return;
             }
-            if (this is SwizzleNode swizzle)
-            {
-                evaluatedOutputDimensions[1] = Mathf.Clamp(swizzle.swizzle.Length, 1, 4);
-                return;
-            }
 
             var inputDimensions = new Dictionary<int, int>();
 
@@ -377,6 +373,7 @@ namespace Graphlit
                 }
             }
 
+
             int trunc = 4;
             int max = 1;
 
@@ -401,14 +398,7 @@ namespace Graphlit
                         if (@float.dynamic)
                         {
                             var port = Inputs.First(x => x.GetPortID() == desc.ID);
-                            if (port.connected)
-                            {
-                                SetPortColor(port, Float.GetPortColor(trunc));
-                            }
-                            else
-                            {
-                                SetPortColor(port, Float.GetPortColor(@float.dimensions));
-                            }
+                            SetPortColor(port, Float.GetPortColor(trunc));
                         }
                     }
                 }
@@ -428,6 +418,14 @@ namespace Graphlit
                         }
                     }
                 }
+            }
+
+
+            if (this is SwizzleNode swizzle)
+            {
+                evaluatedOutputDimensions[1] = Mathf.Clamp(swizzle.swizzle.Length, 1, 4);
+                SetPortColor(Outputs.First(), Float.GetPortColor(evaluatedOutputDimensions[1]));
+                return;
             }
 
             if (this is RegisterVariableNode reg)
@@ -875,8 +873,8 @@ namespace Graphlit
                 if (dimensions == 1)
                 {
                     // no need to upcast
-                    // name = "(" + name + ").xxxx"[..(targetComponent + 2)];
-                    return data;
+                    // name = "(" + name + ").xxxx"[..(targetDimensions + 2)];
+                    //return data;
                 }
                 else if (dimensions == 2)
                 {

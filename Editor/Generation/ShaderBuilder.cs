@@ -278,12 +278,26 @@ namespace Graphlit
             {
                 if (graphElement is ShaderNode shaderNode)
                 {
+                    bool skip = false;
+                    foreach (var input in shaderNode.Inputs)
+                    {
+                        if (input.connected)
+                        {
+                            skip = true;
+                            continue;
+                        }
+                    }
+                    if (skip)
+                    {
+                        continue;
+                    }
                     if (shaderNode._previewDisabled || shaderNode.DisablePreview)
                     {
-                        shaderNode.EvaluateDimensionsForGraphView();
+                        shaderNode.GeneratePreviewForAffectedNodes();
                     }
                 }
             }
+
         }
 
         public static void GeneratePreviewFromEdge(ShaderGraphView graphView, Edge edge, bool toRemove)

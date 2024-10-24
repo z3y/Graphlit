@@ -37,7 +37,7 @@ namespace Graphlit
 
         public override void AdditionalElements(VisualElement root)
         {
-            var channelsSelector = new Toggle("float4");
+            var channelsSelector = new Toggle("float4") { value = _channels == 4};
             channelsSelector.RegisterValueChangedCallback((evt) =>
             {
                 _channels = evt.newValue ? 4 : 2;

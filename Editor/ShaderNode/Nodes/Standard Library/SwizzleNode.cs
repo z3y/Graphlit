@@ -16,7 +16,7 @@ namespace Graphlit
         public override void Initialize()
         {
             AddPort(new(PortDirection.Input, new Float(1, true), IN));
-            AddPort(new(PortDirection.Output, new Float(1, true), OUT));
+            var outport = AddPort(new(PortDirection.Output, new Float(1, true), OUT));
 
             var f = new TextField { value = swizzle };
             f.RegisterValueChangedCallback((evt) =>
@@ -25,10 +25,15 @@ namespace Graphlit
                 if (!swizzle.Equals(newValue))
                 {
                     swizzle = newValue;
+                    EvaluateDimensionsForGraphView();
+                    SetPortColor(outport, Float.GetPortColor(evaluatedOutputDimensions[OUT]));
                     GeneratePreviewForAffectedNodes();
                 }
             });
             extensionContainer.Add(f);
+
+            EvaluateDimensionsForGraphView();
+            SetPortColor(outport, Float.GetPortColor(evaluatedOutputDimensions[OUT]));
         }
 
         protected override void Generate(NodeVisitor visitor)
