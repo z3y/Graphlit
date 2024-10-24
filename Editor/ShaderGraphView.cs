@@ -7,7 +7,6 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Graphlit.Nodes;
-using System.Linq.Expressions;
 
 namespace Graphlit
 {

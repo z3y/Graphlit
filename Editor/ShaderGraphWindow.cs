@@ -89,6 +89,7 @@ namespace Graphlit
 
         private void OnDisable()
         {
+            ShaderGraphImporter._graphViews[importerGuid] = null;
             disabled = true;
         }
 

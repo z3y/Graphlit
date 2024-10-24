@@ -5,9 +5,6 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using Graphlit.Nodes.PortType;
-using System.IO;
-using UnityEditor.Hardware;
-using UnityEditor.Rendering;
 
 namespace Graphlit
 {
