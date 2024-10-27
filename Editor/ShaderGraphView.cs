@@ -64,9 +64,11 @@ namespace Graphlit
             this.AddManipulator(CreateGroupContextualMenu());
 
             // background
-            var gridBackground = new GridBackground();
-            gridBackground.StretchToParentSize();
-            Insert(0, gridBackground);
+            //var gridBackground = new GridBackground();
+            //gridBackground.StretchToParentSize();
+            //gridBackground.style.backgroundColor = Color.red;
+            style.backgroundColor = new Color(0.14f, 0.14f, 0.14f, 1);
+            //Insert(0, gridBackground);
 
             // search window
             if (_searchWindow == null)
@@ -270,13 +272,22 @@ namespace Graphlit
         private GraphElement CreateGroup(string title, Vector2 localMousePosition)
         {
             TransformMousePositionToLocalSpace(ref localMousePosition, false);
-            var group = new Group
-            {
-                title = title
-            };
+            var group = CreateGroup(title);
 
             group.SetPosition(new Rect(localMousePosition, Vector3.one));
             return group;
+        }
+
+        public Group CreateGroup(string title)
+        {
+            return new Group
+            {
+                title = title,
+                style =
+                {
+                    backgroundColor = new Color(0.12f, 0.125f, 0.125f, 1),
+                }
+            };
         }
 
         public void CreateNode(ShaderNode node, Vector2 position, bool transform = true)

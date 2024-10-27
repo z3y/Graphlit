@@ -96,9 +96,8 @@ namespace Graphlit
 
             foreach (var group in groups)
             {
-                var g = new Group();
+                var g = graphView.CreateGroup(group.title);
                 g.SetPosition(new Rect(group.x, group.y, 1, 1));
-                g.title = group.title;
 
                 foreach (var guid in group.elements)
                 {

@@ -529,12 +529,16 @@ namespace Graphlit
             RefreshPorts();
         }
         public virtual Color Accent => Color.gray;
+
+        static Color _color0 = new Color(0.07f, 0.07f, 0.07f, 1);
+        static Color _color1 = new Color(0.11f, 0.11f, 0.11f, 1);
+        //static Color _color2 = new Color(0.2f, 0.2f, 0.2f, 1);
+
         void AddStyles()
         {
-            var color = new Color(0.07f, 0.07f, 0.07f, 1);
-            extensionContainer.style.backgroundColor = color;
-            inputContainer.style.backgroundColor = color;
-            outputContainer.style.backgroundColor = color;
+            extensionContainer.style.backgroundColor = _color0;
+            inputContainer.style.backgroundColor = this is TemplateOutput ? _color0 : _color1;
+            outputContainer.style.backgroundColor = _color0;
 
             var accentLine = new VisualElement();
             {
@@ -546,12 +550,21 @@ namespace Graphlit
             }
             titleContainer.Add(accentLine);
 
+            var div1 = topContainer.Q("divider");
+            div1.parent.Remove(div1);
+
+            var div2 = extensionContainer.parent.Q("divider");
+            div2.parent.Remove(div2);
+
 
             var divider = contentContainer.Q("divider");
             divider.parent.Remove(divider);
 
+            var border = this.Q("node-border");
+            border.style.SetBorderWidth(0);
+            //border.style.display = DisplayStyle.None;
 
-            /*var border = this.Q("node-border");
+            /*
             border.style.overflow = Overflow.Visible;
             {
                 var s = titleContainer.style;
@@ -596,7 +609,9 @@ namespace Graphlit
 
             var titleStyle = titleContainer.style;
             titleStyle.height = 24;
-            titleStyle.backgroundColor = Color.black;
+
+            //var color = new Color(0.07f, 0.07f, 0.07f, 1);
+            titleStyle.backgroundColor = _color0;
         }
 
         public string UniqueVariableID { get; private set; }
