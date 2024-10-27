@@ -155,7 +155,7 @@ namespace Graphlit
                     PortBinding.LightmapUV => "data.lightmapUV",
                     PortBinding.ShadowCoord => "data.shadowCoords",
                     _ => throw new NotImplementedException(),
-                }; ;
+                };
             }
         }
         static string RequireTangentSpaceTransformFragment(PassBuilder pass)

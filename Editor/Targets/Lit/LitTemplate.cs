@@ -284,7 +284,7 @@ namespace Graphlit
 
                 if (_fwdAddBlendOpMax)
                 {
-                    pass.renderStates["BlendOp"] = "Max, Add";
+                    //pass.renderStates["BlendOp"] = "Max, Add";
                 }
 
                 pass.pragmas.Add("#pragma shader_feature_local _ _ALPHAFADE_ON _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");

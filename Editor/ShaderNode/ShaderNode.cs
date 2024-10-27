@@ -932,6 +932,24 @@ namespace Graphlit
                 caps.style.borderLeftColor = color;
                 caps.style.borderRightColor = color;
             }
+
+            foreach (var edge in port.connections)
+            {
+                var control = edge.Q<EdgeControl>();
+                if (control is null)
+                {
+                    continue;
+                }
+                if (port.direction == Direction.Input)
+                {
+                    control.inputColor = color;
+                }
+                else
+                {
+                    control.outputColor = color;
+                }
+            }
+
         }
 
         public override void OnSelected()
