@@ -530,8 +530,8 @@ namespace Graphlit
         }
         public virtual Color Accent => Color.gray;
 
-        static Color _color0 = new Color(0.07f, 0.07f, 0.07f, 1);
-        static Color _color1 = new Color(0.11f, 0.11f, 0.11f, 1);
+        static Color _color1 = new Color(0.08f, 0.08f, 0.08f, 1);
+        static Color _color0 = new Color(0.05f, 0.05f, 0.05f, 1);
         //static Color _color2 = new Color(0.2f, 0.2f, 0.2f, 1);
 
         void AddStyles()

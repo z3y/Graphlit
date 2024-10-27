@@ -285,7 +285,7 @@ namespace Graphlit
                 title = title,
                 style =
                 {
-                    backgroundColor = new Color(0.12f, 0.125f, 0.125f, 1),
+                    backgroundColor = new Color(0.09f, 0.09f, 0.09f, 0.5f),
                 }
             };
         }
