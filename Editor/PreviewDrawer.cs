@@ -15,42 +15,14 @@ namespace Graphlit
 
     public class PreviewDrawer : ImmediateModeElement
     {
+        static Shader _defaultShader = Shader.Find("Unlit/Color");
         int _resolution = 96;
-        public string shaderLabString;
-        public Shader cachedShader;
         Material _material;
         ShaderGraphView _graphView;
         ShaderNode _node;
-        static Shader _defaultShader = Shader.Find("Unlit/Color");
-        private bool _disabled = false;
-        Shader PreviewShader
-        {
-            get
-            {
-                if (cachedShader == null)
-                {
-                    CompileShader();
-                }
-                return cachedShader;
-            }
-        }
-
-        void CompileShader()
-        {
-            if (string.IsNullOrEmpty(shaderLabString))
-            {
-                cachedShader = _defaultShader;
-                return;
-            }
-            if (cachedShader != null)
-            {
-                ShaderUtil.UpdateShaderAsset(cachedShader, shaderLabString, false);
-            }
-            else
-            {
-                cachedShader = ShaderUtil.CreateShaderAsset(shaderLabString, false);
-            }
-        }
+        bool _disabled = false;
+        public int previewId;
+        Shader _previewShader = null;
 
         PreviewDrawer _extensionPreviewDrawer;
 
@@ -58,8 +30,8 @@ namespace Graphlit
         {
             _extensionPreviewDrawer ??= new PreviewDrawer(node, _graphView, 389)
             {
-                shaderLabString = shaderLabString,
-                cachedShader = cachedShader
+                _previewShader = _previewShader,
+                previewId = previewId
             };
 
             return _extensionPreviewDrawer;
@@ -78,15 +50,14 @@ namespace Graphlit
             name = "PreviewDrawer";
         }
 
-        public void SetShader(string shader)
+        public bool HasShader => _previewShader != null;
+        public void SetShader(Shader shader)
         {
-            Dispose();
-            shaderLabString = shader;
-            CompileShader();
+            _previewShader = shader;
             if (_extensionPreviewDrawer is not null)
             {
-                _extensionPreviewDrawer.shaderLabString = shaderLabString;
-                _extensionPreviewDrawer.cachedShader = cachedShader;
+                _extensionPreviewDrawer._previewShader = _previewShader;
+                _extensionPreviewDrawer.previewId = previewId;
             }
             MarkDirtyRepaint();
         }
@@ -96,7 +67,6 @@ namespace Graphlit
             _disabled = true;
             style.height = 0;
             style.width = 0;
-            Dispose();
         }
 
         public void Enable()
@@ -106,16 +76,9 @@ namespace Graphlit
             style.height = _resolution;
         }
 
-        public void Dispose()
-        {
-            if (cachedShader)
-            {
-                GameObject.DestroyImmediate(cachedShader);
-            }
-            shaderLabString = string.Empty;
-        }
         int _graphTimeId = Shader.PropertyToID("_GraphTime");
         int _preview3dId = Shader.PropertyToID("_Preview3D");
+        int _previewIDId = Shader.PropertyToID("_PreviewID");
 
         protected override void ImmediateRepaint()
         {
@@ -130,10 +93,7 @@ namespace Graphlit
                 return;
             }
 
-            if (!string.IsNullOrEmpty(shaderLabString))
-            {
-                _material.shader = PreviewShader;
-            }
+            _material.shader = HasShader ? _previewShader : _defaultShader;
 
             if (_material.shader == null)
             {
@@ -149,6 +109,7 @@ namespace Graphlit
             {
                 previewType = _node._inheritedPreview;
             }
+            _material.SetInteger(_previewIDId, previewId);
             _material.SetVector(_graphTimeId, time);
             _material.SetFloat(_preview3dId, previewType == PreviewType.Preview3D ? 1f : 0f);
             Graphics.DrawTexture(contentRect, Texture2D.whiteTexture, _material, 0);

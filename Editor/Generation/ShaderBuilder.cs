@@ -6,6 +6,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using Graphlit.Nodes.PortType;
 using System.Linq.Expressions;
+using System;
 
 namespace Graphlit
 {
@@ -145,7 +146,7 @@ namespace Graphlit
             TraverseGraph(shaderNode, fragmentVisitor);
             shaderNode.BuilderVisit(fragmentVisitor);
 
-            shaderNode.UpdateGraphView();
+            // shaderNode.UpdateGraphView();
 
             if (GenerationMode == GenerationMode.Preview && !shaderNode.DisablePreview)
             {
@@ -178,18 +179,21 @@ namespace Graphlit
         const string VertexPreview = "Packages/com.z3y.graphlit/Editor/Targets/Preview/Vertex.hlsl";
         const string FragmentPreview = "Packages/com.z3y.graphlit/Editor/Targets/Preview/Fragment.hlsl";
 
-        public static void GeneratePreview(ShaderGraphView graphView, ShaderNode shaderNode, bool log = false)
+        public static void GenerateUnifiedPreview(ShaderGraphView graphView, ShaderNode node, List<ShaderNode> rightNodes, bool log = false)
         {
-            shaderNode.EvaluateDimensionsForGraphView();
-            // shaderNode.InheritPreviewAndPrecision();
-
-            if (shaderNode._previewDisabled || shaderNode.DisablePreview)
+            if (rightNodes.Count == 0)
             {
-                return;
+                if (node._previewDisabled || node.DisablePreview)
+                {
+                    node.EvaluateDimensionsForGraphView();
+                    return;
+                }
             }
 
-            var shaderBuilder = new ShaderBuilder(GenerationMode.Preview, graphView);
-            shaderBuilder.shaderName = "Hidden/GraphlitPreviews/" + shaderNode.viewDataKey;
+            var shaderBuilder = new ShaderBuilder(GenerationMode.Preview, graphView)
+            {
+                shaderName = "Hidden/GraphlitPreview"
+            };
             var pass = new PassBuilder("FORWARD", VertexPreview, FragmentPreview);
 
             shaderBuilder.AddPass(pass);
@@ -210,55 +214,111 @@ namespace Graphlit
 
 
             //shaderBuilder.passBuilders[0].renderStates.Add("Cull", "Off");
-            shaderBuilder.Build(shaderNode);
+            var fragmentVisitor = new NodeVisitor(shaderBuilder, ShaderStage.Fragment, 0);
 
-            //if (shaderNode._inheritedPreview == PreviewType.Preview3D)
-            //{
-            //    pass.pragmas.Insert(0, "#define PREVIEW3D");
-            //}
+            shaderBuilder.TraverseGraph(node, fragmentVisitor);
+            node.BuilderVisit(fragmentVisitor);
+            shaderBuilder.visitedNodes.Add(node.viewDataKey);
+            node.EvaluateDimensionsForGraphView();
 
-            if (shaderNode.DisablePreview)
+            foreach (var rightNode in rightNodes)
             {
-                return;
+                shaderBuilder.TraverseGraph(rightNode, fragmentVisitor);
+                if (!shaderBuilder.visitedNodes.Contains(rightNode.viewDataKey))
+                {
+                    shaderBuilder.visitedNodes.Add(rightNode.viewDataKey);
+                    rightNode.BuilderVisit(fragmentVisitor);
+                }
+
+                rightNode.EvaluateDimensionsForGraphView();
             }
 
-            if (!shaderNode._previewDisabled)
+
+            var sb = pass.surfaceDescription;
+            var outputStruct = pass.surfaceDescriptionStruct;
+            outputStruct.Add("float4 Color;");
+
+            sb.Add("[forcecase]");
+            sb.Add("switch(_PreviewID) {");
+            int previewId = 0;
+            var affectedNodes = (new List<ShaderNode> { node }).Union(rightNodes);
+            foreach (var x in affectedNodes)
             {
-                string result = shaderBuilder.ToString();
-                shaderNode.previewDrawer?.SetShader(result);
-                shaderNode.UpdatePreviewMaterial();
-                if (log) Debug.Log(shaderBuilder);
+                if (x._previewDisabled || x.DisablePreview)
+                {
+                    continue;
+                }
+
+                foreach (var port in x.Outputs)
+                {
+                    int id = port.GetPortID();
+                    if (x.PortData[id].Type is Float @float)
+                    {
+                        var cast = x.Cast(id, 4, false);
+                        if (@float.dimensions != 4)
+                        {
+                            sb.Add($"case {previewId}: output.Color = {cast.Name}; output.Color.a = 1.0; break;");
+                        }
+                        else
+                        {
+                            sb.Add($"case {previewId}: output.Color = {cast.Name}; break;");
+                        }
+                    }
+                    else
+                    {
+                        sb.Add($"case {previewId}: output.Color = float4(0,0,0,1); break;");
+                    }
+
+                    break; // only first port for preview
+                }
+
+                x.previewDrawer.previewId = previewId;
+
+                previewId++;
+            }
+            sb.Add("}");
+
+
+            string result = shaderBuilder.ToString();
+
+            Debug.Log(result);
+
+            var shader = ShaderUtil.CreateShaderAsset(result);
+
+            foreach (var x in affectedNodes)
+            {
+                if (x._previewDisabled || x.DisablePreview)
+                {
+                    continue;
+                }
+
+                x.previewDrawer.SetShader(shader);
+                x.UpdatePreviewMaterial();
             }
         }
 
         public static void GenerateAllPreviews(ShaderGraphView graphView)
         {
             graphView.UpdateCachedNodesForBuilder();
-
             var nodes = graphView.cachedNodesForBuilder;
-            foreach (var shaderNode in nodes)
-            {
-                GeneratePreview(graphView, shaderNode);
-            }
 
             foreach (var shaderNode in nodes)
             {
-                bool skip = false;
-                foreach (var input in shaderNode.Inputs)
-                {
-                    if (input.connected)
-                    {
-                        skip = true;
-                        continue;
-                    }
-                }
-                if (skip)
+                if (shaderNode.Inputs.Any(x => x.connected))
                 {
                     continue;
                 }
+
                 if (shaderNode._previewDisabled || shaderNode.DisablePreview)
                 {
                     shaderNode.GeneratePreviewForAffectedNodes();
+                }
+                else
+                {
+                    if (shaderNode.previewDrawer is not null && !shaderNode.previewDrawer.HasShader)
+                    {
+                        shaderNode.GeneratePreviewForAffectedNodes();
+                    }
                 }
             }
 
@@ -266,8 +326,7 @@ namespace Graphlit
 
         public static void GeneratePreviewFromEdge(ShaderGraphView graphView, Edge edge, bool toRemove)
         {
-            var nodesToGenerate = new List<ShaderNode>();
-            GetConnectedNodesFromEdge(nodesToGenerate, edge, new HashSet<string>());
+            var node = (ShaderNode)edge.input.node;
 
             if (toRemove)
             {
@@ -277,14 +336,10 @@ namespace Graphlit
                 output.Disconnect(edge);
             }
 
-
-            foreach (var node in nodesToGenerate)
-            {
-                GeneratePreview(graphView, node);
-            }
+            node.GeneratePreviewForAffectedNodes();
         }
 
-        public static void GetConnectedNodesFromEdge(List<ShaderNode> nodes, Edge edge, HashSet<string> addedNodes)
+        public static void GetConnectedNodesFromEdgeRight(List<ShaderNode> nodes, Edge edge, HashSet<string> addedNodes)
         {
             var connectedNode = (ShaderNode)edge.input.node;
             var guid = connectedNode.viewDataKey;
@@ -296,12 +351,9 @@ namespace Graphlit
 
                 foreach (var port in connectedNode.Outputs)
                 {
-                    if (port.connected)
+                    foreach (var connection in port.connections)
                     {
-                        foreach (var connection in port.connections)
-                        {
-                            GetConnectedNodesFromEdge(nodes, connection, addedNodes);
-                        }
+                        GetConnectedNodesFromEdgeRight(nodes, connection, addedNodes);
                     }
                 }
             }
@@ -322,27 +374,12 @@ namespace Graphlit
                     continue;
                 }
 
-                Edge input = null;
-                if (!port.connections.Any())
+                var connections = port.connections.ToArray();
+                if (connections.Length == 0)
                 {
-                    /*foreach (var node in autoWireNodes)
-                    {
-                        if (node._name.ToLower() == port.portName.ToLower())
-                        {
-                            input = node.Inputs.First().connections.FirstOrDefault();
-                            break;
-                        }
-                    }*/
-
-                    if (input is null)
-                    {
-                        continue;
-                    }
+                    continue;
                 }
-                else
-                {
-                    input = port.connections.First();
-                }
+                Edge input = connections[0];
 
                 var inputNode = (ShaderNode)input.output.node;
 
@@ -357,10 +394,10 @@ namespace Graphlit
                 inputNode.BuilderVisit(visitor);
                 visitedNodes.Add(inputNode.viewDataKey);
 
-                if (GenerationMode == GenerationMode.Preview && !unlocked)
+                /*if (GenerationMode == GenerationMode.Preview && !unlocked)
                 {
                     inputNode.UpdateGraphView();
-                }
+                }*/
             }
         }
 

@@ -91,11 +91,11 @@ namespace Graphlit
 
         public void GeneratePreview(DropdownMenuAction action)
         {
-            InvokeOnSelection(x => ShaderBuilder.GeneratePreview(GraphView, x, action != null));
+            InvokeOnSelection(x => x.GeneratePreviewForAffectedNodes());
         }
         public void GeneratePreview()
         {
-            ShaderBuilder.GeneratePreview(GraphView, this, false);
+            GeneratePreviewForAffectedNodes();
         }
 
         void InvokeOnSelection(Action<ShaderNode> action)
@@ -272,25 +272,18 @@ namespace Graphlit
 
         public void GeneratePreviewForAffectedNodes()
         {
-            ShaderBuilder.GeneratePreview(GraphView, this);
-            var nodesToGenerate = new List<ShaderNode>();
-            var nodesAdded = new HashSet<string>();
+            var rightNodesAdded = new HashSet<string>();
+            var rightNodes = new List<ShaderNode>();
 
             foreach (var output in Outputs)
             {
-                if (output.connected)
+                foreach (var edge in output.connections)
                 {
-                    foreach (var edge in output.connections)
-                    {
-                        ShaderBuilder.GetConnectedNodesFromEdge(nodesToGenerate, edge, nodesAdded);
-                    }
+                    ShaderBuilder.GetConnectedNodesFromEdgeRight(rightNodes, edge, rightNodesAdded);
                 }
             }
 
-            foreach (var node in nodesToGenerate)
-            {
-                ShaderBuilder.GeneratePreview(GraphView, node);
-            }
+            ShaderBuilder.GenerateUnifiedPreview(GraphView, this, rightNodes);
         }
 
         public void InheritPreviewTypeForAffectedNodes()
@@ -304,7 +297,7 @@ namespace Graphlit
                 {
                     foreach (var edge in output.connections)
                     {
-                        ShaderBuilder.GetConnectedNodesFromEdge(nodesToGenerate, edge, nodesAdded);
+                        ShaderBuilder.GetConnectedNodesFromEdgeRight(nodesToGenerate, edge, nodesAdded);
                     }
                 }
             }
@@ -944,7 +937,7 @@ namespace Graphlit
             return newData;
         }
 
-        public void UpdateGraphView()
+        /*public void UpdateGraphView()
         {
             foreach (var data in PortData)
             {
@@ -962,7 +955,7 @@ namespace Graphlit
                     SetPortColor(port, color);
                 }
             }
-        }
+        }*/
 
         public static void SetPortColor(Port port, Color color)
         {
@@ -1055,7 +1048,7 @@ namespace Graphlit
             style.marginRight = 5;
             style.bottom = 5;
 
-            if (!DisablePreview && previewDrawer is not null && previewDrawer.cachedShader != null)
+            if (!DisablePreview && previewDrawer is not null && previewDrawer.HasShader)
             {
                 ve.Add(previewDrawer.GetExtensionPreview(this));
             }
