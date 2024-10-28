@@ -60,7 +60,7 @@ namespace Graphlit
             root.Add(auto);*/
 
             var update = new Button() { text = "Update Preview" };
-            update.clicked += GeneratePreviewForAffectedNodes;
+            update.clicked += () => GeneratePreviewForAffectedNodes();
             //update.clicked += GeneratePreviewForAutoWiredNodes;
 
             root.Add(update);

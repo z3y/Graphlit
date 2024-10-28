@@ -270,7 +270,7 @@ namespace Graphlit
             //RefreshPorts();
         }
 
-        public void GeneratePreviewForAffectedNodes()
+        public HashSet<string> GeneratePreviewForAffectedNodes()
         {
             var rightNodesAdded = new HashSet<string>();
             var rightNodes = new List<ShaderNode>();
@@ -284,6 +284,7 @@ namespace Graphlit
             }
 
             ShaderBuilder.GenerateUnifiedPreview(GraphView, this, rightNodes);
+            return rightNodesAdded;
         }
 
         public void InheritPreviewTypeForAffectedNodes()

@@ -53,7 +53,7 @@ namespace Graphlit
             root.Add(text);
 
             var update = new Button() { text = "Update Preview" };
-            update.clicked += GeneratePreviewForAffectedNodes;
+            update.clicked += () => GeneratePreviewForAffectedNodes();
             root.Add(update);
         }
 

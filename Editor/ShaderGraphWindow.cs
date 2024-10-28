@@ -104,6 +104,20 @@ namespace Graphlit
         {
             ShaderGraphImporter._graphViews[importerGuid] = null;
             disabled = true;
+
+            var nodes = graphView.nodes.OfType<ShaderNode>();
+            foreach ( var node in nodes )
+            {
+                if (node.previewDrawer is not null)
+                {
+                    var shader = node.previewDrawer._previewShader;
+                    if (shader != null)
+                    {
+                        DestroyImmediate(shader);
+                    }
+                }
+            }
+            DestroyImmediate(graphView.PreviewMaterial);
         }
 
 

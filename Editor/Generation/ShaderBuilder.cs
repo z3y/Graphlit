@@ -7,6 +7,7 @@ using UnityEngine;
 using Graphlit.Nodes.PortType;
 using System.Linq.Expressions;
 using System;
+using static UnityEditor.Rendering.CameraUI;
 
 namespace Graphlit
 {
@@ -181,13 +182,21 @@ namespace Graphlit
 
         public static void GenerateUnifiedPreview(ShaderGraphView graphView, ShaderNode node, List<ShaderNode> rightNodes, bool log = false)
         {
-            if (rightNodes.Count == 0)
+            var affectedNodes = (new List<ShaderNode> { node }).Union(rightNodes);
+
+            bool anyPreview = false;
+            foreach (var x in affectedNodes)
             {
-                if (node._previewDisabled || node.DisablePreview)
+                x.EvaluateDimensionsForGraphView();
+                if (x._previewDisabled || x.DisablePreview)
                 {
-                    node.EvaluateDimensionsForGraphView();
-                    return;
+                    continue;
                 }
+                anyPreview = true;
+            }
+            if (!anyPreview)
+            {
+                return;
             }
 
             var shaderBuilder = new ShaderBuilder(GenerationMode.Preview, graphView)
@@ -241,7 +250,6 @@ namespace Graphlit
             sb.Add("[forcecase]");
             sb.Add("switch(_PreviewID) {");
             int previewId = 0;
-            var affectedNodes = (new List<ShaderNode> { node }).Union(rightNodes);
             foreach (var x in affectedNodes)
             {
                 if (x._previewDisabled || x.DisablePreview)
@@ -284,6 +292,7 @@ namespace Graphlit
             Debug.Log(result);
 
             var shader = ShaderUtil.CreateShaderAsset(result);
+            var shaderRef = new ObjectRc<Shader>(shader);
 
             foreach (var x in affectedNodes)
             {
@@ -292,7 +301,7 @@ namespace Graphlit
                     continue;
                 }
 
-                x.previewDrawer.SetShader(shader);
+                x.previewDrawer.SetShader(shaderRef);
                 x.UpdatePreviewMaterial();
             }
         }
@@ -304,21 +313,49 @@ namespace Graphlit
 
             foreach (var shaderNode in nodes)
             {
-                if (shaderNode.Inputs.Any(x => x.connected))
+                bool skip = false;
+                foreach (var input in shaderNode.Inputs)
+                {
+                    if (input.connected)
+                    {
+                        skip = true;
+                        continue;
+                    }
+                }
+                if (skip)
                 {
                     continue;
                 }
 
-                if (shaderNode._previewDisabled || shaderNode.DisablePreview)
+                var rightNodesAdded = new HashSet<string>();
+                var rightNodes = new List<ShaderNode>();
+
+                foreach (var output in shaderNode.Outputs)
                 {
-                    shaderNode.GeneratePreviewForAffectedNodes();
-                }
-                else
-                {
-                    if (shaderNode.previewDrawer is not null && !shaderNode.previewDrawer.HasShader)
+                    foreach (var edge in output.connections)
                     {
-                        shaderNode.GeneratePreviewForAffectedNodes();
+                        GetConnectedNodesFromEdgeRight(rightNodes, edge, rightNodesAdded);
                     }
+                }
+                shaderNode.EvaluateDimensionsForGraphView();
+
+                foreach (var rightNode in rightNodes)
+                {
+                    rightNode.EvaluateDimensionsForGraphView();
+                }
+            }
+
+            var generatedNodes = new HashSet<string>();
+
+            foreach (var node in nodes)
+            {
+                if (!generatedNodes.Contains(node.viewDataKey))
+                {
+                    if (!(node._previewDisabled || node.DisablePreview))
+                    {
+                        generatedNodes.UnionWith(node.GeneratePreviewForAffectedNodes());
+                    }
+                    generatedNodes.Add(node.viewDataKey);
                 }
             }
 

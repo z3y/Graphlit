@@ -16,13 +16,14 @@ namespace Graphlit
     public class PreviewDrawer : ImmediateModeElement
     {
         static Shader _defaultShader = Shader.Find("Unlit/Color");
+        internal Shader _previewShader = null;
+        ObjectRc<Shader> _shaderRc = null;
         int _resolution = 96;
         Material _material;
         ShaderGraphView _graphView;
         ShaderNode _node;
         bool _disabled = false;
         public int previewId;
-        Shader _previewShader = null;
 
         PreviewDrawer _extensionPreviewDrawer;
 
@@ -51,9 +52,12 @@ namespace Graphlit
         }
 
         public bool HasShader => _previewShader != null;
-        public void SetShader(Shader shader)
+        public void SetShader(ObjectRc<Shader> shader)
         {
-            _previewShader = shader;
+            _shaderRc?.Drop();
+            _shaderRc = shader;
+
+            _previewShader = _shaderRc.Clone();
             if (_extensionPreviewDrawer is not null)
             {
                 _extensionPreviewDrawer._previewShader = _previewShader;
