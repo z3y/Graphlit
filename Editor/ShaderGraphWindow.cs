@@ -106,7 +106,7 @@ namespace Graphlit
             disabled = true;
 
             var nodes = graphView.nodes.OfType<ShaderNode>();
-            foreach ( var node in nodes )
+            foreach (var node in nodes)
             {
                 if (node.previewDrawer is not null)
                 {
@@ -117,7 +117,6 @@ namespace Graphlit
                     }
                 }
             }
-            DestroyImmediate(graphView.PreviewMaterial);
         }
 
 
