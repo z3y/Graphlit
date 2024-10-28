@@ -273,6 +273,8 @@ namespace Graphlit
         public void GeneratePreviewForAffectedNodes()
         {
             ShaderBuilder.GeneratePreview(GraphView, this);
+            var nodesToGenerate = new List<ShaderNode>();
+            var nodesAdded = new HashSet<string>();
 
             foreach (var output in Outputs)
             {
@@ -280,11 +282,39 @@ namespace Graphlit
                 {
                     foreach (var edge in output.connections)
                     {
-                        ShaderBuilder.GeneratePreviewFromEdge(GraphView, edge, false);
+                        ShaderBuilder.GetConnectedNodesFromEdge(nodesToGenerate, edge, nodesAdded);
                     }
                 }
             }
 
+            foreach (var node in nodesToGenerate)
+            {
+                ShaderBuilder.GeneratePreview(GraphView, node);
+            }
+        }
+
+        public void InheritPreviewTypeForAffectedNodes()
+        {
+            var nodesToGenerate = new List<ShaderNode>();
+            var nodesAdded = new HashSet<string>();
+
+            foreach (var output in Outputs)
+            {
+                if (output.connected)
+                {
+                    foreach (var edge in output.connections)
+                    {
+                        ShaderBuilder.GetConnectedNodesFromEdge(nodesToGenerate, edge, nodesAdded);
+                    }
+                }
+            }
+
+            InheritPreviewAndPrecision();
+
+            foreach (var node in nodesToGenerate)
+            {
+                node.InheritPreviewAndPrecision();
+            }
         }
 
         public abstract void Initialize();
@@ -306,7 +336,7 @@ namespace Graphlit
             }
         }
         public virtual PreviewType DefaultPreviewOverride => PreviewType.Inherit;
-        protected internal PreviewType _inheritedPreview;
+        internal PreviewType _inheritedPreview;
 
         protected internal bool _previewDisabled = false;
         public virtual bool DisablePreview => false;
@@ -1027,7 +1057,7 @@ namespace Graphlit
 
             if (!DisablePreview && previewDrawer is not null && previewDrawer.cachedShader != null)
             {
-                ve.Add(previewDrawer.GetExtensionPreview());
+                ve.Add(previewDrawer.GetExtensionPreview(this));
             }
 
             if (this is not TemplateOutput)
@@ -1043,7 +1073,8 @@ namespace Graphlit
                 previewSelection.RegisterValueChangedCallback(x =>
                 {
                     DefaultPreview = (PreviewType)x.newValue;
-                    GeneratePreviewForAffectedNodes();
+                    // GeneratePreviewForAffectedNodes();
+                    InheritPreviewTypeForAffectedNodes();
                 });
                 ve.Add(previewSelection);
             }
@@ -1081,7 +1112,7 @@ namespace Graphlit
         public PreviewDrawer previewDrawer;
         void AddPreview()
         {
-            previewDrawer = new PreviewDrawer(GraphView, PreviewResolution);
+            previewDrawer = new PreviewDrawer(this, GraphView, PreviewResolution);
             extensionContainer.Add(previewDrawer);
             if (_previewDisabled)
             {

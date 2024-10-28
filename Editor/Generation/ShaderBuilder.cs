@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using Graphlit.Nodes.PortType;
+using System.Linq.Expressions;
 
 namespace Graphlit
 {
@@ -180,6 +181,8 @@ namespace Graphlit
         public static void GeneratePreview(ShaderGraphView graphView, ShaderNode shaderNode, bool log = false)
         {
             shaderNode.EvaluateDimensionsForGraphView();
+            // shaderNode.InheritPreviewAndPrecision();
+
             if (shaderNode._previewDisabled || shaderNode.DisablePreview)
             {
                 return;
@@ -209,10 +212,10 @@ namespace Graphlit
             //shaderBuilder.passBuilders[0].renderStates.Add("Cull", "Off");
             shaderBuilder.Build(shaderNode);
 
-            if (shaderNode._inheritedPreview == PreviewType.Preview3D)
-            {
-                pass.pragmas.Insert(0, "#define PREVIEW3D");
-            }
+            //if (shaderNode._inheritedPreview == PreviewType.Preview3D)
+            //{
+            //    pass.pragmas.Insert(0, "#define PREVIEW3D");
+            //}
 
             if (shaderNode.DisablePreview)
             {
@@ -263,8 +266,8 @@ namespace Graphlit
 
         public static void GeneratePreviewFromEdge(ShaderGraphView graphView, Edge edge, bool toRemove)
         {
-            var nodesToGenerate = new HashSet<ShaderNode>();
-            GetConnectedNodesFromEdge(nodesToGenerate, edge);
+            var nodesToGenerate = new List<ShaderNode>();
+            GetConnectedNodesFromEdge(nodesToGenerate, edge, new HashSet<string>());
 
             if (toRemove)
             {
@@ -281,20 +284,23 @@ namespace Graphlit
             }
         }
 
-        private static void GetConnectedNodesFromEdge(HashSet<ShaderNode> nodes, Edge edge)
+        public static void GetConnectedNodesFromEdge(List<ShaderNode> nodes, Edge edge, HashSet<string> addedNodes)
         {
             var connectedNode = (ShaderNode)edge.input.node;
+            var guid = connectedNode.viewDataKey;
 
-            if (!nodes.Contains(connectedNode))
+            if (!addedNodes.Contains(guid))
             {
                 nodes.Add(connectedNode);
+                addedNodes.Add(guid);
+
                 foreach (var port in connectedNode.Outputs)
                 {
                     if (port.connected)
                     {
                         foreach (var connection in port.connections)
                         {
-                            GetConnectedNodesFromEdge(nodes, connection);
+                            GetConnectedNodesFromEdge(nodes, connection, addedNodes);
                         }
                     }
                 }

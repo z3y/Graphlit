@@ -16,7 +16,11 @@ half4 frag(Varyings varyings) : SV_Target
 {
     // create data for preview
     float2 rawUV = UNPACK_UV0.xy;
-    #ifdef PREVIEW3D
+    float alpha3D = 1;
+    
+    UNITY_BRANCH
+    if (_Preview3D)
+    {
         // https://bgolus.medium.com/rendering-a-sphere-on-a-quad-13c92025570c
         float2 uv = UNPACK_UV0.xy;
         uv -= 0.5;
@@ -26,7 +30,6 @@ half4 frag(Varyings varyings) : SV_Target
         float3 rayOrigin = _WorldSpaceCameraPos.xyz;
         
         float rayHit = sphIntersect_Preview(rayOrigin, rayDir, float4(spherePos, 1));
-        float alpha3D = 1;
         if (rayHit < 0) alpha3D = 0;
 
         float3 positionWS = rayDir * rayHit + rayOrigin;
@@ -49,7 +52,6 @@ half4 frag(Varyings varyings) : SV_Target
             UNPACK_TANGENTWS = tangentWS;
         #endif
 
-        #ifdef PREVIEW3D
         normalWS = normalize(normalWS);
         float2 generatedUV = float2(
             atan2(normalWS.z, normalWS.x) / (UNITY_PI * 2.0),
@@ -69,9 +71,9 @@ half4 frag(Varyings varyings) : SV_Target
         #ifdef UNPACK_UV3
             UNPACK_UV3.xy = generatedUV;
         #endif
-        #endif
-
-    #else // 2d preview
+    }
+    else // 2d preview
+    {
         #ifdef UNPACK_POSITIONWS
             UNPACK_POSITIONWS = float3(UNPACK_UV0.xy - 0.5, 0) * 2.0;
         #endif
@@ -91,7 +93,7 @@ half4 frag(Varyings varyings) : SV_Target
         #ifdef UNPACK_UV3
             UNPACK_UV3.xy = UNPACK_UV0.xy;
         #endif
-    #endif
+    }
     
     #ifdef UNPACK_COLOR
         UNPACK_COLOR = 1.0;
@@ -114,12 +116,8 @@ half4 frag(Varyings varyings) : SV_Target
     half4 col = surfaceDescription.Color;
     half alpha = saturate(surfaceDescription.Color.a);
 
-    #ifdef PREVIEW3D
-        col.a = alpha3D;
-        // col.rgb = dot(UNPACK_NORMALWS, normalize(float3(0.46, 0.18, -0.28)));
-    #else
-        col.a = 1;
-    #endif
+    col.a = _Preview3D ? alpha3D : 1.0;
+
     col = saturate(col);
     col.r = LinearToGammaSpaceExact(col.r);
     col.g = LinearToGammaSpaceExact(col.g);
