@@ -289,7 +289,7 @@ namespace Graphlit
 
             string result = shaderBuilder.ToString();
 
-            Debug.Log(result);
+            //Debug.Log(result);
 
             var shader = ShaderUtil.CreateShaderAsset(result);
             var shaderRef = new ObjectRc<Shader>(shader);
