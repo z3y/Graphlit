@@ -357,11 +357,6 @@ namespace Graphlit
         public Dictionary<int, int> evaluatedOutputDimensions = new Dictionary<int, int>();
         public void EvaluateDimensionsForGraphView()
         {
-            if (this is FetchVariableNode)
-            {
-                return;
-            }
-
             var inputDimensions = new Dictionary<int, int>();
 
             foreach (var port in Inputs)
@@ -449,9 +444,19 @@ namespace Graphlit
                 return;
             }
 
+            if (this is FetchVariableNode fv)
+            {
+                var registers = GraphView.cachedRegisterVariablesForBuilder.Where(x => x._name == fv._name);
+                foreach (var regs in registers)
+                {
+                    regs.evaluatedOutputDimensions[1] = trunc;
+                    SetPortColor(regs.inputContainer.Children().OfType<Port>().First(), Float.GetPortColor(trunc));
+                }
+            }
             if (this is RegisterVariableNode reg)
             {
                 var fetches = GraphView.cachedNodesForBuilder.OfType<FetchVariableNode>().Where(x => x._name == reg._name);
+                //Debug.Log(trunc);
                 foreach (var fetch in fetches)
                 {
                     fetch.evaluatedOutputDimensions[1] = trunc;
@@ -598,7 +603,7 @@ namespace Graphlit
         }
         public TextElement TitleLabel;
 
-        float _lastClickTime = 0;
+        //float _lastClickTime = 0;
 
         public string GetTitleTooltip() => GetType().Name + "\n" + viewDataKey;
         void AddTitleElement()

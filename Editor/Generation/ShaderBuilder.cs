@@ -5,9 +5,7 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using Graphlit.Nodes.PortType;
-using System.Linq.Expressions;
 using System;
-using static UnityEditor.Rendering.CameraUI;
 
 namespace Graphlit
 {
@@ -306,43 +304,52 @@ namespace Graphlit
             }
         }
 
+        static void EvaluateDimensionsRecursive(HashSet<string> visitedNodes, ShaderNode node)
+        {
+            if (visitedNodes.Contains(node.viewDataKey))
+            {
+                return;
+            }
+
+            foreach (var input in node.Inputs)
+            {
+                foreach (var edge in input.connections)
+                {
+                    EvaluateDimensionsRecursive(visitedNodes, (ShaderNode)edge.output.node);
+                    break;
+                }
+            }
+
+            node.EvaluateDimensionsForGraphView();
+            visitedNodes.Add(node.viewDataKey);
+        }
+
         public static void GenerateAllPreviews(ShaderGraphView graphView)
         {
             graphView.UpdateCachedNodesForBuilder();
             var nodes = graphView.cachedNodesForBuilder;
 
-            foreach (var shaderNode in nodes)
+            var endNodes = new List<ShaderNode>();
+            foreach (var node in nodes)
             {
-                bool skip = false;
-                foreach (var input in shaderNode.Inputs)
+                bool include = true;
+                foreach (var output in node.Outputs)
                 {
-                    if (input.connected)
+                    if (output.connected)
                     {
-                        skip = true;
-                        continue;
+                        include = false;
                     }
                 }
-                if (skip)
+                if (include)
                 {
-                    continue;
+                    endNodes.Add(node);
                 }
+            }
 
-                var rightNodesAdded = new HashSet<string>();
-                var rightNodes = new List<ShaderNode>();
-
-                foreach (var output in shaderNode.Outputs)
-                {
-                    foreach (var edge in output.connections)
-                    {
-                        GetConnectedNodesFromEdgeRight(rightNodes, edge, rightNodesAdded);
-                    }
-                }
-                shaderNode.EvaluateDimensionsForGraphView();
-
-                foreach (var rightNode in rightNodes)
-                {
-                    rightNode.EvaluateDimensionsForGraphView();
-                }
+            var visitedNodes = new HashSet<string>();
+            foreach (var node in endNodes)
+            {
+                EvaluateDimensionsRecursive(visitedNodes, node);
             }
 
             var generatedNodes = new HashSet<string>();
@@ -358,7 +365,6 @@ namespace Graphlit
                     generatedNodes.Add(node.viewDataKey);
                 }
             }
-
         }
 
         public static void GeneratePreviewFromEdge(ShaderGraphView graphView, Edge edge, bool toRemove)

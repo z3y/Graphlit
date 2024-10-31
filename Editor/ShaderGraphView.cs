@@ -27,7 +27,7 @@ namespace Graphlit
 
         public void UpdateCachedNodesForBuilder()
         {
-            cachedNodesForBuilder = graphElements.OfType<ShaderNode>().ToList();
+            cachedNodesForBuilder = nodes.OfType<ShaderNode>().ToList();
             cachedRegisterVariablesForBuilder = cachedNodesForBuilder.OfType<RegisterVariableNode>().ToList();
             //Debug.Log($"UpdateCachedNodesForBuilder");
         }

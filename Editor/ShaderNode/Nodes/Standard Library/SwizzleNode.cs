@@ -25,15 +25,15 @@ namespace Graphlit
                 if (!swizzle.Equals(newValue))
                 {
                     swizzle = newValue;
-                    EvaluateDimensionsForGraphView();
-                    SetPortColor(outport, Float.GetPortColor(evaluatedOutputDimensions[OUT]));
+                    //EvaluateDimensionsForGraphView();
+                    SetPortColor(outport, Float.GetPortColor(swizzle.Length));
                     GeneratePreviewForAffectedNodes();
                 }
             });
             extensionContainer.Add(f);
 
-            EvaluateDimensionsForGraphView();
-            SetPortColor(outport, Float.GetPortColor(evaluatedOutputDimensions[OUT]));
+            //EvaluateDimensionsForGraphView();
+            SetPortColor(outport, Float.GetPortColor(swizzle.Length));
         }
 
         protected override void Generate(NodeVisitor visitor)
