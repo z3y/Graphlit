@@ -3,10 +3,12 @@
 Varyings vert(Attributes input)
 {
     Varyings varyings = (Varyings)0;
+    UNITY_INITIALIZE_OUTPUT(Varyings, varyings);
+
 #if !defined(UNITY_PASS_META)
     UNITY_SETUP_INSTANCE_ID(input);
+    UNITY_TRANSFER_INSTANCE_ID(input, varyings);
 #endif
-    UNITY_INITIALIZE_OUTPUT(Varyings, varyings);
     UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(varyings);
 
     VertexDescription vertexDescription = VertexDescriptionFunction(input, varyings);
