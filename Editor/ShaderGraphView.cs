@@ -91,12 +91,12 @@ namespace Graphlit
             RegisterCallback<DragUpdatedEvent>(OnDragUpdated);
             RegisterCallback<DragPerformEvent>(OnDragPerform);
 
-            if (!string.IsNullOrEmpty(assetPath))
+            /*if (!string.IsNullOrEmpty(assetPath))
             {
                 var assets = AssetDatabase.LoadAllAssetRepresentationsAtPath(assetPath);
                 //i//mportedMaterial = assets.OfType<Material>().FirstOrDefault();
                 //Debug.Log(importedMaterial);
-            }
+            }*/
         }
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange change)
@@ -532,7 +532,7 @@ namespace Graphlit
             evt.StopPropagation();
         }
 
-        public Dictionary<string, T> GetElementsGuidDictionary<T>() where T : GraphElement, new()
+        public Dictionary<string, T> GetElementsGuidDictionary<T>() where T : GraphElement
         {
             var acceleratedGetNode = new Dictionary<string, T>();
             foreach (var item in graphElements.OfType<T>())

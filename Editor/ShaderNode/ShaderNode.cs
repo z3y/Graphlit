@@ -354,117 +354,6 @@ namespace Graphlit
         public virtual Precision DefaultPrecisionOverride => Precision.Inherit;
         protected internal bool _inheritedPrecision;
 
-        public Dictionary<int, int> evaluatedOutputDimensions = new Dictionary<int, int>();
-        public void EvaluateDimensionsForGraphView()
-        {
-            var inputDimensions = new Dictionary<int, int>();
-
-            foreach (var port in Inputs)
-            {
-                int id = port.GetPortID();
-                if (!port.connected)
-                {
-                    if (portDescriptors[id].Type is Float @float)
-                    {
-                        inputDimensions[id] = @float.dimensions;
-                        SetPortColor(port, Float.GetPortColor(@float.dimensions));
-                    }
-                    continue;
-                }
-
-                foreach (var edge in port.connections)
-                {
-                    var node = (ShaderNode)edge.output.node;
-                    if (node is null)
-                    {
-                        continue;
-                    }
-
-                    if (node.evaluatedOutputDimensions.TryGetValue(edge.output.GetPortID(), out int value))
-                    {
-                        inputDimensions[id] = value;
-                        //SetPortColor(port, Float.GetPortColor(value));
-                    }
-                    break;
-                }
-            }
-
-
-            int trunc = 4;
-            int max = 1;
-
-            foreach (var dimension in inputDimensions.Values)
-            {
-                if (dimension == 1)
-                {
-                    continue;
-                }
-                max = Mathf.Max(max, dimension);
-                trunc = Mathf.Min(trunc, dimension);
-            }
-            trunc = Mathf.Min(trunc, max);
-            //Debug.Log(trunc);
-
-            foreach (var desc in portDescriptors.Values)
-            {
-                if (desc.Direction == PortDirection.Input)
-                {
-                    if (desc.Type is Float @float)
-                    {
-                        if (@float.dynamic)
-                        {
-                            var port = Inputs.First(x => x.GetPortID() == desc.ID);
-                            SetPortColor(port, Float.GetPortColor(trunc));
-                        }
-                    }
-                }
-                else
-                {
-
-                    if (desc.Type is Float @float)
-                    {
-                        if (!@float.dynamic)
-                        {
-                            evaluatedOutputDimensions[desc.ID] = @float.dimensions;
-                        }
-                        else
-                        {
-                            evaluatedOutputDimensions[desc.ID] = trunc;
-                            SetPortColor(Outputs.First(x => x.GetPortID() == desc.ID), Float.GetPortColor(trunc));
-                        }
-                    }
-                }
-            }
-
-
-            if (this is SwizzleNode swizzle)
-            {
-                evaluatedOutputDimensions[1] = Mathf.Clamp(swizzle.swizzle.Length, 1, 4);
-                SetPortColor(Outputs.First(), Float.GetPortColor(evaluatedOutputDimensions[1]));
-                return;
-            }
-
-            if (this is FetchVariableNode fv)
-            {
-                var registers = GraphView.cachedRegisterVariablesForBuilder.Where(x => x._name == fv._name);
-                foreach (var regs in registers)
-                {
-                    regs.evaluatedOutputDimensions[1] = trunc;
-                    SetPortColor(regs.inputContainer.Children().OfType<Port>().First(), Float.GetPortColor(trunc));
-                }
-            }
-            if (this is RegisterVariableNode reg)
-            {
-                var fetches = GraphView.cachedNodesForBuilder.OfType<FetchVariableNode>().Where(x => x._name == reg._name);
-                //Debug.Log(trunc);
-                foreach (var fetch in fetches)
-                {
-                    fetch.evaluatedOutputDimensions[1] = trunc;
-                    SetPortColor(fetch.outputContainer.Children().OfType<Port>().First(), Float.GetPortColor(trunc));
-                }
-            }
-        }
-
         public void InheritPreviewAndPrecision()
         {
             int is3D = 0;
@@ -666,24 +555,6 @@ namespace Graphlit
             var descriptor = portDescriptors[portID];
             string value = SetDefaultBinding(descriptor, visitor);
 
-            //var autoWireNodes = GraphView.graphElements.OfType<RegisterVariableNode>().Where(x => x._autoWire).ToArray();
-
-            /*foreach (var node in autoWireNodes)
-            {
-                if (node._name.ToLower() == descriptor.Name.ToLower())
-                {
-                    var input = node.Inputs.First();
-                    if (!input.connected)
-                    {
-                        break;
-                    }
-                    var incomingPort = input.connections.First().output;
-                    var incomingNode = (ShaderNode)incomingPort.node;
-                    value = incomingNode.PortData[incomingPort.GetPortID()].Name;
-                    break;
-                }
-            }*/
-
             UpdateDefaultValueTooltip(portID, value);
 
             return new GeneratedPortData(descriptor.Type, value);
@@ -817,6 +688,7 @@ namespace Graphlit
             }
 
             Generate(visitor);
+            UpdateGraphViewDimensions();
         }
         string DisplayName => Info.name.Split("/")[^1];
         public string UniqueVariable => DisplayName.Replace(" ", "") + UniqueVariableID;
@@ -943,7 +815,7 @@ namespace Graphlit
             return newData;
         }
 
-        /*public void UpdateGraphView()
+        public void UpdateGraphViewDimensions()
         {
             foreach (var data in PortData)
             {
@@ -961,7 +833,16 @@ namespace Graphlit
                     SetPortColor(port, color);
                 }
             }
-        }*/
+
+            if (this is FetchVariableNode fetch)
+            {
+                var reg = GraphView.cachedRegisterVariablesForBuilder.FirstOrDefault(x => x._name == fetch._name);
+                if (reg is not null)
+                {
+                    SetPortColor(reg.Inputs.First(), Outputs.First().portColor);
+                }
+            }
+        }
 
         public static void SetPortColor(Port port, Color color)
         {

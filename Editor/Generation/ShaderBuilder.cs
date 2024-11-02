@@ -178,24 +178,9 @@ namespace Graphlit
         const string VertexPreview = "Packages/com.z3y.graphlit/Editor/Targets/Preview/Vertex.hlsl";
         const string FragmentPreview = "Packages/com.z3y.graphlit/Editor/Targets/Preview/Fragment.hlsl";
 
-        public static void GenerateUnifiedPreview(ShaderGraphView graphView, ShaderNode node, List<ShaderNode> rightNodes, bool log = false)
+        public static void GenerateUnifiedPreview(ShaderGraphView graphView, ShaderNode node, List<ShaderNode> rightNodes, bool log = false, bool allNodes = false)
         {
-            var affectedNodes = (new List<ShaderNode> { node }).Union(rightNodes);
-
-            bool anyPreview = false;
-            foreach (var x in affectedNodes)
-            {
-                x.EvaluateDimensionsForGraphView();
-                if (x._previewDisabled || x.DisablePreview)
-                {
-                    continue;
-                }
-                anyPreview = true;
-            }
-            if (!anyPreview)
-            {
-                return;
-            }
+            var affectedNodes = (new List<ShaderNode> { node }).Union(rightNodes).ToList();
 
             var shaderBuilder = new ShaderBuilder(GenerationMode.Preview, graphView)
             {
@@ -226,7 +211,6 @@ namespace Graphlit
             shaderBuilder.TraverseGraph(node, fragmentVisitor);
             node.BuilderVisit(fragmentVisitor);
             shaderBuilder.visitedNodes.Add(node.viewDataKey);
-            node.EvaluateDimensionsForGraphView();
 
             foreach (var rightNode in rightNodes)
             {
@@ -236,8 +220,19 @@ namespace Graphlit
                     shaderBuilder.visitedNodes.Add(rightNode.viewDataKey);
                     rightNode.BuilderVisit(fragmentVisitor);
                 }
+            }
 
-                rightNode.EvaluateDimensionsForGraphView();
+            if (allNodes)
+            {
+                var nodes = graphView.GetElementsGuidDictionary<ShaderNode>();
+                foreach (var guid in shaderBuilder.visitedNodes)
+                {
+                    var n = nodes[guid];
+                    if (!affectedNodes.Contains(n))
+                    {
+                        affectedNodes.Add(n);
+                    }
+                }
             }
 
 
@@ -285,6 +280,11 @@ namespace Graphlit
             sb.Add("}");
 
 
+            if (previewId <= 0)
+            {
+                return;
+            }
+
             string result = shaderBuilder.ToString();
 
             //Debug.Log(result);
@@ -302,26 +302,6 @@ namespace Graphlit
                 x.previewDrawer.SetShader(shaderRef);
                 x.UpdatePreviewMaterial();
             }
-        }
-
-        static void EvaluateDimensionsRecursive(HashSet<string> visitedNodes, ShaderNode node)
-        {
-            if (visitedNodes.Contains(node.viewDataKey))
-            {
-                return;
-            }
-
-            foreach (var input in node.Inputs)
-            {
-                foreach (var edge in input.connections)
-                {
-                    EvaluateDimensionsRecursive(visitedNodes, (ShaderNode)edge.output.node);
-                    break;
-                }
-            }
-
-            node.EvaluateDimensionsForGraphView();
-            visitedNodes.Add(node.viewDataKey);
         }
 
         public static void GenerateAllPreviews(ShaderGraphView graphView)
@@ -346,24 +326,9 @@ namespace Graphlit
                 }
             }
 
-            var visitedNodes = new HashSet<string>();
             foreach (var node in endNodes)
             {
-                EvaluateDimensionsRecursive(visitedNodes, node);
-            }
-
-            var generatedNodes = new HashSet<string>();
-
-            foreach (var node in nodes)
-            {
-                if (!generatedNodes.Contains(node.viewDataKey))
-                {
-                    if (!(node._previewDisabled || node.DisablePreview))
-                    {
-                        generatedNodes.UnionWith(node.GeneratePreviewForAffectedNodes());
-                    }
-                    generatedNodes.Add(node.viewDataKey);
-                }
+                GenerateUnifiedPreview(graphView, node, new List<ShaderNode>(), false, true);
             }
         }
 
