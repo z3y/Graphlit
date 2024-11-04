@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Graphlit.Nodes.PortType;
 using UnityEditor;
+using UnityEditor.AssetImporters;
+using UnityEditor.Experimental.GraphView;
 
 namespace Graphlit
 {
@@ -16,7 +18,7 @@ namespace Graphlit
         public abstract int[] FragmentPorts { get; }
 
         public override Color Accent => Color.magenta;
-
+        public virtual bool TallOutputs => true;
         public override void AdditionalElements(VisualElement root)
         {
             var graphData = GraphView.graphData;
@@ -146,5 +148,32 @@ namespace Graphlit
         protected Texture2D _dfg = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.z3y.graphlit/Editor/Targets/Lit/dfg-multiscatter.exr");
         protected static readonly PropertyDescriptor _dfgProperty = new(PropertyType.Texture2D, "", "_DFG")
         { defaultAttributes = MaterialPropertyAttribute.HideInInspector | MaterialPropertyAttribute.NonModifiableTextureData };
+
+        public virtual void OnImportAsset(AssetImportContext ctx, ShaderBuilder builder)
+        {
+            var result = builder.ToString();
+            ShaderGraphImporter._lastImport = result;
+            var shader = ShaderUtil.CreateShaderAsset(ctx, result, false);
+
+            if (builder._nonModifiableTextures.Count > 0)
+            {
+                EditorMaterialUtility.SetShaderNonModifiableDefaults(shader, builder._nonModifiableTextures.Keys.ToArray(), builder._nonModifiableTextures.Values.ToArray());
+            }
+            if (builder._defaultTextures.Count > 0)
+            {
+                EditorMaterialUtility.SetShaderNonModifiableDefaults(shader, builder._defaultTextures.Keys.ToArray(), builder._defaultTextures.Values.ToArray());
+            }
+
+            ctx.AddObjectToAsset("Main Asset", shader, ShaderGraphImporter.Thumbnail);
+
+
+            string prefix = GraphView.graphData.unlocked ? "Unlocked " : "";
+            var material = new Material(shader)
+            {
+                name = $"{prefix}{builder.shaderName.Replace("/", "_")}"
+            };
+            DefaultInspector.SetupRenderingMode(material);
+            ctx.AddObjectToAsset("Material", material);
+        }
     }
 }

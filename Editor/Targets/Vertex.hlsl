@@ -12,7 +12,7 @@ Varyings vert(Attributes input)
     UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(varyings);
 
     VertexDescription vertexDescription = VertexDescriptionFunction(input, varyings);
-    #ifndef UNITY_PASS_META
+    #if !defined(UNITY_PASS_META) && !defined(SKIP_VERTEX_FUNCTION)
     float3 positionWS = vertexDescription.Position;
     float3 normalWS = vertexDescription.Normal;
     #endif
@@ -35,7 +35,11 @@ Varyings vert(Attributes input)
     #elif defined(UNITY_PASS_META)
         varyings.positionCS = UnityMetaVertexPosition(float4(input.positionOS, 1.0), input.uv1.xy, input.uv2.xy, unity_LightmapST, unity_DynamicLightmapST);
     #else
-        varyings.positionCS = TransformWorldToHClip(positionWS);
+        #ifdef SKIP_VERTEX_FUNCTION
+            varyings.positionCS = TransformObjectToHClip(input.positionOS);
+        #else
+            varyings.positionCS = TransformWorldToHClip(positionWS);
+        #endif
     #endif
 
     #if defined(LIGHTMAP_ON)

@@ -20,19 +20,23 @@ half4 frag(Varyings varyings) : SV_Target
         // surfaceDescription.Color = lerp(1.0, surfaceDescription.Color, surfaceDescription.Alpha);
     // #endif
 
-    half4 col;
-    col.rgb = surfaceDescription.Color;
-    col.a = surfaceDescription.Alpha;
+    #ifdef RETURN_COLOR
+        return surfaceDescription.Color;
+    #else
+        half4 col;
+        col.rgb = surfaceDescription.Color;
+        col.a = surfaceDescription.Alpha;
 
-    #if !defined(_ALPHATEST_ON) && !defined(_ALPHAPREMULTIPLY_ON) && !defined(_ALPHAMODULATE_ON) && !defined(_ALPHAFADE_ON)
-        col.a = 1.0;
+        #if !defined(_ALPHATEST_ON) && !defined(_ALPHAPREMULTIPLY_ON) && !defined(_ALPHAMODULATE_ON) && !defined(_ALPHAFADE_ON)
+            col.a = 1.0;
+        #endif
+
+        #ifdef _ALPHATEST_ON
+            col.a = 1.0;
+        #endif
+
+        UNITY_APPLY_FOG(varyings.fogCoord, col);
+
+        return col;
     #endif
-
-    #ifdef _ALPHATEST_ON
-        col.a = 1.0;
-    #endif
-
-    UNITY_APPLY_FOG(varyings.fogCoord, col);
-
-    return col;
 }

@@ -17,7 +17,7 @@ namespace Graphlit
         internal static Dictionary<string, ShaderGraphView> _graphViews = new();
         internal static string _lastImport;
 
-        private static Texture2D Thumbnail => AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.z3y.graphlit/Editor/icon.psd");
+        public static Texture2D Thumbnail => AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.z3y.graphlit/Editor/icon.psd");
 
         public static SerializableGraph ReadGraphData(string guid)
         {
@@ -86,43 +86,16 @@ namespace Graphlit
 
             }
 
-
-            var result = builder.ToString();
-            _lastImport = result;
-            var shader = ShaderUtil.CreateShaderAsset(ctx, result, false);
-
-            if (builder._nonModifiableTextures.Count > 0)
-            {
-                EditorMaterialUtility.SetShaderNonModifiableDefaults(shader, builder._nonModifiableTextures.Keys.ToArray(), builder._nonModifiableTextures.Values.ToArray());
-            }
-            if (builder._defaultTextures.Count > 0)
-            {
-                EditorMaterialUtility.SetShaderNonModifiableDefaults(shader, builder._defaultTextures.Keys.ToArray(), builder._defaultTextures.Values.ToArray());
-            }
+            var templateOutput = (TemplateOutput)graphView.cachedNodesForBuilder.First(x => x is TemplateOutput);
+            templateOutput.OnImportAsset(ctx, builder);
 
             foreach (var dependency in builder.dependencies)
             {
                 ctx.DependsOnSourceAsset(dependency);
             }
 
-            ctx.AddObjectToAsset("Main Asset", shader, Thumbnail);
 
-            string prefix = unlocked ? "Unlocked " : "";
-            var material = new Material(shader)
-            {
-                name = $"{prefix}{builder.shaderName.Replace("/", "_")}"
-            };
-            DefaultInspector.SetupRenderingMode(material);
-            ctx.AddObjectToAsset("Material", material);
-
-            //ctx.AddObjectToAsset("generation", new TextAsset(result));
-
-            //var text = File.ReadAllText(assetPath);
-            //ctx.AddObjectToAsset("json", new TextAsset(text));
             DefaultInspector.Reinitialize();
-
-            
-
             sw.Stop();
         }
 

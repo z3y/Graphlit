@@ -156,7 +156,7 @@ namespace Graphlit
 
             container.Add(port);
 
-            if (this is TemplateOutput)
+            if (this is TemplateOutput o && o.TallOutputs)
             {
                 port.style.height = 38;
                 port.style.SetBorderWidth(2);

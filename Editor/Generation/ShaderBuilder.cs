@@ -85,7 +85,6 @@ namespace Graphlit
 
         public void BuildTemplate()
         {
-            //ShaderNode.UniqueVariableID = 0; parallel import might not work with this
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
