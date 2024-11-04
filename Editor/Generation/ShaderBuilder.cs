@@ -174,8 +174,8 @@ namespace Graphlit
 
         }
 
-        const string VertexPreview = "Packages/com.z3y.graphlit/Editor/Targets/Preview/Vertex.hlsl";
-        const string FragmentPreview = "Packages/com.z3y.graphlit/Editor/Targets/Preview/Fragment.hlsl";
+        public const string VertexPreview = "Packages/com.z3y.graphlit/Editor/Targets/Preview/Vertex.hlsl";
+        public const string FragmentPreview = "Packages/com.z3y.graphlit/Editor/Targets/Preview/Fragment.hlsl";
 
         public static void GenerateUnifiedPreview(ShaderGraphView graphView, ShaderNode node, List<ShaderNode> rightNodes, bool log = false, bool allNodes = false)
         {

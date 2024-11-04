@@ -113,8 +113,11 @@ half4 frag(Varyings varyings) : SV_Target
     checkerboard = checkerboard ? 0.35 : 0.4;
     // checkerboard = 1;
 
-    half4 col = surfaceDescription.Color;
-    half alpha = saturate(surfaceDescription.Color.a);
+    float4 col = surfaceDescription.Color;
+    #ifdef TEXTURE_OUTPUT
+        return col;
+    #endif
+    float alpha = saturate(surfaceDescription.Color.a);
 
     col.a = _Preview3D ? alpha3D : 1.0;
 
