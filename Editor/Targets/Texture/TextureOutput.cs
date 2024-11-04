@@ -4,29 +4,26 @@ using Graphlit.Nodes;
 using UnityEngine;
 using UnityEditor;
 using System;
-using UnityEditor.AssetImporters;
 using System.Linq;
-using System.IO;
+using System.Threading.Tasks;
 
 namespace Graphlit
 {
-    [NodeInfo("Targets/Texture Output"), Serializable]
-    public class TextureOutput : TemplateOutput
+    [NodeInfo("Preprocess/Generate Texture"), Serializable]
+    public class TextureOutput : ShaderNode, IHasPropertyDescriptor
     {
-        /*[MenuItem("Assets/Create/Graphlit/Unlit Graph")]
-        public static void CreateVariantFile() => ShaderGraphImporter.CreateEmptyTemplate(new UnlitTemplate(),
-            x => x.graphData.vrcFallbackTags.type = VRCFallbackTags.ShaderType.Unlit);*/
-        public override bool TallOutputs => false;
-        public override string Name { get; } = "Unlit";
-        public override int[] VertexPorts => new int[] {};
-        public override int[] FragmentPorts => new int[] { COLOR };
+        public override Color Accent => new Color(0f, 0.851f, 0.743f);
 
         const int COLOR = 0;
+        const int TEXTURE = 1;
+
         public override void Initialize()
         {
             AddPort(new(PortDirection.Input, new Float(4, false), COLOR, "Color"));
+            AddPort(new(PortDirection.Output, new Texture2DObject(), TEXTURE, "Texture"));
         }
 
+        public override bool DisablePreview => true; 
         public override void AdditionalElements(VisualElement root)
         {
             var graphData = GraphView.graphData;
@@ -34,50 +31,61 @@ namespace Graphlit
             var defaultPreviewState = new EnumField("Default Preview", graphData.defaultPreviewState);
             defaultPreviewState.RegisterValueChangedCallback(x => graphData.defaultPreviewState = (GraphData.DefaultPreviewState)x.newValue);
             root.Add(defaultPreviewState);
+
+            var button = new Button() { text = "Generate"};
+            button.clicked += () => { GeneratePreviewForAffectedNodes(); };
+            root.Add(button);
         }
 
-        public override void OnBeforeBuild(ShaderBuilder builder)
+        public RenderTexture rtOutput = null;
+        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(PropertyType.Texture2D);
+        protected override void Generate(NodeVisitor visitor)
         {
-            builder.properties.Add(_srcBlend);
-            builder.properties.Add(_dstBlend);
+            var builder = new ShaderBuilder(GenerationMode.Final, GraphView, BuildTarget.StandaloneWindows64, false);
+
             builder.subshaderTags["RenderType"] = "Opaque";
             builder.subshaderTags["Queue"] = "Geometry";
 
+            var pass = new PassBuilder("FORWARD", ShaderBuilder.VertexPreview, ShaderBuilder.FragmentPreview, COLOR);
+            pass.tags["LightMode"] = "ForwardBase";
+
+            pass.renderStates["Cull"] = "Back";
+            pass.renderStates["ZWrite"] = "On";
+            pass.renderStates["Blend"] = "One One";
+            pass.pragmas.Add("#define PREVIEW");
+            pass.pragmas.Add("#define TEXTURE_OUTPUT");
+
+            pass.attributes.RequirePositionOS();
+            pass.varyings.RequirePositionCS();
+            PortBindings.GetBindingString(pass, ShaderStage.Fragment, 2, PortBinding.UV0);
+
+            pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
+            builder.AddPass(pass);
+
+            var dimensions = ((Float)GetInputPortData(COLOR, visitor).Type).dimensions;
+            ChangeDimensions(COLOR, dimensions);
+
+
+            var fragmentVisitor = new NodeVisitor(builder, ShaderStage.Fragment, 0);
+            builder.TraverseGraph(this, fragmentVisitor);
+            pass.surfaceDescriptionStruct.Add("float4 Color;");
+            pass.surfaceDescription.Add($"output.Color = {PortData[COLOR].Name};");
+            if (dimensions < 4)
             {
-                var pass = new PassBuilder("FORWARD", ShaderBuilder.VertexPreview, ShaderBuilder.FragmentPreview, COLOR);
-                pass.tags["LightMode"] = "ForwardBase";
-
-                pass.renderStates["Cull"] = "Back";
-                pass.renderStates["ZWrite"] = "On";
-                pass.renderStates["Blend"] = "[_SrcBlend] [_DstBlend]";
-                pass.pragmas.Add("#define PREVIEW");
-                pass.pragmas.Add("#define TEXTURE_OUTPUT");
-
-                pass.attributes.RequirePositionOS();
-                pass.varyings.RequirePositionCS();
-                PortBindings.GetBindingString(pass, ShaderStage.Fragment, 2, PortBinding.UV0);
-
-                pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
-                builder.AddPass(pass);
+                pass.surfaceDescription.Add($"output.Color.a = 1;");
             }
-
-        }
-
-        public override void OnAfterBuild(ShaderBuilder builder)
-        {
-            /*var vertexDescription = builder.passBuilders[0].vertexDescriptionStruct;
-            vertexDescription.Add("float3 Position;");
-            vertexDescription.Add("float3 Normal;");
-            vertexDescription.Add("float3 Tangent;");*/
-        }
-
-        public override void OnImportAsset(AssetImportContext ctx, ShaderBuilder builder)
-        {
+            if (dimensions < 3)
+            {
+                pass.surfaceDescription.Add($"output.Color.b = 1;");
+            }
+            if (dimensions < 2)
+            {
+                pass.surfaceDescription.Add($"output.Color.g = 1;");
+            }
             var shaderString = builder.ToString();
-            ShaderGraphImporter._lastImport = shaderString;
-            var shader = ShaderUtil.CreateShaderAsset(shaderString, false);
+            Debug.Log(shaderString);
+            var shader = ShaderUtil.CreateShaderAsset(shaderString);
             var material = new Material(shader);
-
             foreach (var tex in builder._nonModifiableTextures.Union(builder._defaultTextures))
             {
                 material.SetTexture(tex.Key, tex.Value);
@@ -87,49 +95,105 @@ namespace Graphlit
 
             var desc = new RenderTextureDescriptor
             {
-                width = res * 4,
-                height = res * 4,
+                width = res,
+                height = res,
                 mipCount = 1,
                 autoGenerateMips = false,
                 useMipMap = false,
                 msaaSamples = 1,
-                colorFormat = RenderTextureFormat.ARGBFloat,
+                colorFormat = GetFormatForDimensions(dimensions),
                 sRGB = true,
                 volumeDepth = 1,
                 dimension = UnityEngine.Rendering.TextureDimension.Tex2D,
             };
 
+            if (rtOutput == null)
+            {
+                rtOutput = new RenderTexture(desc);
+            }
+            if (rtOutput.format != desc.colorFormat)
+            {
+                UnityEngine.Object.DestroyImmediate(rtOutput);
+                rtOutput = new RenderTexture(desc);
+            }
+            Graphics.Blit(Texture2D.blackTexture, rtOutput);
 
-            var blitRt = new RenderTexture(desc);
+            Graphics.Blit(Texture2D.blackTexture, rtOutput, material);
 
+            Debug.Log(shader);
+            Debug.Log(rtOutput.format);
 
-            Graphics.Blit(Texture2D.whiteTexture, blitRt, material);
-
-            desc.width = res;
-            desc.height = res;
-            var copyRt = new RenderTexture(desc);
-
-            Graphics.Blit(blitRt, copyRt);
-
-            var texture = new Texture2D(copyRt.width, copyRt.height, UnityEngine.Experimental.Rendering.GraphicsFormat.R16G16B16A16_SFloat, UnityEngine.Experimental.Rendering.TextureCreationFlags.None);
-            var activeRt = RenderTexture.active;
-            RenderTexture.active = copyRt;
-            texture.ReadPixels(new Rect(0, 0, copyRt.width, copyRt.height), 0, 0);
-            texture.Apply();
-            RenderTexture.active = null;
-
-            //UnityEngine.Object.DestroyImmediate(shader);
+            UnityEngine.Object.DestroyImmediate(shader);
             UnityEngine.Object.DestroyImmediate(material);
-            UnityEngine.Object.DestroyImmediate(copyRt);
-            UnityEngine.Object.DestroyImmediate(blitRt);
+            propertyDescriptor.tempTexture = rtOutput;
+            visitor.AddProperty(propertyDescriptor);
+            PortData[TEXTURE] = new GeneratedPortData(portDescriptors[TEXTURE].Type, propertyDescriptor.GetReferenceName(GenerationMode.Preview));
 
+            InitializeTexture();
+        }
 
-            ctx.AddObjectToAsset("texture", texture);
-            ctx.AddObjectToAsset("shader", shader);
-
-            //var bytes = ImageConversion.EncodeToPNG(texture);
-            //File.WriteAllBytes(ctx.assetPath + "tex.png", bytes);
+        async void InitializeTexture()
+        {
+            await Task.Delay(100);
+            GraphView.PreviewMaterial.SetTexture(propertyDescriptor.GetReferenceName(GenerationMode.Preview), rtOutput);
+            await Task.Delay(2000);
+            GraphView.PreviewMaterial.SetTexture(propertyDescriptor.GetReferenceName(GenerationMode.Preview), rtOutput);
 
         }
+
+        RenderTextureFormat GetFormatForDimensions(int dimension)
+        {
+            return dimension switch
+            {
+                1 => RenderTextureFormat.RFloat,
+                2 => RenderTextureFormat.RGFloat,
+                3 or _ => RenderTextureFormat.ARGBFloat,
+            };
+        }
+
+        public PropertyDescriptor GetPropertyDescriptor()
+        {
+            return propertyDescriptor;
+        }
+
+
+        /* public override void OnImportAsset(AssetImportContext ctx, ShaderBuilder builder)
+         {
+             var shaderString = builder.ToString();
+             ShaderGraphImporter._lastImport = shaderString;
+             var shader = ShaderUtil.CreateShaderAsset(shaderString, false);
+             var material = new Material(shader);
+
+
+
+
+             Graphics.Blit(Texture2D.whiteTexture, blitRt, material);
+
+             //desc.width = res;
+             //desc.height = res;
+             //var copyRt = new RenderTexture(desc);
+
+
+
+             var texture = new Texture2D(blitRt.width, blitRt.height, UnityEngine.Experimental.Rendering.GraphicsFormat.R16G16B16A16_SFloat, UnityEngine.Experimental.Rendering.TextureCreationFlags.None);
+             var activeRt = RenderTexture.active;
+             RenderTexture.active = blitRt;
+             texture.ReadPixels(new Rect(0, 0, blitRt.width, blitRt.height), 0, 0);
+             texture.Apply();
+             RenderTexture.active = null;
+
+             UnityEngine.Object.DestroyImmediate(shader);
+             UnityEngine.Object.DestroyImmediate(material);
+             //UnityEngine.Object.DestroyImmediate(copyRt);
+             UnityEngine.Object.DestroyImmediate(blitRt);
+
+
+             ctx.AddObjectToAsset("texture", texture);
+             //ctx.AddObjectToAsset("shader", shader);
+
+             //var bytes = ImageConversion.EncodeToPNG(texture);
+             //File.WriteAllBytes(ctx.assetPath + "tex.png", bytes);
+
+         }*/
     }
 }

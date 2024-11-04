@@ -61,35 +61,47 @@ namespace Graphlit
             }
             //Debug.Log("Populate Graph: " + sw.ElapsedMilliseconds);
 
+            graphView.UpdateCachedNodesForBuilder();
+            var shaderNodes = graphView.cachedNodesForBuilder;
+
+            var templateOutputs = shaderNodes.OfType<TemplateOutput>();
+
             var filename = Path.GetFileNameWithoutExtension(ctx.assetPath);
             bool unlocked = graphView.graphData.unlocked;
-            var builder = new ShaderBuilder(unlocked ? GenerationMode.Preview : GenerationMode.Final, graphView, target, unlocked);
-            if (string.IsNullOrEmpty(builder.shaderName) || builder.shaderName == "Default Shader")
-            {
-                builder.shaderName = "Graphlit/" + filename;
-            }
-            sw.Restart();
-            builder.BuildTemplate();
-            //Debug.Log("Build : " + sw.ElapsedMilliseconds);
-            var scriptingDefines = PlayerSettings.GetScriptingDefineSymbols(UnityEditor.Build.NamedBuildTarget.Standalone);
-            foreach (var pass in builder.passBuilders)
-            {
-                pass.pragmas.Add("#define TARGET_" + target.ToString().ToUpper());
 
-                if (!string.IsNullOrEmpty(scriptingDefines))
+            var dependencies = new HashSet<string>();
+            foreach (var template in templateOutputs)
+            {
+                var builder = new ShaderBuilder(unlocked ? GenerationMode.Preview : GenerationMode.Final, graphView, target, unlocked);
+                if (string.IsNullOrEmpty(builder.shaderName) || builder.shaderName == "Default Shader")
                 {
-                    foreach (var define in scriptingDefines.Split(';'))
+                    builder.shaderName = "Graphlit/" + filename;
+                }
+                sw.Restart();
+                builder.BuildTemplate(template);
+                //Debug.Log("Build : " + sw.ElapsedMilliseconds);
+                var scriptingDefines = PlayerSettings.GetScriptingDefineSymbols(UnityEditor.Build.NamedBuildTarget.Standalone);
+                foreach (var pass in builder.passBuilders)
+                {
+                    pass.pragmas.Add("#define TARGET_" + target.ToString().ToUpper());
+
+                    if (!string.IsNullOrEmpty(scriptingDefines))
                     {
-                        pass.pragmas.Add("#define SCRIPTING_DEFINE_" + define);
+                        foreach (var define in scriptingDefines.Split(';'))
+                        {
+                            pass.pragmas.Add("#define SCRIPTING_DEFINE_" + define);
+                        }
                     }
+
                 }
 
+                template.OnImportAsset(ctx, builder);
+
+                dependencies.UnionWith(builder.dependencies);
             }
 
-            var templateOutput = (TemplateOutput)graphView.cachedNodesForBuilder.First(x => x is TemplateOutput);
-            templateOutput.OnImportAsset(ctx, builder);
 
-            foreach (var dependency in builder.dependencies)
+            foreach (var dependency in dependencies)
             {
                 ctx.DependsOnSourceAsset(dependency);
             }

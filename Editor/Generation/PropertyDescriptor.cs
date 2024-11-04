@@ -104,6 +104,7 @@ namespace Graphlit
         [NonSerialized] public bool autoKeyword = false;
 
         [NonSerialized] public bool useReferenceName = false;
+        [NonSerialized] public Texture tempTexture = null;
         public float FloatValue
         {
             get
@@ -142,6 +143,10 @@ namespace Graphlit
         {
             get
             {
+                if (tempTexture != null)
+                {
+                    return tempTexture;
+                }
                 if (string.IsNullOrEmpty(_defaultTexture))
                 {
                     return null;

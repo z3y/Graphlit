@@ -71,8 +71,8 @@ namespace Graphlit
                 bool hasKeyword = false;
                 if (visitor.GenerationMode == GenerationMode.Final && this is SampleTexture2DNode sample2d)
                 {
-                    var connectedProp = (Texture2DPropertyNode)_texturePort.connections.First().output.node;
-                    var desc = connectedProp.propertyDescriptor;
+                    var connectedProp = (IHasPropertyDescriptor)_texturePort.connections.First().output.node;
+                    var desc = connectedProp.GetPropertyDescriptor();
                     if (sample2d.autoKeyword)
                     {
                         hasKeyword = true;

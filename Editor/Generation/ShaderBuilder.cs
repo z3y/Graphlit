@@ -83,14 +83,12 @@ namespace Graphlit
             passBuilders.Add(passBuilder);
         }
 
-        public void BuildTemplate()
+        public void BuildTemplate(TemplateOutput target)
         {
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
-            ShaderGraphView.UpdateCachedNodesForBuilder();
             var shaderNodes = ShaderGraphView.cachedNodesForBuilder;
-            var target = (TemplateOutput)shaderNodes.First(x => x is TemplateOutput);
 
             var graphData = ShaderGraphView.graphData;
             customEditor = graphData.customEditor;

@@ -14,7 +14,11 @@ namespace Graphlit
     {
         public ShaderNode ToProperty();
     }
-    public abstract class PropertyNode : ShaderNode
+    public interface IHasPropertyDescriptor
+    {
+        PropertyDescriptor GetPropertyDescriptor();
+    }
+    public abstract class PropertyNode : ShaderNode, IHasPropertyDescriptor
     {
         public void SetReference(string guid)
         {
@@ -78,5 +82,9 @@ namespace Graphlit
             PortData[OUT] = new GeneratedPortData(portDescriptors[OUT].Type, propertyDescriptor.GetReferenceName(visitor.GenerationMode));
         }
 
+        public PropertyDescriptor GetPropertyDescriptor()
+        {
+            return propertyDescriptor;
+        }
     }
 }
