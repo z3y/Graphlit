@@ -36,6 +36,7 @@ namespace Graphlit
         private HashSet<string> visitedNodes = new HashSet<string>();
         public List<PropertyDescriptor> properties = new();
         public List<PropertyDescriptor> subgraphProperties = new();
+        public List<PropertyDescriptor> generatedTextures = new();
 
         public GenerationMode GenerationMode { get; private set; }
         public SerializableGraph SerializableGraph { get; }

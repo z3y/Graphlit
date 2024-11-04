@@ -6,6 +6,8 @@ using UnityEditor;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 
 namespace Graphlit
 {
@@ -37,6 +39,7 @@ namespace Graphlit
             root.Add(button);
         }
 
+
         public RenderTexture rtOutput = null;
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(PropertyType.Texture2D);
         protected override void Generate(NodeVisitor visitor)
@@ -62,12 +65,15 @@ namespace Graphlit
             pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
             builder.AddPass(pass);
 
-            var dimensions = ((Float)GetInputPortData(COLOR, visitor).Type).dimensions;
-            ChangeDimensions(COLOR, dimensions);
+
 
 
             var fragmentVisitor = new NodeVisitor(builder, ShaderStage.Fragment, 0);
             builder.TraverseGraph(this, fragmentVisitor);
+
+            var dimensions = ((Float)GetInputPortData(COLOR, fragmentVisitor).Type).dimensions;
+            ChangeDimensions(COLOR, dimensions);
+
             pass.surfaceDescriptionStruct.Add("float4 Color;");
             pass.surfaceDescription.Add($"output.Color = {PortData[COLOR].Name};");
             if (dimensions < 4)
@@ -90,6 +96,11 @@ namespace Graphlit
             {
                 material.SetTexture(tex.Key, tex.Value);
             }
+            foreach (var tex in builder.generatedTextures)
+            {
+                material.SetTexture(tex.GetReferenceName(GenerationMode.Preview), tex.DefaultTextureValue);
+            }
+
 
             int res = 512;
 
@@ -120,16 +131,19 @@ namespace Graphlit
 
             Graphics.Blit(Texture2D.blackTexture, rtOutput, material);
 
-            Debug.Log(shader);
-            Debug.Log(rtOutput.format);
+            Debug.Log(viewDataKey);
+
+            //Debug.Log(rtOutput.format);
 
             UnityEngine.Object.DestroyImmediate(shader);
             UnityEngine.Object.DestroyImmediate(material);
             propertyDescriptor.tempTexture = rtOutput;
             visitor.AddProperty(propertyDescriptor);
+            visitor._shaderBuilder.generatedTextures.Add(propertyDescriptor);
             PortData[TEXTURE] = new GeneratedPortData(portDescriptors[TEXTURE].Type, propertyDescriptor.GetReferenceName(GenerationMode.Preview));
 
             InitializeTexture();
+
         }
 
         async void InitializeTexture()
