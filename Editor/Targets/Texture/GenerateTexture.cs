@@ -37,12 +37,12 @@ namespace Graphlit
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(PropertyType.Texture2D);
         protected override void Generate(NodeVisitor visitor)
         {
-            Generate();
+            Generate(visitor._shaderBuilder.generatedTextureResolution);
             visitor.AddProperty(propertyDescriptor);
             visitor._shaderBuilder.generatedTextures.Add(propertyDescriptor);
         }
 
-        public void Generate()
+        public void Generate(int resolution)
         {
             var builder = new ShaderBuilder(GenerationMode.Final, GraphView, BuildTarget.StandaloneWindows64, false);
             builder.subshaderTags["RenderType"] = "Opaque";
@@ -99,13 +99,10 @@ namespace Graphlit
                 material.SetTexture(tex.GetReferenceName(GenerationMode.Preview), tex.DefaultTextureValue);
             }
 
-
-            int res = 512;
-
             var desc = new RenderTextureDescriptor
             {
-                width = res,
-                height = res,
+                width = resolution,
+                height = resolution,
                 mipCount = 1,
                 autoGenerateMips = false,
                 useMipMap = false,
@@ -120,7 +117,7 @@ namespace Graphlit
             {
                 rtOutput = new RenderTexture(desc);
             }
-            if (rtOutput.format != desc.colorFormat)
+            if (rtOutput.format != desc.colorFormat || rtOutput.width != resolution)
             {
                 UnityEngine.Object.DestroyImmediate(rtOutput);
                 rtOutput = new RenderTexture(desc);

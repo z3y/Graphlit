@@ -37,6 +37,7 @@ namespace Graphlit
         public List<PropertyDescriptor> properties = new();
         public List<PropertyDescriptor> subgraphProperties = new();
         public List<PropertyDescriptor> generatedTextures = new();
+        public int generatedTextureResolution = 512;
 
         public GenerationMode GenerationMode { get; private set; }
         public SerializableGraph SerializableGraph { get; }
