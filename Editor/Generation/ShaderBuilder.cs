@@ -104,9 +104,6 @@ namespace Graphlit
 
             target.OnBeforeBuild(this);
 
-            
-            var ns = new List<ShaderNode>(1000);
-
             for (int i = 0; i < passBuilders.Count; i++)
             {
                 int passIndex = i;

@@ -6,8 +6,7 @@ using UnityEditor;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
+using Palmmedia.ReportGenerator.Core;
 
 namespace Graphlit
 {
@@ -28,12 +27,6 @@ namespace Graphlit
         public override bool DisablePreview => true; 
         public override void AdditionalElements(VisualElement root)
         {
-            var graphData = GraphView.graphData;
-
-            var defaultPreviewState = new EnumField("Default Preview", graphData.defaultPreviewState);
-            defaultPreviewState.RegisterValueChangedCallback(x => graphData.defaultPreviewState = (GraphData.DefaultPreviewState)x.newValue);
-            root.Add(defaultPreviewState);
-
             var button = new Button() { text = "Generate"};
             button.clicked += () => { GeneratePreviewForAffectedNodes(); };
             root.Add(button);
@@ -44,8 +37,14 @@ namespace Graphlit
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(PropertyType.Texture2D);
         protected override void Generate(NodeVisitor visitor)
         {
-            var builder = new ShaderBuilder(GenerationMode.Final, GraphView, BuildTarget.StandaloneWindows64, false);
+            Generate();
+            visitor.AddProperty(propertyDescriptor);
+            visitor._shaderBuilder.generatedTextures.Add(propertyDescriptor);
+        }
 
+        public void Generate()
+        {
+            var builder = new ShaderBuilder(GenerationMode.Final, GraphView, BuildTarget.StandaloneWindows64, false);
             builder.subshaderTags["RenderType"] = "Opaque";
             builder.subshaderTags["Queue"] = "Geometry";
 
@@ -66,12 +65,11 @@ namespace Graphlit
             builder.AddPass(pass);
 
 
-
-
             var fragmentVisitor = new NodeVisitor(builder, ShaderStage.Fragment, 0);
             builder.TraverseGraph(this, fragmentVisitor);
+            DefaultVisit(fragmentVisitor);
 
-            var dimensions = ((Float)GetInputPortData(COLOR, fragmentVisitor).Type).dimensions;
+            int dimensions = ((Float)GetInputPortData(COLOR, fragmentVisitor).Type).dimensions;
             ChangeDimensions(COLOR, dimensions);
 
             pass.surfaceDescriptionStruct.Add("float4 Color;");
@@ -138,8 +136,7 @@ namespace Graphlit
             UnityEngine.Object.DestroyImmediate(shader);
             UnityEngine.Object.DestroyImmediate(material);
             propertyDescriptor.tempTexture = rtOutput;
-            visitor.AddProperty(propertyDescriptor);
-            visitor._shaderBuilder.generatedTextures.Add(propertyDescriptor);
+
             PortData[TEXTURE] = new GeneratedPortData(portDescriptors[TEXTURE].Type, propertyDescriptor.GetReferenceName(GenerationMode.Preview));
 
             InitializeTexture();

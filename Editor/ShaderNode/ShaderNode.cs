@@ -536,8 +536,8 @@ namespace Graphlit
         public Dictionary<int, GeneratedPortData> PortData { get; set; } = new();
         public GeneratedPortData GetInputPortData(int portID, NodeVisitor visitor)
         {
-            var port = Inputs.Where(x => x.GetPortID() == portID).First();
-            if (port.connected)
+            var port = Inputs.FirstOrDefault(x => x.GetPortID() == portID);
+            if (port is not null && port.connected)
             {
                 var incomingPort = port.connections.First().output;
                 var incomingNode = (ShaderNode)incomingPort.node;
@@ -639,6 +639,13 @@ namespace Graphlit
 
         internal void BuilderVisit(NodeVisitor visitor, int[] portsMask = null)
         {
+            DefaultVisit(visitor, portsMask);
+            Generate(visitor);
+            UpdateGraphViewDimensions();
+        }
+
+        internal void DefaultVisit(NodeVisitor visitor, int[] portsMask = null)
+        {
             InheritPreviewAndPrecision();
             var stage = visitor.Stage;
 
@@ -686,10 +693,8 @@ namespace Graphlit
                     PortData[id] = new GeneratedPortData(type, name);
                 }
             }
-
-            Generate(visitor);
-            UpdateGraphViewDimensions();
         }
+
         string DisplayName => Info.name.Split("/")[^1];
         public string UniqueVariable => DisplayName.Replace(" ", "") + UniqueVariableID;
         public void SetVariable(int id, string name)
