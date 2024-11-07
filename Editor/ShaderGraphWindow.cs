@@ -33,17 +33,13 @@ namespace Graphlit
             container.style.flexDirection = FlexDirection.RowReverse;
             rootVisualElement.Add(container);
             AddGraphView(container);
-            var data = ShaderGraphImporter.ReadGraphData(importerGuid);
-            data.PopulateGraph(graphView);
+            var serializableGraph = ShaderGraphImporter.ReadGraphData(importerGuid);
+            serializableGraph.PopulateGraph(graphView);
 
             AddBar(rootVisualElement);
             container.Add(GetNodePropertiesElement());
 
-            titleContent = new GUIContent(data.data.shaderName);
-            if (string.IsNullOrEmpty(data.data.shaderName) || data.data.shaderName == "Default Shader")
-            {
-                titleContent = new GUIContent(data.data.shaderName = "Graphlit/" + Path.GetFileNameWithoutExtension(AssetDatabase.GUIDToAssetPath(importerGuid)));
-            }
+            titleContent = new GUIContent(GetShaderDisplayName(serializableGraph.data));
 
             if (focus)
             {
@@ -68,6 +64,15 @@ namespace Graphlit
             hasUnsavedChanges = true;
         }
 
+        public string GetShaderDisplayName(GraphData data)
+        {
+            if (string.IsNullOrEmpty(data.shaderName) || data.shaderName == "Default Shader")
+            {
+                return data.shaderName = "Graphlit/" + Path.GetFileNameWithoutExtension(AssetDatabase.GUIDToAssetPath(importerGuid));
+            }
+            return data.shaderName;
+        }
+
         public override void SaveChanges() => SaveChangesImpl(true);
         public void SaveChangesUser() => SaveChangesImpl(false);
         public void SaveChangesImpl(bool isEditor = false)
@@ -88,6 +93,8 @@ namespace Graphlit
                 saveChangesMessage = "Disable live preview.";
                 hasUnsavedChanges = true;
             }
+
+            titleContent = new GUIContent(GetShaderDisplayName(graphView.graphData));
         }
 
         public void OnEnable()

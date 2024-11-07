@@ -6,7 +6,6 @@ using UnityEditor;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Palmmedia.ReportGenerator.Core;
 
 namespace Graphlit
 {
