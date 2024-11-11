@@ -26,7 +26,7 @@ namespace Graphlit
             var data = new SerializableGraph();
             if (!string.IsNullOrEmpty(text))
             {
-                JsonUtility.FromJsonOverwrite(text, data);
+                EditorJsonUtility.FromJsonOverwrite(text, data);
             }
             return data;
         }
@@ -120,7 +120,7 @@ namespace Graphlit
                 var graph = ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
                 graph.data.shaderName = "Default Shader";
 
-                var jsonData = JsonUtility.ToJson(graph, true);
+                var jsonData = EditorJsonUtility.ToJson(graph, true);
                 ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.graphlit", jsonData);
             }
             else
@@ -129,7 +129,7 @@ namespace Graphlit
                 var graph = ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
                 graph.data.shaderName = "Default Shader";
 
-                var jsonData = JsonUtility.ToJson(graph, true);
+                var jsonData = EditorJsonUtility.ToJson(graph, true);
                 ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.graphlit", jsonData);
             }
 
@@ -171,7 +171,7 @@ namespace Graphlit
             {
                 var importerPath = AssetDatabase.GUIDToAssetPath(guid);
                 var data = SerializableGraph.StoreGraph(graphView);
-                var jsonData = JsonUtility.ToJson(data, true);
+                var jsonData = EditorJsonUtility.ToJson(data, true);
 
                 _graphViews[importerPath] = graphView;
 

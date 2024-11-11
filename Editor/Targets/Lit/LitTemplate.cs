@@ -21,7 +21,7 @@ namespace Graphlit
             var graph = ShaderGraphImporter.ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
             graph.data.shaderName = "Default Shader";
 
-            var jsonData = JsonUtility.ToJson(graph, true);
+            var jsonData = EditorJsonUtility.ToJson(graph, true);
             ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.graphlit", jsonData);
         }
 
@@ -32,7 +32,7 @@ namespace Graphlit
             var graph = ShaderGraphImporter.ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
             graph.data.shaderName = "Default Shader";
 
-            var jsonData = JsonUtility.ToJson(graph, true);
+            var jsonData = EditorJsonUtility.ToJson(graph, true);
             ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.graphlit", jsonData);
         }
 

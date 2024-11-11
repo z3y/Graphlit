@@ -98,7 +98,8 @@ namespace Graphlit
         [SerializeField] public float rangeX;
         [SerializeField] public float rangeY;
         [SerializeField] string _value;
-        [SerializeField] string _defaultTexture;
+        [SerializeField] string _defaultTexture; // read only
+        [SerializeField] Texture _defaultTextureObject;
         [SerializeField] public PropertyDeclaration declaration = PropertyDeclaration.Local;
 
         [NonSerialized] public bool autoKeyword = false;
@@ -147,6 +148,10 @@ namespace Graphlit
                 {
                     return tempTexture;
                 }
+                if (_defaultTextureObject != null)
+                {
+                    return _defaultTextureObject;
+                }
                 if (string.IsNullOrEmpty(_defaultTexture))
                 {
                     return null;
@@ -155,7 +160,8 @@ namespace Graphlit
             }
             set
             {
-                _defaultTexture = Helpers.AssetSerializableReference(value);
+                _defaultTextureObject = value;
+                _defaultTexture = string.Empty;
             }
         }
         public Vector2 Range

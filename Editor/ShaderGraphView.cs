@@ -124,7 +124,7 @@ namespace Graphlit
                     AssetDatabase.ImportAsset(AssetDatabase.GUIDToAssetPath(_editorWindow.importerGuid), ImportAssetOptions.ForceUpdate);
                 };
             };*/
-            
+
             return change;
         }
 
@@ -203,15 +203,15 @@ namespace Graphlit
             }
 
             copyMousePos = lastMousePos;
-            //_lastCopyGraph = JsonUtility.ToJson(data, false);
-            return JsonUtility.ToJson(data, false);
+            //_lastCopyGraph = EditorJsonUtility.ToJson(data, false);
+            return EditorJsonUtility.ToJson(data, false);
         }
 
         public void UnserializeAndPasteImpl(string operationName, string jsonData)
         {
             //RecordUndo();
-
-            var data = JsonUtility.FromJson<SerializableGraph>(jsonData);
+            var data = new SerializableGraph();
+            EditorJsonUtility.FromJsonOverwrite(jsonData, data);
 
             var offset = lastMousePos - copyMousePos;
             //TransformMousePositionToLocalSpace(ref offset, true);
@@ -502,13 +502,13 @@ namespace Graphlit
 
                     var asset = AssetDatabase.GetAssetPath(texture);
                     var importer = AssetImporter.GetAtPath(asset);
-                    
+
                     if (importer is TextureImporter textureImporter)
                     {
                         if (textureImporter.textureType == TextureImporterType.NormalMap)
                         {
                             desc.defaultAttributes |= MaterialPropertyAttribute.Normal;
-                            desc.DefaultTextureEnum = DefaultTextureName.bump; 
+                            desc.DefaultTextureEnum = DefaultTextureName.bump;
                         }
                         else if (!textureImporter.sRGBTexture)
                         {

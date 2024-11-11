@@ -33,6 +33,12 @@ namespace Graphlit
                 {
                     return _code;
                 }
+                if (_shaderInclude != null)
+                {
+                    _fileName = _shaderInclude.name;
+                    _path = AssetDatabase.GetAssetPath(_shaderInclude);
+                    return File.ReadAllText(_path);
+                }
                 var include = Helpers.SerializableReferenceToObject<ShaderInclude>(_file);
                 if (include == null)
                 {
@@ -44,11 +50,14 @@ namespace Graphlit
             }
         }
 
-        [SerializeField] string _file;
+        [SerializeField] string _file; // read only
+        [SerializeField] ShaderInclude _shaderInclude;
+
         [SerializeField] bool _useFile = false;
         public void UseFile(ShaderInclude include)
         {
-            _file = Helpers.AssetSerializableReference(include);
+            _shaderInclude = include;
+            _file = string.Empty;
             _useFile = true;
         }
         private FunctionParser _functionParser = new();
@@ -100,14 +109,24 @@ namespace Graphlit
             {
                 objectType = typeof(ShaderInclude)
             };
-            if (!string.IsNullOrEmpty(_file))
+
+            if (_shaderInclude != null)
             {
-                file.value = Helpers.SerializableReferenceToObject<ShaderInclude>(_file);
+                file.value = _shaderInclude;
             }
+            else
+            {
+                if (!string.IsNullOrEmpty(_file))
+                {
+                    file.value = Helpers.SerializableReferenceToObject<ShaderInclude>(_file);
+                }
+            }
+
             file.RegisterValueChangedCallback(x =>
             {
-                _file = Helpers.AssetSerializableReference(x.newValue);
+                _shaderInclude = (ShaderInclude)x.newValue;
             });
+
 
             var updateButton = new Button
             {

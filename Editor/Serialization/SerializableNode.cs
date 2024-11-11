@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using UnityEditor;
 
 namespace Graphlit
 {
@@ -38,7 +39,7 @@ namespace Graphlit
             var seriazableAttribute = Attribute.GetCustomAttribute(type, typeof(SerializableAttribute));
             if (seriazableAttribute is not null)
             {
-                data = JsonUtility.ToJson(node);
+                data = EditorJsonUtility.ToJson(node);
             }
             else
             {
@@ -68,7 +69,7 @@ namespace Graphlit
 
             if (!string.IsNullOrEmpty(data))
             {
-                JsonUtility.FromJsonOverwrite(data, instance);
+                EditorJsonUtility.FromJsonOverwrite(data, instance);
             }
 
             shaderNode = instance;

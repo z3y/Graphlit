@@ -34,7 +34,7 @@ namespace Graphlit
             return c;
         }
 
-        public static string AssetSerializableReference(UnityEngine.Object @object)
+      /*  public static string AssetSerializableReference(UnityEngine.Object @object)
         {
             if (!ObjectIdentifier.TryGetObjectIdentifier(@object, out var id))
             {
@@ -42,7 +42,7 @@ namespace Graphlit
             }
             return id.localIdentifierInFile + "|" + id.guid.ToString();
         }
-
+*/
         public static T SerializableReferenceToObject<T>(string reference) where T : UnityEngine.Object
         {
             if (string.IsNullOrEmpty(reference))
