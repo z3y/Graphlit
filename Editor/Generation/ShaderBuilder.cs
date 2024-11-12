@@ -35,7 +35,6 @@ namespace Graphlit
 
         private HashSet<string> visitedNodes = new HashSet<string>();
         public List<PropertyDescriptor> properties = new();
-        public List<PropertyDescriptor> subgraphProperties = new();
         public List<PropertyDescriptor> generatedTextures = new();
         public int generatedTextureResolution = 512;
 
@@ -467,7 +466,7 @@ namespace Graphlit
 
                 if (unlocked)
                 {
-                    foreach (var property in properties.Union(ShaderGraphView.graphData.properties).Union(subgraphProperties).Distinct())
+                    foreach (var property in properties.Union(ShaderGraphView.graphData.properties).Distinct())
                     {
                         if (property.ShouldDeclare())
                         {
@@ -496,7 +495,7 @@ namespace Graphlit
             }
             else
             {
-                foreach (var property in properties.Union(ShaderGraphView.graphData.properties).Union(subgraphProperties))
+                foreach (var property in properties.Union(ShaderGraphView.graphData.properties))
                 {
                     if (property.ShouldDeclare())
                         _sb.AppendLine(property.GetPropertyDeclaration(GenerationMode.Final));

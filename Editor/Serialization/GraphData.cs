@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-//using static Graphlit.SubgraphOutputNode;
+using static Graphlit.SubgraphOutputNode;
 
 namespace Graphlit
 {
@@ -18,8 +18,8 @@ namespace Graphlit
         public VRCFallbackTags vrcFallbackTags = new VRCFallbackTags();
         public bool unlocked = false;
 
-        //public List<SerializablePortDescriptor> subgraphOutputs = new();
-        //public List<SerializablePortDescriptor> subgraphInputs = new();
+        public List<SerializablePortDescriptor> subgraphOutputs = new();
+        public List<SerializablePortDescriptor> subgraphInputs = new();
         public int subgraphOutputIdCounter = 0;
 
         public enum GraphPrecision

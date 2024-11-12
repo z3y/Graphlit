@@ -53,7 +53,7 @@ namespace Graphlit
             };
 
 
-            /*if (_graphView.graphData.subgraphInputs.Count > 0)
+            if (_graphView.graphData.subgraphInputs.Count > 0)
             {
                 tree.Add(new SearchTreeGroupEntry(new GUIContent("Subgraph Inputs"), 1));
 
@@ -63,7 +63,7 @@ namespace Graphlit
                     var ctx = new CreateSubgraphInputContext() { id = var.id };
                     tree.Add(new SearchTreeEntry(new GUIContent($"Input: {name}", _nodeIndentationIcon)) { level = 2, userData = ctx });
                 }
-            }*/
+            }
 
             tree.Add(new SearchTreeGroupEntry(new GUIContent("Material Properties"), 1));
             for (int i = 0; i < _graphView.graphData.properties.Count; i++)
@@ -192,13 +192,13 @@ namespace Graphlit
                 _graphView.CreateNode(node, context.screenMousePosition);
                 return true;
             }
-            /*else if (userData is CreateSubgraphInputContext var1)
+            else if (userData is CreateSubgraphInputContext var1)
             {
                 var node = (SubgraphInputNode)Activator.CreateInstance(typeof(SubgraphInputNode));
                 node.SetReference(var1.id);
                 _graphView.CreateNode(node, context.screenMousePosition);
                 return true;
-            }*/
+            }
             _graphView.CreateNode(searchTreeEntry.userData as Type, context.screenMousePosition);
             return true;
         }

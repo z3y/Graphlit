@@ -1,11 +1,9 @@
-/*using System;
+using System;
 using UnityEngine.UIElements;
 using UnityEngine;
 using System.Linq;
 using Graphlit.Nodes.PortType;
 using Graphlit.Nodes;
-using System.Collections.Generic;
-using static UnityEditor.Rendering.CameraUI;
 
 namespace Graphlit
 {
@@ -20,11 +18,11 @@ namespace Graphlit
         protected const int OUT = 0;
         [SerializeField] internal int _ref;
         public override Color Accent => Color.magenta;
-        //[NonSerialized] public PropertyDescriptor propertyDescriptor;
+        [NonSerialized] public PropertyDescriptor propertyDescriptor;
 
         public override bool DisablePreview => true;
 
-        //[NonSerialized] SubgraphOutputNode _subgraphOut;
+        [NonSerialized] SubgraphOutputNode _subgraphOut;
 
         public override void Initialize()
         {
@@ -40,11 +38,11 @@ namespace Graphlit
             output.AddPropertyDescriptor(this, PortDirection.Output);
 
 
-            //TitleLabel.text = desc.Name;
+            //TitleLabel.text = propertyDescriptor.Name;
 
             ResetPorts();
 
-            *//*propertyDescriptor.onValueChange += () =>
+            propertyDescriptor.onValueChange += () =>
             {
                 if (TitleLabel is null || propertyDescriptor is null)
                 {
@@ -52,17 +50,17 @@ namespace Graphlit
                 }
                 TitleLabel.text = propertyDescriptor.displayName;
             };
-            TitleLabel.text = propertyDescriptor.displayName;*//*
+            TitleLabel.text = propertyDescriptor.displayName;
         }
 
         public override void AdditionalElements(VisualElement root)
         {
-            *//*var imgui = new IMGUIContainer();
+            var imgui = new IMGUIContainer();
             imgui.onGUIHandler = () =>
             {
                 propertyDescriptor.PropertyEditorGUI();
             };
-            root.Add(imgui);*//*
+            root.Add(imgui);
         }
 
         protected override void Generate(NodeVisitor visitor)
@@ -92,4 +90,4 @@ namespace Graphlit
             //PortData[OUT] = new GeneratedPortData(portDescriptors[OUT].Type, output.name);
         }
     }
-}*/
+}

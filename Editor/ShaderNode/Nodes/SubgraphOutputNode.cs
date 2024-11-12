@@ -1,4 +1,4 @@
-/*using System;
+using System;
 using UnityEngine.UIElements;
 using UnityEngine;
 using Graphlit.Nodes;
@@ -184,8 +184,10 @@ namespace Graphlit
                 void OnTypeSelected(object data)
                 {
                     var type = (Type)data;
-                    ports.Add(new SerializablePortDescriptor() {
-                        id = GraphView.graphData.subgraphOutputIdCounter++, type = type.Name
+                    ports.Add(new SerializablePortDescriptor()
+                    {
+                        id = GraphView.graphData.subgraphOutputIdCounter++,
+                        type = type.Name
                     });
                     list.Select(ports.Count - 1);
 
@@ -229,4 +231,4 @@ namespace Graphlit
             CleanLooseEdges();
         }
     }
-}*/
+}

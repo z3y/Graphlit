@@ -8,10 +8,12 @@ using System.IO;
 using System;
 using UnityEditor.Callbacks;
 using System.Linq;
+using UnityEditor.VersionControl;
+using Graphlit.Nodes.PortType;
 
 namespace Graphlit
 {
-    [ScriptedImporter(9, new[] { "graphlit", "subgraphlit", "zsg" }, 0)]
+    [ScriptedImporter(9, new[] { "graphlit", "zsg" }, 0)]
     public class ShaderGraphImporter : ScriptedImporter
     {
         internal static Dictionary<string, ShaderGraphView> _graphViews = new();
@@ -31,21 +33,22 @@ namespace Graphlit
             return data;
         }
 
-
         public override void OnImportAsset(AssetImportContext ctx)
         {
             var sw = new System.Diagnostics.Stopwatch();
+
             sw.Start();
-            bool isSubgraph = assetPath.EndsWith("subgraphlit");
-            if (isSubgraph)
+
+
+            if (this is ShaderSubGraphImporter)
             {
-                var asset = ScriptableObject.CreateInstance<Subgraph>();
-                ctx.AddObjectToAsset("Subgraph Asset", asset);
+                ShaderSubGraphImporter.BuildSubgraph(ctx);
                 return;
             }
 
             var target = ctx.selectedBuildTarget;
             string guid = AssetDatabase.AssetPathToGUID(assetPath);
+
 
             ShaderGraphView graphView = null;
 #if USE_CACHE
@@ -63,13 +66,14 @@ namespace Graphlit
 
             graphView.UpdateCachedNodesForBuilder();
             var shaderNodes = graphView.cachedNodesForBuilder;
+            var dependencies = new HashSet<string>();
+
 
             var template = shaderNodes.OfType<TemplateOutput>().First();
 
             var filename = Path.GetFileNameWithoutExtension(ctx.assetPath);
             bool unlocked = graphView.graphData.unlocked;
 
-            var dependencies = new HashSet<string>();
 
             var builder = new ShaderBuilder(unlocked ? GenerationMode.Preview : GenerationMode.Final, graphView, target, unlocked);
             if (string.IsNullOrEmpty(builder.shaderName) || builder.shaderName == "Default Shader")
@@ -109,6 +113,7 @@ namespace Graphlit
             DefaultInspector.Reinitialize();
             sw.Stop();
         }
+
 
         public static void CreateEmptyTemplate(TemplateOutput template, Action<ShaderGraphView> onCreate = null)
         {
@@ -201,4 +206,5 @@ namespace Graphlit
             return true;
         }
     }
+
 }
