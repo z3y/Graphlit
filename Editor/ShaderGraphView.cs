@@ -63,12 +63,7 @@ namespace Graphlit
             RegisterCallback<MouseMoveEvent>(OnMouseMoveEvent);
             this.AddManipulator(CreateGroupContextualMenu());
 
-            // background
-            //var gridBackground = new GridBackground();
-            //gridBackground.StretchToParentSize();
-            //gridBackground.style.backgroundColor = Color.red;
             style.backgroundColor = new Color(0.14f, 0.14f, 0.14f, 1);
-            //Insert(0, gridBackground);
 
             // search window
             if (_searchWindow == null)
@@ -90,13 +85,6 @@ namespace Graphlit
 
             RegisterCallback<DragUpdatedEvent>(OnDragUpdated);
             RegisterCallback<DragPerformEvent>(OnDragPerform);
-
-            /*if (!string.IsNullOrEmpty(assetPath))
-            {
-                var assets = AssetDatabase.LoadAllAssetRepresentationsAtPath(assetPath);
-                //i//mportedMaterial = assets.OfType<Material>().FirstOrDefault();
-                //Debug.Log(importedMaterial);
-            }*/
         }
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange change)
@@ -116,15 +104,7 @@ namespace Graphlit
             }
 
             _editorWindow.SetDirty();
-
-            /*EditorApplication.delayCall += () =>
-            {
-                if (graphData.unlocked && (change.edgesToCreate is not null || change.elementsToRemove is not null))
-                {
-                    AssetDatabase.ImportAsset(AssetDatabase.GUIDToAssetPath(_editorWindow.importerGuid), ImportAssetOptions.ForceUpdate);
-                };
-            };*/
-
+            //RecordUndo();
             return change;
         }
 
@@ -182,7 +162,6 @@ namespace Graphlit
 
         public void SetDirty() => _editorWindow.SetDirty();
 
-        //private static string _lastCopyGraph;
         public string SerializeGraphElementsImpl(IEnumerable<GraphElement> elements)
         {
             var data = new SerializableGraph
@@ -203,13 +182,11 @@ namespace Graphlit
             }
 
             copyMousePos = lastMousePos;
-            //_lastCopyGraph = EditorJsonUtility.ToJson(data, false);
             return EditorJsonUtility.ToJson(data, false);
         }
 
         public void UnserializeAndPasteImpl(string operationName, string jsonData)
         {
-            //RecordUndo();
             var data = new SerializableGraph();
             EditorJsonUtility.FromJsonOverwrite(jsonData, data);
 
@@ -226,40 +203,45 @@ namespace Graphlit
             }
         }
 
-        private SerializedGraphDataSo _serializedGraphDataSo;
-        private Stack<SerializableGraph> _undoStates = new(10);
-        /*  public void RecordUndo()
-          {
-              if (_serializedGraphDataSo == null)
-              {
-                  _serializedGraphDataSo = ScriptableObject.CreateInstance<SerializedGraphDataSo>();
-              }
-              Undo.RegisterCompleteObjectUndo(_serializedGraphDataSo, "Graph Undo");
-
-              var data = SerializableGraph.StoreGraph(this);
-              _undoStates.Push(data);
-
-              _serializedGraphDataSo.graphView = this;
-              EditorUtility.SetDirty(_serializedGraphDataSo);
-              _editorWindow.SetDirty();
-              _serializedGraphDataSo.Init();
-          }*/
-
-        public void OnUndoPerformed()
+        /*private SerializedGraphDataSo _serializedGraphDataSo;
+        private List<SerializableGraph> _undoStates = new();
+        int _undoIndex = 0;
+        public void RecordUndo()
         {
-            if (_undoStates.Count < 1)
+            if (_serializedGraphDataSo == null)
+            {
+                _serializedGraphDataSo = ScriptableObject.CreateInstance<SerializedGraphDataSo>();
+            }
+            Undo.RegisterCompleteObjectUndo(_serializedGraphDataSo, "Graph Undo");
+
+            var data = SerializableGraph.StoreGraph(this);
+            _undoStates.Add(data);
+            _undoIndex = _undoStates.Count - 1;
+
+            _serializedGraphDataSo.graphView = this;
+            EditorUtility.SetDirty(_serializedGraphDataSo);
+            _editorWindow.SetDirty();
+            _serializedGraphDataSo.Init();
+
+            Debug.Log("Record Undo");
+
+        }*/
+
+       /* public void OnUndoRedoPerformed(in UndoRedoInfo undo)
+        {
+            if (_undoStates.Count <= 0)
             {
                 return;
             }
 
-            //var data = _undoStates[^1];
-            //_undoStates.RemoveAt(_undoStates.Count-1);
+            Debug.Log("Undo");
+
             var data = _undoStates.Pop();
 
             DeleteElements(graphElements);
 
             data.PopulateGraph(this);
-        }
+        }*/
 
 
         private IManipulator CreateGroupContextualMenu()
@@ -292,7 +274,10 @@ namespace Graphlit
 
         public void CreateNode(ShaderNode node, Vector2 position, bool transform = true)
         {
-            _editorWindow?.SetDirty();
+            if (_editorWindow != null)
+            {
+                _editorWindow.SetDirty();
+            }
             if (transform) TransformMousePositionToLocalSpace(ref position, true);
 
             if (node is not PreviewNode)
@@ -302,6 +287,7 @@ namespace Graphlit
             node.InitializeInternal(this, position);
             AddElement(node);
             node.GeneratePreview();
+            //RecordUndo();
         }
 
         public void CreateNode(Type type, Vector2 position, bool transform = true)

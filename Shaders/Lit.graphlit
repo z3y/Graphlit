@@ -13,6 +13,9 @@
                 "rangeY": 1.0,
                 "_value": "0.5",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             },
             {
@@ -26,6 +29,9 @@
                 "rangeY": 0.0,
                 "_value": "(1.00, 1.00, 1.00, 1.00)",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             },
             {
@@ -39,6 +45,9 @@
                 "rangeY": 0.0,
                 "_value": "",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             },
             {
@@ -52,6 +61,9 @@
                 "rangeY": 0.0,
                 "_value": "",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             },
             {
@@ -65,6 +77,9 @@
                 "rangeY": 0.0,
                 "_value": "white",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             },
             {
@@ -78,6 +93,9 @@
                 "rangeY": 1.0,
                 "_value": "0",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             },
             {
@@ -91,6 +109,9 @@
                 "rangeY": 1.0,
                 "_value": "0.5",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             },
             {
@@ -104,6 +125,9 @@
                 "rangeY": 1.0,
                 "_value": "1",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             },
             {
@@ -117,6 +141,9 @@
                 "rangeY": 0.0,
                 "_value": "",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             },
             {
@@ -130,6 +157,9 @@
                 "rangeY": 0.0,
                 "_value": "1",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             },
             {
@@ -143,6 +173,9 @@
                 "rangeY": 0.0,
                 "_value": "bump",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             },
             {
@@ -156,6 +189,9 @@
                 "rangeY": 0.0,
                 "_value": "",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             },
             {
@@ -169,6 +205,9 @@
                 "rangeY": 0.0,
                 "_value": "(1.00, 1.00, 1.00, 1.00)",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             },
             {
@@ -182,6 +221,9 @@
                 "rangeY": 0.0,
                 "_value": "",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             },
             {
@@ -195,6 +237,9 @@
                 "rangeY": 0.0,
                 "_value": "",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             },
             {
@@ -208,6 +253,9 @@
                 "rangeY": 1.0,
                 "_value": "0.15",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             },
             {
@@ -221,6 +269,9 @@
                 "rangeY": 1.0,
                 "_value": "0.1",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             },
             {
@@ -234,6 +285,9 @@
                 "rangeY": 5.0,
                 "_value": "1",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             }
         ],
@@ -273,7 +327,7 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": true,
-            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n    Out = In;\\n}\",\"_file\":\"10900000|85a00f5fef33e1449bd1f3c09192fcfd\",\"_useFile\":true}"
+            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n    Out = In;\\n}\",\"_file\":\"10900000|85a00f5fef33e1449bd1f3c09192fcfd\",\"_shaderInclude\":{\"instanceID\":0},\"_useFile\":true}"
         },
         {
             "type": "Graphlit.SampleTexture2DNode",
@@ -496,7 +550,7 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": true,
-            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n    Out = In;\\n}\",\"_file\":\"10900000|66a03437d6d37e44c9d754713b85ddf1\",\"_useFile\":true}"
+            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n    Out = In;\\n}\",\"_file\":\"10900000|66a03437d6d37e44c9d754713b85ddf1\",\"_shaderInclude\":{\"instanceID\":0},\"_useFile\":true}"
         },
         {
             "type": "Graphlit.RegisterVariableNode",
@@ -878,7 +932,7 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": true,
-            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n    Out = In;\\n}\",\"_file\":\"10900000|c63569117ea5bc04e913aa954fa423d7\",\"_useFile\":true}"
+            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n    Out = In;\\n}\",\"_file\":\"10900000|c63569117ea5bc04e913aa954fa423d7\",\"_shaderInclude\":{\"instanceID\":0},\"_useFile\":true}"
         },
         {
             "type": "Graphlit.MultiplyNode",

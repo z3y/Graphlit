@@ -1,3 +1,4 @@
+/*using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,9 +8,9 @@ namespace Graphlit
     {
         public void Init()
         {
-            Undo.undoRedoPerformed -= graphView.OnUndoPerformed;
-            Undo.undoRedoPerformed += graphView.OnUndoPerformed;
+            Undo.undoRedoEvent -= graphView.OnUndoRedoPerformed;
+            Undo.undoRedoEvent += graphView.OnUndoRedoPerformed;
         }
-        public ShaderGraphView graphView;
+        [NonSerialized] public ShaderGraphView graphView;
     }
-}
+}*/

@@ -13,6 +13,9 @@
                 "rangeY": 1.0,
                 "_value": "0.5",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             },
             {
@@ -26,6 +29,9 @@
                 "rangeY": 0.0,
                 "_value": "(1.00, 1.00, 1.00, 1.00)",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             },
             {
@@ -39,6 +45,9 @@
                 "rangeY": 0.0,
                 "_value": "",
                 "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
                 "declaration": 0
             }
         ],

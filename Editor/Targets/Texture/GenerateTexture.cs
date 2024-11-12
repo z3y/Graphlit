@@ -1,4 +1,4 @@
-using UnityEngine.UIElements;
+/*using UnityEngine.UIElements;
 using Graphlit.Nodes.PortType;
 using Graphlit.Nodes;
 using UnityEngine;
@@ -162,45 +162,5 @@ namespace Graphlit
         {
             return propertyDescriptor;
         }
-
-
-        /* public override void OnImportAsset(AssetImportContext ctx, ShaderBuilder builder)
-         {
-             var shaderString = builder.ToString();
-             ShaderGraphImporter._lastImport = shaderString;
-             var shader = ShaderUtil.CreateShaderAsset(shaderString, false);
-             var material = new Material(shader);
-
-
-
-
-             Graphics.Blit(Texture2D.whiteTexture, blitRt, material);
-
-             //desc.width = res;
-             //desc.height = res;
-             //var copyRt = new RenderTexture(desc);
-
-
-
-             var texture = new Texture2D(blitRt.width, blitRt.height, UnityEngine.Experimental.Rendering.GraphicsFormat.R16G16B16A16_SFloat, UnityEngine.Experimental.Rendering.TextureCreationFlags.None);
-             var activeRt = RenderTexture.active;
-             RenderTexture.active = blitRt;
-             texture.ReadPixels(new Rect(0, 0, blitRt.width, blitRt.height), 0, 0);
-             texture.Apply();
-             RenderTexture.active = null;
-
-             UnityEngine.Object.DestroyImmediate(shader);
-             UnityEngine.Object.DestroyImmediate(material);
-             //UnityEngine.Object.DestroyImmediate(copyRt);
-             UnityEngine.Object.DestroyImmediate(blitRt);
-
-
-             ctx.AddObjectToAsset("texture", texture);
-             //ctx.AddObjectToAsset("shader", shader);
-
-             //var bytes = ImageConversion.EncodeToPNG(texture);
-             //File.WriteAllBytes(ctx.assetPath + "tex.png", bytes);
-
-         }*/
     }
-}
+}*/

@@ -64,41 +64,40 @@ namespace Graphlit
             graphView.UpdateCachedNodesForBuilder();
             var shaderNodes = graphView.cachedNodesForBuilder;
 
-            var templateOutputs = shaderNodes.OfType<TemplateOutput>();
+            var template = shaderNodes.OfType<TemplateOutput>().First();
 
             var filename = Path.GetFileNameWithoutExtension(ctx.assetPath);
             bool unlocked = graphView.graphData.unlocked;
 
             var dependencies = new HashSet<string>();
-            foreach (var template in templateOutputs)
+
+            var builder = new ShaderBuilder(unlocked ? GenerationMode.Preview : GenerationMode.Final, graphView, target, unlocked);
+            if (string.IsNullOrEmpty(builder.shaderName) || builder.shaderName == "Default Shader")
             {
-                var builder = new ShaderBuilder(unlocked ? GenerationMode.Preview : GenerationMode.Final, graphView, target, unlocked);
-                if (string.IsNullOrEmpty(builder.shaderName) || builder.shaderName == "Default Shader")
-                {
-                    builder.shaderName = "Graphlit/" + filename;
-                }
-                sw.Restart();
-                builder.BuildTemplate(template);
-                //Debug.Log("Build : " + sw.ElapsedMilliseconds);
-                var scriptingDefines = PlayerSettings.GetScriptingDefineSymbols(UnityEditor.Build.NamedBuildTarget.Standalone);
-                foreach (var pass in builder.passBuilders)
-                {
-                    pass.pragmas.Add("#define TARGET_" + target.ToString().ToUpper());
-
-                    if (!string.IsNullOrEmpty(scriptingDefines))
-                    {
-                        foreach (var define in scriptingDefines.Split(';'))
-                        {
-                            pass.pragmas.Add("#define SCRIPTING_DEFINE_" + define);
-                        }
-                    }
-
-                }
-
-                template.OnImportAsset(ctx, builder);
-
-                dependencies.UnionWith(builder.dependencies);
+                builder.shaderName = "Graphlit/" + filename;
             }
+            sw.Restart();
+            builder.BuildTemplate(template);
+            //Debug.Log("Build : " + sw.ElapsedMilliseconds);
+            var scriptingDefines = PlayerSettings.GetScriptingDefineSymbols(UnityEditor.Build.NamedBuildTarget.Standalone);
+            foreach (var pass in builder.passBuilders)
+            {
+                pass.pragmas.Add("#define TARGET_" + target.ToString().ToUpper());
+
+                if (!string.IsNullOrEmpty(scriptingDefines))
+                {
+                    foreach (var define in scriptingDefines.Split(';'))
+                    {
+                        pass.pragmas.Add("#define SCRIPTING_DEFINE_" + define);
+                    }
+                }
+
+            }
+
+            template.OnImportAsset(ctx, builder);
+
+            dependencies.UnionWith(builder.dependencies);
+
 
 
             foreach (var dependency in dependencies)
