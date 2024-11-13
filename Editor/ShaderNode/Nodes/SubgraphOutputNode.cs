@@ -94,8 +94,6 @@ namespace Graphlit
             defaultPreviewState.RegisterValueChangedCallback(x => graphData.defaultPreviewState = (GraphData.DefaultPreviewState)x.newValue);
             root.Add(defaultPreviewState);
 
-            root.Add(PropertyDescriptor.CreateReordableListElement(graphData.properties, GraphView));
-
             root.Add(CreateReordableListElement(graphData.subgraphInputs, false));
             root.Add(CreateReordableListElement(graphData.subgraphOutputs, true));
         }

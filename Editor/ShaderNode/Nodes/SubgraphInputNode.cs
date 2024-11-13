@@ -42,15 +42,19 @@ namespace Graphlit
 
             ResetPorts();
 
-            propertyDescriptor.onValueChange += () =>
+            if (propertyDescriptor is not null)
             {
-                if (TitleLabel is null || propertyDescriptor is null)
+                propertyDescriptor.onValueChange += () =>
                 {
-                    return;
-                }
-                TitleLabel.text = propertyDescriptor.displayName;
-            };
-            TitleLabel.text = propertyDescriptor.displayName;
+                    if (TitleLabel is null)
+                    {
+                        return;
+                    }
+                    TitleLabel.text = propertyDescriptor.displayName;
+                };
+                TitleLabel.text = propertyDescriptor.displayName; 
+            }
+
         }
 
         public override void AdditionalElements(VisualElement root)
@@ -58,7 +62,7 @@ namespace Graphlit
             var imgui = new IMGUIContainer();
             imgui.onGUIHandler = () =>
             {
-                propertyDescriptor.PropertyEditorGUI();
+                propertyDescriptor?.PropertyEditorGUI();
             };
             root.Add(imgui);
         }

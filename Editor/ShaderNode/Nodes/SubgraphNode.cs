@@ -121,9 +121,10 @@ namespace Graphlit
             var currentPass = visitor._shaderBuilder.passBuilders[visitor.Pass];
             currentPass.attributes.UnionWith(subgraphPass.attributes);
             currentPass.varyings.UnionWith(subgraphPass.varyings);
+            GraphView.uniqueID = subgraphView.uniqueID;
 
-
-            //visitor._shaderBuilder.dependencies.Add(assetPath);
+            visitor._shaderBuilder.dependencies.UnionWith(subgraphBuilder.dependencies);
+            visitor._shaderBuilder.dependencies.Add(AssetDatabase.GetAssetPath(subgraph));
         }
     }
 }
