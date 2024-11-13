@@ -11,6 +11,29 @@ namespace Graphlit
             _attributes = attributes;
         }
 
+        public void UnionWith(ShaderVaryings other)
+        {
+            foreach (var otherCustomVaryingsString in other.customVaryingsStrings)
+            {
+                customVaryingsStrings.Add(otherCustomVaryingsString);
+            }
+
+            foreach (var varyingDescriptor in other.varyings)
+            {
+                var existingIndex = varyings.FindIndex(x => x.name == varyingDescriptor.name);
+                if (existingIndex >= 0)
+                {
+                    var existing = varyings[existingIndex];
+                    existing.channels = Mathf.Max(existing.channels, varyingDescriptor.channels);
+                    varyings[existingIndex] = existing;
+                }
+                else
+                {
+                    varyings.Add(varyingDescriptor);
+                }
+            }
+        }
+
         readonly ShaderAttributes _attributes;
         
         [System.Serializable]

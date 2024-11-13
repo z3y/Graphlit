@@ -103,12 +103,12 @@ namespace Graphlit
 
             subgraphView.uniqueID = GraphView.uniqueID;
             //var subgraphResults = visitor._shaderBuilder.BuildSubgraph(sub.graph, visitor, sub.path);
-            var builder = new ShaderBuilder(GenerationMode.Final, subgraphView, BuildTarget.StandaloneWindows64, false);
-            var pass = new PassBuilder("", "", "");
-            builder.AddPass(pass);
-            builder.Build(subgraphOutput);
-
-            foreach (var line in pass.surfaceDescription)
+            var subgraphBuilder = new ShaderBuilder(GenerationMode.Final, subgraphView, BuildTarget.StandaloneWindows64, false);
+            var subgraphPass = new PassBuilder("", "", "");
+            subgraphBuilder.AddPass(subgraphPass);
+            subgraphBuilder.Build(subgraphOutput);
+            
+            foreach (var line in subgraphPass.surfaceDescription)
             {
                 visitor.AppendLine(line);
             }
@@ -117,6 +117,11 @@ namespace Graphlit
                 int id = item.GetPortID();
                 PortData[id] = subgraphOutput.subgraphResults[id];
             }
+
+            var currentPass = visitor._shaderBuilder.passBuilders[visitor.Pass];
+            currentPass.attributes.UnionWith(subgraphPass.attributes);
+            currentPass.varyings.UnionWith(subgraphPass.varyings);
+
 
             //visitor._shaderBuilder.dependencies.Add(assetPath);
         }

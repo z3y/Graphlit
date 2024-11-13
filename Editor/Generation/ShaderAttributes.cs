@@ -46,6 +46,19 @@ namespace Graphlit
         public HashSet<string> customAttributes = new();
         public HashSet<string> attributeDefines = new();
 
+        public void UnionWith(ShaderAttributes other)
+        {
+            foreach (var attr in other.attributes)
+            {
+                RequireInternal(attr.type, attr.name, attr.semantic, attr.channels);
+            }
+
+            foreach (var otherCustomAttribute in other.customAttributes)
+            {
+                customAttributes.Add(otherCustomAttribute);
+            }
+        }
+
         public string RequirePositionOS(int channels = 3) => RequireInternal(AttributeType.PositionOS, "positionOS", "POSITION", channels);
         public string RequireNormalOS(int channels = 3) => RequireInternal(AttributeType.NormalOS, "normalOS", "NORMAL", channels);
         public string RequireTangentOS(int channels = 4) => RequireInternal(AttributeType.TangentOS, "tangentOS", "TANGENT", channels);
