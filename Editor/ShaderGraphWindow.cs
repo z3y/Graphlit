@@ -33,7 +33,7 @@ namespace Graphlit
             container.style.flexDirection = FlexDirection.RowReverse;
             rootVisualElement.Add(container);
             AddGraphView(container);
-            var serializableGraph = ShaderGraphImporter.ReadGraphData(importerGuid);
+            var serializableGraph = GraphlitImporter.ReadGraphData(importerGuid);
             serializableGraph.PopulateGraph(graphView);
 
             AddBar(rootVisualElement);
@@ -83,7 +83,7 @@ namespace Graphlit
             }
             var previousSelection = Selection.activeObject;
             Selection.activeObject = null;
-            ShaderGraphImporter.SaveGraphAndReimport(graphView, importerGuid);
+            GraphlitImporter.SaveGraphAndReimport(graphView, importerGuid);
             base.SaveChanges();
 
             Selection.activeObject = previousSelection;
@@ -103,13 +103,13 @@ namespace Graphlit
             {
                 Initialize(importerGuid, false);
                 ShaderBuilder.GenerateAllPreviews(graphView);
-                ShaderGraphImporter._graphViews[importerGuid] = graphView;
+                GraphlitImporter._graphViews[importerGuid] = graphView;
             }
         }
 
         private void OnDisable()
         {
-            ShaderGraphImporter._graphViews[importerGuid] = null;
+            GraphlitImporter._graphViews[importerGuid] = null;
             disabled = true;
 
             var nodes = graphView.nodes.OfType<ShaderNode>();

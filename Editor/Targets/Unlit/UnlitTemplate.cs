@@ -11,7 +11,7 @@ namespace Graphlit
     public class UnlitTemplate : TemplateOutput
     {
         [MenuItem("Assets/Create/Graphlit/Unlit Graph")]
-        public static void CreateVariantFile() => ShaderGraphImporter.CreateEmptyTemplate(new UnlitTemplate(),
+        public static void CreateVariantFile() => GraphlitImporter.CreateEmptyTemplate(new UnlitTemplate(),
             x => x.graphData.vrcFallbackTags.type = VRCFallbackTags.ShaderType.Unlit);
 
         public override string Name { get; } = "Unlit";

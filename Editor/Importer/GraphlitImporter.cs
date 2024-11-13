@@ -14,7 +14,7 @@ using Graphlit.Nodes.PortType;
 namespace Graphlit
 {
     [ScriptedImporter(9, new[] { "graphlit", "zsg" }, 0)]
-    public class ShaderGraphImporter : ScriptedImporter
+    public class GraphlitImporter : ScriptedImporter
     {
         internal static Dictionary<string, ShaderGraphView> _graphViews = new();
         internal static string _lastImport;
@@ -40,9 +40,9 @@ namespace Graphlit
             sw.Start();
 
 
-            if (this is ShaderSubGraphImporter)
+            if (this is SubGraphlitImporter)
             {
-                ShaderSubGraphImporter.BuildSubgraph(ctx);
+                SubGraphlitImporter.BuildSubgraph(ctx);
                 return;
             }
 
@@ -196,7 +196,7 @@ namespace Graphlit
             var unityObject = EditorUtility.InstanceIDToObject(instanceID);
             var path = AssetDatabase.GetAssetPath(unityObject);
             var importer = AssetImporter.GetAtPath(path);
-            if (importer is not ShaderGraphImporter shaderGraphImporter)
+            if (importer is not GraphlitImporter shaderGraphImporter)
             {
                 return false;
             }

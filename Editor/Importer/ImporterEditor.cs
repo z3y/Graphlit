@@ -6,7 +6,7 @@ using UnityEditorInternal;
 namespace Graphlit
 {
 
-    [CustomEditor(typeof(ShaderGraphImporter))]
+    [CustomEditor(typeof(GraphlitImporter))]
     internal class ShaderGraphImporterEditor : ScriptedImporterEditor
     {
         /*public override VisualElement CreateInspectorGUI()
@@ -29,25 +29,25 @@ namespace Graphlit
 
         public override void OnInspectorGUI()
         {
-            var importer = (ShaderGraphImporter)serializedObject.targetObject;
+            var importer = (GraphlitImporter)serializedObject.targetObject;
             base.OnInspectorGUI();
 
 
             if (GUILayout.Button("Edit Shader"))
             {
-                ShaderGraphImporter.OpenInGraphView(AssetDatabase.GUIDFromAssetPath(importer.assetPath).ToString());
+                GraphlitImporter.OpenInGraphView(AssetDatabase.GUIDFromAssetPath(importer.assetPath).ToString());
             }
             if (GUILayout.Button("Show Generated Shader"))
             {
                 AssetDatabase.ImportAsset(importer.assetPath, ImportAssetOptions.ForceUpdate);
                 string path = "Temp/Graphlit.shader";
-                File.WriteAllText(path, ShaderGraphImporter._lastImport);
+                File.WriteAllText(path, GraphlitImporter._lastImport);
                 InternalEditorUtility.OpenFileAtLineExternal(Path.GetFullPath(path), 0);
             }
             if (GUILayout.Button("Copy Shader"))
             {
                 AssetDatabase.ImportAsset(importer.assetPath, ImportAssetOptions.ForceUpdate);
-                GUIUtility.systemCopyBuffer = ShaderGraphImporter._lastImport;
+                GUIUtility.systemCopyBuffer = GraphlitImporter._lastImport;
             }
         }
 

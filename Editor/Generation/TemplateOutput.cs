@@ -152,7 +152,7 @@ namespace Graphlit
         public virtual void OnImportAsset(AssetImportContext ctx, ShaderBuilder builder)
         {
             var result = builder.ToString();
-            ShaderGraphImporter._lastImport = result;
+            GraphlitImporter._lastImport = result;
             var shader = ShaderUtil.CreateShaderAsset(ctx, result, false);
 
             if (builder._nonModifiableTextures.Count > 0)
@@ -164,7 +164,7 @@ namespace Graphlit
                 EditorMaterialUtility.SetShaderNonModifiableDefaults(shader, builder._defaultTextures.Keys.ToArray(), builder._defaultTextures.Values.ToArray());
             }
 
-            ctx.AddObjectToAsset("Main Asset", shader, ShaderGraphImporter.Thumbnail);
+            ctx.AddObjectToAsset("Main Asset", shader, GraphlitImporter.Thumbnail);
 
 
             string prefix = GraphView.graphData.unlocked ? "Unlocked " : "";

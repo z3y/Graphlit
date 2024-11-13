@@ -66,7 +66,7 @@ namespace Graphlit
             style.backgroundColor = new Color(0.14f, 0.14f, 0.14f, 1);
 
             // search window
-            if (_searchWindow == null)
+            if (!_searchWindow)
             {
                 _searchWindow = ScriptableObject.CreateInstance<ShaderNodeSearchWindow>();
                 _searchWindow.Initialize(this);
@@ -274,7 +274,7 @@ namespace Graphlit
 
         public void CreateNode(ShaderNode node, Vector2 position, bool transform = true)
         {
-            if (_editorWindow != null)
+            if (_editorWindow)
             {
                 _editorWindow.SetDirty();
             }

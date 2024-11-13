@@ -12,13 +12,13 @@ namespace Graphlit
     public class LitTemplate : TemplateOutput
     {
         [MenuItem("Assets/Create/Graphlit/Lit Graph")]
-        public static void CreateVariantFile() => ShaderGraphImporter.CreateEmptyTemplate<LitTemplate>();
+        public static void CreateVariantFile() => GraphlitImporter.CreateEmptyTemplate<LitTemplate>();
 
         [MenuItem("Assets/Create/Graphlit/Toon Graph")]
         public static void CreateToonVariant()
         {
             const string samplePath = "Packages/com.z3y.graphlit/Shaders/Toon.graphlit";
-            var graph = ShaderGraphImporter.ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
+            var graph = GraphlitImporter.ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
             graph.data.shaderName = "Default Shader";
 
             var jsonData = EditorJsonUtility.ToJson(graph, true);
@@ -29,7 +29,7 @@ namespace Graphlit
         public static void CreateCustomVariant()
         {
             const string samplePath = "Packages/com.z3y.graphlit/Shaders/Custom.graphlit";
-            var graph = ShaderGraphImporter.ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
+            var graph = GraphlitImporter.ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
             graph.data.shaderName = "Default Shader";
 
             var jsonData = EditorJsonUtility.ToJson(graph, true);
