@@ -197,6 +197,8 @@ namespace Graphlit
             states.Add("ZWrite", "Off");
             states.Add("Blend", "SrcAlpha OneMinusSrcAlpha");
 
+            states.Add("Stencil", "{Ref 1\nComp Equal}");
+
             PortBindings.GetBindingString(pass, ShaderStage.Fragment, 2, PortBinding.UV0);
 
 
