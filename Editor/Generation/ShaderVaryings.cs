@@ -12,11 +12,11 @@ namespace Graphlit
         }
 
         readonly ShaderAttributes _attributes;
-
+        
+        [System.Serializable]
         public struct VaryingDescriptor
         {
             public string name;
-            public string prefix;
             public string passthrough;
             public int channels;
         }
@@ -32,10 +32,7 @@ namespace Graphlit
 
         public void RequireCustomString(string varying)
         {
-            if (!customVaryingsStrings.Contains(varying))
-            {
-                customVaryingsStrings.Add(varying);
-            }
+            customVaryingsStrings.Add(varying);
         }
         private int _interpCounter = 0;
         public string RequireCustom(int channels, string value)

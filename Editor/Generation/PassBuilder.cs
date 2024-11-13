@@ -19,8 +19,6 @@ namespace Graphlit
         public Dictionary<string, string> tags = new();
         public Dictionary<string, string> renderStates = new();
         public List<string> pragmas = new();
-        public List<string> cbuffer = new();
-        public List<string> objectDecleration = new();
         public List<string> functions = new();
         public List<string> preincludes = new();
         public List<string> vertexDescription = new();

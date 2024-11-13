@@ -8,7 +8,8 @@ namespace Graphlit
         {
             _object = obj;
         }
-        T _object;
+
+        readonly T _object;
         int _rc = 0;
         public T Clone()
         {
@@ -18,7 +19,7 @@ namespace Graphlit
         public void Drop()
         {
             _rc--;
-            if (_rc <= 0 && _object != null)
+            if (_rc <= 0 && _object)
             {
                 Object.DestroyImmediate(_object);
             }
