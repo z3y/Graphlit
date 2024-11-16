@@ -46,15 +46,32 @@ namespace Graphlit
 
             foreach (var output in outputs)
             {
-                output.AddPropertyDescriptor(this, PortDirection.Output);
+                output.AddPortDescriptor(this, PortDirection.Output);
             }
 
             foreach (var input in inputs)
             {
-                input.AddPropertyDescriptor(this, PortDirection.Input);
+                input.AddPortDescriptor(this, PortDirection.Input);
             }
 
             ResetPorts();
+        }
+
+        public void ReinitializePorts()
+        {
+            SafeModifyPortElements(() =>
+            {
+                inputContainer.Clear();
+                outputContainer.Clear();
+                Initialize();
+            });
+        }
+
+        public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
+        {
+            base.BuildContextualMenu(evt);
+            
+            evt.menu.AppendAction("Reinitialize Subgraph", (a) => { ReinitializePorts(); });
         }
 
         public override void AdditionalElements(VisualElement root)
@@ -94,7 +111,7 @@ namespace Graphlit
                 }
 
                 int id = item.ID;
-                string name = $"SubgraphInput_{id}_{uniqueID}";
+                string name = $"SubgraphInput_{viewDataKey.Replace("-", "_")}_{id}_{uniqueID}";
                 //Debug.Log(subgraphResults[id].Name);
                 //PortData[id] = subgraphResults[id];
                 visitor.AppendLine($"{item.Type} {name} = {PortData[id].Name};");

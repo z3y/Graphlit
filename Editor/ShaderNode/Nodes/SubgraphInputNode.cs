@@ -26,8 +26,7 @@ namespace Graphlit
 
         public override void Initialize()
         {
-            var output = GraphView.graphData.subgraphInputs.Where(x => x.id == _ref).FirstOrDefault();
-
+            var output = GraphView.graphData.subgraphInputs.FirstOrDefault(x => x.id == _ref);
 
             if (output is null)
             {
@@ -35,7 +34,7 @@ namespace Graphlit
             }
 
             //PortDescriptor desc;
-            output.AddPropertyDescriptor(this, PortDirection.Output);
+            output.AddPortDescriptor(this, PortDirection.Output);
 
 
             //TitleLabel.text = propertyDescriptor.Name;

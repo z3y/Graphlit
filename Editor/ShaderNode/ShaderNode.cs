@@ -109,7 +109,7 @@ namespace Graphlit
             }
         }
 
-        public IEnumerable<Port> PortElements => Inputs.Union(Outputs);
+        public IEnumerable<Port> PortElements => Inputs.Concat(Outputs);
         public virtual IEnumerable<Port> Inputs => inputContainer.Children().OfType<Port>();
         public virtual IEnumerable<Port> Outputs => outputContainer.Children().OfType<Port>();
 
@@ -190,8 +190,8 @@ namespace Graphlit
 
         public void CleanLooseEdges()
         {
-            var eges = GraphView.graphElements.OfType<Edge>();
-            foreach (var edge in eges)
+            var edges = GraphView.graphElements.OfType<Edge>();
+            foreach (var edge in edges)
             {
                 if (!(edge.input.connected && edge.output.connected))
                 {
@@ -199,28 +199,55 @@ namespace Graphlit
                 }
             }
         }
-        // serialize, disconnect then reconnect
-        public void SafeModifyInputs(Action a)
+        // store connections, disconnect and reconnect
+        public void SafeModifyPortElements(Action a)
         {
-            var node = new SerializableNode(this);
+            var connections = new Dictionary<int, (string, int)>();
+            
+            foreach (var portElement in PortElements)
+            {
+                foreach (var connection in portElement.connections)
+                {
+                    var port = portElement.direction == Direction.Input ? connection.output : connection.input;
+                    connections[portElement.GetPortID()] = (port.node.viewDataKey, port.GetPortID());
+                }
+            }
 
-
-            foreach (var port in Inputs.ToArray())
+            foreach (var port in PortElements.ToArray())
             {
                 Disconnect(port);
                 port.parent.Remove(port);
             }
-
+            CleanLooseEdges();
             portDescriptors.Clear();
             _portBindings.Clear();
 
             a.Invoke();
+            
+            foreach (var connection in connections)
+            {
+                var port = PortElements.FirstOrDefault(x => x.GetPortID() == connection.Key);
+                if (port is null)
+                {
+                    continue;
+                }
 
-            var sg = new SerializableGraph();
-            sg.nodes.Add(node);
-            sg.SetupNodeConnections(GraphView);
+                var guid = connection.Value.Item1;
+                var connectedID = connection.Value.Item2;
+                var connectedNode = GraphView.graphElements.OfType<ShaderNode>().FirstOrDefault(x => x.viewDataKey == guid);
+                if (connectedNode is null)
+                {
+                    continue;
+                }
 
-            CleanLooseEdges();
+                var connectedPort = connectedNode.PortElements.FirstOrDefault(x => x.GetPortID() == connectedID);
+                if (connectedPort is null)
+                {
+                    continue;
+                }
+                var newEdge = port.ConnectTo(connectedPort);
+                GraphView.AddElement(newEdge);
+            }
         }
 
         // what the fuck does this do

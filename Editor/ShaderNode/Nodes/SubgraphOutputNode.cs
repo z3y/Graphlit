@@ -13,7 +13,7 @@ using System.Linq;
 namespace Graphlit
 {
 
-    [NodeInfo("Targets/Subgraph"), Serializable]
+    [NodeInfo("Targets/Subgraph Output"), Serializable]
     public class SubgraphOutputNode : ShaderNode
     {
         [Serializable]
@@ -46,7 +46,7 @@ namespace Graphlit
                 };
             }
 
-            public void AddPropertyDescriptor(ShaderNode node, PortDirection direction)
+            public void AddPortDescriptor(ShaderNode node, PortDirection direction)
             {
                 if (type == "Float")
                 {
@@ -82,7 +82,7 @@ namespace Graphlit
             var data = GraphView.graphData;
             foreach (var output in data.subgraphOutputs)
             {
-                output.AddPropertyDescriptor(this, PortDirection.Input);
+                output.AddPortDescriptor(this, PortDirection.Input);
             }
             ResetPorts();
         }
