@@ -44,7 +44,8 @@ struct FragmentData
         float3 unnormalizedNormalWS = output.normalWS;
         float renormFactor = 1.0 / length(unnormalizedNormalWS);
 
-        output.positionOS = mul(unity_WorldToObject, float4(output.positionWS, 1.0)).xyz;
+        // output.positionOS = mul(unity_WorldToObject, float4(output.positionWS, 1.0)).xyz;
+        output.positionOS = TransformWorldToObject(output.positionWS);
         output.normalOS = normalize(mul(output.normalWS, (float3x3)UNITY_MATRIX_M));
         output.tangentOS = TransformWorldToObjectDir(tangentWS.xyz);
         output.bitangentOS = TransformWorldToObjectDir(output.bitangentWS);
