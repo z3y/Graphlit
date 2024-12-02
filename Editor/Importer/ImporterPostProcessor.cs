@@ -19,31 +19,30 @@ namespace Graphlit
                     continue;
                 }
                 
-                var extension = Path.GetExtension(importedAsset);
-                if (extension == ".subgraphlit")
+                var activeGraphViews = GraphlitImporter._graphViews.Values;
+                foreach (var activeGraphView in activeGraphViews)
                 {
-                    var activeGraphViews = GraphlitImporter._graphViews.Values;
-                    foreach (var activeGraphView in activeGraphViews)
+                    if (activeGraphView is null)
                     {
-                        if (activeGraphView is null)
+                        continue;
+                    }
+
+                    var subgraphNodes = activeGraphView.graphElements.OfType<SubgraphNode>();
+                    foreach (var subgraphNode in subgraphNodes)
+                    {
+                        if (subgraphNode.subgraph != subgraphObject)
                         {
                             continue;
                         }
 
-                        var subgraphNodes = activeGraphView.graphElements.OfType<SubgraphNode>();
-                        foreach (var subgraphNode in subgraphNodes)
+                        subgraphNode.ReinitializePorts();
+                        if (activeGraphView._editorWindow)
                         {
-                            if (subgraphNode.subgraph != subgraphObject)
-                            {
-                                continue;
-                            }
-
-                            subgraphNode.ReinitializePorts();
-                            Debug.Log("Updating node");
+                            activeGraphView._editorWindow.SetDirty();
                         }
+                        // Debug.Log("Updating node");
                     }
                 }
-                
             }
         }
     }

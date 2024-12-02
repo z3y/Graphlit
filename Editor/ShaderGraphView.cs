@@ -14,7 +14,7 @@ namespace Graphlit
     public class ShaderGraphView : GraphView
     {
         private ShaderNodeSearchWindow _searchWindow;
-        private ShaderGraphWindow _editorWindow;
+        internal ShaderGraphWindow _editorWindow;
 
         public GraphData graphData;
         public VisualElement additionalNodeElements;
@@ -190,10 +190,8 @@ namespace Graphlit
             var data = new SerializableGraph();
             EditorJsonUtility.FromJsonOverwrite(jsonData, data);
 
-            var offset = lastMousePos - copyMousePos;
-            //TransformMousePositionToLocalSpace(ref offset, true);
-
-            var graphElements = data.PasteElementsAndOverwiteGuids(this, offset);
+            data.Reposition(lastMousePos);
+            var graphElements = data.PasteElementsAndOverwiteGuids(this);
 
             ClearSelection();
 
@@ -201,49 +199,9 @@ namespace Graphlit
             {
                 AddToSelection(graphElement);
             }
+            
         }
-
-        /*private SerializedGraphDataSo _serializedGraphDataSo;
-        private List<SerializableGraph> _undoStates = new();
-        int _undoIndex = 0;
-        public void RecordUndo()
-        {
-            if (_serializedGraphDataSo == null)
-            {
-                _serializedGraphDataSo = ScriptableObject.CreateInstance<SerializedGraphDataSo>();
-            }
-            Undo.RegisterCompleteObjectUndo(_serializedGraphDataSo, "Graph Undo");
-
-            var data = SerializableGraph.StoreGraph(this);
-            _undoStates.Add(data);
-            _undoIndex = _undoStates.Count - 1;
-
-            _serializedGraphDataSo.graphView = this;
-            EditorUtility.SetDirty(_serializedGraphDataSo);
-            _editorWindow.SetDirty();
-            _serializedGraphDataSo.Init();
-
-            Debug.Log("Record Undo");
-
-        }*/
-
-       /* public void OnUndoRedoPerformed(in UndoRedoInfo undo)
-        {
-            if (_undoStates.Count <= 0)
-            {
-                return;
-            }
-
-            Debug.Log("Undo");
-
-            var data = _undoStates.Pop();
-
-            DeleteElements(graphElements);
-
-            data.PopulateGraph(this);
-        }*/
-
-
+        
         private IManipulator CreateGroupContextualMenu()
         {
             return new ContextualMenuManipulator(

@@ -174,7 +174,7 @@ namespace Graphlit
             return newGraph;
         }
 
-        public List<ShaderNode> PasteElementsAndOverwiteGuids(ShaderGraphView graphView, Vector2? positionOffset = null)
+        public List<ShaderNode> PasteElementsAndOverwiteGuids(ShaderGraphView graphView)
         {
             var newElements = GenerateNewGUIDs();
 
@@ -194,15 +194,7 @@ namespace Graphlit
             foreach (var serializableNode in newElements.nodes)
             {
                 var graphElement = graphView.AddNode(serializableNode);
-
-                if (positionOffset is Vector2 offset)
-                {
-                    var previousPosition = serializableNode.Position;
-                    graphElement.SetPosition(new Rect(previousPosition + offset, Vector2.one));
-                }
                 graphElements.Add(graphElement);
-
-
             }
 
             newElements.SetupNodeConnections(graphView);
@@ -212,6 +204,29 @@ namespace Graphlit
             UpdatePreviews(graphView);
 
             return graphElements;
+        }
+
+        public void Reposition(Vector2 center)
+        {
+            Vector2 previousCenter = Vector2.zero;
+
+            foreach (var node in nodes)
+            {
+                previousCenter += node.Position;
+            }
+
+            previousCenter /= nodes.Count;
+
+            Vector2 offset = center - previousCenter;
+
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                SerializableNode node = nodes[i];
+                var node1 = node;
+                node1.x = (int)(node1.x + offset.x);
+                node1.y = (int)(node1.y + offset.y);
+                nodes[i] = node1;
+            }
         }
 
         public void SetupNodeConnections(ShaderGraphView graphView)
