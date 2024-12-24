@@ -161,7 +161,7 @@ namespace Graphlit
             }
             if (builder._defaultTextures.Count > 0)
             {
-                EditorMaterialUtility.SetShaderNonModifiableDefaults(shader, builder._defaultTextures.Keys.ToArray(), builder._defaultTextures.Values.ToArray());
+                EditorMaterialUtility.SetShaderDefaults(shader, builder._defaultTextures.Keys.ToArray(), builder._defaultTextures.Values.ToArray());
             }
 
             ctx.AddObjectToAsset("Main Asset", shader, GraphlitImporter.Thumbnail);
