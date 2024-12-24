@@ -352,6 +352,8 @@
             "doubleSided": false
         },
         "unlocked": false,
+        "subgraphOutputs": [],
+        "subgraphInputs": [],
         "subgraphOutputIdCounter": 0
     },
     "nodes": [

@@ -71,21 +71,24 @@ namespace Graphlit
                 bool hasKeyword = false;
                 if (visitor.GenerationMode == GenerationMode.Final && this is SampleTexture2DNode sample2d)
                 {
-                    var connectedProp = (IHasPropertyDescriptor)_texturePort.connections.First().output.node;
-                    var desc = connectedProp.GetPropertyDescriptor();
-                    if (sample2d.autoKeyword)
+                    var node = _texturePort.connections.First().output.node;
+                    if (node is IHasPropertyDescriptor connectedProp)
                     {
-                        hasKeyword = true;
-                        var keyword = PropertyDescriptor.GetAutoKeywordName(desc.GetReferenceName(visitor.GenerationMode));
-                        var defaultValueStr = desc.DefaultTextureToValue();
-                        desc.autoKeyword = true;
+                        var desc = connectedProp.GetPropertyDescriptor();
+                        if (sample2d.autoKeyword)
+                        {
+                            hasKeyword = true;
+                            var keyword = PropertyDescriptor.GetAutoKeywordName(desc.GetReferenceName(visitor.GenerationMode));
+                            var defaultValueStr = desc.DefaultTextureToValue();
+                            desc.autoKeyword = true;
 
-                        visitor.AddPragma($"#pragma shader_feature_local {keyword}");
+                            visitor.AddPragma($"#pragma shader_feature_local {keyword}");
 
 
-                        visitor.AppendLine($"#ifndef {keyword}");
-                        visitor.AppendLine($"{PrecisionString(4)} {PortData[OUT_RGBA].Name} = {defaultValueStr};");
-                        visitor.AppendLine($"#else");
+                            visitor.AppendLine($"#ifndef {keyword}");
+                            visitor.AppendLine($"{PrecisionString(4)} {PortData[OUT_RGBA].Name} = {defaultValueStr};");
+                            visitor.AppendLine($"#else");
+                        }
                     }
                 }
 
