@@ -117,6 +117,14 @@ namespace Graphlit
             // taken from shader graph, why isnt this already included ;w;
             foreach (var node in _existingNodeTypes)
             {
+                if (!_graphView.IsSubgraph)
+                {
+                    if (node.Name == "SubgraphInputNode" ||
+                        node.Name == "SubgraphOutputNode")
+                    {
+                        continue;
+                    }
+                }
                 // `createIndex` represents from where we should add new group entries from the current entry's group path.
                 var createIndex = int.MaxValue;
                 var nodeInfo = node.GetCustomAttribute<NodeInfo>();
