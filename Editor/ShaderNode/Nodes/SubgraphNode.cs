@@ -84,6 +84,7 @@ namespace Graphlit
             file.RegisterValueChangedCallback(x =>
             {
                 subgraph = (SubgraphObject)x.newValue;
+                ReinitializePorts();
             });
 
             root.Add(file);
