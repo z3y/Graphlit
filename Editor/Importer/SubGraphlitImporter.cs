@@ -12,5 +12,15 @@ namespace Graphlit
         {
             ctx.AddObjectToAsset("Subgraph Asset", ScriptableObject.CreateInstance<SubgraphObject>());
         }
+
+        [MenuItem("Assets/Create/Graphlit/Subgraph")]
+        public static void CreateVariantFile()
+        {
+            const string samplePath = "Packages/com.z3y.graphlit/Shaders/Subgraph.subgraphlit";
+            var graph = ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
+
+            var jsonData = EditorJsonUtility.ToJson(graph, true);
+            ProjectWindowUtil.CreateAssetWithContent($"Subgraph.subgraphlit", jsonData);
+        }
     }
 }

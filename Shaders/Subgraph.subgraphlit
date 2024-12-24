@@ -1,0 +1,81 @@
+{
+    "data": {
+        "shaderName": "Graphlit/New Shader Graph",
+        "properties": [],
+        "precision": 0,
+        "defaultPreviewState": 1,
+        "customEditor": "",
+        "fallback": "",
+        "include": "",
+        "outlinePass": 0,
+        "stencil": false,
+        "vrcFallbackTags": {
+            "type": 1,
+            "mode": 0,
+            "doubleSided": false
+        },
+        "unlocked": false,
+        "subgraphOutputs": [
+            {
+                "name": "Out",
+                "value": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                },
+                "dimension": 1,
+                "id": 6,
+                "type": "Float",
+                "binding": -1
+            }
+        ],
+        "subgraphInputs": [
+            {
+                "name": "In",
+                "value": {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0,
+                    "w": 0.0
+                },
+                "dimension": 1,
+                "id": 7,
+                "type": "Float",
+                "binding": -1
+            }
+        ],
+        "subgraphOutputIdCounter": 8
+    },
+    "nodes": [
+        {
+            "type": "Graphlit.SubgraphInputNode",
+            "guid": "93d77a58-f82a-4fc7-9d9d-19da58805cdc",
+            "x": -202,
+            "y": 225,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":7}"
+        },
+        {
+            "type": "Graphlit.SubgraphOutputNode",
+            "guid": "5428163f-98bf-426a-8904-6df83db0933e",
+            "x": 235,
+            "y": 225,
+            "connections": [
+                {
+                    "a": 7,
+                    "b": 6,
+                    "node": "93d77a58-f82a-4fc7-9d9d-19da58805cdc"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{}"
+        }
+    ],
+    "groups": []
+}
