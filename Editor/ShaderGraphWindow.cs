@@ -66,6 +66,10 @@ namespace Graphlit
 
         public string GetShaderDisplayName(GraphData data)
         {
+            if (graphView.IsSubgraph)
+            {
+                return Path.GetFileNameWithoutExtension(AssetDatabase.GUIDToAssetPath(importerGuid));
+            }
             if (string.IsNullOrEmpty(data.shaderName) || data.shaderName == "Default Shader")
             {
                 return data.shaderName = "Graphlit/" + Path.GetFileNameWithoutExtension(AssetDatabase.GUIDToAssetPath(importerGuid));
