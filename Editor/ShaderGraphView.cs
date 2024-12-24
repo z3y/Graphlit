@@ -50,6 +50,8 @@ namespace Graphlit
             }
         }
 
+        public bool IsSubgraph => _assetPath.EndsWith(".subgraphlit");
+
         string _assetPath;
         public ShaderGraphView(ShaderGraphWindow editorWindow, string assetPath)
         {
@@ -412,7 +414,8 @@ namespace Graphlit
         {
             if (DragAndDrop.objectReferences.Length > 0)
             {
-                if (DragAndDrop.objectReferences[0] is Texture2D)
+                if (DragAndDrop.objectReferences[0] is Texture2D
+                    || DragAndDrop.objectReferences[0] is SubgraphObject)
                 {
                     DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
                     evt.StopPropagation();
@@ -470,6 +473,13 @@ namespace Graphlit
                     AddElement(newEdge);
                     node.GeneratePreviewForAffectedNodes();
                     pos.y += 400;
+                }
+                else if (obj is SubgraphObject subgraphObj)
+                {
+                    var node = new SubgraphNode();
+                    node.subgraph = subgraphObj;
+                    CreateNode(node, pos, false);
+                    node.ReinitializePorts();
                 }
             }
 
