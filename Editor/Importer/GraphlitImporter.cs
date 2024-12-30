@@ -117,26 +117,19 @@ namespace Graphlit
 
         public static void CreateEmptyTemplate(TemplateOutput template, Action<ShaderGraphView> onCreate = null)
         {
-
+            string samplePath;
             if (template is LitTemplate)
             {
-                const string samplePath = "Packages/com.z3y.graphlit/Shaders/Lit.graphlit";
-                var graph = ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
-                graph.data.shaderName = "Default Shader";
-
-                var jsonData = EditorJsonUtility.ToJson(graph, true);
-                ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.graphlit", jsonData);
+                samplePath = "Packages/com.z3y.graphlit/Shaders/Lit.graphlit";
             }
             else
             {
-                const string samplePath = "Packages/com.z3y.graphlit/Shaders/Unlit.graphlit";
-                var graph = ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
-                graph.data.shaderName = "Default Shader";
-
-                var jsonData = EditorJsonUtility.ToJson(graph, true);
-                ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.graphlit", jsonData);
+                samplePath = "Packages/com.z3y.graphlit/Shaders/Unlit.graphlit";
             }
-
+            var graph = ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
+            graph.data.shaderName = "Default Shader";
+            var jsonData = EditorJsonUtility.ToJson(graph, true);
+            ProjectWindowUtil.CreateAssetWithContent($"New Graphlit Shader.graphlit", jsonData);
         }
         public static void CreateEmptyTemplate<T>() where T : TemplateOutput, new()
         {

@@ -13,7 +13,7 @@
     "url": "https://github.com/z3y"
   },
   "dependencies": {
-    "com.unity.render-pipelines.core": "14.0.8"
+    "com.unity.render-pipelines.core": "14.0.10"
   },
   "description": "A Node shader editor"
 }
