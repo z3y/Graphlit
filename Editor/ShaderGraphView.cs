@@ -75,7 +75,7 @@ namespace Graphlit
             }
             nodeCreationRequest = context => SearchWindow.Open(new SearchWindowContext(context.screenMousePosition, 350, 450), _searchWindow);
 
-            RegisterCallback<KeyDownEvent>(UndoEvent);
+            //RegisterCallback<KeyDownEvent>(UndoEvent);
             RegisterCallback<KeyDownEvent>(NodeHotkeyKeyDown);
 
             RegisterCallback<KeyUpEvent>(NodeHotkeyUpDown);
@@ -109,7 +109,7 @@ namespace Graphlit
                 }
             }
 
-            RecordUndo();
+            //RecordUndo();
             _editorWindow.SetDirty();
             return change;
         }
@@ -249,7 +249,7 @@ namespace Graphlit
                 node._previewDisabled = graphData.defaultPreviewState == GraphData.DefaultPreviewState.Disabled;
             }
             node.InitializeInternal(this, position);
-            RecordUndo();
+            //RecordUndo();
             AddElement(node);
             node.GeneratePreview();
         }
@@ -334,77 +334,77 @@ namespace Graphlit
             _lastKeyCode = KeyCode.None;
         }
 
-        List<string> _udonStates = new List<string>();
-        int _undoCount = 0;
-        public void RecordUndo()
-        {
-            Debug.Log("Record Undo");
-            var graph = SerializableGraph.StoreGraph(this);
-            var json = EditorJsonUtility.ToJson(graph, false);
+        //List<string> _udonStates = new List<string>();
+        //int _undoCount = 0;
+        //public void RecordUndo()
+        //{
+        //    //Debug.Log("Record Undo");
+        //    var graph = SerializableGraph.StoreGraph(this);
+        //    var json = EditorJsonUtility.ToJson(graph, false);
 
-            _udonStates.Add(json);
-            _undoCount = _udonStates.Count;
-        }
-
-
-        private void UndoEvent(KeyDownEvent e)
-        {
-            if (e.target is not ShaderGraphView)
-            {
-                return;
-            }
+        //    _udonStates.Add(json);
+        //    _undoCount = _udonStates.Count;
+        //}
 
 
-            if (!e.ctrlKey)
-            {
-                return;
-            }
+        //private void UndoEvent(KeyDownEvent e)
+        //{
+        //    if (e.target is not ShaderGraphView)
+        //    {
+        //        return;
+        //    }
 
-            var key = e.keyCode;
 
-            if (key == KeyCode.Z)
-            {
-                e.StopPropagation();
+        //    if (!e.ctrlKey)
+        //    {
+        //        return;
+        //    }
 
-                if (_undoCount <= 0)
-                {
-                    Debug.Log("Nothing to Undo");
-                    return;
-                }
+        //    var key = e.keyCode;
 
-                foreach (var element in graphElements)
-                {
-                    RemoveElement(element);
-                }
-                var graph = new SerializableGraph();
-                _undoCount--;
-                EditorJsonUtility.FromJsonOverwrite(_udonStates[_undoCount], graph);
-                graph.PopulateGraph(this);
-                ShaderBuilder.GenerateAllPreviews(this);
+        //    if (key == KeyCode.Z)
+        //    {
+        //        e.StopPropagation();
 
-                Debug.Log("UNDO");
-            }
-            if (key == KeyCode.Y)
-            {
-                e.StopPropagation();
-                if (_undoCount + 1 >= _udonStates.Count)
-                {
-                    Debug.Log("Nothing to Redo");
-                    return;
-                }
-                foreach (var element in graphElements)
-                {
-                    RemoveElement(element);
-                }
-                var graph = new SerializableGraph();
-                _undoCount++;
-                EditorJsonUtility.FromJsonOverwrite(_udonStates[_undoCount], graph);
-                graph.PopulateGraph(this);
-                ShaderBuilder.GenerateAllPreviews(this);
+        //        if (_undoCount <= 0)
+        //        {
+        //            //Debug.Log("Nothing to Undo");
+        //            return;
+        //        }
 
-                Debug.Log("REDO");
-            }
-        }
+        //        foreach (var element in graphElements)
+        //        {
+        //            RemoveElement(element);
+        //        }
+        //        var graph = new SerializableGraph();
+        //        _undoCount--;
+        //        EditorJsonUtility.FromJsonOverwrite(_udonStates[_undoCount], graph);
+        //        graph.PopulateGraph(this);
+        //        ShaderBuilder.GenerateAllPreviews(this);
+
+        //        //Debug.Log("UNDO");
+        //    }
+        //    if (key == KeyCode.Y)
+        //    {
+        //        e.StopPropagation();
+        //        if (_undoCount + 1 >= _udonStates.Count)
+        //        {
+        //            //Debug.Log("Nothing to Redo");
+        //            return;
+        //        }
+        //        foreach (var element in graphElements)
+        //        {
+        //            RemoveElement(element);
+        //        }
+        //        var graph = new SerializableGraph();
+        //        _undoCount++;
+        //        EditorJsonUtility.FromJsonOverwrite(_udonStates[_undoCount], graph);
+        //        graph.PopulateGraph(this);
+        //        ShaderBuilder.GenerateAllPreviews(this);
+
+        //        //Debug.Log("REDO");
+        //    }
+        //}
 
 
         private void NodeHotkey(ClickEvent e)
