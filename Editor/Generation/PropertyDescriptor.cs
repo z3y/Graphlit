@@ -98,6 +98,7 @@ namespace Graphlit
         [SerializeField] public float rangeX;
         [SerializeField] public float rangeY;
         [SerializeField] string _value;
+        [SerializeField] string _autoKeywordName;
         [SerializeField] string _defaultTexture; // read only
         [SerializeField] Texture _defaultTextureObject;
         [SerializeField] public PropertyDeclaration declaration = PropertyDeclaration.Local;
@@ -344,7 +345,7 @@ namespace Graphlit
 
             if (autoKeyword)
             {
-                sb.Append("[AutoKeyword]");
+                sb.Append($"[AutoKeyword({GetAutoKeywordName(referenceName)})]");
             }    
 
             return sb.ToString();
@@ -428,6 +429,8 @@ namespace Graphlit
                     DefaultTextureEnum = (DefaultTextureName)defaultTex;
                     UpdatePreviewMaterial();
                 }
+
+                _autoKeywordName = EditorGUILayout.TextField("Auto Keyword Name", _autoKeywordName);
             }
         }
 
@@ -583,6 +586,7 @@ namespace Graphlit
             else if (type == PropertyType.Color) OnGUIColor(rect);
             else if (type == PropertyType.Bool || type == PropertyType.KeywordToggle) OnGUIBool(rect);
             else if (IsTextureType) OnGUITexture(rect);
+
         }
 
         public Type GetNodeType()
@@ -780,6 +784,6 @@ namespace Graphlit
             };
         }
 
-        public static string GetAutoKeywordName(string referenceName) => "_ENABLE" + referenceName.ToUpper();
+        public string GetAutoKeywordName(string referenceName) => string.IsNullOrEmpty(_autoKeywordName) ? "_ENABLE" + referenceName.ToUpper() : _autoKeywordName;
     }
 }

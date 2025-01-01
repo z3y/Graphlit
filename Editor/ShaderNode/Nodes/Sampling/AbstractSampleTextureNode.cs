@@ -78,7 +78,7 @@ namespace Graphlit
                         if (sample2d.autoKeyword)
                         {
                             hasKeyword = true;
-                            var keyword = PropertyDescriptor.GetAutoKeywordName(desc.GetReferenceName(visitor.GenerationMode));
+                            var keyword = desc.GetAutoKeywordName(desc.GetReferenceName(visitor.GenerationMode));
                             var defaultValueStr = desc.DefaultTextureToValue();
                             desc.autoKeyword = true;
 

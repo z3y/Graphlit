@@ -147,9 +147,16 @@ namespace Graphlit
                 }*/
                 else if (materialProperty.type == MaterialProperty.PropType.Texture)
                 {
-                    bool textureToggle = attributes.Contains("AutoKeyword");
+                    var textureToggleAttribute = attributes.FirstOrDefault(x => x.StartsWith("AutoKeyword("));
 
-                    string keywordName = PropertyDescriptor.GetAutoKeywordName(materialProperty.name);
+                    bool textureToggle = false;
+                    string keywordName = "";
+                    if (!string.IsNullOrEmpty(textureToggleAttribute))
+                    {
+                        keywordName = textureToggleAttribute.Split('(')[1].TrimEnd(')');
+                        textureToggle = true;
+                    }
+
 
                     // run on start as well
                     if (textureToggle)
