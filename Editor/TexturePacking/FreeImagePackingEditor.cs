@@ -68,12 +68,17 @@ namespace Graphlit
             ChannelR.Channel.DefaultColor = DefaultColor.White;
             ChannelG.Channel.DefaultColor = DefaultColor.White;
             ChannelB.Channel.DefaultColor = DefaultColor.White;
+
+            packingSuffix = "";
         }
 
         public static PackingField ChannelR;
         public static PackingField ChannelG;
         public static PackingField ChannelB;
         public static PackingField ChannelA;
+
+        public static string packingSuffix = "";
+
 
         public static Texture2D PackedTexture = null;
         private static Vector2Int _customSize = new Vector2Int(1024, 1024);
@@ -121,34 +126,14 @@ namespace Graphlit
                 EditorGUILayout.EndVertical();
             }
 
-
-            TexturePackingField(ref ChannelR, Color.red, _preview0, _firstTime);
-            TexturePackingField(ref ChannelG, Color.green, _preview1, _firstTime);
-            TexturePackingField(ref ChannelB, Color.blue, _preview2, _firstTime);
-            TexturePackingField(ref ChannelA, Color.white, _preview3, _firstTime);
-            _firstTime = false;
-
-
-            EditorGUILayout.BeginVertical(_guiStyle);
-            PackingFormat = (TexturePackingFormat)EditorGUILayout.EnumPopup("Format", PackingFormat);
-            ImageFilter = (FreeImage.FREE_IMAGE_FILTER)EditorGUILayout.EnumPopup(new GUIContent("Rescale Filter", "Filter that will be used for rescaling textures to match them to the target size if needed"), ImageFilter);
-            Size = (TextureSize)EditorGUILayout.EnumPopup(new GUIContent("Size", "Specify the size of the packed texture"), Size);
-            if (Size == TextureSize.Custom)
-            {
-                EditorGUI.indentLevel++;
-                _customSize = EditorGUILayout.Vector2IntField(new GUIContent(), _customSize);
-                EditorGUI.indentLevel--;
-            }
-            //Linear = EditorGUILayout.Toggle(new GUIContent("Linear", "Disable sRGB on texture import, for mask and data textures (Roughness, Occlusion, Metallic etc)"), Linear);
-
-
             EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Reset"))
+
+            if (GUILayout.Button("Reset", GUILayout.Height(30)))
             {
                 ResetFields();
             }
 
-            if (GUILayout.Button("Pack"))
+            if (GUILayout.Button("Pack", GUILayout.Height(30)))
             {
                 GetTexturePath(ref ChannelR);
                 GetTexturePath(ref ChannelG);
@@ -198,6 +183,66 @@ namespace Graphlit
                 onPackingFinished.Invoke();
             }
             EditorGUILayout.EndHorizontal();
+            EditorGUILayout.Space();
+
+
+
+
+
+            TexturePackingField(ref ChannelR, Color.red, _preview0, _firstTime);
+            TexturePackingField(ref ChannelG, Color.green, _preview1, _firstTime);
+            TexturePackingField(ref ChannelB, Color.blue, _preview2, _firstTime);
+            TexturePackingField(ref ChannelA, Color.white, _preview3, _firstTime);
+            _firstTime = false;
+
+            EditorGUILayout.Space();
+            EditorGUILayout.BeginVertical(_guiStyle);
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Preset", GUILayout.Width(149));
+            if (GUILayout.Button("Mask Map"))
+            {
+                ChannelR.Channel.DefaultColor = DefaultColor.White;
+                ChannelG.Channel.DefaultColor = DefaultColor.White;
+                ChannelB.Channel.DefaultColor = DefaultColor.Black;
+                ChannelA.Channel.DefaultColor = DefaultColor.White;
+
+                ChannelR.DisplayName = "Ambient Occlusion";
+                ChannelG.DisplayName = "Roughness";
+                ChannelG.InvertDisplayName = "Smoothness";
+                ChannelB.DisplayName = "Metallic";
+                ChannelA.DisplayName = "Detail Mask";
+                packingSuffix = "_MaskMap";
+            }
+            if (GUILayout.Button("Metallic Smoothness"))
+            {
+                ChannelR.Channel.DefaultColor = DefaultColor.Black;
+                ChannelG.Channel.DefaultColor = DefaultColor.Black;
+                ChannelB.Channel.DefaultColor = DefaultColor.Black;
+                ChannelA.Channel.DefaultColor = DefaultColor.White;
+
+                ChannelR.DisplayName = "Metallic";
+                ChannelA.DisplayName = "Smoothness";
+                ChannelA.InvertDisplayName = "Roughness";
+                ChannelB.DisplayName = "";
+                ChannelG.DisplayName = "";
+                packingSuffix = "_MetallicSmoothness";
+            }
+            EditorGUILayout.EndHorizontal();
+
+            PackingFormat = (TexturePackingFormat)EditorGUILayout.EnumPopup("Format", PackingFormat);
+            ImageFilter = (FreeImage.FREE_IMAGE_FILTER)EditorGUILayout.EnumPopup(new GUIContent("Rescale Filter", "Filter that will be used for rescaling textures to match them to the target size if needed"), ImageFilter);
+            Size = (TextureSize)EditorGUILayout.EnumPopup(new GUIContent("Size", "Specify the size of the packed texture"), Size);
+            if (Size == TextureSize.Custom)
+            {
+                EditorGUI.indentLevel++;
+                _customSize = EditorGUILayout.Vector2IntField(new GUIContent(), _customSize);
+                EditorGUI.indentLevel--;
+            }
+            //Linear = EditorGUILayout.Toggle(new GUIContent("Linear", "Disable sRGB on texture import, for mask and data textures (Roughness, Occlusion, Metallic etc)"), Linear);
+
+            packingSuffix = EditorGUILayout.TextField(new GUIContent("Suffix"), packingSuffix);
+
 
             EditorGUILayout.EndVertical();
 
@@ -225,7 +270,8 @@ namespace Graphlit
             var directory = Path.GetDirectoryName(referencePath);
             var fileName = Path.GetFileNameWithoutExtension(referencePath);
 
-            var newPath = directory + @"\" + fileName + "_packed";
+            var newPath = directory + @"\" + fileName + 
+                (string.IsNullOrEmpty(packingSuffix) ? "_packed" : packingSuffix);
             var extension = PackingFormat.GetExtension();
 
             newPath = newPath + "." + extension;
