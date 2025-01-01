@@ -158,7 +158,7 @@
             {
                 "guid": "8003d520-ea6c-43aa-a941-dfca94d5ac07",
                 "referenceName": "shader_feature_local _EMISSION",
-                "displayName": "Enable Emission",
+                "displayName": "Emission",
                 "type": 13,
                 "customAttributes": "",
                 "defaultAttributes": 0,
