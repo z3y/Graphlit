@@ -14,6 +14,7 @@ namespace Graphlit
         public string fallback = string.Empty;
         public string include = string.Empty;
         public OutlinePassMode outlinePass = OutlinePassMode.Disabled;
+        public bool depthFillPass = false;
         public bool stencil = false;
         public VRCFallbackTags vrcFallbackTags = new VRCFallbackTags();
         public bool unlocked = false;

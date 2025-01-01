@@ -535,6 +535,10 @@ namespace Graphlit
 
         private void AppendPasses()
         {
+            if (ShaderGraphView.graphData.depthFillPass)
+            {
+                _sb.AppendLine("Pass { ZWrite On ColorMask 0 }");
+            }
             if (grabpass && SupportsGrabpas)
             {
                 _sb.AppendLine("GrabPass { Tags { \"LightMode\" = \"GrabPass\" } \"_CameraOpaqueTexture\" }");

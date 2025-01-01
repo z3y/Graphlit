@@ -64,6 +64,11 @@ namespace Graphlit
             var outline = new EnumField("Outline Pass", graphData.outlinePass);
             outline.RegisterValueChangedCallback(x => graphData.outlinePass = (GraphData.OutlinePassMode)x.newValue);
             root.Add(outline);
+            
+            // https://github.com/pema99/shader-knowledge/blob/main/tips-and-tricks.md#avoiding-draw-order-issues-with-transparent-shaders
+            var depthFill = new Toggle("Depth Fill Pass") { value = graphData.depthFillPass, tooltip = "Avoid draw order issues with transparent shaders" };
+            depthFill.RegisterValueChangedCallback(x => graphData.depthFillPass = x.newValue);
+            root.Add(depthFill);
 
             var stencil = new Toggle("Stencil") { value = graphData.stencil };
             stencil.RegisterValueChangedCallback(x => graphData.stencil = x.newValue);
