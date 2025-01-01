@@ -35,8 +35,6 @@ namespace Graphlit
                 setupGraphlitMaterial = true;
             }
 
-            Debug.Log(setupGraphlitMaterial);
-
             if (!setupGraphlitMaterial)
             {
                 return;
