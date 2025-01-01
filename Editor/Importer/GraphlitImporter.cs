@@ -8,8 +8,6 @@ using System.IO;
 using System;
 using UnityEditor.Callbacks;
 using System.Linq;
-using UnityEditor.VersionControl;
-using Graphlit.Nodes.PortType;
 
 namespace Graphlit
 {

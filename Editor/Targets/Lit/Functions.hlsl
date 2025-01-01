@@ -218,28 +218,3 @@ void LightDefault(Light light, FragmentData fragData, GIInput giInput, SurfaceDe
 
     }
 }
-
-#include "ACES.hlsl"
-
-#define COLOR_FUNC half4 ColorCustom(SurfaceDescription surf, FragmentData fragData, GIInput giInput, GIOutput giOutput)
-#define COLOR_DEFAULT ColorDefault(surf, fragData, giInput, giOutput)
-half4 ColorDefault(SurfaceDescription surf, FragmentData fragData, GIInput giInput, GIOutput giOutput)
-{
-    half indirectOcclusionIntensity = surf.SpecularOcclusion;
-    giOutput.indirectSpecular *= giInput.specularAO * saturate(lerp(1.0, saturate(sqrt(dot(giOutput.indirectOcclusion + giOutput.directDiffuse, 1.0))), indirectOcclusionIntensity));
-    giOutput.directSpecular *= giInput.specularAO;
-
-    half4 color = half4(surf.Albedo * (1.0 - surf.Metallic) * (giOutput.indirectDiffuse * surf.Occlusion + giOutput.directDiffuse), surf.Alpha);
-    color.rgb += giOutput.directSpecular;
-
-    #if defined(UNITY_PASS_FORWARDBASE)
-        color.rgb += giOutput.indirectSpecular;
-        color.rgb += surf.Emission;
-    #endif
-
-    #ifdef _ACES
-        color.rgb = ACESFitted(color.rgb);
-    #endif
-
-    return color;
-}

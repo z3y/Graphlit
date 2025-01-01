@@ -39,7 +39,7 @@ namespace Graphlit
 
         public override string Name { get; } = "Lit";
         public override int[] VertexPorts => new int[] { POSITION, NORMAL_VERTEX, TANGENT };
-        public override int[] FragmentPorts => new int[] { ALBEDO, ALPHA, METALLIC, OCCLUSION, EMISSION, ROUGHNESS, REFLECTANCE, NORMAL_TS, CUTOFF, SPECULAROCCLUSION };
+        public override int[] FragmentPorts => new int[] { ALBEDO, ALPHA, METALLIC, OCCLUSION, EMISSION, ROUGHNESS, REFLECTANCE, NORMAL_TS, CUTOFF };
 
         const int POSITION = 0;
         const int NORMAL_VERTEX = 1;
@@ -53,8 +53,6 @@ namespace Graphlit
         const int EMISSION = 9;
         const int NORMAL_TS = 10;
         const int REFLECTANCE = 11;
-        const int SPECULAROCCLUSION = 12;
-
 
         public override void Initialize()
         {
@@ -81,7 +79,6 @@ namespace Graphlit
 
 
             AddPort(new(PortDirection.Input, new Float(1, false), CUTOFF, "Cutoff"));
-            AddPort(new(PortDirection.Input, new Float(1, false), SPECULAROCCLUSION, "SpecularOcclusion"));
 
 
             Bind(POSITION, PortBinding.PositionWS);
@@ -96,7 +93,6 @@ namespace Graphlit
             DefaultValues[OCCLUSION] = "1.0";
             DefaultValues[EMISSION] = "float3(0.0, 0.0, 0.0)";
             DefaultValues[NORMAL_TS] = "float3(0.0, 0.0, 1.0)";
-            DefaultValues[SPECULAROCCLUSION] = "1.0";
         }
 
 
@@ -145,6 +141,7 @@ namespace Graphlit
         static readonly PropertyDescriptor _nonLinearLightprobeSh = new(PropertyType.Float, "Non Linear Light Probe SH", "_NonLinearLightProbeSH") { customAttributes = "[Toggle(_NONLINEAR_LIGHTPROBESH)]" };
         static readonly PropertyDescriptor _specularHighlights = new(PropertyType.Float, "Specular Highlights", "_SpecularHighlights") { customAttributes = "[ToggleOff]", FloatValue = 1 };
         static readonly PropertyDescriptor _glossyReflections = new(PropertyType.Float, "Environment Reflections", "_GlossyReflections") { customAttributes = "[ToggleOff]", FloatValue = 1 };
+        static readonly PropertyDescriptor _specularOcclusion = new(PropertyType.Float, "Specular Occlusion", "_SpecularOcclusion") { FloatValue = 1, Range = new Vector2(0, 5)};
 
 
         static readonly PropertyDescriptor _lmSpec = new(PropertyType.Float, "Lightmapped Specular", "_LightmappedSpecular") { customAttributes = "[Toggle(_LIGHTMAPPED_SPECULAR)]" };
@@ -180,14 +177,13 @@ namespace Graphlit
             builder.properties.Add(_lmSpec);
             builder.properties.Add(_nonLinearLightprobeSh);
 
+
             if (_specular)
             {
                 builder.properties.Add(_specularHighlights);
                 builder.properties.Add(_glossyReflections);
+                builder.properties.Add(_specularOcclusion);
             }
-
-
-
 
 
             if (_ltcgiExists && builder.BuildTarget != BuildTarget.Android)
@@ -204,7 +200,7 @@ namespace Graphlit
             builder.properties.Add(_properties);
 
             {
-                var portFlags = new List<int>() { POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, EMISSION, NORMAL_TS, SPECULAROCCLUSION };
+                var portFlags = new List<int>() { POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, EMISSION, NORMAL_TS };
                 var pass = new PassBuilder("FORWARD", Vertex, FragmentForward, portFlags.ToArray());
                 pass.tags["LightMode"] = "ForwardBase";
 
@@ -272,7 +268,7 @@ namespace Graphlit
 
             }
             {
-                var portFlags = new List<int>() { POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, NORMAL_TS, SPECULAROCCLUSION };
+                var portFlags = new List<int>() { POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, NORMAL_TS };
                 var pass = new PassBuilder("FORWARD_DELTA", Vertex, FragmentForward, portFlags.ToArray());
                 pass.tags["LightMode"] = "ForwardAdd";
 

@@ -1,10 +1,5 @@
 #pragma fragment frag
 
-#ifdef CUSTOM_COLOR
-    #define COLOR_IMPL ColorCustom
-#else
-    #define COLOR_IMPL ColorDefault
-#endif
 #ifdef CUSTOM_LIGHT
     #define LIGHT_IMPL LightCustom
 #else
@@ -14,6 +9,7 @@
 #ifdef _CBIRP
     #include "Packages/z3y.clusteredbirp/Shaders/CBIRP.hlsl"
 #endif
+
 #ifdef _LTCGI
     #include "Assets/_pi_/_LTCGI/Shaders/LTCGI.cginc"
 #endif
@@ -25,9 +21,14 @@
 #include "NonImportantLights.hlsl"
 
 #ifdef _CBIRP
-
-#include "ClusteredBIRP.hlsl"
+    #include "ClusteredBIRP.hlsl"
 #endif
+
+#ifdef _ACES
+    #include "ACES.hlsl"
+#endif
+
+half _SpecularOcclusion;
 
 half4 frag(Varyings varyings) : SV_Target
 {
@@ -192,7 +193,6 @@ half4 frag(Varyings varyings) : SV_Target
         giOutput.indirectSpecular += reflectionSpecular;
     #endif
 
-                    
     #ifdef _CBIRP
         #ifdef LIGHTMAP_ON
             half4 shadowmask = _Udon_CBIRP_ShadowMask.SampleLevel(custom_bilinear_clamp_sampler, lightmapUV, 0);
@@ -243,7 +243,21 @@ half4 frag(Varyings varyings) : SV_Target
 
     AlphaTransparentBlend(surf.Alpha, surf.Albedo, surf.Metallic);
 
-    half4 color = COLOR_IMPL(surf, fragData, giInput, giOutput);
+    half indirectOcclusionIntensity = _SpecularOcclusion;
+    giOutput.indirectSpecular *= giInput.specularAO * saturate(lerp(1.0, saturate(sqrt(dot(giOutput.indirectOcclusion + giOutput.directDiffuse, 1.0))), indirectOcclusionIntensity));
+    giOutput.directSpecular *= giInput.specularAO;
+
+    half4 color = half4(surf.Albedo * (1.0 - surf.Metallic) * (giOutput.indirectDiffuse * surf.Occlusion + giOutput.directDiffuse), surf.Alpha);
+    color.rgb += giOutput.directSpecular;
+
+    #if defined(UNITY_PASS_FORWARDBASE)
+        color.rgb += giOutput.indirectSpecular;
+        color.rgb += surf.Emission;
+    #endif
+
+    #ifdef _ACES
+        color.rgb = ACESFitted(color.rgb);
+    #endif
 
     #ifdef _ALPHATEST_ON
         color.a = 1.0;
