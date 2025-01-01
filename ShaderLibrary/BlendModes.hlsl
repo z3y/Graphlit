@@ -417,3 +417,8 @@ float3 BlendMode_LighterColor(float3 base, float3 blend)
 {
 	return Color_GetLuminosity(base) > Color_GetLuminosity(blend) ? base : blend;
 }
+
+float3 BlendMode_MultiplyX2(float3 base, float3 blend)
+{
+	return saturate(base * blend * unity_ColorSpaceDouble.rgb);
+}

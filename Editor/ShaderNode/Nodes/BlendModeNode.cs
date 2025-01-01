@@ -36,6 +36,7 @@ namespace Graphlit
             Luminosity,
             LighterColor,
             DarkerColor,
+            MultiplyX2,
         }
 
         [SerializeField] BlendMode _mode;
