@@ -81,7 +81,7 @@ namespace Graphlit
 
 
             AddPort(new(PortDirection.Input, new Float(1, false), CUTOFF, "Cutoff"));
-
+            inputContainer.style.paddingBottom = 8;
 
             Bind(POSITION, PortBinding.PositionWS);
             Bind(NORMAL_VERTEX, PortBinding.NormalWS);

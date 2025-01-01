@@ -39,6 +39,7 @@ namespace Graphlit
             AddPort(new(PortDirection.Input, new Float(3, false), COLOR, "Color"));
             AddPort(new(PortDirection.Input, new Float(1, false), ALPHA, "Alpha"));
             AddPort(new(PortDirection.Input, new Float(1, false), CUTOFF, "Cutoff"));
+            inputContainer.style.paddingBottom = 8;
 
             Bind(POSITION, PortBinding.PositionWS);
             Bind(NORMAL, PortBinding.NormalWS);
