@@ -6,11 +6,20 @@ using Graphlit.Nodes.PortType;
 using UnityEditor;
 using UnityEditor.AssetImporters;
 using UnityEditor.Experimental.GraphView;
+using UnityEngine.Rendering;
 
 namespace Graphlit
 {
     public abstract class TemplateOutput : ShaderNode
     {
+        public enum RenderPipeline
+        {
+            BuiltIn,
+            URP,
+        }
+
+        public static RenderPipeline GetRenderPipeline() => GraphicsSettings.defaultRenderPipeline == null ? RenderPipeline.BuiltIn : RenderPipeline.URP;
+
         public abstract string Name { get; }
         public virtual void OnBeforeBuild(ShaderBuilder builder) { }
         public virtual void OnAfterBuild(ShaderBuilder builder) { }

@@ -117,6 +117,10 @@ namespace Graphlit
 
             sb.AppendLine("#pragma target " + target);
 
+            if (TemplateOutput.GetRenderPipeline() == TemplateOutput.RenderPipeline.URP)
+            {
+                sb.AppendLine("#define UNIVERSALRP");
+            }
             foreach (var p in pragmas)
             {
                 sb.AppendLine(p);
@@ -160,13 +164,13 @@ namespace Graphlit
             }
             sb.UnIndent("};");
 
-            sb.AppendLine("//CBUFFER_START(UnityPerMaterial)");
+            sb.AppendLine("CBUFFER_START(UnityPerMaterial)");
             foreach (var property in properties)
             {
                 if (property.IsTextureType || property.type == PropertyType.KeywordToggle || property.declaration == PropertyDeclaration.Instance) continue;
                 sb.AppendLine(property.GetFieldDeclaration(generationMode));
             }
-            sb.AppendLine("//CBUFFER_END");
+            sb.AppendLine("CBUFFER_END");
             sb.AppendLine();
             sb.AppendLine("UNITY_INSTANCING_BUFFER_START(UnityPerInstance)");
             foreach (var property in properties)

@@ -1,6 +1,6 @@
 {
     "data": {
-        "shaderName": "Graphlit/Custom",
+        "shaderName": "Graphlit/Samples/Custom",
         "properties": [
             {
                 "guid": "75870dec-983a-4ddd-9da2-8370764ba786",
@@ -12,6 +12,7 @@
                 "rangeX": 0.0,
                 "rangeY": 1.0,
                 "_value": "0.5",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
@@ -28,6 +29,7 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "(1.00, 1.00, 1.00, 1.00)",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
@@ -44,6 +46,7 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
