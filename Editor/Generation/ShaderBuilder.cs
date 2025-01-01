@@ -515,6 +515,8 @@ namespace Graphlit
                         }
                     }
                 }
+
+                _sb.AppendLine("[HideInInspector]__reset(\"\", Float) = 1");
             }
 
         }

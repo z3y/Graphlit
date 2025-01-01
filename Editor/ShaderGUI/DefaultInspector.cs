@@ -41,9 +41,16 @@ namespace Graphlit
                 style[i].richText = true;
             }
 
-            if (_shader != ((Material)editor.target).shader)
+            var material = (Material)editor.target;
+            if (_shader != material.shader)
             {
                 _reinitialize = true;
+            }
+
+            if (material.GetFloat("__reset") == 1)
+            {
+                material.SetFloat("__reset", 0);
+                _start = true;
             }
 
             if (_start || _reinitialize)
