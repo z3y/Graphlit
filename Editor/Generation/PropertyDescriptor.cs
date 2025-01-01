@@ -692,11 +692,25 @@ namespace Graphlit
                     list.Select(properties.Count - 1);
                 }
 
+                void OnNormalMapSelected(object data)
+                {
+                    var p = new PropertyDescriptor(PropertyType.Texture2D)
+                    {
+                        DefaultTextureEnum = DefaultTextureName.bump,
+                        defaultAttributes = MaterialPropertyAttribute.Normal
+                    };
+                    properties.Add(p);
+                    list.Select(properties.Count - 1);
+                }
+
                 var menu = new GenericMenu();
                 foreach (PropertyType value in Enum.GetValues(typeof(PropertyType)))
                 {
                     menu.AddItem(new GUIContent(Enum.GetName(typeof(PropertyType), value)), false, OnTypeSelected, value);
                 }
+
+                menu.AddItem(new GUIContent("Texture 2D (Normal Map)"), false, OnNormalMapSelected, null);
+
 
                 menu.ShowAsContext();
             };
