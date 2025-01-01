@@ -17,6 +17,8 @@ namespace Graphlit
         public abstract int[] VertexPorts { get; }
         public abstract int[] FragmentPorts { get; }
 
+        public abstract string TemplateGUID { get; }
+
         public override Color Accent => Color.magenta;
         public virtual bool TallOutputs => true;
         public override void AdditionalElements(VisualElement root)
@@ -165,6 +167,10 @@ namespace Graphlit
             }
 
             ctx.AddObjectToAsset("Main Asset", shader, GraphlitImporter.Thumbnail);
+
+            var path = AssetDatabase.GUIDToAssetPath(TemplateGUID);
+
+            ctx.DependsOnSourceAsset(path);
 
 
             string prefix = GraphView.graphData.unlocked ? "Unlocked " : "";

@@ -17,6 +17,7 @@ namespace Graphlit
         public override string Name { get; } = "Unlit";
         public override int[] VertexPorts => new int[] { POSITION, NORMAL, TANGENT };
         public override int[] FragmentPorts => new int[] { COLOR, ALPHA, CUTOFF };
+        public override string TemplateGUID => "935ee03eb1b484d47906dc3d36fa00db";
 
         const int POSITION = 0;
         const int NORMAL = 1;

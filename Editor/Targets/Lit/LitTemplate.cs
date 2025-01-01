@@ -41,6 +41,8 @@ namespace Graphlit
         public override int[] VertexPorts => new int[] { POSITION, NORMAL_VERTEX, TANGENT };
         public override int[] FragmentPorts => new int[] { ALBEDO, ALPHA, METALLIC, OCCLUSION, EMISSION, ROUGHNESS, REFLECTANCE, NORMAL_TS, CUTOFF };
 
+        public override string TemplateGUID => "131fe11a59ae68b498c21549d0ebdd85";
+
         const int POSITION = 0;
         const int NORMAL_VERTEX = 1;
         const int TANGENT = 2;
