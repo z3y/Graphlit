@@ -197,6 +197,11 @@ namespace Graphlit
                     {
                         p.onGui += (e, p, g) => LinearWarning(p);
                     }
+                    
+                    if (flags.HasFlag(MaterialProperty.PropFlags.Normal))
+                    {
+                        p.onGui += DrawGlNormalWarning;
+                    }
 
                     if (attributes.Contains("TextureToggle"))
                     { 
@@ -231,7 +236,7 @@ namespace Graphlit
         static void Vector2PropertyAction(MaterialEditor e, MaterialProperty p, GUIContent g) => Vector2Property(e, p, g);
         static void Vector3PropertyAction(MaterialEditor e, MaterialProperty p, GUIContent g) => Vector3Property(e, p, g);
         static void Vector4PropertyAction(MaterialEditor e, MaterialProperty p, GUIContent g) => Vector4Property(e, p, g);
-
+        static void DrawGlNormalWarning(MaterialEditor e, MaterialProperty p, GUIContent g) => GlNormalWarning(p);
 
 
         void UserProperties(MaterialEditor editor, MaterialProperty[] properties)

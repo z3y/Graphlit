@@ -35,7 +35,26 @@ namespace Graphlit
             importer.sRGBTexture = false;
             importer.SaveAndReimport();
         }
+        public static void GlNormalWarning(MaterialProperty tex)
+        {
+            if (!tex?.textureValue) return;
+            if (!tex.textureValue.name.ToLower().EndsWith("dx"))
+            {
+                return;
+            }
 
+            var texPath = AssetDatabase.GetAssetPath(tex.textureValue);
+            var importer = AssetImporter.GetAtPath(texPath) as TextureImporter;
+            if (importer == null) return;
+            if (importer.textureType != TextureImporterType.NormalMap)
+            {
+                return;
+            }
+            const string text = "DX Normal Map should be converted to GL.";
+            if (importer.flipGreenChannel || !TextureImportWarningBox(text)) return;
+            importer.flipGreenChannel = true;
+            importer.SaveAndReimport();
+        }
         public static void TextureProperty(MaterialEditor editor, MaterialProperty property, GUIContent label)
         {
             float fieldWidth = EditorGUIUtility.fieldWidth;
