@@ -301,13 +301,17 @@ namespace Graphlit
             }
         }
 
-        public static void GenerateAllPreviews(ShaderGraphView graphView)
+        public static void GenerateAllPreviews(ShaderGraphView graphView, List<ShaderNode> nodes = null)
         {
             graphView.UpdateCachedNodesForBuilder();
-            var nodes = graphView.cachedNodesForBuilder;
+            var affectedNodes = graphView.cachedNodesForBuilder;
+            if (nodes is not null)
+            {
+                affectedNodes = nodes;
+            }
 
             var endNodes = new List<ShaderNode>();
-            foreach (var node in nodes)
+            foreach (var node in affectedNodes)
             {
                 bool include = true;
                 foreach (var output in node.Outputs)

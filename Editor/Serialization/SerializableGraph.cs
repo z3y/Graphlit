@@ -189,21 +189,21 @@ namespace Graphlit
                 }
             }
 
-            var graphElements = new List<ShaderNode>();
+            var newNodeElements = new List<ShaderNode>();
 
             foreach (var serializableNode in newElements.nodes)
             {
                 var graphElement = graphView.AddNode(serializableNode);
-                graphElements.Add(graphElement);
+                newNodeElements.Add(graphElement);
             }
 
             newElements.SetupNodeConnections(graphView);
 
             SetupGroups(graphView);
 
-            UpdatePreviews(graphView);
+            ShaderBuilder.GenerateAllPreviews(graphView, newNodeElements);
 
-            return graphElements;
+            return newNodeElements;
         }
 
         public void Reposition(Vector2 center)
