@@ -101,9 +101,10 @@ namespace LilGlitter
             glitter = near.w < glitterParams1.z ? glitter : 0.0;
         #endif
         // Angle
-        float3 halfDirection = normalize(viewDirection + lightDirection * glitterParams2.z);
-        float nh = saturate(dot(normalWS, halfDirection));
-        glitter = saturate(glitter * saturate(nh * glitterParams2.y + 1.0 - glitterParams2.y));
+        // not needed in graph
+        // float3 halfDirection = normalize(viewDirection + lightDirection * glitterParams2.z);
+        // float nh = saturate(dot(normalWS, halfDirection));
+        // glitter = saturate(glitter * saturate(nh * glitterParams2.y + 1.0 - glitterParams2.y));
         // Random Color
         float3 glitterColor = glitter - glitter * frac(near.xyz*278.436) * glitterParams2.w;
         
@@ -143,12 +144,14 @@ namespace LilGlitter
     }
 }
 
-void GlitterNode(Texture2D shape, bool applyShape, float3 viewDirectionWS, float3 lightDirection, float3 normalWS, float2 UV, out float3 Glitter, float2 scale = 256, float size = 0.16, float contrast = 50, float speed = 0, float angle = 0, float sensitivity = 0.25, float randomScale = 0.5, float randomColor = 0, bool randomAngle = false)
+void GlitterNode(out float3 Glitter, Texture2D shapeTexture, bool applyShape, bool shapeRandomAngle, float2 UV, float2 scale = 256, float size = 0.16, float contrast = 50, float speed = 0, float sensitivity = 0.25, float randomScale = 0.5, float randomColor = 0)
 {
     float3 camDir = LilGlitter::lilCameraDirection();
+
+    // some parts are removed to simplify inputs since they can be remade in the graph
     Glitter = LilGlitter::lilCalcGlitter(UV, camDir, float4(scale, size, contrast),
-        float4(speed, angle, 0, randomColor), sensitivity, randomScale, randomAngle, applyShape, shape,
-        float4(0,0,0,0), float4(1,1,0,0), viewDirectionWS, lightDirection, normalWS);
+        float4(speed, 0, 0, randomColor), sensitivity, randomScale, shapeRandomAngle, applyShape, shapeTexture,
+        float4(0,0,0,0), float4(1,1,0,0), 0, 0, 0);
 }
 
 
