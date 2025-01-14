@@ -251,7 +251,12 @@ namespace Graphlit
         {
             CoreEditorUtils.DrawSplitter();
             EditorGUILayout.Space();
-            editor.LightmapEmissionProperty();
+            Material t = editor.target as Material;
+            if (t)
+            {
+                bool emission = t.IsKeywordEnabled("_EMISSION");
+                editor.LightmapEmissionFlagsProperty(MaterialEditor.kMiniTextureFieldLabelIndentLevel, emission);
+            }
             editor.RenderQueueField();
             editor.EnableInstancingField();
             editor.DoubleSidedGIField();
