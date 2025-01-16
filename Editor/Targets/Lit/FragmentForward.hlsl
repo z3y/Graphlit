@@ -28,6 +28,10 @@
     #include "ACES.hlsl"
 #endif
 
+#ifdef ZH3
+    #include "ZH3.hlsl"
+#endif
+
 half _SpecularOcclusion;
 
 half4 frag(Varyings varyings) : SV_Target
@@ -149,7 +153,21 @@ half4 frag(Varyings varyings) : SV_Target
 
     #elif defined(UNITY_PASS_FORWARDBASE)
 
-        #if defined(_NONLINEAR_LIGHTPROBESH) && !defined(QUALITY_LOW)
+        #if defined(ZH3) && !defined(QUALITY_LOW)
+            #ifdef ZH3_LUM_AXIS
+                #ifdef ZH3_L2
+                    giOutput.indirectDiffuse = ShadeSH9_ZH3Hallucinate_LumAxis(float4(giInput.normalWS, 1));
+                #else
+                    giOutput.indirectDiffuse = SHEvalLinearL0L1_ZH3Hallucinate_LumAxis(float4(giInput.normalWS, 1));
+                #endif
+            #else
+                #ifdef ZH3_L2
+                    giOutput.indirectDiffuse = ShadeSH9_ZH3Hallucinate(float4(giInput.normalWS, 1));
+                #else
+                    giOutput.indirectDiffuse = SHEvalLinearL0L1_ZH3Hallucinate(float4(giInput.normalWS, 1));
+                #endif
+            #endif
+        #elif defined(_NONLINEAR_LIGHTPROBESH) && !defined(QUALITY_LOW)
             giOutput.indirectDiffuse.r = shEvaluateDiffuseL1Geomerics(unity_SHAr.w, unity_SHAr.xyz, giInput.normalWS);
             giOutput.indirectDiffuse.g = shEvaluateDiffuseL1Geomerics(unity_SHAg.w, unity_SHAg.xyz, giInput.normalWS);
             giOutput.indirectDiffuse.b = shEvaluateDiffuseL1Geomerics(unity_SHAb.w, unity_SHAb.xyz, giInput.normalWS);
