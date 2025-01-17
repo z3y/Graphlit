@@ -77,6 +77,8 @@ half4 frag(Varyings varyings) : SV_Target
 
     GIOutput giOutput = GIOutput::New();
 
+    half3 lmSpecular = 0;
+
     #if defined(LIGHTMAP_ON)
         float2 lightmapUV = fragData.lightmapUV;
         #if defined(_BICUBIC_LIGHTMAP) && !defined(QUALITY_LOW)
@@ -127,9 +129,9 @@ half4 frag(Varyings varyings) : SV_Target
                     #ifdef _ANISOTROPY
                         // half at = max(roughnessLm * (1.0 + surf.Anisotropy), 0.001);
                         // half ab = max(roughnessLm * (1.0 - surf.Anisotropy), 0.001);
-                        // giOutput.indirectSpecular += max(Filament::D_GGX_Anisotropic(nh, halfDir, sd.tangentWS, sd.bitangentWS, at, ab) * sh, 0.0);
+                        // lmSpecular += max(Filament::D_GGX_Anisotropic(nh, halfDir, sd.tangentWS, sd.bitangentWS, at, ab) * sh, 0.0);
                     #else
-                        giOutput.indirectSpecular += max(spec * sh, 0.0);
+                        lmSpecular += max(spec * sh, 0.0);
                     #endif
                 }
                 #endif
@@ -252,6 +254,7 @@ half4 frag(Varyings varyings) : SV_Target
     half3 fr;
     fr = giInput.energyCompensation * giInput.brdf;
     giOutput.indirectSpecular *= fr;
+    lmSpecular *= fr;
 
     #if defined(QUALITY_LOW)
         giInput.specularAO = surf.Occlusion;
@@ -263,6 +266,7 @@ half4 frag(Varyings varyings) : SV_Target
 
     half indirectOcclusionIntensity = _SpecularOcclusion;
     giOutput.indirectSpecular *= giInput.specularAO * saturate(lerp(1.0, saturate(sqrt(dot(giOutput.indirectOcclusion + giOutput.directDiffuse, 1.0))), indirectOcclusionIntensity));
+    giOutput.indirectSpecular += lmSpecular;
     giOutput.directSpecular *= giInput.specularAO;
 
     half4 color = half4(surf.Albedo * (1.0 - surf.Metallic) * (giOutput.indirectDiffuse * surf.Occlusion + giOutput.directDiffuse), surf.Alpha);
