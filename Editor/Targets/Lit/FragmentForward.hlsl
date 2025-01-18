@@ -117,9 +117,13 @@ half4 frag(Varyings varyings) : SV_Target
                 illuminance = sh;
                 #ifdef _LIGHTMAPPED_SPECULAR
                 {
+                    #ifdef APPROXIMATE_AREALIGHT_SPECULAR
                     half smoothnessLm = 1.0f - max(roughness2, 0.002);
                     smoothnessLm *= sqrt(saturate(length(nL1)));
                     half roughnessLm = 1.0f - smoothnessLm;
+                    #else
+                    half roughnessLm = roughness2;
+                    #endif
                     half3 dominantDir = nL1;
                     half3 halfDir = Unity_SafeNormalize(normalize(dominantDir) + fragData.viewDirectionWS);
                     half nh = saturate(dot(giInput.normalWS, halfDir));
@@ -237,24 +241,24 @@ half4 frag(Varyings varyings) : SV_Target
     #endif
 
 
+    float3 ltcgiSpecular = 0;
     #ifdef _LTCGI
         float2 untransformedLightmapUV = 0;
         #ifdef LIGHTMAP_ON
         untransformedLightmapUV = (lightmapUV - unity_LightmapST.zw) / unity_LightmapST.xy;
         #endif
-        float3 ltcgiSpecular = 0;
         float3 ltcgiDiffuse = 0;
         LTCGI_Contribution(fragData.positionWS.xyz, giInput.normalWS, fragData.viewDirectionWS, surf.Roughness, untransformedLightmapUV, ltcgiDiffuse, ltcgiSpecular);
         #ifndef LTCGI_DIFFUSE_DISABLED
             giOutput.directDiffuse += ltcgiDiffuse;
         #endif
-        giOutput.indirectSpecular += ltcgiSpecular;
     #endif
 
     half3 fr;
     fr = giInput.energyCompensation * giInput.brdf;
     giOutput.indirectSpecular *= fr;
     lmSpecular *= fr;
+    ltcgiSpecular *= fr;
 
     #if defined(QUALITY_LOW)
         giInput.specularAO = surf.Occlusion;
@@ -267,6 +271,7 @@ half4 frag(Varyings varyings) : SV_Target
     half indirectOcclusionIntensity = _SpecularOcclusion;
     giOutput.indirectSpecular *= giInput.specularAO * saturate(lerp(1.0, saturate(sqrt(dot(giOutput.indirectOcclusion + giOutput.directDiffuse, 1.0))), indirectOcclusionIntensity));
     giOutput.indirectSpecular += lmSpecular;
+    giOutput.directSpecular += ltcgiSpecular;
     giOutput.directSpecular *= giInput.specularAO;
 
     half4 color = half4(surf.Albedo * (1.0 - surf.Metallic) * (giOutput.indirectDiffuse * surf.Occlusion + giOutput.directDiffuse), surf.Alpha);
