@@ -12,7 +12,6 @@ struct GIInput
     half3 brdf;
     half3 energyCompensation;
     float3 normalWS; // this is the normal after the normal map is applied
-    half specularAO;
 
     static GIInput New()
     {

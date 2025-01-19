@@ -139,6 +139,16 @@ namespace Filament
             energyCompensation = 1.0 + f0 * (1.0 / dfg.y - 1.0);
         #endif
     }
+
+    half3 gtaoMultiBounce(half visibility, half3 albedo)
+    {
+        // Jimenez et al. 2016, "Practical Realtime Strategies for Accurate Indirect Occlusion"
+        half3 a =  2.0404 * albedo - 0.3324;
+        half3 b = -4.7951 * albedo + 0.6417;
+        half3 c =  2.7552 * albedo + 0.6903;
+
+        return max(visibility.xxx, ((visibility * a + b) * visibility + c) * visibility);
+    }
 }
 
 /*

@@ -260,21 +260,28 @@ half4 frag(Varyings varyings) : SV_Target
     lmSpecular *= fr;
     ltcgiSpecular *= fr;
 
-    #if defined(QUALITY_LOW)
-        giInput.specularAO = surf.Occlusion;
-    #else
-       giInput.specularAO = Filament::ComputeSpecularAO(giInput.NoV, surf.Occlusion, roughness2);
-    #endif
 
     AlphaTransparentBlend(surf.Alpha, surf.Albedo, surf.Metallic);
 
     half indirectOcclusionIntensity = _SpecularOcclusion;
-    giOutput.indirectSpecular *= giInput.specularAO * saturate(lerp(1.0, saturate(sqrt(dot(giOutput.indirectOcclusion + giOutput.directDiffuse, 1.0))), indirectOcclusionIntensity));
+    giOutput.indirectSpecular *= saturate(lerp(1.0, saturate(sqrt(dot(giOutput.indirectOcclusion + giOutput.directDiffuse, 1.0))), indirectOcclusionIntensity));
+
     giOutput.indirectSpecular += lmSpecular;
     giOutput.directSpecular += ltcgiSpecular;
-    giOutput.directSpecular *= giInput.specularAO;
+    
+    #if defined(QUALITY_LOW)
+        giOutput.indirectSpecular *= surf.Occlusion;
+        giOutput.directSpecular *= surf.Occlusion;
+        giOutput.indirectDiffuse *= surf.Occlusion;
+    #else
+        half singleBounceAO = Filament::ComputeSpecularAO(giInput.NoV, surf.Occlusion, roughness2);
+        half3 multiBounceAOSpecular = Filament::gtaoMultiBounce(singleBounceAO, giInput.f0);
+        giOutput.indirectSpecular *= multiBounceAOSpecular;
+        giOutput.directSpecular *= multiBounceAOSpecular;
+        giOutput.indirectDiffuse *= Filament::gtaoMultiBounce(surf.Occlusion, surf.Albedo);
+    #endif
 
-    half4 color = half4(surf.Albedo * (1.0 - surf.Metallic) * (giOutput.indirectDiffuse * surf.Occlusion + giOutput.directDiffuse), surf.Alpha);
+    half4 color = half4(surf.Albedo * (1.0 - surf.Metallic) * (giOutput.indirectDiffuse + giOutput.directDiffuse), surf.Alpha);
     color.rgb += giOutput.directSpecular;
 
     #if defined(UNITY_PASS_FORWARDBASE)
