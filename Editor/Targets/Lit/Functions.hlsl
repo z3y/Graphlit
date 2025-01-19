@@ -203,7 +203,12 @@ void LightDefault(Light light, FragmentData fragData, GIInput giInput, SurfaceDe
             #endif
         #endif
 
-        giOutput.directDiffuse += lightColor;
+        half microShadowing = 1;
+        #ifndef QUALITY_LOW
+            microShadowing = Filament::computeMicroShadowing(light.NoL, surf.Occlusion);
+        #endif
+
+        giOutput.directDiffuse += lightColor * microShadowing;
 
         #ifndef _SPECULARHIGHLIGHTS_OFF
             half clampedRoughness = max(surf.Roughness * surf.Roughness, 0.002);
@@ -212,7 +217,7 @@ void LightDefault(Light light, FragmentData fragData, GIInput giInput, SurfaceDe
             half D = Filament::D_GGX(light.NoH, clampedRoughness);
             half V = Filament::V_SmithGGXCorrelated(giInput.NoV, light.NoL, clampedRoughness);
 
-            giOutput.directSpecular += max(0.0, (D * V) * F) * lightColor * UNITY_PI * giInput.energyCompensation;
+            giOutput.directSpecular += max(0.0, (D * V) * F) * lightColor * UNITY_PI * giInput.energyCompensation * microShadowing;
         #endif
 
     }

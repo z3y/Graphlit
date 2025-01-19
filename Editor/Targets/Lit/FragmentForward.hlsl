@@ -28,6 +28,7 @@
     #include "ACES.hlsl"
 #endif
 
+#define ZH3
 #ifdef ZH3
     #include "ZH3.hlsl"
 #endif
@@ -277,9 +278,10 @@ half4 frag(Varyings varyings) : SV_Target
         half singleBounceAO = Filament::ComputeSpecularAO(giInput.NoV, surf.Occlusion, roughness2);
         half3 multiBounceAOSpecular = Filament::gtaoMultiBounce(singleBounceAO, giInput.f0);
         giOutput.indirectSpecular *= multiBounceAOSpecular;
-        giOutput.directSpecular *= multiBounceAOSpecular;
-        giOutput.indirectDiffuse *= Filament::gtaoMultiBounce(surf.Occlusion, surf.Albedo);
+        giOutput.indirectDiffuse *= Filament::gtaoMultiBounce(surf.Occlusion, surf.Albedo) * (1.0 - giInput.brdf);
     #endif
+
+    // return giOutput.indirectDiffuse.rgbb;
 
     half4 color = half4(surf.Albedo * (1.0 - surf.Metallic) * (giOutput.indirectDiffuse + giOutput.directDiffuse), surf.Alpha);
     color.rgb += giOutput.directSpecular;

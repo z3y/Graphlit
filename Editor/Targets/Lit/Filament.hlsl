@@ -149,6 +149,14 @@ namespace Filament
 
         return max(visibility.xxx, ((visibility * a + b) * visibility + c) * visibility);
     }
+
+    half computeMicroShadowing(half NoL, half visibility)
+    {
+        // Chan 2018, "Material Advances in Call of Duty: WWII"
+        half aperture = rsqrt(1.0 - min(visibility, 0.9999));
+        half microShadow = saturate(NoL * aperture);
+        return microShadow * microShadow;
+    }
 }
 
 /*
