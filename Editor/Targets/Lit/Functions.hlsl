@@ -209,7 +209,7 @@ void LightDefault(Light light, FragmentData fragData, GIInput giInput, SurfaceDe
         #ifndef _SPECULARHIGHLIGHTS_OFF
             half clampedRoughness = max(surf.Roughness * surf.Roughness, 0.002);
 
-            half3 F = Filament::F_Schlick(light.LoH, giInput.f0) * giInput.energyCompensation;
+            half3 F = Filament::F_Schlick(light.LoH, giInput.f0);
             half D = Filament::D_GGX(light.NoH, clampedRoughness);
             half V = Filament::V_SmithGGXCorrelated(giInput.NoV, light.NoL, clampedRoughness);
 
