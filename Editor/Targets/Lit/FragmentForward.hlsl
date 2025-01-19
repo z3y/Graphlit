@@ -71,6 +71,7 @@ half4 frag(Varyings varyings) : SV_Target
     #endif
     giInput.f0 = 0.16 * surf.Reflectance * surf.Reflectance * (1.0 - surf.Metallic) + surf.Albedo * surf.Metallic;
     Filament::EnvironmentBRDF(giInput.NoV, surf.Roughness, giInput.f0, giInput.brdf, giInput.energyCompensation);
+    half3 fr = giInput.energyCompensation * giInput.brdf;
 
     Light unityLight = Light::GetUnityLight(varyings);
     unityLight.ComputeData(fragData, giInput);
@@ -122,10 +123,11 @@ half4 frag(Varyings varyings) : SV_Target
                     smoothnessLm *= sqrt(saturate(length(nL1)));
                     half roughnessLm = 1.0f - smoothnessLm;
                     #else
-                    half roughnessLm = roughness2;
+                    half roughnessLm = max(roughness2, 0.002);
                     #endif
-                    half3 dominantDir = nL1;
-                    half3 halfDir = Unity_SafeNormalize(normalize(dominantDir) + fragData.viewDirectionWS);
+                    float3 dominantDir = nL1;
+                    float3 lmDirection = normalize(dominantDir);
+                    float3 halfDir = Unity_SafeNormalize(lmDirection + fragData.viewDirectionWS);
                     half nh = saturate(dot(giInput.normalWS, halfDir));
                     half spec = Filament::D_GGX(nh, roughnessLm);
                     sh = L0 + dominantDir.x * L1x + dominantDir.y * L1y + dominantDir.z * L1z;
@@ -254,8 +256,6 @@ half4 frag(Varyings varyings) : SV_Target
         #endif
     #endif
 
-    half3 fr;
-    fr = giInput.energyCompensation * giInput.brdf;
     giOutput.indirectSpecular *= fr;
     lmSpecular *= fr;
     ltcgiSpecular *= fr;
