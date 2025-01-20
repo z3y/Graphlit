@@ -28,7 +28,7 @@
     #include "ACES.hlsl"
 #endif
 
-#define ZH3
+// #define ZH3
 #ifdef ZH3
     #include "ZH3.hlsl"
 #endif
