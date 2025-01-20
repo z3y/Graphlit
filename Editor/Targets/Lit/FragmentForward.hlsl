@@ -281,7 +281,6 @@ half4 frag(Varyings varyings) : SV_Target
         giOutput.indirectDiffuse *= Filament::gtaoMultiBounce(surf.Occlusion, surf.Albedo) * (1.0 - giInput.brdf);
     #endif
 
-    // return giOutput.indirectDiffuse.rgbb;
 
     half4 color = half4(surf.Albedo * (1.0 - surf.Metallic) * (giOutput.indirectDiffuse + giOutput.directDiffuse), surf.Alpha);
     color.rgb += giOutput.directSpecular;

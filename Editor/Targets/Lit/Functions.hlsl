@@ -197,18 +197,12 @@ void LightDefault(Light light, FragmentData fragData, GIInput giInput, SurfaceDe
     {
         half3 lightColor = light.NoL * light.attenuation * light.color;
 
-        #ifdef UNITY_PASS_FORWARDBASE
-            #if !(defined(QUALITY_LOW) || defined(LIGHTMAP_ON))
-                lightColor *= Filament::Fd_Burley(surf.Roughness, giInput.NoV, light.NoL, light.LoH);
-            #endif
+        #if !(defined(QUALITY_LOW) || defined(LIGHTMAP_ON))
+            lightColor *= Filament::Fd_Burley(surf.Roughness * surf.Roughness, giInput.NoV, light.NoL, light.LoH);
+            lightColor *= Filament::computeMicroShadowing(light.NoL, surf.Occlusion);
         #endif
 
-        half microShadowing = 1;
-        #ifndef QUALITY_LOW
-            microShadowing = Filament::computeMicroShadowing(light.NoL, surf.Occlusion);
-        #endif
-
-        giOutput.directDiffuse += lightColor * microShadowing;
+        giOutput.directDiffuse += lightColor;
 
         #ifndef _SPECULARHIGHLIGHTS_OFF
             half clampedRoughness = max(surf.Roughness * surf.Roughness, 0.002);
@@ -217,7 +211,7 @@ void LightDefault(Light light, FragmentData fragData, GIInput giInput, SurfaceDe
             half D = Filament::D_GGX(light.NoH, clampedRoughness);
             half V = Filament::V_SmithGGXCorrelated(giInput.NoV, light.NoL, clampedRoughness);
 
-            giOutput.directSpecular += max(0.0, (D * V) * F) * lightColor * UNITY_PI * giInput.energyCompensation * microShadowing;
+            giOutput.directSpecular += max(0.0, (D * V) * F) * lightColor * UNITY_PI * giInput.energyCompensation;
         #endif
 
     }
