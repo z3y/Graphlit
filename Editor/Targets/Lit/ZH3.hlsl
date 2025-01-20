@@ -18,7 +18,7 @@ float SHEvalLinearL0L1_ZH3Hallucinate(float4 sh, float3 normal)
     float4 radiance = sh * L0L1IrradianceToRadiance;
 
     float3 zonalAxis = float3(radiance.w, radiance.y, radiance.z);
-    float l1Length = length(zonalAxis);
+    float l1Length = max(length(zonalAxis), FLT_MIN);
     zonalAxis /= l1Length;
 
     float ratio = l1Length / radiance.x;
