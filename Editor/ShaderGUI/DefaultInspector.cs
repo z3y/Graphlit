@@ -252,7 +252,7 @@ namespace Graphlit
             CoreEditorUtils.DrawSplitter();
             EditorGUILayout.Space();
             Material t = editor.target as Material;
-            if (t)
+            if (t && t.HasProperty("_EmissionColor"))
             {
                 bool emission = t.IsKeywordEnabled("_EMISSION");
                 editor.LightmapEmissionFlagsProperty(MaterialEditor.kMiniTextureFieldLabelIndentLevel, emission);
