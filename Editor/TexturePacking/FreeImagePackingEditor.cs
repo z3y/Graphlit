@@ -126,64 +126,7 @@ namespace Graphlit
                 EditorGUILayout.EndVertical();
             }
 
-            EditorGUILayout.BeginHorizontal();
 
-            if (GUILayout.Button("Reset", GUILayout.Height(30)))
-            {
-                ResetFields();
-            }
-
-            if (GUILayout.Button("Pack", GUILayout.Height(30)))
-            {
-                GetTexturePath(ref ChannelR);
-                GetTexturePath(ref ChannelG);
-                GetTexturePath(ref ChannelB);
-                GetTexturePath(ref ChannelA);
-
-
-                var referenceTexture = ChannelG.UnityTexture ?? ChannelA.UnityTexture ?? ChannelR.UnityTexture ?? ChannelB.UnityTexture;
-                if (referenceTexture == null) return;
-
-                var path = AssetDatabase.GetAssetPath(referenceTexture);
-                var fullPath = Path.GetFullPath(path);
-
-                var absolutePath = GetPackedTexturePath(fullPath);
-                var unityPath = GetPackedTexturePath(path);
-
-                int width = (int)Size;
-                int height = (int)Size;
-
-                if (Size == TextureSize.Default)
-                {
-                    width = referenceTexture.width;
-                    height = referenceTexture.height;
-                }
-                else if (Size == TextureSize.Custom)
-                {
-                    width = _customSize.x;
-                    height = _customSize.y;
-                }
-
-                PackCustom(absolutePath, ChannelR.Channel, ChannelG.Channel, ChannelB.Channel, ChannelA.Channel, (width, height), PackingFormat);
-
-                settingsNeedApply = true;
-                AssetDatabase.ImportAsset(unityPath, ImportAssetOptions.ForceUpdate);
-
-                var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(unityPath);
-
-                EditorGUIUtility.PingObject(texture);
-
-                if (_packingMaterial)
-                {
-                    _packingMaterial.SetTexture(_packingPropertyName, texture);
-                    DefaultInspector.Reinitialize();
-                    MaterialEditor.ApplyMaterialPropertyDrawers(_packingMaterial);
-                }
-
-                onPackingFinished.Invoke();
-            }
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space();
 
 
 
@@ -245,7 +188,64 @@ namespace Graphlit
 
 
             EditorGUILayout.EndVertical();
+            EditorGUILayout.Space();
+            EditorGUILayout.BeginHorizontal();
 
+            if (GUILayout.Button("Reset", GUILayout.Height(30)))
+            {
+                ResetFields();
+            }
+
+            if (GUILayout.Button("Pack", GUILayout.Height(30)))
+            {
+                GetTexturePath(ref ChannelR);
+                GetTexturePath(ref ChannelG);
+                GetTexturePath(ref ChannelB);
+                GetTexturePath(ref ChannelA);
+
+
+                var referenceTexture = ChannelG.UnityTexture ?? ChannelA.UnityTexture ?? ChannelR.UnityTexture ?? ChannelB.UnityTexture;
+                if (referenceTexture == null) return;
+
+                var path = AssetDatabase.GetAssetPath(referenceTexture);
+                var fullPath = Path.GetFullPath(path);
+
+                var absolutePath = GetPackedTexturePath(fullPath);
+                var unityPath = GetPackedTexturePath(path);
+
+                int width = (int)Size;
+                int height = (int)Size;
+
+                if (Size == TextureSize.Default)
+                {
+                    width = referenceTexture.width;
+                    height = referenceTexture.height;
+                }
+                else if (Size == TextureSize.Custom)
+                {
+                    width = _customSize.x;
+                    height = _customSize.y;
+                }
+
+                PackCustom(absolutePath, ChannelR.Channel, ChannelG.Channel, ChannelB.Channel, ChannelA.Channel, (width, height), PackingFormat);
+
+                settingsNeedApply = true;
+                AssetDatabase.ImportAsset(unityPath, ImportAssetOptions.ForceUpdate);
+
+                var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(unityPath);
+
+                EditorGUIUtility.PingObject(texture);
+
+                if (_packingMaterial)
+                {
+                    _packingMaterial.SetTexture(_packingPropertyName, texture);
+                    DefaultInspector.Reinitialize();
+                    MaterialEditor.ApplyMaterialPropertyDrawers(_packingMaterial);
+                }
+
+                onPackingFinished.Invoke();
+            }
+            EditorGUILayout.EndHorizontal();
 
             if (LastPackingTime > 0)
             {
