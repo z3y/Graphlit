@@ -99,6 +99,7 @@ namespace Graphlit
 
 
         [SerializeField] bool _cbirp = false;
+        [SerializeField] bool _cbirpReflections = false;
         [SerializeField] bool _specular = true;
         [SerializeField] bool _fwdAddBlendOpMax = false;
 
@@ -132,6 +133,10 @@ namespace Graphlit
                 var cbirp = new Toggle("CBIRP") { value = _cbirp };
                 cbirp.RegisterValueChangedCallback(x => _cbirp = x.newValue);
                 root.Add(cbirp);
+
+                var cbirpReflections = new Toggle("CBIRP Reflections") { value = _cbirpReflections };
+                cbirpReflections.RegisterValueChangedCallback(x => _cbirpReflections = x.newValue);
+                root.Add(cbirpReflections);
             }
             var spec = new Toggle("Specular") { value = _specular };
             spec.RegisterValueChangedCallback(x => _specular = x.newValue);
@@ -238,6 +243,10 @@ namespace Graphlit
                 if (_cbirpExists && _cbirp)
                 {
                     pass.pragmas.Add("#define _CBIRP");
+                    if (_cbirpReflections)
+                    {
+                        pass.pragmas.Add("#define _CBIRP_REFLECTIONS");
+                    }
                 }
 
                 pass.pragmas.Add(NormalDropoffDefine());

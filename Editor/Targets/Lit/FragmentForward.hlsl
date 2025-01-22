@@ -235,14 +235,15 @@ half4 frag(Varyings varyings) : SV_Target
 
         ComputeCBIRPLights(cluster, shadowmask, fragData, giInput, surf, giOutput);
 
-        giOutput.indirectSpecular = CBIRP::SampleProbes(cluster, giInput.reflectVector, fragData.positionWS, surf.Roughness).xyz;
+        #ifdef _CBIRP_REFLECTIONS
+            giOutput.indirectSpecular = CBIRP::SampleProbes(cluster, giInput.reflectVector, fragData.positionWS, surf.Roughness).xyz;
+        #endif
     #endif
 
     #if !defined(QUALITY_LOW)
         float horizon = min(1.0 + dot(giInput.reflectVector, giInput.normalWS), 1.0);
         giOutput.indirectSpecular *= horizon * horizon;
     #endif
-
 
     float3 ltcgiSpecular = 0;
     #ifdef _LTCGI
