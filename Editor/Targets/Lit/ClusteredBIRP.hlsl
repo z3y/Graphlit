@@ -29,16 +29,17 @@ void ComputeCBIRPLights(uint3 cluster, half4 shadowmask, FragmentData fragData, 
             // {
             //     attenuation *= PhotometricAttenuation(L, light.direction);
             // }
+            Light l = (Light)0;
 
             #ifdef LIGHTMAP_ON
             if (light.hasShadowmask)
             {
                 attenuation *= shadowmask[light.shadowmaskID];
+                l.specularOnly = light.specularOnly;
             }
             #endif
 
 
-            Light l = (Light)0;
             l.color = light.color;
             l.direction = L;
             l.attenuation = attenuation;
@@ -46,8 +47,6 @@ void ComputeCBIRPLights(uint3 cluster, half4 shadowmask, FragmentData fragData, 
             l.ComputeData(fragData, giInput);
 
             LIGHT_IMPL(l, fragData, giInput, surf, giOutput);
-
-            // diffuse += currentDiffuse * !light.specularOnly;
 
 
         }

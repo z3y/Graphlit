@@ -54,6 +54,7 @@ struct Light
     float3 direction;
     half3 color;
     half attenuation;
+    bool specularOnly;
     
     // calculated values
     float3 halfVector;
@@ -202,7 +203,7 @@ void LightDefault(Light light, FragmentData fragData, GIInput giInput, SurfaceDe
             lightColor *= Filament::computeMicroShadowing(light.NoL, surf.Occlusion);
         #endif
 
-        giOutput.directDiffuse += lightColor;
+        giOutput.directDiffuse += lightColor * !light.specularOnly;
 
         #ifndef _SPECULARHIGHLIGHTS_OFF
             half clampedRoughness = max(surf.Roughness * surf.Roughness, 0.002);
