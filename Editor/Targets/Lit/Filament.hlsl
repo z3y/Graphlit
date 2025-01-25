@@ -39,7 +39,7 @@ namespace Filament
         #endif
     }
 
-    half D_GGX(half NoH, half roughness)
+    half D_GGX(float NoH, half roughness)
     {
         half a = NoH * roughness;
         half k = roughness / (1.0 - NoH * NoH + a * a);
