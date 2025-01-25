@@ -137,7 +137,7 @@ namespace LilGlitter
     float3 lilCameraDirection()
     {
         #if defined(USING_STEREO_MATRICES)
-            return normalize(UNITY_STEREO_MATRIX_V(0)._m20_m21_m22 + UNITY_STEREO_MATRIX_V(1)._m20_m21_m22);
+            return normalize(unity_StereoMatrixV[0]._m20_m21_m22 + unity_StereoMatrixV[1]._m20_m21_m22);
         #else
             return UNITY_MATRIX_V._m20_m21_m22;
         #endif
