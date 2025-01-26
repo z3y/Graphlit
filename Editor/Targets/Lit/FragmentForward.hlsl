@@ -279,8 +279,10 @@ half4 frag(Varyings varyings) : SV_Target
         half singleBounceAO = Filament::ComputeSpecularAO(giInput.NoV, surf.Occlusion, roughness2);
         half3 multiBounceAOSpecular = Filament::gtaoMultiBounce(singleBounceAO, giInput.f0);
         giOutput.indirectSpecular *= multiBounceAOSpecular;
-        giOutput.indirectDiffuse *= Filament::gtaoMultiBounce(surf.Occlusion, surf.Albedo) * (1.0 - giInput.brdf);
+        giOutput.indirectDiffuse *= Filament::gtaoMultiBounce(surf.Occlusion, surf.Albedo);
     #endif
+
+    giOutput.indirectDiffuse *= 1.0 - giInput.brdf;
 
 
     half4 color = half4(surf.Albedo * (1.0 - surf.Metallic) * (giOutput.indirectDiffuse + giOutput.directDiffuse), surf.Alpha);
