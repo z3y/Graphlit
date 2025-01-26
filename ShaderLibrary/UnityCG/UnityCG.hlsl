@@ -623,21 +623,29 @@ float SmoothnessToPerceptualRoughness(float smoothness)
 #define UNITY_SPECCUBE_LOD_STEPS (6)
 #endif
 
+#define FORCE_BOX_PROJECTION
+
+#ifdef FORCE_BOX_PROJECTION
+#ifndef UNITY_SPECCUBE_BOX_PROJECTION
+#define UNITY_SPECCUBE_BOX_PROJECTION
+#endif
+#endif
+
 half3 BoxProjectedCubemapDirection(half3 reflectionWS, float3 positionWS, float4 cubemapPositionWS, float4 boxMin, float4 boxMax)
 {
-    #ifndef UNITY_SPECCUBE_BOX_PROJECTION
+    #if !defined(UNITY_SPECCUBE_BOX_PROJECTION)
         return reflectionWS;
     #endif
+
     // Is this probe using box projection?
+    bool boxProjection = cubemapPositionWS.w > 0.0f;
     
     #ifdef USE_URP_BOX_PROJECTION
-    // Cursed way to get unity to send correct box min and max
-    if (cubemapPositionWS.w <= 0.0f)
-    {
-    #else
-    if (cubemapPositionWS.w > 0.0f)
-    {
+    boxProjection = cubemapPositionWS.w <= 0.0f;
     #endif
+
+    if (boxProjection)
+    {
 
         float3 boxMinMax = (reflectionWS > 0.0f) ? boxMax.xyz : boxMin.xyz;
         half3 rbMinMax = half3(boxMinMax - positionWS) / reflectionWS;
