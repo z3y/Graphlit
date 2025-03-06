@@ -1,6 +1,6 @@
 # Graphlit
 
-A node shader editor for creating Toon and PBR shaders, with a variety of included nodes useful for VRChat Worlds and Avatars.
+A node shader editor for creating Toon and PBR shaders, with a variety of included nodes useful for VRChat Worlds and Avatars. Only supports the built-in Unity render pipeline.
 
 ## Installation
 
