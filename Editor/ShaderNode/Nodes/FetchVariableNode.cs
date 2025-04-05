@@ -42,15 +42,31 @@ namespace Graphlit
             }
         }
 
+        string VariableNotFoundText()
+        {
+            if (Inputs.Count() == 0)
+            {
+                return $" Variable \"{_name}\" not found";
+            }
+
+            return "";
+        }
+
         public override void AdditionalElements(VisualElement root)
         {
             var text = new TextField("Name") { value = _name };
+            GraphView.UpdateCachedNodesForBuilder();
+            var variableFound = new Label(VariableNotFoundText());
             text.RegisterValueChangedCallback(x =>
             {
                 _name = x.newValue;
                 TitleLabel.text = x.newValue;
+
+                var input = Inputs;
+                variableFound.text = VariableNotFoundText();
             });
             root.Add(text);
+            root.Add(variableFound);
 
             var update = new Button() { text = "Update Preview" };
             update.clicked += () => GeneratePreviewForAffectedNodes();
