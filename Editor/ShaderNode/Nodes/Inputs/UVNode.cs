@@ -33,6 +33,8 @@ namespace Graphlit
                 GeneratePreviewForAffectedNodes();
             });
             inputContainer.Add(dropdown);
+
+            portDescriptors[OUT].Type = new Float(_channels);
         }
 
         public override void AdditionalElements(VisualElement root)
