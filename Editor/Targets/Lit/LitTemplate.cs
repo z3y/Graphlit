@@ -352,6 +352,7 @@ namespace Graphlit
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
                 pass.preincludes.Add("Packages/com.z3y.graphlit/Editor/Targets/Lit/Functions.hlsl");
+                pass.properties.Add(_specularOcclusion);
 
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 if (!(_cbirpExists && _cbirp))
@@ -409,7 +410,14 @@ namespace Graphlit
                 }
 
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
-                pass.pragmas.Add("#include \"UnityMetaPass.cginc\"");
+                if (urp)
+                {
+                    pass.pragmas.Add("#include \"Packages/com.unity.render-pipelines.universal/ShaderLibrary/MetaInput.hlsl\"");
+                }
+                else
+                {
+                    pass.pragmas.Add("#include \"UnityMetaPass.cginc\"");
+                }
 
                 builder.AddPass(pass);
             }

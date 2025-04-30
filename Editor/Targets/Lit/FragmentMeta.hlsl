@@ -2,6 +2,14 @@
 
 #include "Packages/com.z3y.graphlit/ShaderLibrary/GraphFunctions.hlsl"
 
+#ifdef UNIVERSALRP
+    #ifdef UNITY_COLORSPACE_GAMMA
+    #define unity_ColorSpaceDielectricSpec half4(0.220916301, 0.220916301, 0.220916301, 1.0 - 0.220916301)
+    #else // Linear values
+    #define unity_ColorSpaceDielectricSpec half4(0.04, 0.04, 0.04, 1.0 - 0.04) // standard dielectric reflectivity coef at incident angle (= 4%)
+    #endif
+#endif
+
 half3 LightmappingAlbedo(half3 diffuse, half3 specular, half roughness)
 {
     half3 res = diffuse;
@@ -33,7 +41,7 @@ half4 frag(Varyings varyings) : SV_Target
     #endif
 
     UnityMetaInput o;
-    UNITY_INITIALIZE_OUTPUT(UnityMetaInput, o);
+    ZERO_INITIALIZE(UnityMetaInput, o);
 
     half3 specColor;
     half oneMinisReflectivity;
@@ -47,7 +55,7 @@ half4 frag(Varyings varyings) : SV_Target
         o.Albedo = LightmappingAlbedo(diffuseColor, specColor, desc.Roughness);
     #endif
     
-    o.SpecularColor = specColor;
+    // o.SpecularColor = specColor;
     o.Emission = desc.Emission;
 
     #if defined(_ALPHATEST_ON)
