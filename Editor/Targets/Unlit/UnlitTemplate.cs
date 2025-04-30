@@ -202,6 +202,11 @@ namespace Graphlit
                 pass.attributes.RequirePositionOS();
                 pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
 
+                if (urp)
+                {
+                    pass.pragmas.Add("#pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW");
+                }
+
                 pass.varyings.RequirePositionCS();
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");

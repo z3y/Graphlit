@@ -78,6 +78,16 @@ struct FragmentData
         #endif
 
         // todo: find functions for urp
+        #if defined(UNIVERSALRP)
+
+            #if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
+                output.shadowCoords = varyings.shadowCoord;
+            #elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)
+                output.shadowCoords = TransformWorldToShadowCoord(output.positionWS);
+            #else
+                output.shadowCoords = float4(0, 0, 0, 0);
+            #endif
+        #endif
         #if defined(UNITY_PASS_FORWARDBASE) || defined(UNITY_PASS_FORWARDADD)
             output.shadowCoords = READ_SHADOW_COORDS(varyings);
         #endif
