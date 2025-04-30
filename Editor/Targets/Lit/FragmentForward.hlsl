@@ -89,7 +89,12 @@ half4 frag(Varyings varyings) : SV_Target
             float4 texelSize = TexelSizeFromTexture2D(unity_Lightmap);
             half3 illuminance = SampleTexture2DBicubic(unity_Lightmap, custom_bilinear_clamp_sampler, lightmapUV, texelSize, 1.0).rgb;
         #else
+            #ifdef UNIVERSALRP
+                half4 decodeInstructions = half4(LIGHTMAP_HDR_MULTIPLIER, LIGHTMAP_HDR_EXPONENT, 0.0h, 0.0h);
+                half3 illuminance = DecodeLightmap(unity_Lightmap.SampleLevel(custom_bilinear_clamp_sampler, lightmapUV, 0), decodeInstructions);
+            #else
             half3 illuminance = DecodeLightmap(unity_Lightmap.SampleLevel(custom_bilinear_clamp_sampler, lightmapUV, 0));
+            #endif
         #endif
 
         #if defined(DIRLIGHTMAP_COMBINED) || defined(_BAKERY_MONOSH)
