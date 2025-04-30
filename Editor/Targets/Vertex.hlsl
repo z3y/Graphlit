@@ -57,7 +57,9 @@ Varyings vert(Attributes input)
     #endif
 
     #ifdef UNIVERSALRP
-        // todo: find proper functions for urp
+        #if defined(FOG_EXP) || defined(FOG_EXP2) || defined(FOG_LINEAR)
+            varyings.fogFactor = InitializeInputDataFog(float4(positionWS, 1.0), 0);
+        #endif
         #ifdef REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR
             varyings.shadowCoord = TransformWorldToShadowCoord(positionWS);
         #endif

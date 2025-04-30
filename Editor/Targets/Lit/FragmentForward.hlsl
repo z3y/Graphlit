@@ -303,7 +303,13 @@ half4 frag(Varyings varyings) : SV_Target
         color.a = 1.0;
     #endif
 
-    UNITY_APPLY_FOG(varyings.fogCoord, color);
+    #if defined(FOG_EXP) || defined(FOG_EXP2) || defined(FOG_LINEAR)
+        #ifdef UNIVERSALRP
+        color.rgb = MixFog(color.rgb, varyings.fogFactor);
+        #else
+        UNITY_APPLY_FOG(varyings.fogCoord, color);
+        #endif
+    #endif
 
     #if defined(FIX_BLACK_LEVEL) && !defined(SHADER_API_MOBILE) && defined(UNITY_PASS_FORWARDBASE)
         color.rgb -= 0.0002;

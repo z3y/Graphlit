@@ -35,10 +35,12 @@ half4 frag(Varyings varyings) : SV_Target
             col.a = 1.0;
         #endif
 
-        #ifdef UNIVERSALRP
-        // todo: urp fog
-        #else
-        UNITY_APPLY_FOG(varyings.fogCoord, col);
+        #if defined(FOG_EXP) || defined(FOG_EXP2) || defined(FOG_LINEAR)
+            #ifdef UNIVERSALRP
+            col.rgb = MixFog(col.rgb, varyings.fogFactor);
+            #else
+            UNITY_APPLY_FOG(varyings.fogCoord, col);
+            #endif
         #endif
 
         return col;
