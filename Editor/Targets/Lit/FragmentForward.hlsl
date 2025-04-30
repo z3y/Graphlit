@@ -203,21 +203,81 @@ half4 frag(Varyings varyings) : SV_Target
 
     // reflection probes
     #if !defined(_GLOSSYREFLECTIONS_OFF)
+        half3 reflectionSpecular = 0;
         Unity_GlossyEnvironmentData envData;
-        envData = GetEnvData(giInput.reflectVector, fragData.positionWS, unity_SpecCube0_ProbePosition, unity_SpecCube0_BoxMin, unity_SpecCube0_BoxMax, surf.Roughness);
+        half3 probe0 = 0;
+        
+        #ifdef UNIVERSALRP
+            half probe0Volume = CalculateProbeVolumeSqrMagnitude(unity_SpecCube0_BoxMin, unity_SpecCube0_BoxMax);
+            half probe1Volume = CalculateProbeVolumeSqrMagnitude(unity_SpecCube1_BoxMin, unity_SpecCube1_BoxMax);
 
-        half3 probe0 = Unity_GlossyEnvironment(UNITY_PASS_TEXCUBE(unity_SpecCube0), unity_SpecCube0_HDR, envData);
-        half3 reflectionSpecular = probe0;
+            half volumeDiff = probe0Volume - probe1Volume;
+            float importanceSign = unity_SpecCube1_BoxMin.w;
 
-        #if defined(UNITY_SPECCUBE_BLENDING)
-            UNITY_BRANCH
-            if (unity_SpecCube0_BoxMin.w < 0.99999)
+            // A probe is dominant if its importance is higher
+            // Or have equal importance but smaller volume
+            bool probe0Dominant = importanceSign > 0.0f || (importanceSign == 0.0f && volumeDiff < -0.0001h);
+            bool probe1Dominant = importanceSign < 0.0f || (importanceSign == 0.0f && volumeDiff > 0.0001h);
+
+            float desiredWeightProbe0 = CalculateProbeWeight(fragData.positionWS, unity_SpecCube0_BoxMin, unity_SpecCube0_BoxMax);
+            float desiredWeightProbe1 = CalculateProbeWeight(fragData.positionWS, unity_SpecCube1_BoxMin, unity_SpecCube1_BoxMax);
+
+            // Subject the probes weight if the other probe is dominant
+            float weightProbe0 = probe1Dominant ? min(desiredWeightProbe0, 1.0f - desiredWeightProbe1) : desiredWeightProbe0;
+            float weightProbe1 = probe0Dominant ? min(desiredWeightProbe1, 1.0f - desiredWeightProbe0) : desiredWeightProbe1;
+
+            float totalWeight = weightProbe0 + weightProbe1;
+            if (!(unity_SpecCube0_BoxMin.w < 0.99999))
             {
-                envData = GetEnvData(giInput.reflectVector, fragData.positionWS, unity_SpecCube1_ProbePosition, unity_SpecCube1_BoxMin, unity_SpecCube1_BoxMax, surf.Roughness);
-                
-                float3 probe1 = Unity_GlossyEnvironment(UNITY_PASS_TEXCUBE_SAMPLER(unity_SpecCube1, unity_SpecCube0), unity_SpecCube1_HDR, envData);
-                reflectionSpecular = lerp(probe1, probe0, unity_SpecCube0_BoxMin.w);
+                totalWeight = weightProbe0;
             }
+
+            // If either probe 0 or probe 1 is dominant the sum of weights is guaranteed to be 1.
+            // If neither is dominant this is not guaranteed - only normalize weights if totalweight exceeds 1.
+            weightProbe0 /= max(totalWeight, 1.0f);
+            weightProbe1 /= max(totalWeight, 1.0f);
+
+
+        if (weightProbe0 > 0.01f)
+        #endif
+        {
+            envData = GetEnvData(giInput.reflectVector, fragData.positionWS, unity_SpecCube0_ProbePosition, unity_SpecCube0_BoxMin, unity_SpecCube0_BoxMax, surf.Roughness);
+            probe0 = Unity_GlossyEnvironment(UNITY_PASS_TEXCUBE(unity_SpecCube0), unity_SpecCube0_HDR, envData);
+            #ifdef UNIVERSALRP
+            probe0 *= weightProbe0;
+            #endif
+            reflectionSpecular += probe0;
+        }
+
+        #ifdef UNIVERSALRP
+        if (weightProbe1 > 0.01f)
+        #endif
+        {
+            #if defined(UNITY_SPECCUBE_BLENDING)
+                UNITY_BRANCH
+                if (unity_SpecCube0_BoxMin.w < 0.99999)
+                {
+                    envData = GetEnvData(giInput.reflectVector, fragData.positionWS, unity_SpecCube1_ProbePosition, unity_SpecCube1_BoxMin, unity_SpecCube1_BoxMax, surf.Roughness);
+                    
+                    float3 probe1 = Unity_GlossyEnvironment(UNITY_PASS_TEXCUBE_SAMPLER(unity_SpecCube1, unity_SpecCube0), unity_SpecCube1_HDR, envData);
+                    #ifdef UNIVERSALRP
+                    probe1 *= weightProbe1;
+                    reflectionSpecular += probe1;
+                    #else
+                    reflectionSpecular = lerp(probe1, probe0, unity_SpecCube0_BoxMin.w);
+                    #endif
+                }
+            #endif
+        }
+
+        #ifdef UNIVERSALRP
+        half mip = PerceptualRoughnessToMipmapLevel(surf.Roughness);
+        if (totalWeight < 0.99f)
+        {
+            half4 encodedIrradiance = half4(SAMPLE_TEXTURECUBE_LOD(_GlossyEnvironmentCubeMap, sampler_GlossyEnvironmentCubeMap, giInput.reflectVector, mip));
+
+            reflectionSpecular += (1.0f - totalWeight) * DecodeHDREnvironment(encodedIrradiance, _GlossyEnvironmentCubeMap_HDR);
+        }
         #endif
         giOutput.indirectSpecular += reflectionSpecular;
 

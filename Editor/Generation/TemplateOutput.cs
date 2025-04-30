@@ -205,8 +205,8 @@ namespace Graphlit
             pass.pragmas.Add("#pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS");
             // pass.pragmas.Add("#pragma multi_compile _ EVALUATE_SH_MIXED EVALUATE_SH_VERTEX");
             pass.pragmas.Add("#pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS");
-            pass.pragmas.Add("#pragma multi_compile_fragment _ _REFLECTION_PROBE_BLENDING");
-            pass.pragmas.Add("#pragma multi_compile_fragment _ _REFLECTION_PROBE_BOX_PROJECTION");
+            // pass.pragmas.Add("#pragma multi_compile_fragment _ _REFLECTION_PROBE_BLENDING");
+            // pass.pragmas.Add("#pragma multi_compile_fragment _ _REFLECTION_PROBE_BOX_PROJECTION");
             pass.pragmas.Add("#pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH");
             pass.pragmas.Add("#pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION");
             // pass.pragmas.Add("#pragma multi_compile_fragment _ _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3");
