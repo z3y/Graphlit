@@ -76,7 +76,7 @@ half4 frag(Varyings varyings) : SV_Target
     Filament::EnvironmentBRDF(giInput.NoV, surf.Roughness, giInput.f0, giInput.brdf, giInput.energyCompensation);
     half3 fr = giInput.energyCompensation * giInput.brdf;
 
-    Light unityLight = Light::GetUnityLight(varyings);
+    GraphlitLight unityLight = GraphlitLight::GetUnityLight(varyings);
     unityLight.ComputeData(fragData, giInput);
 
     GIOutput giOutput = GIOutput::New();
@@ -162,7 +162,7 @@ half4 frag(Varyings varyings) : SV_Target
             giOutput.indirectOcclusion = illuminance;
         #endif
 
-    #elif defined(UNITY_PASS_FORWARDBASE)
+    #elif defined(UNITY_PASS_FORWARDBASE) || defined(UNIVERSAL_FORWARD)
 
         #if defined(ZH3) && !defined(QUALITY_LOW)
             #ifdef ZH3_LUM_AXIS
@@ -183,10 +183,10 @@ half4 frag(Varyings varyings) : SV_Target
             giOutput.indirectDiffuse.g = shEvaluateDiffuseL1Geomerics(unity_SHAg.w, unity_SHAg.xyz, giInput.normalWS);
             giOutput.indirectDiffuse.b = shEvaluateDiffuseL1Geomerics(unity_SHAb.w, unity_SHAb.xyz, giInput.normalWS);
         #else
-            #if UNITY_SAMPLE_FULL_SH_PER_PIXEL
-                giOutput.indirectDiffuse = ShadeSHPerPixel(giInput.normalWS, 0.0, fragData.positionWS);
+            #ifdef UNIVERSAL_FORWARD
+                giOutput.indirectDiffuse = SampleSH(giInput.normalWS);
             #else
-                giOutput.indirectDiffuse = ShadeSHPerPixel(giInput.normalWS, varyings.sh, fragData.positionWS);
+                giOutput.indirectDiffuse = ShadeSHPerPixel(giInput.normalWS, 0.0, fragData.positionWS);
             #endif
         #endif
         giOutput.indirectOcclusion = giOutput.indirectDiffuse;
@@ -220,6 +220,7 @@ half4 frag(Varyings varyings) : SV_Target
             }
         #endif
         giOutput.indirectSpecular += reflectionSpecular;
+
     #endif
 
     #ifdef _CBIRP
@@ -286,11 +287,10 @@ half4 frag(Varyings varyings) : SV_Target
 
     giOutput.indirectDiffuse *= 1.0 - giInput.brdf;
 
-
     half4 color = half4(surf.Albedo * (1.0 - surf.Metallic) * (giOutput.indirectDiffuse + giOutput.directDiffuse), surf.Alpha);
     color.rgb += giOutput.directSpecular;
 
-    #if defined(UNITY_PASS_FORWARDBASE)
+    #if defined(UNITY_PASS_FORWARDBASE) || defined(UNIVERSAL_FORWARD)
         color.rgb += giOutput.indirectSpecular;
         color.rgb += surf.Emission;
     #endif

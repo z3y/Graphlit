@@ -29,7 +29,7 @@ void ComputeCBIRPLights(uint3 cluster, half4 shadowmask, FragmentData fragData, 
             // {
             //     attenuation *= PhotometricAttenuation(L, light.direction);
             // }
-            Light l = (Light)0;
+            GraphlitLight l = (GraphlitLight)0;
 
             #ifdef LIGHTMAP_ON
             if (light.hasShadowmask)

@@ -48,7 +48,7 @@ void ApplyAlphaClip(inout half alpha, half clipThreshold)
     #endif
 }
 
-struct Light
+struct GraphlitLight
 {
     // properties
     float3 direction;
@@ -62,36 +62,54 @@ struct Light
     half LoH;
     half NoH;
 
-    static Light GetUnityLight(Varyings varyings)
+    static GraphlitLight GetUnityLight(Varyings varyings)
     {
-        Light light = (Light)0;
-
-        #if !defined(USING_LIGHT_MULTI_COMPILE)
-            return light;
-        #endif
-
+        GraphlitLight light = (GraphlitLight)0;
         float3 positionWS = UNPACK_POSITIONWS;
 
-        light.direction = Unity_SafeNormalize(UnityWorldSpaceLightDir(positionWS));
-        light.color = _LightColor0.rgb;
+        #ifdef UNIVERSALRP
 
-        UNITY_LIGHT_ATTENUATION(attenuation, varyings, positionWS.xyz);
+            #if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
+                float4 shadowCoords = varyings.shadowCoord;
+            #elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)
+                float4 shadowCoords = TransformWorldToShadowCoord(positionWS);
+            #else
+                float4 shadowCoords = float4(0, 0, 0, 0);
+            #endif
 
-        #if defined(HANDLE_SHADOWS_BLENDING_IN_GI) && defined(SHADOWS_SCREEN) && defined(LIGHTMAP_ON)
-            half bakedAtten = UnitySampleBakedOcclusion(varyings.lightmapUV, positionWS);
-            float zDist = dot(_WorldSpaceCameraPos -  positionWS, UNITY_MATRIX_V[2].xyz);
-            float fadeDist = UnityComputeShadowFadeDistance(positionWS, zDist);
-            attenuation = UnityMixRealtimeAndBakedShadows(attenuation, bakedAtten, UnityComputeShadowFade(fadeDist));
-        #endif
+			Light urpLight = GetMainLight(shadowCoords);
+			light.color = urpLight.color;
+			light.direction = urpLight.direction;
+			light.attenuation = urpLight.distanceAttenuation * urpLight.shadowAttenuation;
+        #else
 
-        #if defined(UNITY_PASS_FORWARDBASE) && !defined(SHADOWS_SCREEN) && !defined(SHADOWS_SHADOWMASK)
-            attenuation = 1.0;
-        #endif
+            #if !defined(USING_LIGHT_MULTI_COMPILE)
+                return light;
+            #endif
 
-        light.attenuation = attenuation;
 
-        #if defined(LIGHTMAP_SHADOW_MIXING) && defined(LIGHTMAP_ON)
-            light.color *= UnityComputeForwardShadows(varyings.lightmapUV.xy, positionWS, varyings._ShadowCoord);
+            light.direction = Unity_SafeNormalize(UnityWorldSpaceLightDir(positionWS));
+            light.color = _LightColor0.rgb;
+
+            UNITY_LIGHT_ATTENUATION(attenuation, varyings, positionWS.xyz);
+
+            #if defined(HANDLE_SHADOWS_BLENDING_IN_GI) && defined(SHADOWS_SCREEN) && defined(LIGHTMAP_ON)
+                half bakedAtten = UnitySampleBakedOcclusion(varyings.lightmapUV, positionWS);
+                float zDist = dot(_WorldSpaceCameraPos -  positionWS, UNITY_MATRIX_V[2].xyz);
+                float fadeDist = UnityComputeShadowFadeDistance(positionWS, zDist);
+                attenuation = UnityMixRealtimeAndBakedShadows(attenuation, bakedAtten, UnityComputeShadowFade(fadeDist));
+            #endif
+
+            #if defined(UNITY_PASS_FORWARDBASE) && !defined(SHADOWS_SCREEN) && !defined(SHADOWS_SHADOWMASK)
+                attenuation = 1.0;
+            #endif
+
+            light.attenuation = attenuation;
+
+            #if defined(LIGHTMAP_SHADOW_MIXING) && defined(LIGHTMAP_ON)
+                light.color *= UnityComputeForwardShadows(varyings.lightmapUV.xy, positionWS, varyings._ShadowCoord);
+            #endif
+
         #endif
 
         return light;
@@ -189,9 +207,9 @@ float shEvaluateDiffuseL1Geomerics(float L0, float3 L1, float3 n)
     return R0 * (a + (1.0f - a) * (p + 1.0f) * pow(q, p));
 }
 
-#define LIGHT_FUNC void LightCustom(Light light, FragmentData fragData, GIInput giInput, SurfaceDescription surf, inout GIOutput giOutput)
+#define LIGHT_FUNC void LightCustom(GraphlitLight light, FragmentData fragData, GIInput giInput, SurfaceDescription surf, inout GIOutput giOutput)
 #define LIGHT_DEFAULT LightDefault(light, fragData, giInput, surf, giOutput)
-void LightDefault(Light light, FragmentData fragData, GIInput giInput, SurfaceDescription surf, inout GIOutput giOutput)
+void LightDefault(GraphlitLight light, FragmentData fragData, GIInput giInput, SurfaceDescription surf, inout GIOutput giOutput)
 {
     UNITY_BRANCH
     if (light.attenuation * light.NoL > 0)
@@ -212,7 +230,7 @@ void LightDefault(Light light, FragmentData fragData, GIInput giInput, SurfaceDe
             half D = Filament::D_GGX(light.NoH, clampedRoughness);
             half V = Filament::V_SmithGGXCorrelated(giInput.NoV, light.NoL, clampedRoughness);
 
-            giOutput.directSpecular += max(0.0, (D * V) * F) * lightColor * UNITY_PI * giInput.energyCompensation;
+            giOutput.directSpecular += max(0.0, (D * V) * F) * lightColor * PI * giInput.energyCompensation;
         #endif
 
     }

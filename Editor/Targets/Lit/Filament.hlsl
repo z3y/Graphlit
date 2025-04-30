@@ -43,7 +43,7 @@ namespace Filament
     {
         half a = NoH * roughness;
         half k = roughness / (1.0 - NoH * NoH + a * a);
-        return k * k * (1.0 / UNITY_PI);
+        return k * k * (1.0 / PI);
     }
 
     float D_GGX_Anisotropic(float NoH, float3 h, float3 t, float3 b, float at, float ab)
@@ -54,7 +54,7 @@ namespace Filament
         float3 v = float3(ab * ToH, at * BoH, a2 * NoH);
         float v2 = dot(v, v);
         half w2 = a2 / v2;
-        return a2 * w2 * w2 * (1.0 / UNITY_PI);
+        return a2 * w2 * w2 * (1.0 / PI);
     }
 
     float V_SmithGGXCorrelatedFast(half NoV, half NoL, half roughness)

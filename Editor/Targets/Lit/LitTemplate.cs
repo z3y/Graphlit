@@ -204,12 +204,19 @@ namespace Graphlit
             builder.subshaderTags["RenderType"] = "Opaque";
             builder.subshaderTags["Queue"] = "Geometry";
 
+            bool urp = GetRenderPipeline() == RenderPipeline.URP;
+
+            if (urp)
+            {
+                builder.subshaderTags["UniversalMaterialType"] = "Lit";
+            }
+
             builder.properties.Add(_properties);
 
             {
                 var portFlags = new List<int>() { POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, EMISSION, NORMAL_TS };
                 var pass = new PassBuilder("FORWARD", Vertex, FragmentForward, portFlags.ToArray());
-                pass.tags["LightMode"] = "ForwardBase";
+                pass.tags["LightMode"] = urp ? "UniversalForward" : "ForwardBase";
 
                 pass.renderStates["Cull"] = "[_Cull]";
                 pass.renderStates["ZWrite"] = "[_ZWrite]";
@@ -218,11 +225,20 @@ namespace Graphlit
 
                 pass.pragmas.Add("#pragma shader_feature_local _ _ALPHAFADE_ON _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
 
-                pass.pragmas.Add("#pragma multi_compile_fwdbase");
+                if (urp)
+                {
+                    AddURPLightingPragmas(pass);
+                    pass.pragmas.Add("#pragma instancing_options renderinglayer");
+                }
+                else
+                {
+                    pass.pragmas.Add("#pragma multi_compile_fwdbase");
+                    pass.pragmas.Add("#pragma shader_feature_fragment VERTEXLIGHT_ON");
+                }
+
                 //pass.pragmas.Add("#pragma skip_variants LIGHTPROBE_SH");
                 pass.pragmas.Add("#pragma multi_compile_fog");
                 pass.pragmas.Add("#pragma multi_compile_instancing");
-                pass.pragmas.Add("#pragma shader_feature_fragment VERTEXLIGHT_ON");
 
                 pass.pragmas.Add("#pragma shader_feature_local _BAKERY_MONOSH");
                 pass.pragmas.Add("#pragma shader_feature_local _BICUBIC_LIGHTMAP");
@@ -264,8 +280,17 @@ namespace Graphlit
                 PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.TangentWS);
                 PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.PositionWS);
 
-                pass.varyings.RequireCustomString("UNITY_FOG_COORDS(*)");
-                pass.varyings.RequireCustomString("UNITY_SHADOW_COORDS(*)");
+                if (urp)
+                {
+                    pass.varyings.RequireCustomString("float fogFactor : FOGFACTOR;");
+                    pass.varyings.RequireCustomString("#ifdef REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR\nfloat4 shadowCoord : SHADOWCOORD;\n#endif");
+                }
+                else
+                {
+                    pass.varyings.RequireCustomString("UNITY_FOG_COORDS(*)");
+                    pass.varyings.RequireCustomString("UNITY_SHADOW_COORDS(*)");
+                }
+
                 pass.varyings.RequireCustomString("#if !UNITY_SAMPLE_FULL_SH_PER_PIXEL\nfloat3 sh : TEXCOORD*;\n#endif");
                 pass.varyings.RequireCustomString("#ifdef LIGHTMAP_ON\ncentroid float2 lightmapUV : LIGHTMAPUV;\n#endif");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
@@ -278,6 +303,7 @@ namespace Graphlit
                 builder.AddPass(pass);
 
             }
+            if (!urp)
             {
                 var portFlags = new List<int>() { POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, NORMAL_TS };
                 var pass = new PassBuilder("FORWARD_DELTA", Vertex, FragmentForward, portFlags.ToArray());
@@ -376,6 +402,11 @@ namespace Graphlit
 
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
+
+                if (urp)
+                {
+                    pass.pragmas.Add("#pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW");
+                }
 
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 pass.pragmas.Add("#include \"UnityMetaPass.cginc\"");

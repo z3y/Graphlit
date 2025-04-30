@@ -50,6 +50,8 @@
     #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
     float3 _LightDirection; // just like that ?
     float3 _LightPosition;
+    #include "URPProbes.hlsl"
+    
 #else
     #include "UnityCG/UnityCG.hlsl"
     #include "AutoLight.cginc"

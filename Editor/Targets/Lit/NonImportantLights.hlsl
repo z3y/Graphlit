@@ -58,7 +58,7 @@ void NonImportantLightsPerPixel(FragmentData fragData, GIInput giInput, SurfaceD
         }
 
         float3 direction = normalize(float3(unity_4LightPosX0[i], unity_4LightPosY0[i], unity_4LightPosZ0[i]) - fragData.positionWS);
-        Light vertexLight = (Light)0;
+        GraphlitLight vertexLight = (GraphlitLight)0;
         vertexLight.color = unity_LightColor[i];
         vertexLight.attenuation = attenuation[i];
         vertexLight.direction = direction;
