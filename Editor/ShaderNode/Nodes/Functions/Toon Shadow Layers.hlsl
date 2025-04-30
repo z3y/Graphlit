@@ -40,9 +40,9 @@ void ToonShadowsLayers(out float3 Diffuse, float3 LightColor, float3 LightDirect
 
     lns = saturate(lns);
 
-    col = lerp(col, lerp(LightColor * ShadowColor1, col, lns.x), ShadowColor1.a);
-    col = lerp(col, lerp(LightColor * ShadowColor2, col, lns.y), ShadowColor2.a);
-    col = lerp(col, lerp(LightColor * ShadowColor3, col, lns.z), ShadowColor3.a);
+    col = lerp(col, lerp(LightColor * ShadowColor1.rgb, col, lns.x), ShadowColor1.a);
+    col = lerp(col, lerp(LightColor * ShadowColor2.rgb, col, lns.y), ShadowColor2.a);
+    col = lerp(col, lerp(LightColor * ShadowColor3.rgb, col, lns.z), ShadowColor3.a);
 
     col = lerp(col, LightColor, lns.w * ShadowBorderColor.rgb);
 

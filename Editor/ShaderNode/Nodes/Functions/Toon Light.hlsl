@@ -2,6 +2,10 @@
 
 #include "Main Light.hlsl"
 
+#ifdef UNIVERSAL_FORWARD
+#define UNITY_SHOULD_SAMPLE_SH 1
+#endif
+
 #define OPENLIT_FALLBACK_DIRECTION  float4(0.001,0.002,0.001,0)
 void ShadeSH9ToonDouble(float3 lightDirection, out float3 shMax, out float3 shMin)
 {
@@ -84,7 +88,7 @@ void FlatLightNode(float4 ShadowCoord, float2 LightmapUV, float3 PositionWS, out
 		float3 lightDirectionForSH9;
 		ComputeLightDirection(lightDir, lightCol, Direction, lightDirectionForSH9);
 
-		#if defined(UNITY_PASS_FORWARDBASE) || defined(OUTLINE_PASS)
+		#if defined(UNITY_PASS_FORWARDBASE) || defined(OUTLINE_PASS) || defined(UNIVERSAL_FORWARD)
 			ShadeSH9ToonDouble(lightDirectionForSH9, shMax, shMin);
 		#endif
 

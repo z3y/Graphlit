@@ -12,6 +12,18 @@ float sphIntersect_Preview(float3 ro, float3 rd, float4 sph)
     return -b - h;
 }
 
+inline float LinearToGammaSpaceExactPreview(float value)
+{
+    if (value <= 0.0F)
+        return 0.0F;
+    else if (value <= 0.0031308F)
+        return 12.92F * value;
+    else if (value < 1.0F)
+        return 1.055F * pow(value, 0.4166667F) - 0.055F;
+    else
+        return pow(value, 0.45454545F);
+}
+
 half4 frag(Varyings varyings) : SV_Target
 {
     // create data for preview
@@ -54,8 +66,8 @@ half4 frag(Varyings varyings) : SV_Target
 
         normalWS = normalize(normalWS);
         float2 generatedUV = float2(
-            atan2(normalWS.z, normalWS.x) / (UNITY_PI * 2.0),
-            acos(-normalWS.y) / UNITY_PI
+            atan2(normalWS.z, normalWS.x) / (PI * 2.0),
+            acos(-normalWS.y) / PI
         );
         generatedUV.x += 0.75;
 
@@ -122,9 +134,9 @@ half4 frag(Varyings varyings) : SV_Target
     col.a = _Preview3D ? alpha3D : 1.0;
 
     col = saturate(col);
-    col.r = LinearToGammaSpaceExact(col.r);
-    col.g = LinearToGammaSpaceExact(col.g);
-    col.b = LinearToGammaSpaceExact(col.b);
+    col.r = LinearToGammaSpaceExactPreview(col.r);
+    col.g = LinearToGammaSpaceExactPreview(col.g);
+    col.b = LinearToGammaSpaceExactPreview(col.b);
     col.rgb = lerp(checkerboard, col.rgb, alpha);
 
     return col;

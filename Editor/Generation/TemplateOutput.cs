@@ -198,6 +198,8 @@ namespace Graphlit
 
         protected static void AddURPLightingPragmas(PassBuilder pass)
         {
+            pass.pragmas.Add("#define UNIVERSAL_FORWARD");
+
             // Universal Pipeline keywords
             pass.pragmas.Add("#pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN");
             pass.pragmas.Add("#pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS");
@@ -222,6 +224,8 @@ namespace Graphlit
             pass.pragmas.Add("#pragma multi_compile _ DYNAMICLIGHTMAP_ON");
             // pass.pragmas.Add("#pragma multi_compile_fragment _ LOD_FADE_CROSSFADE");
             // pass.pragmas.Add("#pragma multi_compile_fragment _ DEBUG_DISPLAY");
+
+
         }
     }
 }
