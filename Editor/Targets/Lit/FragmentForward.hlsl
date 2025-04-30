@@ -202,6 +202,29 @@ half4 frag(Varyings varyings) : SV_Target
     // unity lights
     LIGHT_IMPL(unityLight, fragData, giInput, surf, giOutput);
 
+#ifdef UNIVERSALRP
+    uint pixelLightCount = GetAdditionalLightsCount();
+    uint meshRenderingLayers = GetMeshRenderingLayer();
+    
+    half4 urpShadowMask = 0;
+    LIGHT_LOOP_BEGIN(pixelLightCount)
+        Light light = GetAdditionalLight(lightIndex, fragData.positionWS, urpShadowMask);
+
+#ifdef _LIGHT_LAYERS
+        if (IsMatchingLightLayer(light.layerMask, meshRenderingLayers))
+#endif
+        {
+
+            GraphlitLight additionalLight = (GraphlitLight)0;
+            additionalLight.direction = light.direction;
+            additionalLight.color = light.color;
+            additionalLight.attenuation = light.distanceAttenuation * light.shadowAttenuation;
+            additionalLight.ComputeData(fragData, giInput);
+            LIGHT_IMPL(additionalLight, fragData, giInput, surf, giOutput);
+        }
+    LIGHT_LOOP_END
+#endif
+
     #ifdef VERTEXLIGHT_ON
         NonImportantLightsPerPixel(fragData, giInput, surf, giOutput);
     #endif
