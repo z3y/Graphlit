@@ -106,30 +106,7 @@ namespace Graphlit
                 {
                     if (urp)
                     {
-                        // Universal Pipeline keywords
-                        pass.pragmas.Add("#pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN");
-                        pass.pragmas.Add("#pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS");
-                        pass.pragmas.Add("#pragma multi_compile _ EVALUATE_SH_MIXED EVALUATE_SH_VERTEX");
-                        pass.pragmas.Add("#pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS");
-                        pass.pragmas.Add("#pragma multi_compile_fragment _ _REFLECTION_PROBE_BLENDING");
-                        pass.pragmas.Add("#pragma multi_compile_fragment _ _REFLECTION_PROBE_BOX_PROJECTION");
-                        pass.pragmas.Add("#pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH");
-                        pass.pragmas.Add("#pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION");
-                        pass.pragmas.Add("#pragma multi_compile_fragment _ _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3");
-                        pass.pragmas.Add("#pragma multi_compile_fragment _ _LIGHT_COOKIES");
-                        pass.pragmas.Add("#pragma multi_compile _ _LIGHT_LAYERS");
-                        pass.pragmas.Add("#pragma multi_compile _ _FORWARD_PLUS");
-                        pass.pragmas.Add("#include_with_pragmas \"Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRenderingKeywords.hlsl\"");
-                        pass.pragmas.Add("#include_with_pragmas \"Packages/com.unity.render-pipelines.universal/ShaderLibrary/RenderingLayers.hlsl\"");
-
-                        // Unity defined keywords
-                        pass.pragmas.Add("#pragma multi_compile _ LIGHTMAP_SHADOW_MIXING");
-                        pass.pragmas.Add("#pragma multi_compile _ SHADOWS_SHADOWMASK");
-                        pass.pragmas.Add("#pragma multi_compile _ DIRLIGHTMAP_COMBINED");
-                        pass.pragmas.Add("#pragma multi_compile _ LIGHTMAP_ON");
-                        pass.pragmas.Add("#pragma multi_compile _ DYNAMICLIGHTMAP_ON");
-                        pass.pragmas.Add("#pragma multi_compile_fragment _ LOD_FADE_CROSSFADE");
-                        pass.pragmas.Add("#pragma multi_compile_fragment _ DEBUG_DISPLAY");
+                        AddURPLightingPragmas(pass);
                     }
                     else
                     {
@@ -148,11 +125,28 @@ namespace Graphlit
                 pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
 
                 pass.varyings.RequirePositionCS();
-                pass.varyings.RequireCustomString("UNITY_FOG_COORDS(*)");
+
+                if (urp)
+                {
+                    pass.varyings.RequireCustomString("float fogFactor : FOGFACTOR;");
+                }
+                else
+                {
+                    pass.varyings.RequireCustomString("UNITY_FOG_COORDS(*)");
+                }
+
                 if (_customLighting)
                 {
                     pass.attributes.RequireUV(1, 2);
-                    pass.varyings.RequireCustomString("UNITY_SHADOW_COORDS(*)");
+
+                    if (urp)
+                    {
+                        pass.varyings.RequireCustomString("#ifdef REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR\nfloat4 shadowCoord : SHADOWCOORD;\n#endif");
+                    }
+                    else
+                    {
+                        pass.varyings.RequireCustomString("UNITY_SHADOW_COORDS(*)");
+                    }
                     pass.varyings.RequireCustomString("#ifdef LIGHTMAP_ON\ncentroid float2 lightmapUV : LIGHTMAPUV;\n#endif");
                 }
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");

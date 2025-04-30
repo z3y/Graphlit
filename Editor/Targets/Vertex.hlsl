@@ -3,7 +3,7 @@
 Varyings vert(Attributes input)
 {
     Varyings varyings = (Varyings)0;
-    UNITY_INITIALIZE_OUTPUT(Varyings, varyings);
+    ZERO_INITIALIZE(Varyings, varyings);
 
 #if !defined(UNITY_PASS_META)
     UNITY_SETUP_INSTANCE_ID(input);
@@ -30,8 +30,18 @@ Varyings vert(Attributes input)
 #endif
 
     #if defined(UNITY_PASS_SHADOWCASTER)
-        varyings.positionCS = TransformWorldToHClip(ApplyShadowBiasNormal(positionWS, normalWS));
-        varyings.positionCS = UnityApplyLinearShadowBias(varyings.positionCS);
+    
+        #ifdef UNIVERSALRP
+            #if _CASTING_PUNCTUAL_LIGHT_SHADOW
+                float3 lightDirectionWS = normalize(_LightPosition - positionWS);
+            #else
+                float3 lightDirectionWS = _LightDirection;
+            #endif
+            varyings.positionCS = TransformWorldToHClip(ApplyShadowBias(positionWS, normalWS, lightDirectionWS));
+        #else
+            varyings.positionCS = TransformWorldToHClip(ApplyShadowBiasNormal(positionWS, normalWS));   
+            varyings.positionCS = UnityApplyLinearShadowBias(varyings.positionCS);
+        #endif
     #elif defined(UNITY_PASS_META)
         varyings.positionCS = UnityMetaVertexPosition(float4(input.positionOS, 1.0), input.uv1.xy, input.uv2.xy, unity_LightmapST, unity_DynamicLightmapST);
     #else
@@ -46,12 +56,15 @@ Varyings vert(Attributes input)
         varyings.lightmapUV.xy = mad(input.uv1.xy, unity_LightmapST.xy, unity_LightmapST.zw);
     #endif
 
-    #if !UNITY_SAMPLE_FULL_SH_PER_PIXEL && defined(UNITY_PASS_FORWARDBASE)
-        varyings.sh = ShadeSHPerVertex(normalWS, 0);
+    #ifdef UNIVERSALRP
+        // todo: find proper functions for urp
+        #ifdef REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR
+            varyings.shadowCoord = TransformWorldToShadowCoord(positionWS);
+        #endif
+    #else
+        UNITY_TRANSFER_SHADOW(varyings, input.uv1.xy);
+        UNITY_TRANSFER_FOG(varyings, varyings.positionCS);
     #endif
-
-    UNITY_TRANSFER_SHADOW(varyings, input.uv1.xy);
-    UNITY_TRANSFER_FOG(varyings, varyings.positionCS);
 
     #ifdef EDITOR_VISUALIZATION
         varyings.vizUV = 0;

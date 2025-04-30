@@ -364,7 +364,7 @@
         "defaultPreviewState": 1,
         "customEditor": "",
         "fallback": "",
-        "include": "//#define _BAKERY_MONOSH",
+        "include": "//#define _BAKERY_MONOSH\n\n#ifndef UNITY_PBS_USE_BRDF1 // if android\r\n    #define _ACES // enable aces on all materials and override aces toggle\r\n    // #define _NEUTRAL // enable neutral on all materials and override neutral toggle\r\n    // #define _KHRONOS_NEUTRAL // enable khronos neutral on all materials and override neutral toggle\r\n    #endif\n",
         "outlinePass": 0,
         "depthFillPass": false,
         "stencil": false,
@@ -1765,7 +1765,7 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": false,
-            "data": "{\"defaultMode\":0,\"defaultCull\":2,\"_cbirp\":false,\"_specular\":true,\"_fwdAddBlendOpMax\":false,\"_normal\":0}"
+            "data": "{\"defaultMode\":0,\"defaultCull\":2,\"_cbirp\":false,\"_cbirpReflections\":false,\"_specular\":true,\"_fwdAddBlendOpMax\":false,\"_normal\":0}"
         }
     ],
     "groups": [

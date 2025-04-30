@@ -52,8 +52,17 @@ struct VertexData
         output.frontFace = true;
 
         #if defined(UNITY_PASS_SHADOWCASTER)
-            output.positionCSR = TransformWorldToHClip(ApplyShadowBiasNormal(output.positionWS, output.normalWS));
-            output.positionCSR = UnityApplyLinearShadowBias(output.positionCSR);
+            #ifdef UNIVERSALRP
+                #if _CASTING_PUNCTUAL_LIGHT_SHADOW
+                    float3 lightDirectionWS = normalize(_LightPosition - output.positionWS);
+                #else
+                    float3 lightDirectionWS = _LightDirection;
+                #endif
+                output.positionCSR = TransformWorldToHClip(ApplyShadowBias(output.positionWS, output.normalWS, lightDirectionWS));
+            #else
+                output.positionCSR = TransformWorldToHClip(ApplyShadowBiasNormal(output.positionWS, output.normalWS));   
+                output.positionCSR = UnityApplyLinearShadowBias(output.positionCSR);
+            #endif
         #elif defined(UNITY_PASS_META)
             output.positionCSR = UnityMetaVertexPosition(float4(TransformWorldToObject(output.positionWS), 0), attributes.uv1, attributes.uv2, unity_LightmapST, unity_DynamicLightmapST);
         #else

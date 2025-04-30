@@ -420,5 +420,6 @@ float3 BlendMode_LighterColor(float3 base, float3 blend)
 
 float3 BlendMode_MultiplyX2(float3 base, float3 blend)
 {
-	return base * blend * unity_ColorSpaceDouble.rgb;
+	float4 colorSpaceDouble = float4(4.59479380, 4.59479380, 4.59479380, 2.0);
+	return base * blend * colorSpaceDouble.rgb;
 }

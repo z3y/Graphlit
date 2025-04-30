@@ -3,7 +3,7 @@
 Varyings vert(Attributes input)
 {
     Varyings output = (Varyings)0;
-    UNITY_INITIALIZE_OUTPUT(Varyings, output);
+    ZERO_INITIALIZE(Varyings, output);
 
     VertexDescription vertexDescription = VertexDescriptionFunction(input, output);
 

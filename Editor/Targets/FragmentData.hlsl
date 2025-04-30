@@ -64,6 +64,7 @@ struct FragmentData
         output.frontFace = IS_FRONT_VFACE(varyings.cullFace, true, false);
         #endif
 
+        // todo: find functions for urp
         #ifdef UNPACK_POSITIONCSR
             output.positionCSR = UNPACK_POSITIONCSR;
             float4 grabPos = ComputeGrabScreenPos(output.positionCSR);
@@ -76,6 +77,7 @@ struct FragmentData
             output.lightmapUV = varyings.lightmapUV;
         #endif
 
+        // todo: find functions for urp
         #if defined(UNITY_PASS_FORWARDBASE) || defined(UNITY_PASS_FORWARDADD)
             output.shadowCoords = READ_SHADOW_COORDS(varyings);
         #endif
