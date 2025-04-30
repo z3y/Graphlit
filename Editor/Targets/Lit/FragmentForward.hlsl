@@ -135,7 +135,7 @@ half4 frag(Varyings varyings) : SV_Target
                     #endif
                     float3 dominantDir = nL1;
                     float3 lmDirection = normalize(dominantDir);
-                    float3 halfDir = Unity_SafeNormalize(lmDirection + fragData.viewDirectionWS);
+                    float3 halfDir = SafeNormalize(lmDirection + fragData.viewDirectionWS);
                     half nh = saturate(dot(giInput.normalWS, halfDir));
                     half spec = Filament::D_GGX(nh, roughnessLm);
                     sh = L0 + dominantDir.x * L1x + dominantDir.y * L1y + dominantDir.z * L1z;
