@@ -299,7 +299,7 @@ namespace Graphlit
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
 
                 pass.preincludes.Add("Packages/com.z3y.graphlit/Editor/Targets/Lit/Functions.hlsl");
-
+                pass.properties.Add(_specularOcclusion);
                 builder.AddPass(pass);
 
             }

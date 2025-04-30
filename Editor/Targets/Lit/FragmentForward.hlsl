@@ -35,7 +35,7 @@
 
 #include "HDRPBoxProjection.hlsl"
 
-half _SpecularOcclusion;
+// half _SpecularOcclusion;
 
 half4 frag(Varyings varyings) : SV_Target
 {
@@ -105,7 +105,7 @@ half4 frag(Varyings varyings) : SV_Target
             #endif
             #ifdef _BAKERY_MONOSH
                 half3 L0 = illuminance;
-                half3 nL1 = directionalLightmap * 2.0 - 1.0;
+                half3 nL1 = directionalLightmap.rgb * 2.0 - 1.0;
                 half3 L1x = nL1.x * L0 * 2.0;
                 half3 L1y = nL1.y * L0 * 2.0;
                 half3 L1z = nL1.z * L0 * 2.0;
@@ -205,7 +205,8 @@ half4 frag(Varyings varyings) : SV_Target
 #ifdef UNIVERSALRP
     uint pixelLightCount = GetAdditionalLightsCount();
     uint meshRenderingLayers = GetMeshRenderingLayer();
-    
+
+    // todo: add urp shadowmask
     half4 urpShadowMask = 0;
     LIGHT_LOOP_BEGIN(pixelLightCount)
         Light light = GetAdditionalLight(lightIndex, fragData.positionWS, urpShadowMask);
