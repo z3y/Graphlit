@@ -21,6 +21,16 @@ Supports the built-in and universal render pipeline.
 - Live Preview
 - [Hotkeys](https://z3y.github.io/Graphlit/hotkeys)
 
+### Universal Render Pipeline
+
+Currently not implemented:
+
+- Forward+
+- Dots
+- Decals
+- Rendering Layers
+- SSAO
+
 ## Screenshots
 
 ![Image](/Docs~/public/shader-ball.jpg)
