@@ -539,7 +539,8 @@ namespace Graphlit
 
         private void AppendPasses()
         {
-            if (ShaderGraphView.graphData.depthFillPass)
+            var graphData = ShaderGraphView.graphData;
+            if (graphData.depthFillPass)
             {
                 _sb.AppendLine("Pass { ZWrite On ColorMask 0 }");
             }
@@ -547,11 +548,34 @@ namespace Graphlit
             {
                 _sb.AppendLine("GrabPass { Tags { \"LightMode\" = \"GrabPass\" } \"_CameraOpaqueTexture\" }");
             }
-            var outline = ShaderGraphView.graphData.outlinePass;
+            var outline = graphData.outlinePass;
+
+            // property union for srp batcher
+            var propertyUnion = new List<PropertyDescriptor>();
+            var addedProperties = new HashSet<string>();
+            foreach (var pass in passBuilders)
+            {
+                foreach (var property in pass.properties)
+                {
+                    var referenceName = property.GetReferenceName(pass.generationMode);
+
+                    if (addedProperties.Contains(referenceName))
+                    {
+                        continue;
+                    }
+
+                    addedProperties.Add(referenceName);
+                    propertyUnion.Add(property);
+                }
+            }
+
+            passBuilders.ForEach(x => x.properties = propertyUnion);
+
+
             for (int i = 0; i < passBuilders.Count; i++)
             {
                 PassBuilder pass = passBuilders[i];
-                pass.pragmas.AddRange(ShaderGraphView.graphData.include.Split('\n'));
+                pass.pragmas.AddRange(graphData.include.Split('\n'));
                 if (outline == GraphData.OutlinePassMode.EnabledEarly && i == 0)
                 {
                     //pass.name = "FORWARD_OUTLINE";
@@ -559,12 +583,12 @@ namespace Graphlit
                     pass.outlinePass = true;
                     pass.renderStates["Cull"] = "Front";
                     //pass.tags["LightMode"] = "Always";
-                    AppendPass(pass);
+                    AppendPass(pass, graphData);
                     pass.outlinePass = false;
                     pass.renderStates["Cull"] = cull;
                 }
 
-                AppendPass(pass);
+                AppendPass(pass, graphData);
 
                 if (outline == GraphData.OutlinePassMode.Enabled && i == 0)
                 {
@@ -572,17 +596,17 @@ namespace Graphlit
                     pass.outlinePass = true;
                     pass.renderStates["Cull"] = "Front";
                     //pass.tags["LightMode"] = "Always";
-                    AppendPass(pass);
+                    AppendPass(pass, graphData);
                 }
             }
         }
 
-        private void AppendPass(PassBuilder pass)
+        private void AppendPass(PassBuilder pass, GraphData graphData)
         {
             _sb.AppendLine("Pass");
             _sb.Indent();
             {
-                pass.AppendPass(_sb, ShaderGraphView.graphData.stencil);
+                pass.AppendPass(_sb, graphData);
             }
             _sb.UnIndent();
         }

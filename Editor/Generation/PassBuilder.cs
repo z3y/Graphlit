@@ -47,7 +47,7 @@ namespace Graphlit
         const string AudioLinkPath = "Packages/com.llealloo.audiolink/Runtime/Shaders/AudioLink.cginc";
         static bool AudioLinkExists = System.IO.File.Exists(AudioLinkPath);
 
-        public void AppendPass(ShaderStringBuilder sb, bool stencil = false)
+        public void AppendPass(ShaderStringBuilder sb, GraphData graphData)
         {
             varyings.PackVaryings();
 
@@ -59,13 +59,13 @@ namespace Graphlit
             {
                 sb.AppendLine(state.Key + " " + state.Value);
             }
-            if (stencil)
+            if (graphData.stencil)
             {
                 AppendStencil(sb);
             }
 
             sb.AppendLine("HLSLPROGRAM");
-            AppendPassHLSL(sb);
+            AppendPassHLSL(sb, graphData);
             sb.AppendLine("ENDHLSL");
         }
         static string StencilStates = @"
@@ -111,7 +111,7 @@ namespace Graphlit
                 sb.AppendLine(StencilStates);
             }
         }
-        public void AppendPassHLSL(ShaderStringBuilder sb)
+        public void AppendPassHLSL(ShaderStringBuilder sb, GraphData graphData)
         {
             sb.AppendLine();
 
