@@ -38,6 +38,7 @@ Varyings vert(Attributes input)
                 float3 lightDirectionWS = _LightDirection;
             #endif
             varyings.positionCS = TransformWorldToHClip(ApplyShadowBias(positionWS, normalWS, lightDirectionWS));
+            varyings.positionCS = ApplyShadowClamping(varyings.positionCS);
         #else
             varyings.positionCS = TransformWorldToHClip(ApplyShadowBiasNormal(positionWS, normalWS));   
             varyings.positionCS = UnityApplyLinearShadowBias(varyings.positionCS);

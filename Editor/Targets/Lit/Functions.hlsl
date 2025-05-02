@@ -54,6 +54,7 @@ struct GraphlitLight
     float3 direction;
     half3 color;
     half attenuation;
+    half4 shadowMask;
     bool specularOnly;
     
     // calculated values
@@ -77,10 +78,20 @@ struct GraphlitLight
                 float4 shadowCoords = float4(0, 0, 0, 0);
             #endif
 
-			Light urpLight = GetMainLight(shadowCoords);
+            InputData urpInputData;
+            float2 lightmapUV = 0;
+            #ifdef LIGHTMAP_ON
+            lightmapUV = varyings.lightmapUV;
+            #endif
+            urpInputData.shadowMask = SAMPLE_SHADOWMASK(lightmapUV);
+            half4 shadowMask = CalculateShadowMask(urpInputData);
+            // todo: ao factor
+			Light urpLight = GetMainLight(shadowCoords, positionWS, shadowMask);
+
 			light.color = urpLight.color;
 			light.direction = urpLight.direction;
 			light.attenuation = urpLight.distanceAttenuation * urpLight.shadowAttenuation;
+            light.shadowMask = shadowMask;
         #else
 
             #if !defined(USING_LIGHT_MULTI_COMPILE)

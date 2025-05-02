@@ -76,8 +76,8 @@ half4 frag(Varyings varyings) : SV_Target
     Filament::EnvironmentBRDF(giInput.NoV, surf.Roughness, giInput.f0, giInput.brdf, giInput.energyCompensation);
     half3 fr = giInput.energyCompensation * giInput.brdf;
 
-    GraphlitLight unityLight = GraphlitLight::GetUnityLight(varyings);
-    unityLight.ComputeData(fragData, giInput);
+    GraphlitLight mainLight = GraphlitLight::GetUnityLight(varyings);
+    mainLight.ComputeData(fragData, giInput);
 
     GIOutput giOutput = GIOutput::New();
 
@@ -155,8 +155,8 @@ half4 frag(Varyings varyings) : SV_Target
             #endif
         #endif
         #if defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN)
-            illuminance = SubtractMainLightWithRealtimeAttenuationFromLightmap(illuminance, unityLight.attenuation, float4(0,0,0,0), giInput.normalWS);
-            unityLight.color = 0;
+            illuminance = SubtractMainLightWithRealtimeAttenuationFromLightmap(illuminance, mainLight.attenuation, float4(0,0,0,0), giInput.normalWS);
+            mainLight.color = 0;
         #endif
 
         giOutput.indirectDiffuse = illuminance;
@@ -200,16 +200,14 @@ half4 frag(Varyings varyings) : SV_Target
 
 
     // unity lights
-    LIGHT_IMPL(unityLight, fragData, giInput, surf, giOutput);
+    LIGHT_IMPL(mainLight, fragData, giInput, surf, giOutput);
 
 #ifdef UNIVERSALRP
     uint pixelLightCount = GetAdditionalLightsCount();
     uint meshRenderingLayers = GetMeshRenderingLayer();
 
-    // todo: add urp shadowmask
-    half4 urpShadowMask = 0;
     LIGHT_LOOP_BEGIN(pixelLightCount)
-        Light light = GetAdditionalLight(lightIndex, fragData.positionWS, urpShadowMask);
+        Light light = GetAdditionalLight(lightIndex, fragData.positionWS, mainLight.shadowMask);
 
 #ifdef _LIGHT_LAYERS
         if (IsMatchingLightLayer(light.layerMask, meshRenderingLayers))

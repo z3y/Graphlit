@@ -381,6 +381,10 @@ namespace Graphlit
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
                 pass.properties.Add(_specularOcclusion);
 
+                if (urp)
+                {
+                    pass.pragmas.Add("#pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW");
+                }
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 builder.AddPass(pass);
             }
@@ -405,10 +409,6 @@ namespace Graphlit
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                if (urp)
-                {
-                    pass.pragmas.Add("#pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW");
-                }
                 pass.properties.Add(_specularOcclusion);
 
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
