@@ -198,6 +198,7 @@ namespace Graphlit
                 {
                     var pass = new PassBuilder("DepthNormals", Vertex, FragmentDepthNormals, POSITION, NORMAL, TANGENT, ALPHA, CUTOFF);
                     CreateUniversalDepthNormalsPass(pass);
+                    pass.pragmas.Add("#define UNLIT_TEMPLATE");
                     builder.AddPass(pass);
                 }
             }

@@ -19,6 +19,12 @@ half4 frag(Varyings varyings) : SV_Target
 
     float3 normalWS;
 
+    #ifdef UNLIT_TEMPLATE // todo: figure out something for unlit template
+        #ifndef _NORMAL_DROPOFF_OFF
+            #define _NORMAL_DROPOFF_OFF
+        #endif
+    #endif
+
     #if defined(_NORMAL_DROPOFF_OFF)
         normalWS = fragData.normalWS;
     #elif defined(_NORMAL_DROPOFF_WS)

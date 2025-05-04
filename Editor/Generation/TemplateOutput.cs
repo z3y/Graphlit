@@ -265,6 +265,11 @@ namespace Graphlit
             pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
             pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
+
+            PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.PositionWS);
+            PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.BitangentWS);
+            PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.TangentWS);
+            PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.PositionWS);
         }
     }
 }
