@@ -62,6 +62,8 @@ namespace Graphlit
         const string Vertex = "Packages/com.z3y.graphlit/Editor/Targets/Vertex.hlsl";
         const string FragmentForward = "Packages/com.z3y.graphlit/Editor/Targets/Unlit/FragmentForward.hlsl";
         const string FragmentShadow = "Packages/com.z3y.graphlit/Editor/Targets/FragmentShadow.hlsl";
+        const string FragmentDepth = "Packages/com.z3y.graphlit/Editor/Targets/FragmentDepth.hlsl";
+        const string FragmentDepthNormals = "Packages/com.z3y.graphlit/Editor/Targets/FragmentDepthNormals.hlsl";
 
         public override void OnBeforeBuild(ShaderBuilder builder)
         {
@@ -186,7 +188,19 @@ namespace Graphlit
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
                 builder.AddPass(pass);
             }
-
+            if (urp)
+            {
+                {
+                    var pass = new PassBuilder("DepthOnly", Vertex, FragmentDepth, POSITION, ALPHA, CUTOFF);
+                    CreateUniversalDepthPass(pass);
+                    builder.AddPass(pass);
+                }
+                {
+                    var pass = new PassBuilder("DepthNormals", Vertex, FragmentDepthNormals, POSITION, NORMAL, TANGENT, ALPHA, CUTOFF);
+                    CreateUniversalDepthNormalsPass(pass);
+                    builder.AddPass(pass);
+                }
+            }
             {
                 var pass = new PassBuilder("SHADOWCASTER", Vertex, FragmentShadow, POSITION, NORMAL, TANGENT, ALPHA, CUTOFF);
                 pass.tags["LightMode"] = "ShadowCaster";

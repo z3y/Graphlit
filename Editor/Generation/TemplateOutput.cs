@@ -227,5 +227,44 @@ namespace Graphlit
 
 
         }
+
+        public void CreateUniversalDepthPass(PassBuilder pass)
+        {
+            pass.tags["LightMode"] = "DepthOnly";
+            pass.renderStates["ZWrite"] = "On";
+            pass.renderStates["ColorMask"] = "R";
+            pass.renderStates["Cull"] = "[_Cull]";
+
+            pass.pragmas.Add("#pragma multi_compile_instancing");
+            pass.pragmas.Add("#define DEPTH_ONLY");
+
+            pass.attributes.RequirePositionOS();
+            pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
+
+            pass.varyings.RequirePositionCS();
+            pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
+            pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
+
+            pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
+        }
+
+        public void CreateUniversalDepthNormalsPass(PassBuilder pass)
+        {
+            pass.tags["LightMode"] = "DepthNormals";
+            pass.renderStates["ZWrite"] = "On";
+            pass.renderStates["Cull"] = "[_Cull]";
+
+            pass.pragmas.Add("#pragma multi_compile_instancing");
+            pass.pragmas.Add("#define DEPTH_NORMALS");
+
+            pass.attributes.RequirePositionOS();
+            pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
+
+            pass.varyings.RequirePositionCS();
+            pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
+            pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
+
+            pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
+        }
     }
 }
