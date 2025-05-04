@@ -780,7 +780,7 @@ namespace Graphlit
                 DefaultTextureName.red => "float4(1, 0, 0, 0)",
                 DefaultTextureName.gray or DefaultTextureName.grey => "float4(LinearToSRGB(float3(0.5, 0.5, 0.5)), 0.5)",
                 DefaultTextureName.linearGray or DefaultTextureName.linearGrey => "float4(0.5, 0.5, 0.5, 0.5)",
-                DefaultTextureName.bump => "float4(0.5, 0.5, 1, 1)",
+                DefaultTextureName.bump => "GetFlatNormal()",
                 _ => "float4(1, 1, 1, 1)",
             };
         }

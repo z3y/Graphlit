@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Graphlit
 {
-    [ScriptedImporter(15, new[] { "graphlit", "zsg" }, 0)]
+    [ScriptedImporter(16, new[] { "graphlit", "zsg" }, 0)]
     public class GraphlitImporter : ScriptedImporter
     {
         internal static Dictionary<string, ShaderGraphView> _graphViews = new();
@@ -84,7 +84,7 @@ namespace Graphlit
             var scriptingDefines = PlayerSettings.GetScriptingDefineSymbols(UnityEditor.Build.NamedBuildTarget.Standalone);
             foreach (var pass in builder.passBuilders)
             {
-                pass.pragmas.Add("#define TARGET_" + target.ToString().ToUpper());
+                pass.pragmas.Insert(0, "#define TARGET_" + target.ToString().ToUpper());
 
                 if (!string.IsNullOrEmpty(scriptingDefines))
                 {

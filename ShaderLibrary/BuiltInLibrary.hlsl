@@ -3,6 +3,15 @@
 #endif
 #define UNITY_SAMPLE_FULL_SH_PER_PIXEL 1
 
+float4 GetFlatNormal()
+{
+    // todo: find proper defines for normal map packing
+    #if defined(UNIVERSALRP) && defined(TARGET_ANDROID)
+    return float4(0.5, 0.5, 1, 0.5);
+    #else
+    return float4(0.5, 0.5, 1, 1);
+    #endif
+}
 
 #ifdef UNIVERSALRP
     #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
