@@ -366,7 +366,7 @@ namespace Graphlit
             if (urp)
             {
                 {
-                    var pass = new PassBuilder("DepthOnly", Vertex, FragmentDepth, POSITION, ALPHA, CUTOFF);
+                    var pass = new PassBuilder("DepthOnly", Vertex, FragmentDepth, NORMAL_VERTEX, TANGENT, POSITION, ALPHA, CUTOFF);
                     CreateUniversalDepthPass(pass);
                     builder.AddPass(pass);
                 }
