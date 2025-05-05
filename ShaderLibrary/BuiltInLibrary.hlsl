@@ -61,6 +61,29 @@ float4 GetFlatNormal()
     float3 _LightPosition;
     #include "URPProbes.hlsl"
     
+    // copy for version compatibility
+    half IsDirectionalLight_Local()
+    {
+        return round(_ShadowBias.z) == 1.0 ? 1 : 0;
+    }
+    float4 ApplyShadowClamping_Local(float4 positionCS)
+    {
+        #if UNITY_REVERSED_Z
+            float clamped = min(positionCS.z, positionCS.w * UNITY_NEAR_CLIP_VALUE);
+        #else
+            float clamped = max(positionCS.z, positionCS.w * UNITY_NEAR_CLIP_VALUE);
+        #endif
+
+        // The current implementation of vertex clamping in Universal RP is the same as in Unity Built-In RP.
+        // We follow the same convention in Universal RP where it's only enabled for Directional Lights
+        // (see: Shadows.cpp::RenderShadowMaps() #L2161-L2162)
+        // (see: Shadows.cpp::RenderShadowMaps() #L2086-L2102)
+        // (see: Shadows.cpp::PrepareStateForShadowMap() #L1685-L1686)
+        positionCS.z = lerp(positionCS.z, clamped, IsDirectionalLight_Local());
+
+        return positionCS;
+    }
+
 #else
     #include "UnityCG/UnityCG.hlsl"
     #include "AutoLight.cginc"

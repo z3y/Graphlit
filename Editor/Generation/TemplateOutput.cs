@@ -213,7 +213,9 @@ namespace Graphlit
             pass.pragmas.Add("#pragma multi_compile_fragment _ _LIGHT_COOKIES");
             pass.pragmas.Add("#pragma multi_compile _ _LIGHT_LAYERS");
             // pass.pragmas.Add("#pragma multi_compile _ _FORWARD_PLUS");
+#if UNITY_6000_0_OR_NEWER
             pass.pragmas.Add("#include_with_pragmas \"Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRenderingKeywords.hlsl\"");
+#endif
             pass.pragmas.Add("#include_with_pragmas \"Packages/com.unity.render-pipelines.universal/ShaderLibrary/RenderingLayers.hlsl\"");
 
             // Unity defined keywords
