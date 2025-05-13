@@ -172,11 +172,11 @@ namespace Graphlit
             builder.dependencies.Add(_ltcgiPath);
             builder.dependencies.Add(_cbirpPath);
 
-            builder.properties.Add(_surfaceBlend);
-            builder.properties.Add(_alphaClip);
-            builder.properties.Add(_alphaToMask);
-            builder.properties.Add(_blendModePreserveSpecular);
             builder.properties.Add(_surfaceOptions);
+            builder.properties.Add(_surfaceBlend);
+            builder.properties.Add(_blendModePreserveSpecular);
+            builder.properties.Add(_alphaToMask);
+            builder.properties.Add(_alphaClip);
             builder.properties.Add(_mode);
             builder.properties.Add(_srcBlend);
             builder.properties.Add(_dstBlend);
