@@ -44,7 +44,7 @@ Varyings vert(Attributes input)
             varyings.positionCS = ApplyShadowClamping(varyings.positionCS);
         #endif
     #elif defined(UNITY_PASS_META)
-        varyings.positionCS = UnityMetaVertexPosition(float4(input.positionOS, 1.0), input.uv1.xy, input.uv2.xy, unity_LightmapST, unity_DynamicLightmapST);
+        varyings.positionCS = UnityMetaVertexPosition(input.positionOS, input.uv1.xy, input.uv2.xy);
     #else
         #ifdef SKIP_VERTEX_FUNCTION
             varyings.positionCS = TransformObjectToHClip(input.positionOS);
@@ -58,15 +58,7 @@ Varyings vert(Attributes input)
     #endif
 
     #ifdef EDITOR_VISUALIZATION
-        varyings.vizUV = 0;
-        varyings.lightCoord = 0;
-        if (unity_VisualizationMode == EDITORVIZ_TEXTURE)
-            varyings.vizUV = UnityMetaVizUV(unity_EditorViz_UVIndex, input.uv0.xy, input.uv1.xy, input.uv2.xy, unity_EditorViz_Texture_ST);
-        else if (unity_VisualizationMode == EDITORVIZ_SHOWLIGHTMASK)
-        {
-            varyings.vizUV = input.uv1.xy * unity_LightmapST.xy + unity_LightmapST.zw;
-            varyings.lightCoord = mul(unity_EditorViz_WorldToLight, mul(unity_ObjectToWorld, float4(input.positionOS, 1)));
-        }
+        UnityEditorVizData(input.positionOS, input.uv0.xy, input.uv1.xy, input.uv2.xy, output.VizUV, output.LightCoord);
     #endif
 
     #ifdef UNPACK_POSITIONCSR

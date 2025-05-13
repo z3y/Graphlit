@@ -446,9 +446,37 @@ namespace Graphlit
 
         public override void AssignNewShaderToMaterial(Material material, Shader oldShader, Shader newShader)
         {
+            if (oldShader.FindPropertyIndex("_Mode") >= 0)
+            {
+                UpgradeMode(material);
+            }
+            if (oldShader.FindPropertyIndex("_Glossiness") >= 0)
+            {
+                material.SetFloat("_Roughness", 1.0f - material.GetFloat("_Glossiness"));
+            }
             base.AssignNewShaderToMaterial(material, oldShader, newShader);
             material.shaderKeywords = null;
             SetupSurfaceType(material);
+        }
+
+        public static void UpgradeMode(Material material)
+        {
+            int mode = (int)material.GetFloat("_Mode");
+            Debug.Log($"Upgrading Surface Mode {mode} for {material.name} material");
+            if (mode == 0)
+            {
+                return;
+            }
+
+            if (mode > 0 && mode != 1)
+            {
+                material.SetFloat("_Surface", 1.0f);
+                if (mode == 3) material.SetFloat("_BlendModePreserveSpecular", 1.0f);
+            }
+            if (mode == 1)
+            {
+                material.SetFloat("_AlphaClip", 1.0f);
+            }
         }
 
         public static void SetupSurfaceType(Material material)
@@ -461,7 +489,9 @@ namespace Graphlit
             int surfaceType = (int)material.GetFloat("_Surface");
             int surfaceBlend = (int)material.GetFloat("_Blend");
             bool alphaClip = material.GetFloat("_AlphaClip") > 0;
-            bool preserveSpecular = material.GetFloat("_BlendModePreserveSpecular") > 0;
+
+            bool preserveSpecular = material.HasFloat("_BlendModePreserveSpecular") ?
+                material.GetFloat("_BlendModePreserveSpecular") > 0 : false;
 
             ToggleKeyword(material, "_SURFACE_TYPE_TRANSPARENT", surfaceType > 0);
             ToggleKeyword(material, "_ALPHAPREMULTIPLY_ON", false);

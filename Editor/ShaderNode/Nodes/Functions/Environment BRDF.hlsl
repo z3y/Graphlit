@@ -10,7 +10,7 @@ half3 EnvironmentBRDFApproximation_1(half perceptualRoughness, half NoV, half3 f
 	return saturate(lerp(a0, a1, f0));
 }
 
-void EnvironmentBRDFNode(out float3 BRDF, out half energyCompensation, float3 normalWS, float3 viewDirectionWS, half metallic, half roughness, half reflectance = 0.5, half3 albedo = 1)
+void EnvironmentBRDFNode(out float3 BRDF, out half3 energyCompensation, float3 normalWS, float3 viewDirectionWS, half metallic, half roughness, half reflectance = 0.5, half3 albedo = 1)
 {
 	half NoV = abs(dot(normalWS, viewDirectionWS)) + 1e-5f;
   	half3 f0 = 0.16 * reflectance * reflectance * (1.0 - metallic) + albedo * metallic;
@@ -19,7 +19,8 @@ void EnvironmentBRDFNode(out float3 BRDF, out half energyCompensation, float3 no
 		energyCompensation = 1.0;
 		BRDF = EnvironmentBRDFApproximation_1(roughness, NoV, f0);
 	#else
-		float2 dfg = _DFG.SampleLevel(custom_bilinear_clamp_sampler, float2(NoV, roughness), 0).rg;
+        float2 dfg = SAMPLE_TEXTURE2D_LOD(_DFG, sampler_BilinearClamp, float2(NoV, roughness), 0).rg;
+
 		BRDF = lerp(dfg.xxx, dfg.yyy, f0);
 		energyCompensation = 1.0 + f0 * (1.0 / dfg.y - 1.0);
 	#endif

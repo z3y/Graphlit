@@ -188,7 +188,8 @@ namespace Graphlit
 
             pass.pragmas.Add("#pragma skip_optimizations d3d11");
             pass.pragmas.Add("#define PREVIEW");
-            pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
+            pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
+            pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Preview.hlsl\"");
 
             var tags = shaderBuilder.subshaderTags;
             tags.Add("Queue", "Transparent");

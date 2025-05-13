@@ -53,6 +53,8 @@ SamplerState sampler_BilinearClamp;
 #define Light URPLight
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/RealtimeLights.hlsl"
 #undef Light
+float3 _LightDirection; // just like that ?
+float3 _LightPosition;
 #endif
 
 #include "ShadingData.hlsl"
