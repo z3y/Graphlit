@@ -135,13 +135,13 @@ half4 SampleShadowMask(float2 lightmapUV)
 #ifndef UNIVERSALRP
 half UnitySampleBakedOcclusion(float2 lightmapUV, float3 positionWS)
 {
-    #ifndef SHADOWS_SHADOWMASK
-    return 1;
-    #endif
+    // #if !(defined(SHADOWS_SHADOWMASK) || defined(LIGHTMAP_SHADOW_MIXING))
+    // return 1;
+    // #endif
     #if defined(SHADOWS_SHADOWMASK) && defined(LIGHTMAP_ON)
         half4 rawOcclusionMask = SampleShadowMask(lightmapUV);
         return saturate(dot(rawOcclusionMask, unity_OcclusionMaskSelector));
-    #else
+    #elif defined(LIGHTPROBE_SH)
         //In forward dynamic objects can only get baked occlusion from LPPV, light probe occlusion is done on the CPU by attenuating the light color.
         half attenuation = 1.0f;
         #if defined(UNITY_INSTANCING_ENABLED) && defined(UNITY_USE_SHCOEFFS_ARRAYS)
@@ -160,6 +160,7 @@ half UnitySampleBakedOcclusion(float2 lightmapUV, float3 positionWS)
 
         return attenuation;
     #endif
+    return 1.0;
 }
 #endif
 

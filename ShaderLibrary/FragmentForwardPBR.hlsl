@@ -65,7 +65,7 @@ float4 frag(Varyings input) : SV_Target
     light.shadowAttenuation *= ComputeMicroShadowing(surface.Occlusion, dot(light.direction, normalWS), 1.0);
     #endif
 
-    #if defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN)
+    #if defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) && defined(LIGHTMAP_ON)
     bakedGI = SubtractMainLightFromLightmap(bakedGI, normalWS, light.color, light.direction, light.shadowAttenuation);
     light.color = 0;
     #endif

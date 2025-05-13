@@ -1,4 +1,5 @@
 #pragma once
+// #define QUALITY_LOW
 
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
 
