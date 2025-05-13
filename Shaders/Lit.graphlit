@@ -364,7 +364,7 @@
         "defaultPreviewState": 1,
         "customEditor": "",
         "fallback": "",
-        "include": "",
+        "include": "#ifndef UNITY_PBS_USE_BRDF1 // if android\r\n    //#define _ACES // enable aces on all materials and override aces toggle\r\n    // #define _NEUTRAL // enable neutral on all materials and override neutral toggle\r\n    // #define _KHRONOS_NEUTRAL // enable khronos neutral on all materials and override neutral toggle\r\n    #endif",
         "outlinePass": 0,
         "depthFillPass": false,
         "stencil": false,

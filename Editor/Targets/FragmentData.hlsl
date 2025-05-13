@@ -65,32 +65,19 @@ struct FragmentData
         #endif
 
         // todo: find functions for urp
-        #ifdef UNPACK_POSITIONCSR
-            output.positionCSR = UNPACK_POSITIONCSR;
-            float4 grabPos = ComputeGrabScreenPos(output.positionCSR);
-            float4 screenPos = ComputeScreenPos(output.positionCSR);
-            output.grabScreenPosition = grabPos.xy / grabPos.w;
-            output.screenPosition = screenPos.xy / screenPos.w;
-        #endif
+        // #ifdef UNPACK_POSITIONCSR
+        //     output.positionCSR = UNPACK_POSITIONCSR;
+        //     float4 grabPos = ComputeGrabScreenPos(output.positionCSR);
+        //     float4 screenPos = ComputeScreenPos(output.positionCSR);
+        //     output.grabScreenPosition = grabPos.xy / grabPos.w;
+        //     output.screenPosition = screenPos.xy / screenPos.w;
+        // #endif
 
         #ifdef LIGHTMAP_ON
             output.lightmapUV = varyings.lightmapUV;
         #endif
 
-        // todo: find functions for urp
-        #if defined(UNIVERSALRP)
-
-            #if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
-                output.shadowCoords = varyings.shadowCoord;
-            #elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)
-                output.shadowCoords = TransformWorldToShadowCoord(output.positionWS);
-            #else
-                output.shadowCoords = float4(0, 0, 0, 0);
-            #endif
-        #endif
-        #if defined(UNITY_PASS_FORWARDBASE) || defined(UNITY_PASS_FORWARDADD)
-            output.shadowCoords = READ_SHADOW_COORDS(varyings);
-        #endif
+        output.shadowCoords = TransformWorldToShadowCoord(output.positionWS);
 
         return output;
     }

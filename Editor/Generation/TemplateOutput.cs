@@ -140,13 +140,17 @@ namespace Graphlit
 
         protected sealed override void Generate(NodeVisitor visitor) { }
 
-        internal static readonly PropertyDescriptor _surfaceOptionsStart = new(PropertyType.Float, "Surface Options", "_SurfaceOptions") { customAttributes = "[Foldout]" };
-        internal PropertyDescriptor _mode => new(PropertyType.Float, "Rendering Mode", "_Mode") { FloatValue = (int)defaultMode, customAttributes = "[Enum(Opaque, 0, Cutout, 1, Fade, 2, Transparent, 3, Additive, 4, Multiply, 5, TransClipping, 6)]" };
+        internal static readonly PropertyDescriptor _surfaceOptions = new(PropertyType.Float, "Surface Type", "_Surface") { customAttributes = "[Enum(Opaque, 0, Transparent, 1)]" };
+        internal static readonly PropertyDescriptor _surfaceBlend = new(PropertyType.Float, "Blending Mode", "_Blend") { customAttributes = "[ShowIf(_Surface, 1)] [Enum(Alpha, 0, Premultiply, 1, Additive, 2, Multiply, 3)]" };
+        internal static readonly PropertyDescriptor _blendModePreserveSpecular = new(PropertyType.Float, "Preserve Specular", "_BlendModePreserveSpecular") { customAttributes = "[ShowIf(_Surface, 1)] [ToggleUI]" };
+        internal static readonly PropertyDescriptor _alphaClip = new(PropertyType.Float, "Alpha Clipping", "_AlphaClip") { customAttributes = "[ToggleUI]" };
+        internal static readonly PropertyDescriptor _alphaToMask = new(PropertyType.Float, "_AlphaToMask", "_AlphaToMask") { customAttributes = "[HideInInspector] [ToggleUI]" };
+
+        internal PropertyDescriptor _mode => new(PropertyType.Float, "Rendering Mode", "_Mode") { customAttributes = "[HideInInspector]" };
         internal static readonly PropertyDescriptor _srcBlend = new(PropertyType.Float, "Source Blend", "_SrcBlend") { FloatValue = 1, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         internal static readonly PropertyDescriptor _dstBlend = new(PropertyType.Float, "Destination Blend", "_DstBlend") { FloatValue = 0, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         internal static readonly PropertyDescriptor _zwrite = new(PropertyType.Float, "ZWrite", "_ZWrite") { FloatValue = 1, customAttributes = "[Enum(Off, 0, On, 1)]" };
         internal PropertyDescriptor _cull => new(PropertyType.Float, "Cull", "_Cull") { FloatValue = (int)defaultCull, customAttributes = "[Enum(UnityEngine.Rendering.CullMode)]" };
-        internal static readonly PropertyDescriptor _properties = new(PropertyType.Float, "Properties", "_Properties") { customAttributes = "[Foldout]" };
 
         [SerializeField] public MaterialRenderMode defaultMode = MaterialRenderMode.Opaque;
         [SerializeField] public UnityEngine.Rendering.CullMode defaultCull = UnityEngine.Rendering.CullMode.Back;
@@ -247,7 +251,7 @@ namespace Graphlit
             pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
             pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-            pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
+            pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
         }
 
         public void CreateUniversalDepthNormalsPass(PassBuilder pass)
@@ -266,12 +270,44 @@ namespace Graphlit
             pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
             pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-            pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
+            pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
 
             PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.PositionWS);
             PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.BitangentWS);
             PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.TangentWS);
             PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.PositionWS);
+        }
+
+        public static void CreateShadowCaster(PassBuilder pass, bool urp)
+        {
+            pass.tags["LightMode"] = "ShadowCaster";
+            pass.renderStates["ZWrite"] = "On";
+            pass.renderStates["ZTest"] = "LEqual";
+            pass.renderStates["ColorMask"] = "0";
+            pass.renderStates["Cull"] = "[_Cull]";
+
+            pass.pragmas.Add("#pragma multi_compile_instancing");
+
+            pass.attributes.RequirePositionOS();
+            pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
+
+            if (urp)
+            {
+                pass.pragmas.Add("#pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW");
+            }
+            else
+            {
+                pass.pragmas.Add("#pragma dynamic_branch _ SHADOWS_CUBE SHADOWS_DEPTH");
+            }
+            pass.pragmas.Add("#pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT");
+            pass.pragmas.Add("#pragma shader_feature_local_fragment _ALPHATEST_ON");
+
+
+            pass.varyings.RequirePositionCS();
+            pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
+            pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
+
+            pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
         }
     }
 }

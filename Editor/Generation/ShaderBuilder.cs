@@ -448,7 +448,7 @@ namespace Graphlit
             }
 
             _sb.AppendLine(string.IsNullOrEmpty(fallback) ? "// Fallback None" : "Fallback \"" + fallback + "\"");
-            _sb.AppendLine(string.IsNullOrEmpty(customEditor) ? "CustomEditor \"Graphlit.DefaultInspector\"" : "CustomEditor \"" + customEditor + "\"");
+            _sb.AppendLine(string.IsNullOrEmpty(customEditor) ? "CustomEditor \"Graphlit.ShaderInspector\"" : "CustomEditor \"" + customEditor + "\"");
 
             _sb.UnIndent();
 

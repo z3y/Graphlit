@@ -159,12 +159,12 @@ namespace Graphlit
         static bool _ltcgiExists = System.IO.File.Exists(_ltcgiPath);
         static bool _cbirpExists = System.IO.File.Exists(_cbirpPath);
 
-        const string Vertex = "Packages/com.z3y.graphlit/Editor/Targets/Vertex.hlsl";
-        const string FragmentForward = "Packages/com.z3y.graphlit/Editor/Targets/Lit/FragmentForward.hlsl";
-        const string FragmentShadow = "Packages/com.z3y.graphlit/Editor/Targets/FragmentShadow.hlsl";
-        const string FragmentMeta = "Packages/com.z3y.graphlit/Editor/Targets/Lit/FragmentMeta.hlsl";
-        const string FragmentDepth = "Packages/com.z3y.graphlit/Editor/Targets/FragmentDepth.hlsl";
-        const string FragmentDepthNormals = "Packages/com.z3y.graphlit/Editor/Targets/FragmentDepthNormals.hlsl";
+        const string Vertex = "Packages/com.z3y.graphlit/ShaderLibrary/Vertex.hlsl";
+        const string FragmentForward = "Packages/com.z3y.graphlit/ShaderLibrary/FragmentForwardPBR.hlsl";
+        const string FragmentShadow = "Packages/com.z3y.graphlit/ShaderLibrary/FragmentShadow.hlsl";
+        const string FragmentMeta = "Packages/com.z3y.graphlit/ShaderLibrary/FragmentMeta.hlsl";
+        const string FragmentDepth = "Packages/com.z3y.graphlit/ShaderLibrary/FragmentDepth.hlsl";
+        const string FragmentDepthNormals = "Packages/com.z3y.graphlit/ShaderLibrary/FragmentDepthNormals.hlsl";
 
 
         public override void OnBeforeBuild(ShaderBuilder builder)
@@ -172,7 +172,11 @@ namespace Graphlit
             builder.dependencies.Add(_ltcgiPath);
             builder.dependencies.Add(_cbirpPath);
 
-            builder.properties.Add(_surfaceOptionsStart);
+            builder.properties.Add(_surfaceBlend);
+            builder.properties.Add(_alphaClip);
+            builder.properties.Add(_alphaToMask);
+            builder.properties.Add(_blendModePreserveSpecular);
+            builder.properties.Add(_surfaceOptions);
             builder.properties.Add(_mode);
             builder.properties.Add(_srcBlend);
             builder.properties.Add(_dstBlend);
@@ -213,11 +217,10 @@ namespace Graphlit
                 builder.subshaderTags["UniversalMaterialType"] = "Lit";
             }
 
-            builder.properties.Add(_properties);
 
             {
                 var portFlags = new List<int>() { POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, EMISSION, NORMAL_TS };
-                var pass = new PassBuilder("FORWARD", Vertex, FragmentForward, portFlags.ToArray());
+                var pass = new PassBuilder("Forward", Vertex, FragmentForward, portFlags.ToArray());
                 pass.tags["LightMode"] = urp ? "UniversalForward" : "ForwardBase";
 
                 pass.renderStates["Cull"] = "[_Cull]";
@@ -225,7 +228,10 @@ namespace Graphlit
                 pass.renderStates["Blend"] = "[_SrcBlend] [_DstBlend]";
 
 
-                pass.pragmas.Add("#pragma shader_feature_local _ _ALPHAFADE_ON _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _ALPHATEST_ON");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _ _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
+
 
                 if (urp)
                 {
@@ -282,31 +288,18 @@ namespace Graphlit
                 PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.TangentWS);
                 PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.PositionWS);
 
-                if (urp)
-                {
-                    pass.varyings.RequireCustomString("float fogFactor : FOGFACTOR;");
-                    pass.varyings.RequireCustomString("#ifdef REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR\nfloat4 shadowCoord : SHADOWCOORD;\n#endif");
-                }
-                else
-                {
-                    pass.varyings.RequireCustomString("UNITY_FOG_COORDS(*)");
-                    pass.varyings.RequireCustomString("UNITY_SHADOW_COORDS(*)");
-                }
-
-                pass.varyings.RequireCustomString("#if !UNITY_SAMPLE_FULL_SH_PER_PIXEL\nfloat3 sh : TEXCOORD*;\n#endif");
-                pass.varyings.RequireCustomString("#ifdef LIGHTMAP_ON\ncentroid float2 lightmapUV : LIGHTMAPUV;\n#endif");
+                pass.varyings.RequireCustomString("#ifdef LIGHTMAP_ON\ncentroid float2 lightmapUV : LIGHTMAP;\n#endif");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
 
-                pass.preincludes.Add("Packages/com.z3y.graphlit/Editor/Targets/Lit/Functions.hlsl");
                 pass.properties.Add(_specularOcclusion);
                 builder.AddPass(pass);
 
             }
 
-            if (!urp)
+            /*if (!urp)
             {
                 var portFlags = new List<int>() { POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, NORMAL_TS };
                 var pass = new PassBuilder("FORWARD_DELTA", Vertex, FragmentForward, portFlags.ToArray());
@@ -362,7 +355,7 @@ namespace Graphlit
                 {
                     builder.AddPass(pass);
                 }
-            }
+            }*/
             if (urp)
             {
                 {
@@ -377,39 +370,20 @@ namespace Graphlit
                 }
             }
             {
-                var pass = new PassBuilder("SHADOWCASTER", Vertex, FragmentShadow, POSITION, NORMAL_VERTEX, TANGENT, ALPHA, CUTOFF);
-                pass.tags["LightMode"] = "ShadowCaster";
-                pass.renderStates["ZWrite"] = "On";
-                pass.renderStates["ZTest"] = "LEqual";
-                pass.renderStates["Cull"] = "[_Cull]";
-
-                pass.pragmas.Add("#pragma multi_compile_shadowcaster");
-                pass.pragmas.Add("#pragma multi_compile_instancing");
-                pass.pragmas.Add("#pragma shader_feature_local _ _ALPHAFADE_ON _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
-
-
-                pass.attributes.RequirePositionOS();
-                pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
-
-                pass.varyings.RequirePositionCS();
-                pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
-                pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
-                pass.properties.Add(_specularOcclusion);
-
-                if (urp)
-                {
-                    pass.pragmas.Add("#pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW");
-                }
-                pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                var pass = new PassBuilder("ShadowCaster", Vertex, FragmentShadow, POSITION, NORMAL_VERTEX, TANGENT, ALPHA, CUTOFF);
+                CreateShadowCaster(pass, urp);
                 builder.AddPass(pass);
             }
             {
-                var pass = new PassBuilder("META", Vertex, FragmentMeta, ALPHA, CUTOFF, ALBEDO, METALLIC, ROUGHNESS, EMISSION);
+                var pass = new PassBuilder("Meta", Vertex, FragmentMeta, ALPHA, CUTOFF, ALBEDO, METALLIC, ROUGHNESS, EMISSION);
                 pass.tags["LightMode"] = "Meta";
                 pass.renderStates["Cull"] = "Off";
 
                 pass.pragmas.Add("#pragma shader_feature EDITOR_VISUALIZATION");
-                pass.pragmas.Add("#pragma shader_feature_local _ _ALPHAFADE_ON _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
+
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _ALPHATEST_ON");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _ _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
 
                 pass.attributes.RequireUV(0, 2);
                 pass.attributes.RequireUV(1, 2);
@@ -418,23 +392,16 @@ namespace Graphlit
                 pass.attributes.RequirePositionOS();
                 pass.varyings.RequirePositionCS();
 
-                pass.varyings.RequireCustomString("#ifdef EDITOR_VISUALIZATION\nfloat2 vizUV : TEXCOORD*;\n#endif");
-                pass.varyings.RequireCustomString("#ifdef EDITOR_VISUALIZATION\nfloat4 lightCoord : TEXCOORD*;\n#endif");
+                pass.varyings.RequireCustomString("#ifdef EDITOR_VISUALIZATION\nfloat2 VizUV : TEXCOORD*;\n#endif");
+                pass.varyings.RequireCustomString("#ifdef EDITOR_VISUALIZATION\nfloat4 LightCoord : TEXCOORD*;\n#endif");
 
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
                 pass.properties.Add(_specularOcclusion);
 
-                pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
-                if (urp)
-                {
-                    pass.pragmas.Add("#include \"Packages/com.unity.render-pipelines.universal/ShaderLibrary/MetaInput.hlsl\"");
-                }
-                else
-                {
-                    pass.pragmas.Add("#include \"UnityMetaPass.cginc\"");
-                }
+                pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/MetaFragment.hlsl\"");
 
                 builder.AddPass(pass);
             }

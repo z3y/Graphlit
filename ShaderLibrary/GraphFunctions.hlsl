@@ -77,8 +77,8 @@ float SampleSceneDepth(float2 uv)
     return SAMPLE_TEXTURE2D_X(_CameraDepthTexture, sampler_CameraDepthTexture, uv).r;
 }
 
-Texture2D<float4> _DFG;
-SamplerState custom_bilinear_clamp_sampler;
+// Texture2D<float4> _DFG;
+// SamplerState custom_bilinear_clamp_sampler;
 
 void AlphaTransparentBlend(inout half alpha, inout half3 albedo, half metallic)
 {
