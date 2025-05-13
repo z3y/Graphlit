@@ -41,10 +41,11 @@ float4 frag(Varyings input) : SV_Target
     shading.normalWS = normalWS;
     shading.reflectVector = reflect(-fragment.viewDirectionWS, normalWS);
     shading.perceptualRoughness = surface.Roughness;
+    shading.roughness = max(shading.perceptualRoughness * shading.perceptualRoughness, HALF_MIN_SQRT);
+
     shading.viewDirectionWS = fragment.viewDirectionWS;
     half dielectricSpecularF0 = 0.16 * surface.Reflectance * surface.Reflectance;
     shading.f0 = surface.Albedo * surface.Metallic + dielectricSpecularF0 * (1.0 - surface.Metallic);
-    shading.energyCompensation = 1.0;
 
     float3 positionWS = fragment.positionWS;
 
@@ -107,12 +108,15 @@ float4 frag(Varyings input) : SV_Target
     indirectSpecular *= brdf * energyCompensation;
     lightmapSpecular *= brdf * energyCompensation;
     bakedGI *= 1.0 - brdf;
-    specular *= energyCompensation;
+    specular *= energyCompensation * PI;
     
-    half singleBounceAO = GetSpecularOcclusionFromAmbientOcclusion(shading.NoV, surface.Occlusion,
-        surface.Roughness * surface.Roughness);
-    indirectSpecular *= GTAOMultiBounce(singleBounceAO, shading.f0);
-    bakedGI *= GTAOMultiBounce(surface.Occlusion, diffuseColor);
+    #ifdef _MASKMAP // doesnt get optimized out even if occlusion is 1
+        half singleBounceAO = GetSpecularOcclusionFromAmbientOcclusion(shading.NoV, surface.Occlusion,
+            surface.Roughness * surface.Roughness);
+        indirectSpecular *= GTAOMultiBounce(singleBounceAO, shading.f0);
+        bakedGI *= GTAOMultiBounce(surface.Occlusion, diffuseColor);
+    #endif
+
 
     float4 color = float4(diffuseColor * (diffuse + bakedGI) + specular + lightmapSpecular + indirectSpecular, alpha);
 

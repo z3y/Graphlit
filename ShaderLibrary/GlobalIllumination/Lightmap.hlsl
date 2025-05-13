@@ -135,6 +135,9 @@ half4 SampleShadowMask(float2 lightmapUV)
 #ifndef UNIVERSALRP
 half UnitySampleBakedOcclusion(float2 lightmapUV, float3 positionWS)
 {
+    #ifndef SHADOWS_SHADOWMASK
+    return 1;
+    #endif
     #if defined(SHADOWS_SHADOWMASK) && defined(LIGHTMAP_ON)
         half4 rawOcclusionMask = SampleShadowMask(lightmapUV);
         return saturate(dot(rawOcclusionMask, unity_OcclusionMaskSelector));

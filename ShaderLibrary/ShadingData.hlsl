@@ -7,6 +7,6 @@ struct ShadingData
     float3 reflectVector;
     half3 f0;
     half perceptualRoughness;
+    half roughness;
     float3 viewDirectionWS;
-    half3 energyCompensation;
 };
