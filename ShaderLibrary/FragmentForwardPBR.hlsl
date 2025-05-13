@@ -59,8 +59,11 @@ float4 frag(Varyings input) : SV_Target
 
     float4 shadowCoord = TransformWorldToShadowCoord(positionWS);
     Light light = GetMainLight(positionWS, shadowCoord, fragment.lightmapUV);
+
+    #if defined(_MASKMAP) || defined(_OCCLUSION)
     // only for directional light
     light.shadowAttenuation *= ComputeMicroShadowing(surface.Occlusion, dot(light.direction, normalWS), 1.0);
+    #endif
 
     #if defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN)
     bakedGI = SubtractMainLightFromLightmap(bakedGI, normalWS, light.color, light.direction, light.shadowAttenuation);
@@ -110,7 +113,7 @@ float4 frag(Varyings input) : SV_Target
     bakedGI *= 1.0 - brdf;
     specular *= energyCompensation * PI;
     
-    #ifdef _MASKMAP // doesnt get optimized out even if occlusion is 1
+    #if defined(_MASKMAP) || defined(_OCCLUSION) // doesnt get optimized out even if occlusion is 1
         half singleBounceAO = GetSpecularOcclusionFromAmbientOcclusion(shading.NoV, surface.Occlusion,
             surface.Roughness * surface.Roughness);
         indirectSpecular *= GTAOMultiBounce(singleBounceAO, shading.f0);
