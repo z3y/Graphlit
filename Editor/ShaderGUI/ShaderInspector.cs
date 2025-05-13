@@ -33,6 +33,7 @@ namespace Graphlit
             public string textureToggleKeyword;
             public int indent;
             public string folder;
+            public bool linearWarning;
         }
 
         public class PropertyFolder
@@ -175,6 +176,7 @@ namespace Graphlit
                             break;
                         case PropertyElementType.Texture:
                             TextureProperty(materialEditor, materialProperty, element.guiContent);
+                            if (element.linearWarning) LinearWarning(materialProperty);
                             break;
                         case PropertyElementType.MinMax:
                             Vector2MinMaxProperty(materialEditor, materialProperty, element.guiContent, element.minMax.x, element.minMax.y);
@@ -324,6 +326,10 @@ namespace Graphlit
 
             if (element.type == PropertyElementType.Texture)
             {
+                if (attributes.Contains("Linear"))
+                {
+                    element.linearWarning = true;
+                }
                 string keyword = TryParseStringParam(attributes, "Toggle");
                 if (!string.IsNullOrEmpty(keyword))
                 {

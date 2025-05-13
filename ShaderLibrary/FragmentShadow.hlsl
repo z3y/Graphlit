@@ -8,11 +8,7 @@ void frag(Varyings input)
     SurfaceDescription surface = SurfaceDescriptionFunction(input);
 
     #if defined(_ALPHATEST_ON)
-        half alpha = AlphaClip(surface.Alpha, surface.Cutoff);
-    #elif defined(_SURFACE_TYPE_TRANSPARENT)
-        half alpha = surface.Alpha;
-    #else
-        half alpha = half(1.0);
+        if (surface.Alpha < surface.Cutoff) discard;
     #endif
 
     #if defined(_SURFACE_TYPE_TRANSPARENT)

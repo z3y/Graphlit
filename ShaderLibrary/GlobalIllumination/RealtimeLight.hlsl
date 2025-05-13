@@ -165,7 +165,7 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
         lightColor *= DisneyDiffuseNoPI(shading.NoV, NoL, LoV, shading.perceptualRoughness);
 
         diffuse += lightColor * !light.specularOnly;
-
+#ifndef _SPECULARHIGHLIGHTS_OFF
         half roughness = max(shading.perceptualRoughness * shading.perceptualRoughness, HALF_MIN_SQRT);
 
         real3 F = F_Schlick(shading.f0, LoH);
@@ -173,5 +173,6 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
         real V = V_SmithJointGGX(NoL, shading.NoV, roughness);
 
         specular += max(0.0, (D * V) * F) * lightColor * PI * shading.energyCompensation;
+#endif
     }
 }

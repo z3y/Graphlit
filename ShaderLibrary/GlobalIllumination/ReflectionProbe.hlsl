@@ -152,7 +152,7 @@ half3 CalculateIrradianceFromReflectionProbes(half3 reflectVector, float3 positi
 
         irradiance += weightProbe0 * DecodeHDREnvironment(encodedIrradiance, unity_SpecCube0_HDR) * GetHorizonOcclusion(reflectVector0, vertexNormalWS);
     }
-
+    
     // Sample the second reflection probe
     if (weightProbe1 > 0.01f)
     {

@@ -345,8 +345,8 @@ namespace Graphlit
 
             if (autoKeyword)
             {
-                sb.Append($"[AutoKeyword({GetAutoKeywordName(referenceName)})]");
-            }    
+                sb.Append($"[Toggle({GetAutoKeywordName(referenceName)})]");
+            }
 
             return sb.ToString();
         }
@@ -437,7 +437,7 @@ namespace Graphlit
         void OnGUIFloat(Rect rect)
         {
             EditorGUI.BeginChangeCheck();
-            
+
             float newValue;
             if (HasRange)
             {
@@ -753,7 +753,7 @@ namespace Graphlit
 
             return reorderableList;
         }
-        
+
 
         IConvertablePropertyNode ToConstantNode()
         {

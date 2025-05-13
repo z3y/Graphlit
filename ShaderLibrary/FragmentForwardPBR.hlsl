@@ -26,7 +26,15 @@ float4 frag(Varyings input) : SV_Target
         diffuseColor *= alpha;
     #endif
 
-    float3 normalWS = SafeNormalize(mul(surface.Normal, fragment.tangentSpaceTransform));
+    #if defined(_NORMAL_DROPOFF_OFF)
+        float3 normalWS = fragment.normalWS;
+    #elif defined(_NORMAL_DROPOFF_WS)
+        float3 normalWS = surface.Normal;
+    #elif defined(_NORMAL_DROPOFF_OS)
+        float3 normalWS = TransformObjectToWorldNormal(surface.Normal);
+    #else // _NORMAL_DROPOFF_TS
+        float3 normalWS = SafeNormalize(mul(surface.Normal, fragment.tangentSpaceTransform));
+    #endif
 
     ShadingData shading;
     shading.NoV = abs(dot(normalWS, fragment.viewDirectionWS)) + 1e-5f;
@@ -58,8 +66,11 @@ float4 frag(Varyings input) : SV_Target
     light.color = 0;
     #endif
 
-    half3 indirectSpecular = CalculateIrradianceFromReflectionProbes(shading.reflectVector,
+    half3 indirectSpecular = 0;
+#ifndef _GLOSSYREFLECTIONS_OFF
+    indirectSpecular = CalculateIrradianceFromReflectionProbes(shading.reflectVector,
         positionWS, shading.perceptualRoughness, 0, fragment.normalWS);
+#endif
 
     half3 diffuse = 0;
     half3 specular = 0;

@@ -190,23 +190,6 @@
                 "declaration": 0
             },
             {
-                "guid": "95e0e700-07c1-4e32-925f-b5326470cac2",
-                "referenceName": "_EmissionGIMultiplier",
-                "displayName": "Emission GI Multiplier",
-                "type": 1,
-                "customAttributes": "[Folder(Emission)]",
-                "defaultAttributes": 0,
-                "rangeX": 0.0,
-                "rangeY": 0.0,
-                "_value": "1",
-                "_autoKeywordName": "",
-                "_defaultTexture": "",
-                "_defaultTextureObject": {
-                    "instanceID": 0
-                },
-                "declaration": 0
-            },
-            {
                 "guid": "b67f4fdb-26e1-4441-b381-8932243f25ff",
                 "referenceName": "_EmissionMap",
                 "displayName": "Emission Map",
@@ -216,6 +199,23 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0
+            },
+            {
+                "guid": "95e0e700-07c1-4e32-925f-b5326470cac2",
+                "referenceName": "_EmissionGIMultiplier",
+                "displayName": "Emission GI Multiplier",
+                "type": 1,
+                "customAttributes": "[Folder(Emission)]",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "1",
                 "_autoKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
@@ -347,7 +347,7 @@
         "defaultPreviewState": 1,
         "customEditor": "",
         "fallback": "",
-        "include": "#ifndef UNITY_PBS_USE_BRDF1 // if android\r\n    //#define _ACES // enable aces on all materials and override aces toggle\r\n    // #define _NEUTRAL // enable neutral on all materials and override neutral toggle\r\n    // #define _KHRONOS_NEUTRAL // enable khronos neutral on all materials and override neutral toggle\r\n    #endif",
+        "include": "",
         "outlinePass": 0,
         "depthFillPass": false,
         "stencil": false,
