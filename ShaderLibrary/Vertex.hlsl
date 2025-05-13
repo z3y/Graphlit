@@ -58,7 +58,7 @@ Varyings vert(Attributes input)
     #endif
 
     #ifdef EDITOR_VISUALIZATION
-        UnityEditorVizData(input.positionOS, input.uv0.xy, input.uv1.xy, input.uv2.xy, output.VizUV, output.LightCoord);
+        UnityEditorVizData(input.positionOS, input.uv0.xy, input.uv1.xy, input.uv2.xy, varyings.VizUV, varyings.LightCoord);
     #endif
 
     #ifdef UNPACK_POSITIONCSR

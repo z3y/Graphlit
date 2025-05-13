@@ -64,7 +64,7 @@ struct VertexData
                 output.positionCSR = ApplyShadowClamping(output.positionCSR);
             #endif
         #elif defined(UNITY_PASS_META)
-            output.positionCSR = UnityMetaVertexPosition(float4(TransformWorldToObject(output.positionWS), 0), attributes.uv1, attributes.uv2, unity_LightmapST, unity_DynamicLightmapST);
+            output.positionCSR = UnityMetaVertexPosition(output.positionOS, attributes.uv1.xy, attributes.uv2.xy);
         #else
             output.positionCSR = TransformWorldToHClip(output.positionWS);
         #endif

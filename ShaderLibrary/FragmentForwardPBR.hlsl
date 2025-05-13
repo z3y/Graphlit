@@ -105,6 +105,7 @@ float4 frag(Varyings input) : SV_Target
     half3 energyCompensation;
     EnvironmentBRDF(shading.NoV, shading.perceptualRoughness, shading.f0, brdf, energyCompensation);
     indirectSpecular *= brdf * energyCompensation;
+    lightmapSpecular *= brdf * energyCompensation;
     bakedGI *= 1.0 - brdf;
     specular *= energyCompensation;
     

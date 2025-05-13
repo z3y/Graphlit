@@ -3,12 +3,21 @@
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Filtering.hlsl"
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/BSDF.hlsl"
 
-// #define BICUBIC_LIGHTMAP
-// #define BICUBIC_SHADOWMASK
+#ifdef _BICUBIC_LIGHTMAP
+#define BICUBIC_LIGHTMAP
+#endif
+#ifdef _BICUBIC_SHADOWMASK
+#define BICUBIC_SHADOWMASK
+#endif
+
 // #define BICUBIC_DIRECTIONAL_LIGHTMAP
 
-// #define BAKERY_MONOSH
-// #define LIGHTMAP_SPECULAR
+#ifdef _BAKERY_MONOSH
+#define BAKERY_MONOSH
+#endif
+#ifdef _LIGHTMAPPED_SPECULAR
+#define LIGHTMAP_SPECULAR
+#endif
 
 void SampleLightmap(out half3 illuminance, out half3 specular, float2 lightmapUV, float3 normalWS, float3 viewDirectionWS, half perceptualRoughness)
 {

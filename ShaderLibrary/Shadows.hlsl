@@ -11,14 +11,14 @@ float4 _ShadowMapTexture_TexelSize;
 
 float4 TransformWorldToShadowCoord(float3 positionWS)
 {
-#if defined(SHADOWS_SCREEN) && !defined(_SURFACE_TYPE_TRANSPARENT)
+#if defined(SHADOWS_SCREEN)// && !defined(_SURFACE_TYPE_TRANSPARENT)
     float4 shadowCoord = float4(ComputeNormalizedDeviceCoordinatesWithZ(positionWS, GetWorldToHClipMatrix()), 1.0);
 #else
     #ifdef UNITY_NO_SCREENSPACE_SHADOWS
-        half cascadeIndex = ComputeCascadeIndex(positionWS);
+        // half cascadeIndex = ComputeCascadeIndex(positionWS);
     #else
-        half cascadeIndex = half(0.0);
     #endif
+        half cascadeIndex = half(0.0);
 
     float4 shadowCoord = float4(mul(unity_WorldToShadow[cascadeIndex], float4(positionWS, 1.0)).xyz, 0.0);
 #endif
