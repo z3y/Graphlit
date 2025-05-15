@@ -16,8 +16,8 @@ void frag(Varyings input)
             if(UNITY_MATRIX_P._m33 != 0.0) // thanks liltoon
         #endif
         {
-        // half dither = Unity_Dither(alpha, input.positionCS.xy / _ScreenParams.xy);
-        // if (dither < 0.0) discard;
+        half dither = Unity_Dither(surface.Alpha, input.positionCS.xy / _ScreenParams.xy);
+        if (dither < 0.0) discard;
         }
 
     #endif
