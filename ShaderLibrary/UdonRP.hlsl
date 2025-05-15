@@ -1,8 +1,12 @@
 #pragma once
 
+// #define _UDONRP_ENVIRONMENT_PROBE
+
+#ifdef _UDONRP_DIRECTIONAL_COOKIE
 float4x4 _UdonRPWorldToDirectionalLight;
 TEXTURE2D(_UdonRPDirectionalCookie);
 SAMPLER(sampler_UdonRPDirectionalCookie);
+#endif
 
 #ifdef _UDONRP_ENVIRONMENT_PROBE
 TEXTURECUBE(_UdonRPGlossyEnvironmentCubeMap);

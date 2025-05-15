@@ -18,7 +18,7 @@ SAMPLER(sampler_DFG);
 bool IsBoxProjection(float4 cubemapPositionWS)
 {
     bool boxProjection = cubemapPositionWS.w > 0.0f;
-    #ifdef UNITY_PASS_FORWARDBASE
+    #ifdef _UDONRP_ENVIRONMENT_PROBE
     // hack to force box projection when its disabled because unity then sets min/max values not tied to renderer bounds
     boxProjection = any(cubemapPositionWS);
     #endif
@@ -64,7 +64,7 @@ half CalculateProbeVolumeSqrMagnitude(float4 probeBoxMin, float4 probeBoxMax)
 half GetHorizonOcclusion(float3 reflectVector, float3 vertexNormalWS)
 {
     float horizon = min(1.0 + dot(reflectVector, vertexNormalWS), 1.0);
-    return horizon * horizon;
+    return saturate(horizon * horizon);
 }
 
 half3 CalculateIrradianceFromReflectionProbes(half3 reflectVector, float3 positionWS, half perceptualRoughness, float2 normalizedScreenSpaceUV, float3 vertexNormalWS)
@@ -135,10 +135,9 @@ half3 CalculateIrradianceFromReflectionProbes(half3 reflectVector, float3 positi
     weightProbe1 /= max(totalWeight, 1.0f);
 
     // Sample the first reflection probe
-    #ifndef _UDONRP_ENVIRONMENT_PROBE
-    UNITY_FLATTEN
-    #endif
+    #ifdef ENABLE_ENVIRONMENT_PROBE
     if (weightProbe0 > 0.01f)
+    #endif
     {
         half3 reflectVector0 = reflectVector;
         half perceptualRoughness0 = perceptualRoughness;
@@ -149,12 +148,21 @@ half3 CalculateIrradianceFromReflectionProbes(half3 reflectVector, float3 positi
 #endif
 
         half4 encodedIrradiance = half4(SAMPLE_TEXTURECUBE_LOD(unity_SpecCube0, samplerunity_SpecCube0, reflectVector0, mip0));
-
-        irradiance += weightProbe0 * DecodeHDREnvironment(encodedIrradiance, unity_SpecCube0_HDR) * GetHorizonOcclusion(reflectVector0, vertexNormalWS);
+        
+        half3 probe0 = DecodeHDREnvironment(encodedIrradiance, unity_SpecCube0_HDR) * GetHorizonOcclusion(reflectVector, vertexNormalWS);
+        #ifndef ENABLE_ENVIRONMENT_PROBE
+            irradiance = probe0;
+        #else
+            irradiance += weightProbe0 * probe0;
+        #endif
     }
     
     // Sample the second reflection probe
+    #ifdef ENABLE_ENVIRONMENT_PROBE
     if (weightProbe1 > 0.01f)
+    #else
+    if (unity_SpecCube0_BoxMin.w < 0.99999)
+    #endif
     {
         half3 reflectVector1 = reflectVector;
         half perceptualRoughness1 = perceptualRoughness;
@@ -164,8 +172,12 @@ half3 CalculateIrradianceFromReflectionProbes(half3 reflectVector, float3 positi
         mip1 = PerceptualRoughnessToMipmapLevel(perceptualRoughness1);
 #endif
         half4 encodedIrradiance = half4(SAMPLE_TEXTURECUBE_LOD(unity_SpecCube1, samplerunity_SpecCube0, reflectVector1, mip1));
-
-        irradiance += weightProbe1 * DecodeHDREnvironment(encodedIrradiance, unity_SpecCube1_HDR) * GetHorizonOcclusion(reflectVector1, vertexNormalWS);
+        half3 probe1 = DecodeHDREnvironment(encodedIrradiance, unity_SpecCube1_HDR) * GetHorizonOcclusion(reflectVector, vertexNormalWS);
+        #ifndef ENABLE_ENVIRONMENT_PROBE
+            irradiance = lerp(probe1, irradiance, unity_SpecCube0_BoxMin.w);
+        #else
+            irradiance += weightProbe1 * probe1;
+        #endif
     }
 #endif
 
