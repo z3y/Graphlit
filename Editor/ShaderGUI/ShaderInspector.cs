@@ -214,6 +214,7 @@ namespace Graphlit
             "_SrcBlendAlpha",
             "_DstBlendAlpha",
             "_Cutoff",
+            "_TransClipping",
         };
 
         void PraseProperties(MaterialEditor editor, MaterialProperty[] properties)
@@ -348,7 +349,7 @@ namespace Graphlit
 
             if (property.name == "_Surface" || property.name == "_Blend" ||
                 property.name == "_BlendModePreserveSpecular" || property.name == "_AlphaToMask" ||
-                property.name == "_AlphaClip")
+                property.name == "_AlphaClip" || property.name == "_TransClipping")
             {
                 element.onValueChange = static (m, e) =>
                 {
@@ -495,6 +496,7 @@ namespace Graphlit
             int surfaceType = (int)material.GetFloat("_Surface");
             int surfaceBlend = (int)material.GetFloat("_Blend");
             bool alphaClip = material.GetFloat("_AlphaClip") > 0;
+            bool transclipping = material.GetFloat("_TransClipping") > 0;
 
             bool preserveSpecular = material.HasFloat("_BlendModePreserveSpecular") ?
                 material.GetFloat("_BlendModePreserveSpecular") > 0 : false;
@@ -505,7 +507,7 @@ namespace Graphlit
             ToggleKeyword(material, "_ALPHATEST_ON", alphaClip);
             material.SetFloat("_AlphaToMask", alphaClip ? 1 : 0);
 
-            if (surfaceType == 1)
+            if (surfaceType > 0)
             {
                 material.SetOverrideTag("RenderType", "Transparent");
                 material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
@@ -536,7 +538,8 @@ namespace Graphlit
                     ToggleKeyword(material, "_ALPHAMODULATE_ON", true);
                 }
             }
-            else if (alphaClip)
+
+            if (alphaClip && surfaceType == 0)
             {
                 material.SetOverrideTag("RenderType", "TransparentCutout");
                 material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
@@ -545,7 +548,15 @@ namespace Graphlit
                 material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
                 material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
             }
-            else
+
+            if (surfaceType > 0 && transclipping)
+            {
+                material.SetOverrideTag("RenderType", "TransparentCutout");
+                material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest + 10;
+                material.SetInt("_ZWrite", 1);
+            }
+
+            if (!alphaClip && surfaceType == 0)
             {
                 material.SetOverrideTag("RenderType", "Opaque");
                 material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Geometry;

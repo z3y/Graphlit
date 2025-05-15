@@ -69,6 +69,8 @@ namespace Graphlit
         {
             builder.properties.Add(_surfaceOptions);
             builder.properties.Add(_surfaceBlend);
+            builder.properties.Add(_blendModePreserveSpecular);
+            builder.properties.Add(_transClipping);
             builder.properties.Add(_alphaClip);
             builder.properties.Add(_alphaToMask);
 

@@ -10,12 +10,9 @@ float4 frag(Varyings input) : SV_Target
     SurfaceDescription surface = SurfaceDescriptionFunction(input);
 
 
+    half alpha = surface.Alpha;
     #if defined(_ALPHATEST_ON)
-        half alpha = AlphaClip(surface.Alpha, surface.Cutoff);
-    #elif defined(_SURFACE_TYPE_TRANSPARENT)
-        half alpha = surface.Alpha;
-    #else
-        half alpha = half(1.0);
+        half clippedAlpha = AlphaClip(surface.Alpha, surface.Cutoff);
     #endif
 
     half3 diffuseColor = surface.Albedo * (1.0 - surface.Metallic);
