@@ -9,6 +9,7 @@ bool ProbeVolumeEnabled()
     #endif
 }
 
+#include "ZH3.hlsl"
 
 #ifndef UNIVERSALRP
 half3 SHEvalLinearL0L1_SampleProbeVolume(float3 normalWS, float3 positionWS)
@@ -61,7 +62,11 @@ half3 SampleSH(float3 normalWS, float3 positionWS)
     }
     else
     {
-        res += SHEvalLinearL0L1(normalWS, unity_SHAr, unity_SHAg, unity_SHAb);
+        #ifdef ZH3
+            res += SHEvalLinearL0L1_ZH3Hallucinate(normalWS);
+        #else
+            res += SHEvalLinearL0L1(normalWS, unity_SHAr, unity_SHAg, unity_SHAb);
+        #endif
     }
     res += SHEvalLinearL2(normalWS, unity_SHBr, unity_SHBg, unity_SHBb, unity_SHC);
 
