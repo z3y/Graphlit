@@ -522,6 +522,8 @@ namespace Graphlit
                 }
 
                 _sb.AppendLine("[HideInInspector]__reset(\"\", Float) = 1");
+                _sb.AppendLine("[HideInInspector]_GraphlitMaterial(\"\", Float) = 1");
+
             }
 
         }

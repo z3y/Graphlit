@@ -239,7 +239,7 @@ namespace Graphlit
                 if (_packingMaterial)
                 {
                     _packingMaterial.SetTexture(_packingPropertyName, texture);
-                    DefaultInspector.Reinitialize();
+                    ShaderInspector.Reinitialize();
                     MaterialEditor.ApplyMaterialPropertyDrawers(_packingMaterial);
                 }
 

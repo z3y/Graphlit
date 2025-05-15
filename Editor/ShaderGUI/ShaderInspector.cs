@@ -61,7 +61,11 @@ namespace Graphlit
         public static void Reinitialize() => _reinitialize = true;
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
         {
-
+            if (Array.Exists(properties, x => x.name == "_GraphlitPreviewEnabled"))
+            {
+                EditorGUILayout.LabelField("LIVE PREVIEW ENABLED");
+                return;
+            }
             var style = GUI.skin.customStyles;
             bool[] richTextState = new bool[style.Length];
             for (int i = 0; i < style.Length; i++)
@@ -443,8 +447,8 @@ namespace Graphlit
             Material t = editor.target as Material;
             if (t && t.HasProperty("_EmissionColor"))
             {
-                //bool emission = t.IsKeywordEnabled("_EMISSION");
-                //editor.LightmapEmissionFlagsProperty(MaterialEditor.kMiniTextureFieldLabelIndentLevel, emission);
+                bool emission = t.IsKeywordEnabled("_EMISSION");
+                editor.LightmapEmissionFlagsProperty(MaterialEditor.kMiniTextureFieldLabelIndentLevel, emission);
             }
             editor.RenderQueueField();
             editor.EnableInstancingField();
@@ -469,11 +473,12 @@ namespace Graphlit
         public static void UpgradeMode(Material material)
         {
             int mode = (int)material.GetFloat("_Mode");
-            Debug.Log($"Upgrading Surface Mode {mode} for {material.name} material");
             if (mode == 0)
             {
                 return;
             }
+
+            Debug.Log($"Upgrading Surface Mode {mode} for {material.name} material");
 
             if (mode > 0 && mode != 1)
             {
@@ -483,6 +488,33 @@ namespace Graphlit
             if (mode == 1)
             {
                 material.SetFloat("_AlphaClip", 1.0f);
+            }
+
+            if (mode == 6)
+            {
+                material.SetFloat("_TransClipping", 1.0f);
+            }
+
+            SetupSurfaceType(material);
+        }
+
+        [MenuItem("Tools/Graphlit/Upgrade Materials")]
+        public static void UpgradeAllMaterials()
+        {
+            var materials = AssetDatabase.FindAssets("t:material")
+                .Select(x => AssetDatabase.LoadAssetAtPath<Material>(AssetDatabase.GUIDToAssetPath(x)))
+                .OfType<Material>();
+
+            foreach(var material in materials)
+            {
+                bool isGraplitMaterial = material.HasFloat("_GraphlitMaterial");
+
+                if (!isGraplitMaterial)
+                {
+                    continue;
+                }
+
+                UpgradeMode(material);
             }
         }
 
