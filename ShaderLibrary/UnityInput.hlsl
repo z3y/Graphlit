@@ -292,3 +292,9 @@ float4x4 OptimizeProjectionMatrix(float4x4 M)
 }
 
 float4x4 unity_WorldToLight;
+#ifdef POINT_COOKIE
+TEXTURECUBE(_LightTexture0);
+#else
+TEXTURE2D(_LightTexture0);
+#endif
+SAMPLER(sampler_LightTexture0);

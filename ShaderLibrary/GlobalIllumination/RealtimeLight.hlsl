@@ -99,13 +99,8 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
             half range = length(lightZ);
             light.distanceAttenuation = GetSquareFalloffAttenuation(distanceSquare, range * range);
             #ifdef SPOT
-                float outerAngle = degrees(70); // todo: figure out spot angle
-                float innerAnglePercent = 75;
-                float spotScale;
-                float spotOffset;
-                GetSpotScaleOffset(outerAngle, innerAnglePercent, spotScale, spotOffset);
-                float3 spotDirection = normalize(unity_WorldToLight[2].xyz);
-                light.distanceAttenuation *= GetSpotAngleAttenuation(spotDirection, light.direction, spotScale, spotOffset);
+                float2 spotUV = lightCoord.xy / lightCoord.w + 0.5;
+                light.color *= SAMPLE_TEXTURE2D(_LightTexture0, sampler_LightTexture0, spotUV).a * (lightCoord.z > 0);
             #endif
         #else
         light.distanceAttenuation = 1;
