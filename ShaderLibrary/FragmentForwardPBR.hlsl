@@ -1,5 +1,6 @@
 #pragma fragment frag
 
+#include "GlobalIllumination/ClusteredBIRP.hlsl"
 #include "GlobalIllumination/LTCGI.hlsl"
 
 float4 frag(Varyings input) : SV_Target
@@ -107,6 +108,17 @@ float4 frag(Varyings input) : SV_Target
 
     #ifdef _LTCGI
         GetLTCGIDiffuseAndSpecular(diffuse, indirectSpecular, shading, fragment, surface);
+    #endif
+
+    #ifdef _CBIRP
+        half4 shadowmask = SampleShadowMask(fragment.lightmapUV);
+        uint3 cluster = CBIRP::GetCluster(fragment.positionWS);
+
+        ComputeCBIRPLights(diffuse, specular, cluster, shadowmask, fragment, shading, surface);
+
+        #ifdef _CBIRP_REFLECTIONS
+            indirectSpecular = CBIRP::SampleProbes(cluster, shading.reflectVector, fragment.positionWS, surface.Roughness).xyz;
+        #endif
     #endif
 
     half3 brdf;
