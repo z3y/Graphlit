@@ -92,11 +92,14 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
         light.shadowAttenuation = UnityMixRealtimeAndBakedShadows(light.shadowAttenuation, shadowMaskAttenuation, shadowFade);
 
         #ifdef UNITY_PASS_FORWARDADD
+            float4 lightCoord = mul(unity_WorldToLight, float4(positionWS, 1));
+            float3 lightZ = float3(unity_WorldToLight[0][2], unity_WorldToLight[1][2], unity_WorldToLight[2][2]);
+
             float distanceSquare = dot(positionToLight, positionToLight);
-            half range = unity_WorldToLight[1].y * unity_WorldToLight[1].y;
-            light.distanceAttenuation = GetSquareFalloffAttenuation(distanceSquare, range);
+            half range = length(lightZ);
+            light.distanceAttenuation = GetSquareFalloffAttenuation(distanceSquare, range * range);
             #ifdef SPOT
-                float outerAngle = 50;
+                float outerAngle = degrees(70); // todo: figure out spot angle
                 float innerAnglePercent = 75;
                 float spotScale;
                 float spotOffset;
