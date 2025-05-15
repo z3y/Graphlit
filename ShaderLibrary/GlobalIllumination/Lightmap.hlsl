@@ -23,7 +23,7 @@
     #define BAKERY_SHNONLINEAR
 #endif
 
-void SampleLightmap(out half3 illuminance, out half3 specular, float2 lightmapUV, float3 normalWS, float3 viewDirectionWS, half perceptualRoughness)
+void SampleLightmap(out half3 illuminance, out half3 specular, float2 lightmapUV, float3 normalWS, float3 viewDirectionWS, half perceptualRoughness, inout half3 indirectOcclusion, float3 reflectVector)
 {
     illuminance = 0;
     specular = 0;
@@ -85,6 +85,12 @@ void SampleLightmap(out half3 illuminance, out half3 specular, float2 lightmapUV
             illuminance = illuminance * halfLambert / max(1e-4, directionalLightmap.w);
         #endif
 
+    #endif
+
+    #if defined(BAKERY_MONOSH) && defined(DIRLIGHTMAP_COMBINED)
+        indirectOcclusion = (dot(nL1, reflectVector) + 1.0) * L0 * 2.0;
+    #else
+        indirectOcclusion = illuminance;
     #endif
 }
 

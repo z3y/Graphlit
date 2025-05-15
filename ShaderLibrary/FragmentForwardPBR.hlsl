@@ -48,8 +48,9 @@ float4 frag(Varyings input) : SV_Target
 
     half3 bakedGI = 0;
     half3 lightmapSpecular = 0;
+    half3 indirectOcclusion = 0;
     #if defined(LIGHTMAP_ON)
-        SampleLightmap(bakedGI, lightmapSpecular, fragment.lightmapUV, normalWS, fragment.viewDirectionWS, shading.perceptualRoughness);
+        SampleLightmap(bakedGI, lightmapSpecular, fragment.lightmapUV, normalWS, fragment.viewDirectionWS, shading.perceptualRoughness, indirectOcclusion, shading.reflectVector);
     #elif defined(LIGHTPROBE_SH)
         bakedGI = SampleSH(normalWS, positionWS);
     #endif
@@ -109,6 +110,12 @@ float4 frag(Varyings input) : SV_Target
     lightmapSpecular *= brdf * energyCompensation;
     bakedGI *= 1.0 - brdf;
     specular *= energyCompensation * PI;
+
+    #ifdef LIGHTMAP_ON
+        half indirectOcclusionIntensity = _SpecularOcclusion;
+        half occlusionFromLightmap = saturate(lerp(1.0, saturate(sqrt(dot(indirectOcclusion + diffuse, 1.0))), indirectOcclusionIntensity));
+        indirectSpecular *= occlusionFromLightmap;
+    #endif
     
     #if defined(_MASKMAP) || defined(_OCCLUSION) // doesnt get optimized out even if occlusion is 1
         half singleBounceAO = GetSpecularOcclusionFromAmbientOcclusion(shading.NoV, surface.Occlusion,
