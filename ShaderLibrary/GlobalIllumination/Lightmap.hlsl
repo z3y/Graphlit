@@ -19,6 +19,10 @@
 #define LIGHTMAP_SPECULAR
 #endif
 
+#ifndef QUALITY_LOW
+    #define BAKERY_SHNONLINEAR
+#endif
+
 void SampleLightmap(out half3 illuminance, out half3 specular, float2 lightmapUV, float3 normalWS, float3 viewDirectionWS, half perceptualRoughness)
 {
     illuminance = 0;
@@ -58,7 +62,7 @@ void SampleLightmap(out half3 illuminance, out half3 specular, float2 lightmapUV
                 float lumaL1z = dot(L1z, 1);
                 float lumaSH = shEvaluateDiffuseL1Geomerics(lumaL0, float3(lumaL1x, lumaL1y, lumaL1z), normalWS);
 
-                half3 sh = L0 + normalWS.x * L1x + normalWS.y * L1y + giInput.normalWS.z * L1z;
+                half3 sh = L0 + normalWS.x * L1x + normalWS.y * L1y + normalWS.z * L1z;
                 float regularLumaSH = dot(sh, 1);
                 sh *= lerp(1, lumaSH / regularLumaSH, saturate(regularLumaSH * 16));
                 illuminance = sh;
@@ -72,9 +76,9 @@ void SampleLightmap(out half3 illuminance, out half3 specular, float2 lightmapUV
                 float3 halfVector = SafeNormalize(directionality + viewDirectionWS);
                 half NoH = saturate(dot(normalWS, halfVector));
                 half spec = D_GGX(NoH, max(perceptualRoughness * perceptualRoughness, HALF_MIN_SQRT));
-                half3 sh = L0 + dominantDir.x * L1x + dominantDir.y * L1y + dominantDir.z * L1z;
+                half3 sh2 = L0 + dominantDir.x * L1x + dominantDir.y * L1y + dominantDir.z * L1z;
                 half LoH = saturate(dot(directionality, halfVector));
-                specular = max(spec * sh, 0.0);
+                specular = max(spec * sh2, 0.0);
             #endif
         #else
             half halfLambert = dot(normalWS, directionalLightmap.xyz - 0.5) + 0.5;

@@ -108,7 +108,7 @@ namespace Graphlit
 
             int mode = (int)material.GetFloat("_Mode");
 
-            ShaderInspector.UpgradeMode(material, false);
+            ShaderInspector.UpgradeMode(material, false, false);
 
             if (material.GetTexture("_BumpMap") != null)
             {

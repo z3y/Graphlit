@@ -459,7 +459,7 @@ namespace Graphlit
         {
             if (oldShader.FindPropertyIndex("_Mode") >= 0)
             {
-                UpgradeMode(material);
+                UpgradeMode(material, true, false);
             }
             if (oldShader.FindPropertyIndex("_Glossiness") >= 0)
             {
@@ -470,7 +470,7 @@ namespace Graphlit
             SetupSurfaceType(material);
         }
 
-        public static void UpgradeMode(Material material, bool log = true)
+        public static void UpgradeMode(Material material, bool preserveQueue, bool log)
         {
             int mode = (int)material.GetFloat("_Mode");
             if (mode == 0)
@@ -498,9 +498,17 @@ namespace Graphlit
                 material.SetFloat("_BlendModePreserveSpecular", 1.0f);
             }
 
-            var queue = material.renderQueue;
-            SetupSurfaceType(material);
-            material.renderQueue = queue;
+            if (preserveQueue)
+            {
+                var queue = material.renderQueue;
+                SetupSurfaceType(material);
+                material.renderQueue = queue;
+            }
+            else
+            {
+                SetupSurfaceType(material);
+            }
+
         }
 
         [MenuItem("Tools/Graphlit/Upgrade Materials")]
@@ -519,7 +527,7 @@ namespace Graphlit
                     continue;
                 }
 
-                UpgradeMode(material);
+                UpgradeMode(material, true, true);
             }
         }
 
