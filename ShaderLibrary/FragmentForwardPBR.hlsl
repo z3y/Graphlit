@@ -41,7 +41,7 @@ float4 frag(Varyings input) : SV_Target
     shading.normalWS = normalWS;
     shading.reflectVector = reflect(-fragment.viewDirectionWS, normalWS);
     shading.perceptualRoughness = surface.Roughness;
-    shading.roughness = max(shading.perceptualRoughness * shading.perceptualRoughness, HALF_MIN_SQRT);
+    shading.roughness = max(shading.perceptualRoughness * shading.perceptualRoughness, 0.002);
 
     shading.viewDirectionWS = fragment.viewDirectionWS;
     half dielectricSpecularF0 = 0.16 * surface.Reflectance * surface.Reflectance;

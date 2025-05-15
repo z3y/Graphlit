@@ -153,11 +153,15 @@ namespace Graphlit
 
         static readonly PropertyDescriptor _lmSpec = new(PropertyType.Float, "Lightmapped Specular", "_LightmappedSpecular") { customAttributes = "[Toggle(_LIGHTMAPPED_SPECULAR)] [Folder(Surface Options)]" };
         static readonly PropertyDescriptor _ltcgi = new(PropertyType.Float, "LTCGI", "_LTCGI") { customAttributes = "[Toggle(_LTCGI)] [Folder(Surface Options)]" };
+        static readonly PropertyDescriptor _lightVolumes = new(PropertyType.Float, "VRC Light Volumes", "_VRC_LightVolumes") { customAttributes = "[Toggle(_VRC_LIGHTVOLUMES)] [Folder(Surface Options)]" };
 
         const string _ltcgiPath = "Packages/at.pimaker.ltcgi/Shaders/LTCGI.cginc";
         const string _cbirpPath = "Packages/z3y.clusteredbirp/Shaders/cbirp.hlsl";
+        const string _vrcLightVolumesPath = "Packages/red.sim.lightvolumes/Shaders/LightVolumes.cginc";
+
         static bool _ltcgiExists = System.IO.File.Exists(_ltcgiPath);
         static bool _cbirpExists = System.IO.File.Exists(_cbirpPath);
+        static bool _lightVolumesExists = System.IO.File.Exists(_vrcLightVolumesPath);
 
         const string Vertex = "Packages/com.z3y.graphlit/ShaderLibrary/Vertex.hlsl";
         const string FragmentForward = "Packages/com.z3y.graphlit/ShaderLibrary/FragmentForwardPBR.hlsl";
@@ -171,6 +175,8 @@ namespace Graphlit
         {
             builder.dependencies.Add(_ltcgiPath);
             builder.dependencies.Add(_cbirpPath);
+            builder.dependencies.Add(_vrcLightVolumesPath);
+
 
             builder.properties.Add(_surfaceOptions);
             builder.properties.Add(_surfaceBlend);
@@ -204,6 +210,10 @@ namespace Graphlit
             {
                 builder.properties.Add(_ltcgi);
                 builder.subshaderTags["LTCGI"] = "_LTCGI";
+            }
+            if (_lightVolumesExists)
+            {
+                builder.properties.Add(_lightVolumes);
             }
 
             builder._defaultTextures["_DFG"] = _dfg;
@@ -277,6 +287,7 @@ namespace Graphlit
                 pass.pragmas.Add(NormalDropoffDefine());
 
                 if (_ltcgiExists && builder.BuildTarget != BuildTarget.Android) pass.pragmas.Add("#pragma shader_feature_local_fragment _LTCGI");
+                if (_lightVolumesExists) pass.pragmas.Add("#pragma shader_feature_local_fragment _VRC_LIGHTVOLUMES");
 
 
                 pass.attributes.RequirePositionOS();

@@ -11,6 +11,10 @@ bool ProbeVolumeEnabled()
 
 #include "ZH3.hlsl"
 
+#ifdef _VRC_LIGHTVOLUMES
+#include "Packages/red.sim.lightvolumes/Shaders/LightVolumes.cginc"
+#endif
+
 #ifndef UNIVERSALRP
 half3 SHEvalLinearL0L1_SampleProbeVolume(float3 normalWS, float3 positionWS)
 {
@@ -54,6 +58,15 @@ half3 SHEvalLinearL0L1_SampleProbeVolume(float3 normalWS, float3 positionWS)
 
 half3 SampleSH(float3 normalWS, float3 positionWS)
 {
+    #ifdef _VRC_LIGHTVOLUMES
+        half3 lvL0;
+        half3 lvL1r;
+        half3 lvL1g;
+        half3 lvL1b;
+        LightVolumeSH(positionWS, lvL0, lvL1r, lvL1g, lvL1b);
+        return LightVolumeEvaluate(normalWS, lvL0, lvL1r, lvL1g, lvL1b);
+    #endif
+
     half3 res = 0;
 
     if (ProbeVolumeEnabled())

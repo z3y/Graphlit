@@ -22,7 +22,7 @@ float4 frag(Varyings input) : SV_Target
 
     UnityMetaInput meta;
     ZERO_INITIALIZE(UnityMetaInput, meta);
-    meta.Albedo = diffuse + specular * max(perceptualRoughness * perceptualRoughness, HALF_MIN_SQRT) * 0.5;
+    meta.Albedo = diffuse + specular * perceptualRoughness * perceptualRoughness * 0.5;
     meta.Emission = emission;
     #ifdef EDITOR_VISUALIZATION
         meta.VizUV = input.VizUV;

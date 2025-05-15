@@ -75,7 +75,7 @@ void SampleLightmap(out half3 illuminance, out half3 specular, float2 lightmapUV
                 float3 directionality = normalize(dominantDir);
                 float3 halfVector = SafeNormalize(directionality + viewDirectionWS);
                 half NoH = saturate(dot(normalWS, halfVector));
-                half spec = D_GGX(NoH, max(perceptualRoughness * perceptualRoughness, HALF_MIN_SQRT));
+                half spec = D_GGX(NoH, max(perceptualRoughness * perceptualRoughness, 0.002));
                 half3 sh2 = L0 + dominantDir.x * L1x + dominantDir.y * L1y + dominantDir.z * L1z;
                 half LoH = saturate(dot(directionality, halfVector));
                 specular = max(spec * sh2, 0.0);
