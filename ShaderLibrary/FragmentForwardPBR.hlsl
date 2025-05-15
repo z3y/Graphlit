@@ -1,5 +1,7 @@
 #pragma fragment frag
 
+#include "GlobalIllumination/LTCGI.hlsl"
+
 float4 frag(Varyings input) : SV_Target
 {
     UNITY_SETUP_INSTANCE_ID(input);
@@ -101,6 +103,10 @@ float4 frag(Varyings input) : SV_Target
             ShadeLight(diffuse, specular, additionalLight, shading);
         }
     LIGHT_LOOP_END
+    #endif
+
+    #ifdef _LTCGI
+        GetLTCGIDiffuseAndSpecular(diffuse, indirectSpecular, shading, fragment, surface);
     #endif
 
     half3 brdf;
