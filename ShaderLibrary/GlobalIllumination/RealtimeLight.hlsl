@@ -21,11 +21,22 @@ float GetSquareFalloffAttenuation(float distanceSquare, float lightInvRadius2)
     float smoothFactor = saturate(1.0 - factor * factor);
     return (smoothFactor * smoothFactor) / (distanceSquare + 1.0);
 }
-float4 GetSquareFalloffAttenuation(float4 distanceSquare, float4 lightInvRadius2)
+
+float GetSpotAngleAttenuation(float3 spotForward, float3 l, float spotScale, float spotOffset)
 {
-    float4 factor = distanceSquare * lightInvRadius2;
-    float4 smoothFactor = saturate(1.0 - factor * factor);
-    return (smoothFactor * smoothFactor) / (distanceSquare + 1.0);
+    float cd = dot(-spotForward, l);
+    float attenuation = saturate(cd * spotScale + spotOffset);
+    return attenuation * attenuation;
+}
+
+void GetSpotScaleOffset(float outerAngle, float innerAnglePercent, out float spotScale, out float spotOffset)
+{
+    half innerAngle = outerAngle / 100 * innerAnglePercent;
+    innerAngle = innerAngle / 360 * PI;
+    outerAngle = outerAngle / 360 * PI;
+    float cosOuter = cos(outerAngle);
+    spotScale = 1.0 / max(cos(innerAngle) - cosOuter, 1e-4);
+    spotOffset = -cosOuter * spotScale;
 }
 
 #ifdef UNIVERSALRP
@@ -81,11 +92,18 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
         light.shadowAttenuation = UnityMixRealtimeAndBakedShadows(light.shadowAttenuation, shadowMaskAttenuation, shadowFade);
 
         #ifdef UNITY_PASS_FORWARDADD
-        #ifdef POINT
             float distanceSquare = dot(positionToLight, positionToLight);
-            half range = _LightPositionRange.w * _LightPositionRange.w;
+            half range = unity_WorldToLight[1].y * unity_WorldToLight[1].y;
             light.distanceAttenuation = GetSquareFalloffAttenuation(distanceSquare, range);
-        #endif
+            #ifdef SPOT
+                float outerAngle = 50;
+                float innerAnglePercent = 75;
+                float spotScale;
+                float spotOffset;
+                GetSpotScaleOffset(outerAngle, innerAnglePercent, spotScale, spotOffset);
+                float3 spotDirection = normalize(unity_WorldToLight[2].xyz);
+                light.distanceAttenuation *= GetSpotAngleAttenuation(spotDirection, light.direction, spotScale, spotOffset);
+            #endif
         #else
         light.distanceAttenuation = 1;
         #endif

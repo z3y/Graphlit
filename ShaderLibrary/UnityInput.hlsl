@@ -290,3 +290,5 @@ float4x4 OptimizeProjectionMatrix(float4x4 M)
     M._12_42 = 0;
     return M;
 }
+
+float4x4 unity_WorldToLight;
