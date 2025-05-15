@@ -63,7 +63,9 @@ float4 frag(Varyings input) : SV_Target
 
     #if defined(_MASKMAP) || defined(_OCCLUSION)
     // only for directional light
+    #ifndef UNITY_PASS_FORWARDADD
     light.shadowAttenuation *= ComputeMicroShadowing(surface.Occlusion, dot(light.direction, normalWS), 1.0);
+    #endif
     #endif
 
     #if defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) && defined(LIGHTMAP_ON)
@@ -72,9 +74,11 @@ float4 frag(Varyings input) : SV_Target
     #endif
 
     half3 indirectSpecular = 0;
+#ifndef UNITY_PASS_FORWARDADD
 #ifndef _GLOSSYREFLECTIONS_OFF
     indirectSpecular = CalculateIrradianceFromReflectionProbes(shading.reflectVector,
         positionWS, shading.perceptualRoughness, 0, fragment.normalWS);
+#endif
 #endif
 
     half3 diffuse = 0;
@@ -145,7 +149,9 @@ float4 frag(Varyings input) : SV_Target
 
     float4 color = float4(diffuseColor * (diffuse + bakedGI) + specular + lightmapSpecular + indirectSpecular, alpha);
 
+#ifndef UNITY_PASS_FORWARDADD
     color.rgb += surface.Emission;
+#endif
 
     color.rgb = MixFog(color.rgb, InitializeInputDataFog(float4(positionWS, 1), 0));
 

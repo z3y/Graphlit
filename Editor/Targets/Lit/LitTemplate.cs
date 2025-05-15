@@ -311,7 +311,7 @@ namespace Graphlit
 
             }
 
-            /*if (!urp)
+            if (!urp)
             {
                 var portFlags = new List<int>() { POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, NORMAL_TS };
                 var pass = new PassBuilder("FORWARD_DELTA", Vertex, FragmentForward, portFlags.ToArray());
@@ -328,7 +328,9 @@ namespace Graphlit
                     //pass.renderStates["BlendOp"] = "Max, Add";
                 }
 
-                pass.pragmas.Add("#pragma shader_feature_local _ _ALPHAFADE_ON _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _ALPHATEST_ON");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _ _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
 
                 pass.pragmas.Add("#pragma multi_compile_fwdadd_fullshadows");
                 pass.pragmas.Add("#pragma multi_compile_fog");
@@ -354,20 +356,17 @@ namespace Graphlit
                 PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.TangentWS);
                 PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.PositionWS);
 
-                pass.varyings.RequireCustomString("UNITY_FOG_COORDS(*)");
-                pass.varyings.RequireCustomString("UNITY_SHADOW_COORDS(*)");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                pass.preincludes.Add("Packages/com.z3y.graphlit/Editor/Targets/Lit/Functions.hlsl");
                 pass.properties.Add(_specularOcclusion);
 
-                pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/BuiltInLibrary.hlsl\"");
+                pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
                 if (!(_cbirpExists && _cbirp))
                 {
                     builder.AddPass(pass);
                 }
-            }*/
+            }
             if (urp)
             {
                 {

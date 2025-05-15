@@ -54,7 +54,8 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
         URPLight urpLight = GetMainLight(shadowCoord, positionWS, SampleShadowMask(lightmapUV));
         CopyUniversalLight(light, urpLight);
     #else
-        light.direction = _WorldSpaceLightPos0.xyz - positionWS * _WorldSpaceLightPos0.w;
+        float3 positionToLight = _WorldSpaceLightPos0.xyz - positionWS * _WorldSpaceLightPos0.w;
+        light.direction = positionToLight;
         #ifdef UNITY_PASS_FORWARDBASE
             light.enabled = any(_LightColor0.rgb) > 0;
         #else
@@ -79,7 +80,15 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
 
         light.shadowAttenuation = UnityMixRealtimeAndBakedShadows(light.shadowAttenuation, shadowMaskAttenuation, shadowFade);
 
+        #ifdef UNITY_PASS_FORWARDADD
+        #ifdef POINT
+            float distanceSquare = dot(positionToLight, positionToLight);
+            half range = _LightPositionRange.w * _LightPositionRange.w;
+            light.distanceAttenuation = GetSquareFalloffAttenuation(distanceSquare, range);
+        #endif
+        #else
         light.distanceAttenuation = 1;
+        #endif
 
         half4 cookieTexture = SampleUdonRPDirectionalCookie(positionWS);
         light.color *= cookieTexture.rgb;
