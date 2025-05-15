@@ -160,7 +160,7 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
         float3 halfVector = SafeNormalize(light.direction + shading.viewDirectionWS);
         half LoV = saturate(dot(light.direction, shading.viewDirectionWS));
         half LoH = saturate(dot(light.direction, halfVector));
-        half NoH = saturate(dot(shading.normalWS, halfVector));
+        float NoH = saturate(dot(shading.normalWS, halfVector));
 
         #ifndef QUALITY_LOW
         lightColor *= DisneyDiffuseNoPI(shading.NoV, NoL, LoV, shading.perceptualRoughness);
@@ -168,12 +168,25 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
 
         diffuse += lightColor * !light.specularOnly;
 #ifndef _SPECULARHIGHLIGHTS_OFF
+        #ifdef QUALITY_LOW
+            half roughness2 = shading.roughness * shading.roughness;
+            float d = NoH * NoH * (roughness2 - 1) + 1.00001f;
 
+            half LoH2 = LoH * LoH;
+            half normalizationTerm = (shading.perceptualRoughness * shading.perceptualRoughness) * 4.0 + 2.0;
+            half specularTerm = roughness2 / ((d * d) * max(0.1h, LoH2) * normalizationTerm);
+        #if REAL_IS_HALF
+            specularTerm = specularTerm - HALF_MIN;
+            specularTerm = clamp(specularTerm, 0.0, 1000.0); // Prevent FP16 overflow on mobiles
+        #endif
+        specular += specularTerm * shading.f0 * lightColor * (1.0/PI);
+    #else
         real3 F = F_Schlick(shading.f0, LoH);
         real D = D_GGX(NoH, shading.roughness);
         real V = V_SmithJointGGX(NoL, shading.NoV, shading.roughness);
 
         specular += max(0.0, (D * V) * F) * lightColor;
+    #endif
 #endif
     }
 }
