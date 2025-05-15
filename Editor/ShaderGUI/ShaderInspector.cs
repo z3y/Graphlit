@@ -470,7 +470,7 @@ namespace Graphlit
             SetupSurfaceType(material);
         }
 
-        public static void UpgradeMode(Material material)
+        public static void UpgradeMode(Material material, bool log = true)
         {
             int mode = (int)material.GetFloat("_Mode");
             if (mode == 0)
@@ -478,12 +478,14 @@ namespace Graphlit
                 return;
             }
 
-            Debug.Log($"Upgrading Surface Mode {mode} for {material.name} material");
+            if (log)
+                Debug.Log($"Upgrading Surface Mode {mode} for {material.name} material");
 
             if (mode > 0 && mode != 1)
             {
                 material.SetFloat("_Surface", 1.0f);
                 if (mode == 3) material.SetFloat("_BlendModePreserveSpecular", 1.0f);
+                else material.SetFloat("_BlendModePreserveSpecular", 0.0f);
             }
             if (mode == 1)
             {
@@ -493,9 +495,12 @@ namespace Graphlit
             if (mode == 6)
             {
                 material.SetFloat("_TransClipping", 1.0f);
+                material.SetFloat("_BlendModePreserveSpecular", 1.0f);
             }
 
+            var queue = material.renderQueue;
             SetupSurfaceType(material);
+            material.renderQueue = queue;
         }
 
         [MenuItem("Tools/Graphlit/Upgrade Materials")]

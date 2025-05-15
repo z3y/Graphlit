@@ -197,7 +197,8 @@ namespace Graphlit
             {
                 name = $"{prefix}{builder.shaderName.Replace("/", "_")}"
             };
-            DefaultInspector.SetupRenderingMode(material);
+            material.SetFloat("_Mode", (int)defaultMode);
+            ShaderInspector.UpgradeMode(material, false);
             ctx.AddObjectToAsset("Material", material);
         }
 
