@@ -42,7 +42,7 @@ float4 frag(Varyings input) : SV_Target
     shading.reflectVector = reflect(-fragment.viewDirectionWS, normalWS);
     shading.perceptualRoughness = surface.Roughness;
     #ifdef QUALITY_LOW
-    shading.roughness = max(shading.perceptualRoughness * shading.perceptualRoughness, 0.004);
+    shading.roughness = max(shading.perceptualRoughness * shading.perceptualRoughness, HALF_MIN_SQRT);
     #else
     shading.roughness = max(shading.perceptualRoughness * shading.perceptualRoughness, 0.002);
     #endif
