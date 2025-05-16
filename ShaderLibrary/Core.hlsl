@@ -1,5 +1,8 @@
 #pragma once
-// #define QUALITY_LOW
+
+#ifndef UNITY_PBS_USE_BRDF1
+    #define QUALITY_LOW
+#endif
 
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
 
@@ -13,6 +16,7 @@
     #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/DebugMipmapStreamingMacros.hlsl"
 #else
     #include "Input.hlsl"
+    #include "VRChatInput.hlsl"
 
     #if UNITY_REVERSED_Z
         // TODO: workaround. There's a bug where SHADER_API_GL_CORE gets erroneously defined on switch.
@@ -99,6 +103,9 @@ float shEvaluateDiffuseL1Geomerics(float L0, float3 L1, float3 n)
 
 float4 GetFlatNormal()
 {
+    #ifdef UNITY_ASTC_NORMALMAP_ENCODING
+    return float4(0.5, 0.5, 1, 0.5);
+    #endif
     // todo: find proper defines for normal map packing
     #if defined(UNIVERSALRP) && defined(TARGET_ANDROID)
     return float4(0.5, 0.5, 1, 0.5);

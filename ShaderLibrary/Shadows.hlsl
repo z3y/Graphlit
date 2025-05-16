@@ -167,6 +167,9 @@ half UnityMixRealtimeAndBakedShadows(half realtimeShadowAttenuation, half bakedS
 
 real SampleShadowmapFilteredHighQuality(TEXTURE2D_SHADOW_PARAM(ShadowMap, sampler_ShadowMap), float4 shadowCoord, float4 texelSize)
 {
+    #ifdef QUALITY_LOW
+    return 1.0;
+    #else
     float fetchesWeights[16];
     float2 fetchesUV[16];
     SampleShadow_ComputeSamples_Tent_7x7(texelSize, shadowCoord, fetchesWeights, fetchesUV);
@@ -187,6 +190,7 @@ real SampleShadowmapFilteredHighQuality(TEXTURE2D_SHADOW_PARAM(ShadowMap, sample
                 + fetchesWeights[13] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[13].xy, shadowCoord.z))
                 + fetchesWeights[14] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[14].xy, shadowCoord.z))
                 + fetchesWeights[15] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[15].xy, shadowCoord.z));
+    #endif
 }
 
 

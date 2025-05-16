@@ -41,7 +41,11 @@ float4 frag(Varyings input) : SV_Target
     shading.normalWS = normalWS;
     shading.reflectVector = reflect(-fragment.viewDirectionWS, normalWS);
     shading.perceptualRoughness = surface.Roughness;
+    #ifdef QUALITY_LOW
+    shading.roughness = max(shading.perceptualRoughness * shading.perceptualRoughness, 0.004);
+    #else
     shading.roughness = max(shading.perceptualRoughness * shading.perceptualRoughness, 0.002);
+    #endif
 
     shading.viewDirectionWS = fragment.viewDirectionWS;
     half dielectricSpecularF0 = 0.16 * surface.Reflectance * surface.Reflectance;
@@ -123,6 +127,15 @@ float4 frag(Varyings input) : SV_Target
         #ifdef _CBIRP_REFLECTIONS
             indirectSpecular = CBIRP::SampleProbes(cluster, shading.reflectVector, fragment.positionWS, surface.Roughness).xyz;
         #endif
+    #endif
+
+    #ifdef _MIRROR
+        float2 mirrorUV = fragment.positionNDC.xy;
+        half4 mirrorReflection = unity_StereoEyeIndex == 0 ? 
+            SAMPLE_TEXTURE2D(_ReflectionTex0, sampler_BilinearClamp, mirrorUV) :
+            SAMPLE_TEXTURE2D(_ReflectionTex1, sampler_BilinearClamp, mirrorUV);
+        alpha *= mirrorReflection.a;
+        indirectSpecular = mirrorReflection.rgb;
     #endif
 
     half3 brdf;

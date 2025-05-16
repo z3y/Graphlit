@@ -1,4 +1,3 @@
-float _VRChatMirrorMode;
 void VRChat_MirrorMode(out bool NotInMirror, out bool MirrorVR, out bool MirrorDesktop, out bool InMirror)
 {
     NotInMirror = _VRChatMirrorMode == 0;

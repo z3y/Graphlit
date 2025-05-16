@@ -1,4 +1,3 @@
-float _VRChatCameraMode;
 void VRChat_CameraMode(out bool Normal, out bool VRHandheld, out bool DesktopHandheld, out bool Screenshot)
 {
     Normal = _VRChatCameraMode == 0;

@@ -19,6 +19,7 @@ struct FragmentData
     float2 screenPosition;
     float2 lightmapUV;
     float4 shadowCoords;
+    float3 positionNDC;
 
     static FragmentData Create(Varyings varyings)
     {
@@ -65,13 +66,15 @@ struct FragmentData
         #endif
 
         // todo: find functions for urp
-        // #ifdef UNPACK_POSITIONCSR
-        //     output.positionCSR = UNPACK_POSITIONCSR;
-        //     float4 grabPos = ComputeGrabScreenPos(output.positionCSR);
-        //     float4 screenPos = ComputeScreenPos(output.positionCSR);
-        //     output.grabScreenPosition = grabPos.xy / grabPos.w;
-        //     output.screenPosition = screenPos.xy / screenPos.w;
-        // #endif
+        #ifdef UNPACK_POSITIONCSR
+            output.positionCSR = UNPACK_POSITIONCSR;
+            float4 grabPos = ComputeGrabScreenPos(output.positionCSR);
+            float4 screenPos = ComputeScreenPos(output.positionCSR);
+            output.grabScreenPosition = grabPos.xy / grabPos.w;
+            output.screenPosition = screenPos.xy / screenPos.w;
+        #endif
+
+        output.positionNDC = ComputeNormalizedDeviceCoordinatesWithZ(output.positionWS, GetWorldToHClipMatrix());
 
         #ifdef LIGHTMAP_ON
             output.lightmapUV = varyings.lightmapUV;

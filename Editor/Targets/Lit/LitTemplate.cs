@@ -150,7 +150,7 @@ namespace Graphlit
         static readonly PropertyDescriptor _glossyReflections = new(PropertyType.Float, "Environment Reflections", "_GlossyReflections") { customAttributes = "[ToggleOff] [Folder(Surface Options)]", FloatValue = 1 };
         static readonly PropertyDescriptor _specularOcclusion = new(PropertyType.Float, "Specular Occlusion", "_SpecularOcclusion") { FloatValue = 1, Range = new Vector2(0, 5), customAttributes = "[Folder(Surface Options)]" };
 
-
+        static readonly PropertyDescriptor _mirror = new(PropertyType.Float, "Mirror", "_Mirror") { customAttributes = "[Toggle(_MIRROR)] [Folder(Surface Options)]" };
         static readonly PropertyDescriptor _lmSpec = new(PropertyType.Float, "Lightmapped Specular", "_LightmappedSpecular") { customAttributes = "[Toggle(_LIGHTMAPPED_SPECULAR)] [Folder(Surface Options)]" };
         static readonly PropertyDescriptor _ltcgi = new(PropertyType.Float, "LTCGI", "_LTCGI") { customAttributes = "[Toggle(_LTCGI)] [Folder(Surface Options)]" };
         static readonly PropertyDescriptor _lightVolumes = new(PropertyType.Float, "VRC Light Volumes", "_VRC_LightVolumes") { customAttributes = "[Toggle(_VRC_LIGHTVOLUMES)] [Folder(Surface Options)]" };
@@ -202,6 +202,7 @@ namespace Graphlit
             {
                 builder.properties.Add(_specularHighlights);
                 builder.properties.Add(_glossyReflections);
+                builder.properties.Add(_mirror);
                 builder.properties.Add(_specularOcclusion);
             }
 
@@ -259,10 +260,11 @@ namespace Graphlit
                 pass.pragmas.Add("#pragma multi_compile_fog");
                 pass.pragmas.Add("#pragma multi_compile_instancing");
 
-                pass.pragmas.Add("#pragma shader_feature_local _BAKERY_MONOSH");
-                pass.pragmas.Add("#pragma shader_feature_local _BICUBIC_LIGHTMAP");
-                pass.pragmas.Add("#pragma shader_feature_local _LIGHTMAPPED_SPECULAR");
-                pass.pragmas.Add("#pragma shader_feature_local _NONLINEAR_LIGHTPROBESH");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _BAKERY_MONOSH");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _BICUBIC_LIGHTMAP");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _LIGHTMAPPED_SPECULAR");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _NONLINEAR_LIGHTPROBESH");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _MIRROR");
 
 
                 if (!_specular)
@@ -272,8 +274,8 @@ namespace Graphlit
                 }
                 else
                 {
-                    pass.pragmas.Add("#pragma shader_feature_local _SPECULARHIGHLIGHTS_OFF");
-                    pass.pragmas.Add("#pragma shader_feature_local _GLOSSYREFLECTIONS_OFF");
+                    pass.pragmas.Add("#pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF");
+                    pass.pragmas.Add("#pragma shader_feature_local_fragment _GLOSSYREFLECTIONS_OFF");
                 }
                 if (_cbirpExists && _cbirp)
                 {
@@ -342,7 +344,7 @@ namespace Graphlit
                 }
                 else
                 {
-                    pass.pragmas.Add("#pragma shader_feature_local _SPECULARHIGHLIGHTS_OFF");
+                    pass.pragmas.Add("#pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF");
                 }
 
                 pass.pragmas.Add(NormalDropoffDefine());
