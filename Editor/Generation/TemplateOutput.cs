@@ -299,7 +299,8 @@ namespace Graphlit
             }
             else
             {
-                pass.pragmas.Add("#pragma dynamic_branch _ SHADOWS_CUBE SHADOWS_DEPTH");
+                //pass.pragmas.Add("#pragma dynamic_branch _ SHADOWS_CUBE SHADOWS_DEPTH");
+                pass.pragmas.Add("#pragma multi_compile_shadowcaster");
             }
             pass.pragmas.Add("#pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT");
             pass.pragmas.Add("#pragma shader_feature_local_fragment _ALPHATEST_ON");

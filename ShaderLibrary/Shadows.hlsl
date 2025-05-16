@@ -1,10 +1,17 @@
 #pragma once
 
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
-// #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Shadow/ShadowSamplingTent.hlsl"
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Shadow/ShadowSamplingTent.hlsl"
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/GlobalSamplers.hlsl"
 
+#ifdef SHADOWS_CUBE
+TEXTURECUBE(_ShadowMapTexture);
+#elif defined(SHADOWS_SCREEN)
 TEXTURE2D_X(_ShadowMapTexture);
+#else
+TEXTURE2D(_ShadowMapTexture);
+#endif
+
 SAMPLER_CMP(sampler_LinearClampCompare);
 float4 _ShadowOffsets[4];
 float4 _ShadowMapTexture_TexelSize;
@@ -24,7 +31,7 @@ float4 TransformWorldToShadowCoord(float3 positionWS)
 #endif
     return shadowCoord;
 }
-
+#ifdef SHADOWS_SCREEN
 half SampleScreenSpaceShadowmap(float4 shadowCoord)
 {
     shadowCoord.xy /= max(0.00001, shadowCoord.w); // Prevent division by zero.
@@ -40,6 +47,7 @@ half SampleScreenSpaceShadowmap(float4 shadowCoord)
 
     return attenuation;
 }
+#endif
 
 bool IsDirectionalLight()
 {
@@ -156,3 +164,78 @@ half UnityMixRealtimeAndBakedShadows(half realtimeShadowAttenuation, half bakedS
     //In distance shadowmask or realtime shadow fadeout we lerp toward the baked shadows (bakedShadowAttenuation will be 1 if no baked shadows)
     return lerp(realtimeShadowAttenuation, bakedShadowAttenuation, fade);
 }
+
+real SampleShadowmapFilteredHighQuality(TEXTURE2D_SHADOW_PARAM(ShadowMap, sampler_ShadowMap), float4 shadowCoord, float4 texelSize)
+{
+    float fetchesWeights[16];
+    float2 fetchesUV[16];
+    SampleShadow_ComputeSamples_Tent_7x7(texelSize, shadowCoord, fetchesWeights, fetchesUV);
+
+    return fetchesWeights[0] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[0].xy, shadowCoord.z))
+                + fetchesWeights[1] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[1].xy, shadowCoord.z))
+                + fetchesWeights[2] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[2].xy, shadowCoord.z))
+                + fetchesWeights[3] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[3].xy, shadowCoord.z))
+                + fetchesWeights[4] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[4].xy, shadowCoord.z))
+                + fetchesWeights[5] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[5].xy, shadowCoord.z))
+                + fetchesWeights[6] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[6].xy, shadowCoord.z))
+                + fetchesWeights[7] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[7].xy, shadowCoord.z))
+                + fetchesWeights[8] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[8].xy, shadowCoord.z))
+                + fetchesWeights[9] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[9].xy, shadowCoord.z))
+                + fetchesWeights[10] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[10].xy, shadowCoord.z))
+                + fetchesWeights[11] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[11].xy, shadowCoord.z))
+                + fetchesWeights[12] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[12].xy, shadowCoord.z))
+                + fetchesWeights[13] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[13].xy, shadowCoord.z))
+                + fetchesWeights[14] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[14].xy, shadowCoord.z))
+                + fetchesWeights[15] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[15].xy, shadowCoord.z));
+}
+
+
+real SampleShadowmap(TEXTURE2D_SHADOW_PARAM(ShadowMap, sampler_ShadowMap), float4 shadowCoord, float4 texelSize, bool isPerspectiveProjection = true)
+{
+    // Compiler will optimize this branch away as long as isPerspectiveProjection is known at compile time
+    if (isPerspectiveProjection)
+        shadowCoord.xyz /= shadowCoord.w;
+
+    real attenuation;
+
+    #if defined(SHADOWS_SOFT)
+        attenuation = SampleShadowmapFilteredHighQuality(TEXTURE2D_SHADOW_ARGS(ShadowMap, sampler_ShadowMap), shadowCoord, texelSize);
+    #else
+        attenuation = real(SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, shadowCoord.xyz));
+    #endif
+
+    attenuation = lerp(_LightShadowData.r, 1.0f, attenuation);
+
+    return attenuation;
+}
+
+#ifdef SHADOWS_CUBE
+inline half UnitySampleShadowmap(float3 vec)
+{
+    float3 absVec = abs(vec);
+    float dominantAxis = max(max(absVec.x, absVec.y), absVec.z); // TODO use max3() instead
+    dominantAxis = max(0.00001, dominantAxis - _LightProjectionParams.z); // shadow bias from point light is apllied here.
+    dominantAxis *= _LightProjectionParams.w; // bias
+    float mydist = -_LightProjectionParams.x + _LightProjectionParams.y/dominantAxis; // project to shadow map clip space [0; 1]
+
+    #if defined(UNITY_REVERSED_Z)
+    mydist = 1.0 - mydist; // depth buffers are reversed! Additionally we can move this to CPP code!
+    #endif
+
+
+    #if defined(SHADOWS_SOFT)
+        float z = 1.0/128.0;
+        float4 shadowVals;
+        shadowVals.x = SAMPLE_TEXTURECUBE_SHADOW(_ShadowMapTexture, sampler_LinearClampCompare, float4(vec+float3( z, z, z), mydist));
+        shadowVals.y = SAMPLE_TEXTURECUBE_SHADOW(_ShadowMapTexture, sampler_LinearClampCompare, float4(vec+float3(-z,-z, z), mydist));
+        shadowVals.z = SAMPLE_TEXTURECUBE_SHADOW(_ShadowMapTexture, sampler_LinearClampCompare, float4(vec+float3(-z, z,-z), mydist));
+        shadowVals.w = SAMPLE_TEXTURECUBE_SHADOW(_ShadowMapTexture, sampler_LinearClampCompare, float4(vec+float3( z,-z,-z), mydist));
+        half shadow = dot(shadowVals, 0.25);
+        return lerp(_LightShadowData.r, 1.0, shadow);
+    #else
+        half shadow = SAMPLE_TEXTURECUBE_SHADOW(_ShadowMapTexture, sampler_LinearClampCompare, float4(vec, mydist));
+        return lerp(_LightShadowData.r, 1.0, shadow);
+    #endif
+
+}
+#endif // #if defined (SHADOWS_CUBE)

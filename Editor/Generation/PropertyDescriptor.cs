@@ -547,7 +547,8 @@ namespace Graphlit
                 var tex = DefaultTextureValue;
                 if (tex == null)
                 {
-                    m.SetTexture(name, GetDefaultUnityTexture());
+                    if (type == PropertyType.Texture2D)
+                        m.SetTexture(name, GetDefaultUnityTexture());
                 }
                 else
                 {

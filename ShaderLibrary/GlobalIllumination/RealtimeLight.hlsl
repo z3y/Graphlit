@@ -83,13 +83,12 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
 
         half shadowMaskAttenuation = UnitySampleBakedOcclusion(lightmapUV, positionWS);
 
-        #ifdef SHADOWS_SCREEN
+        #if defined(SHADOWS_SCREEN) || defined(SHADOWS_DEPTH) || defined(SHADOWS_CUBE)
             half shadowFade = GetMainLightShadowFade(positionWS);
         #else
             half shadowFade = half(1.0);
         #endif
 
-        light.shadowAttenuation = UnityMixRealtimeAndBakedShadows(light.shadowAttenuation, shadowMaskAttenuation, shadowFade);
 
         #ifdef UNITY_PASS_FORWARDADD
             float4 lightCoord = mul(unity_WorldToLight, float4(positionWS, 1));
@@ -102,9 +101,25 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
                 float2 spotUV = lightCoord.xy / lightCoord.w + 0.5;
                 light.color *= SAMPLE_TEXTURE2D(_LightTexture0, sampler_LightTexture0, spotUV).a * (lightCoord.z > 0);
             #endif
+
         #else
         light.distanceAttenuation = 1;
         #endif
+
+        #if defined(SHADOWS_DEPTH) || defined(SHADOWS_CUBE)
+        UNITY_BRANCH
+        if (shadowFade < (1.0f - 1e-2f))
+        {
+            #if defined(SHADOWS_DEPTH) && defined(SPOT)
+                float4 spotShadowCoord = mul(unity_WorldToShadow[0], float4(positionWS, 1));
+                light.shadowAttenuation = SampleShadowmap(TEXTURE2D_SHADOW_ARGS(_ShadowMapTexture, sampler_LinearClampCompare), spotShadowCoord, _ShadowMapTexture_TexelSize);
+            #elif defined(SHADOWS_CUBE) && defined(POINT)
+                light.shadowAttenuation = UnitySampleShadowmap(positionWS - _LightPositionRange.xyz);
+            #endif
+        }
+        #endif
+
+        light.shadowAttenuation = UnityMixRealtimeAndBakedShadows(light.shadowAttenuation, shadowMaskAttenuation, shadowFade);
 
         half4 cookieTexture = SampleUdonRPDirectionalCookie(positionWS);
         light.color *= cookieTexture.rgb;
@@ -214,4 +229,9 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
     #endif
 #endif
     }
+}
+
+half SampleAddShadowMap(float4 shadowCoord)
+{
+
 }
