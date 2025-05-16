@@ -152,36 +152,40 @@ namespace Graphlit
                 builder.AddPass(pass);
             }
 
-            /*  if (_customLighting && !urp)
-              {
-                  var pass = new PassBuilder("FORWARD_DELTA", Vertex, FragmentForward, POSITION, NORMAL, TANGENT, COLOR, ALPHA, CUTOFF);
-                  pass.tags["LightMode"] = "ForwardAdd";
+            if (_customLighting && !urp)
+            {
+                var pass = new PassBuilder("FORWARD_DELTA", Vertex, FragmentForward, POSITION, NORMAL, TANGENT, COLOR, ALPHA, CUTOFF);
+                pass.tags["LightMode"] = "ForwardAdd";
 
-                  pass.renderStates["Fog"] = "{ Color (0,0,0,0) }";
-                  pass.renderStates["Cull"] = "[_Cull]";
-                  pass.renderStates["Blend"] = "[_SrcBlend] One";
-                  pass.renderStates["ZWrite"] = "Off";
-                  pass.renderStates["ZTest"] = "LEqual";
+                pass.renderStates["Fog"] = "{ Color (0,0,0,0) }";
+                pass.renderStates["Cull"] = "[_Cull]";
+                pass.renderStates["Blend"] = "[_SrcBlend] One";
+                pass.renderStates["ZWrite"] = "Off";
+                pass.renderStates["ZTest"] = "LEqual";
 
-                  pass.pragmas.Add("#pragma shader_feature_local _ _ALPHAFADE_ON _ALPHATEST_ON _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _ALPHATEST_ON");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _ _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
 
-                  pass.pragmas.Add("#pragma multi_compile_fwdadd_fullshadows");
-                  pass.pragmas.Add("#pragma multi_compile_fog");
-                  pass.pragmas.Add("#pragma multi_compile_instancing");
+                pass.pragmas.Add("#pragma multi_compile_fwdadd_fullshadows");
+                pass.pragmas.Add("#pragma multi_compile_fog");
+                pass.pragmas.Add("#pragma multi_compile_instancing");
 
-                  pass.attributes.RequirePositionOS();
-                  pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
+                pass.attributes.RequirePositionOS();
+                pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
 
-                  pass.varyings.RequirePositionCS();
+                pass.varyings.RequirePositionCS();
+                PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.PositionWS);
+                PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.BitangentWS);
+                PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.TangentWS);
+                PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.PositionWS);
 
-                  pass.varyings.RequireCustomString("UNITY_FOG_COORDS(*)");
-                  pass.varyings.RequireCustomString("UNITY_SHADOW_COORDS(*)");
-                  pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
-                  pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
+                pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
+                pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
-                  pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
-                  builder.AddPass(pass);
-              }*/
+                pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
+                builder.AddPass(pass);
+            }
             if (urp)
             {
                 {
