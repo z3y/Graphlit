@@ -23,6 +23,7 @@
     #define BAKERY_SHNONLINEAR
 #endif
 
+#ifdef DYNAMICLIGHTMAP_ON
 half3 DecodeRealtimeLightmap(half4 color)
 {
     //@TODO: Temporary until Geomerics gives us an API to convert lightmaps to RGBM in gamma space on the enlighten thread before we upload the textures.
@@ -32,7 +33,7 @@ half3 DecodeRealtimeLightmap(half4 color)
     return pow ((unity_DynamicLightmap_HDR.x * color.a) * color.rgb, unity_DynamicLightmap_HDR.y);
 #endif
 }
-    
+#endif
 
 void SampleLightmap(out half3 illuminance, out half3 specular, float4 lightmapUV, float3 normalWS, float3 viewDirectionWS, half perceptualRoughness, inout half3 indirectOcclusion, float3 reflectVector)
 {

@@ -40,6 +40,10 @@ float4 frag(Varyings input) : SV_Target
         float3 normalWS = SafeNormalize(mul(surface.Normal, fragment.tangentSpaceTransform));
     #endif
 
+    #if defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_FACE) && !defined(LIGHTMAP_ON)
+        if (!fragment.frontFace) normalWS *= -1;
+    #endif
+
     ShadingData shading;
     shading.NoV = abs(dot(normalWS, fragment.viewDirectionWS)) + 1e-5f;
     shading.normalWS = normalWS;
@@ -79,6 +83,10 @@ float4 frag(Varyings input) : SV_Target
     #if defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) && defined(LIGHTMAP_ON)
     bakedGI = SubtractMainLightFromLightmap(bakedGI, normalWS, light.color, light.direction, light.shadowAttenuation);
     light.color = 0;
+    #endif
+
+    #ifdef LIGHTMAP_SPECULAR
+
     #endif
 
     half3 indirectSpecular = 0;
