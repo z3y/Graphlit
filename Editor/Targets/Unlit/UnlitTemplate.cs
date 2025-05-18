@@ -81,6 +81,8 @@ namespace Graphlit
             builder.properties.Add(_srcBlend);
             builder.properties.Add(_dstBlend);
             builder.properties.Add(_zwrite);
+            builder.properties.Add(_ztest);
+
             builder.properties.Add(_cull);
 
             if (_customLighting)
@@ -108,7 +110,7 @@ namespace Graphlit
                 pass.renderStates["Cull"] = "[_Cull]";
                 pass.renderStates["ZWrite"] = "[_ZWrite]";
                 pass.renderStates["Blend"] = "[_SrcBlend] [_DstBlend]";
-
+                pass.renderStates["ZTest"] = "[_ZTest]";
 
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ALPHATEST_ON");
@@ -161,7 +163,7 @@ namespace Graphlit
                 pass.renderStates["Cull"] = "[_Cull]";
                 pass.renderStates["Blend"] = "[_SrcBlend] One";
                 pass.renderStates["ZWrite"] = "Off";
-                pass.renderStates["ZTest"] = "LEqual";
+                pass.renderStates["ZTest"] = "[_ZTest]";
 
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ALPHATEST_ON");

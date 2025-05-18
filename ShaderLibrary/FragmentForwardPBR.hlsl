@@ -3,6 +3,10 @@
 #include "GlobalIllumination/ClusteredBIRP.hlsl"
 #include "GlobalIllumination/LTCGI.hlsl"
 
+#ifdef _ACES
+    #include "ACES.hlsl"
+#endif
+
 float4 frag(Varyings input) : SV_Target
 {
     UNITY_SETUP_INSTANCE_ID(input);
@@ -175,6 +179,10 @@ float4 frag(Varyings input) : SV_Target
     #endif
     
     color.a = OutputAlpha(color.a, isTransparent);
+
+    #ifdef _ACES
+        color.rgb = ACESFitted(color.rgb);
+    #endif
 
     return color;
 }

@@ -188,6 +188,8 @@ namespace Graphlit
             builder.properties.Add(_srcBlend);
             builder.properties.Add(_dstBlend);
             builder.properties.Add(_zwrite);
+            builder.properties.Add(_ztest);
+
             builder.properties.Add(_cull);
             //if (GraphView.graphData.outlinePass != GraphData.OutlinePassMode.Disabled) builder.properties.Add(_outlineToggle);
             builder.properties.Add(_dfgProperty);
@@ -237,6 +239,7 @@ namespace Graphlit
 
                 pass.renderStates["Cull"] = "[_Cull]";
                 pass.renderStates["ZWrite"] = "[_ZWrite]";
+                pass.renderStates["ZTest"] = "[_ZTest]";
                 pass.renderStates["Blend"] = "[_SrcBlend] [_DstBlend]";
 
 
@@ -323,6 +326,7 @@ namespace Graphlit
                 pass.renderStates["Cull"] = "[_Cull]";
                 pass.renderStates["Blend"] = "[_SrcBlend] One";
                 pass.renderStates["ZWrite"] = "Off";
+                pass.renderStates["ZTest"] = "[_ZTest]";
                 pass.renderStates["ZTest"] = "LEqual";
 
                 if (_fwdAddBlendOpMax)

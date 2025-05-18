@@ -172,7 +172,7 @@ real SampleShadowmapFilteredHighQuality(TEXTURE2D_SHADOW_PARAM(ShadowMap, sample
     #else
     float fetchesWeights[16];
     float2 fetchesUV[16];
-    SampleShadow_ComputeSamples_Tent_7x7(texelSize, shadowCoord, fetchesWeights, fetchesUV);
+    SampleShadow_ComputeSamples_Tent_7x7(texelSize, shadowCoord.xy, fetchesWeights, fetchesUV);
 
     return fetchesWeights[0] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[0].xy, shadowCoord.z))
                 + fetchesWeights[1] * SAMPLE_TEXTURE2D_SHADOW(ShadowMap, sampler_ShadowMap, float3(fetchesUV[1].xy, shadowCoord.z))

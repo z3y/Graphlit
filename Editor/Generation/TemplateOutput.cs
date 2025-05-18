@@ -151,6 +151,8 @@ namespace Graphlit
         internal static readonly PropertyDescriptor _srcBlend = new(PropertyType.Float, "Source Blend", "_SrcBlend") { FloatValue = 1, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         internal static readonly PropertyDescriptor _dstBlend = new(PropertyType.Float, "Destination Blend", "_DstBlend") { FloatValue = 0, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         internal static readonly PropertyDescriptor _zwrite = new(PropertyType.Float, "ZWrite", "_ZWrite") { FloatValue = 1, customAttributes = "[Enum(Off, 0, On, 1)]" };
+        internal static readonly PropertyDescriptor _ztest = new(PropertyType.Float, "ZTest", "_ZTest") { FloatValue = 4, customAttributes = "[Enum(UnityEngine.Rendering.CompareFunction)]" };
+        
         internal PropertyDescriptor _cull => new(PropertyType.Float, "Cull", "_Cull") { FloatValue = (int)defaultCull, customAttributes = "[Enum(UnityEngine.Rendering.CullMode)]" };
 
         [SerializeField] public MaterialRenderMode defaultMode = MaterialRenderMode.Opaque;

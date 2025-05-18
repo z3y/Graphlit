@@ -219,6 +219,7 @@ namespace Graphlit
             "_DstBlendAlpha",
             "_Cutoff",
             "_TransClipping",
+            "_ZTest"
         };
 
         void PraseProperties(MaterialEditor editor, MaterialProperty[] properties)

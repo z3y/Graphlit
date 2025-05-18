@@ -97,6 +97,7 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
             float distanceSquare = dot(positionToLight, positionToLight);
             half range = length(lightZ);
             light.distanceAttenuation = GetSquareFalloffAttenuation(distanceSquare, range * range);
+            // light.distanceAttenuation *= 2.0;
             #ifdef SPOT
                 float2 spotUV = lightCoord.xy / lightCoord.w + 0.5;
                 light.color *= SAMPLE_TEXTURE2D(_LightTexture0, sampler_LightTexture0, spotUV).a * (lightCoord.z > 0);
@@ -202,11 +203,13 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
         half LoH = saturate(dot(light.direction, halfVector));
         float NoH = saturate(dot(shading.normalWS, halfVector));
 
-        #ifndef QUALITY_LOW
-        lightColor *= DisneyDiffuseNoPI(shading.NoV, NoL, LoV, shading.perceptualRoughness);
+        #ifdef QUALITY_LOW
+        half3 Fd = lightColor;
+        #else
+        half3 Fd = lightColor * DisneyDiffuseNoPI(shading.NoV, NoL, LoV, shading.perceptualRoughness);
         #endif
 
-        diffuse += lightColor * !light.specularOnly;
+        diffuse += Fd * !light.specularOnly;
 #ifndef _SPECULARHIGHLIGHTS_OFF
         #ifdef QUALITY_LOW
             half roughness2 = shading.roughness * shading.roughness;

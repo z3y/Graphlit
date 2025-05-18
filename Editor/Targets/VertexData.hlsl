@@ -19,7 +19,7 @@ struct VertexData
 
     static VertexData Create(Attributes attributes)
     {
-        VertexData output = (VertexData)1;
+        VertexData output = (VertexData)0;
 
         #ifdef ATTRIBUTES_NEED_POSITIONOS
             output.positionOS = attributes.positionOS;

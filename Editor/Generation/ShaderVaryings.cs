@@ -156,7 +156,13 @@ namespace Graphlit
                         sb.AppendLine("varyings." + vMasked + " = " + Mask(v.passthrough, v.channels) + ";");
                     }
 
+
+                    
                     string input = Mask("varyings." + b.name, v.channels, offset);
+                    if (v.name.StartsWith("uv") && v.channels == 2)
+                    {
+                        input = $"float4({input}, 0, 0)";
+                    }
                     _unpackDefines.Add($"#define UNPACK_{v.name.ToUpper()} {input}");
 
                     offset += v.channels;

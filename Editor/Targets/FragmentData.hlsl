@@ -21,9 +21,14 @@ struct FragmentData
     float4 shadowCoords;
     float3 positionNDC;
 
+    float4 uv0;
+    float4 uv1;
+    float4 uv2;
+    float4 uv3;
+
     static FragmentData Create(Varyings varyings)
     {
-        FragmentData output = (FragmentData)1;
+        FragmentData output = (FragmentData)0;
 
         #ifdef UNPACK_POSITIONWS
             output.positionWS = UNPACK_POSITIONWS;
@@ -43,7 +48,11 @@ struct FragmentData
         output.bitangentWS = crossSign * cross(output.normalWS.xyz, tangentWS.xyz);
 
         float3 unnormalizedNormalWS = output.normalWS;
+        #ifdef UNPACK_NORMALWS
         float renormFactor = 1.0 / length(unnormalizedNormalWS);
+        #else
+        float renormFactor = 1.0;
+        #endif
 
         // output.positionOS = mul(unity_WorldToObject, float4(output.positionWS, 1.0)).xyz;
         output.positionOS = TransformWorldToObject(output.positionWS);
@@ -81,6 +90,19 @@ struct FragmentData
         #endif
 
         output.shadowCoords = TransformWorldToShadowCoord(output.positionWS);
+
+        #ifdef UNPACK_UV0
+            output.uv0 = UNPACK_UV0;
+        #endif
+        #ifdef UNPACK_UV1
+            output.uv1 = UNPACK_UV1;
+        #endif
+        #ifdef UNPACK_UV2
+            output.uv2 = UNPACK_UV2;
+        #endif
+        #ifdef UNPACK_UV3
+            output.uv3 = UNPACK_UV3;
+        #endif
 
         return output;
     }
