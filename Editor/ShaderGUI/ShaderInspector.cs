@@ -34,6 +34,7 @@ namespace Graphlit
             public int indent;
             public string folder;
             public bool linearWarning;
+            public int extraProperty = -1;
         }
 
         public class PropertyFolder
@@ -109,6 +110,7 @@ namespace Graphlit
 
             foreach (var folder in _folders)
             {
+                EditorGUI.indentLevel = baseIndentation;
                 CoreEditorUtils.DrawSplitter();
                 const string folderPrefix = "folder_";
                 bool folderVisible = _material.GetTag(folderPrefix + folder.name, false, "1") == "1";
@@ -127,7 +129,6 @@ namespace Graphlit
                 {
                     var materialProperty = properties[element.index];
 
-                    EditorGUI.indentLevel = baseIndentation + element.indent;
                     if (element.showIf is not null)
                     {
                         bool isHidden = true;
@@ -156,6 +157,8 @@ namespace Graphlit
                             continue;
                         }
                     }
+                    
+                    EditorGUI.indentLevel = baseIndentation + element.indent;
 
                     bool hasOnValueChange = element.onValueChange is not null;
 
@@ -179,7 +182,17 @@ namespace Graphlit
                             Vector4Property(materialEditor, materialProperty, element.guiContent);
                             break;
                         case PropertyElementType.Texture:
-                            TextureProperty(materialEditor, materialProperty, element.guiContent);
+                            //TextureProperty(materialEditor, materialProperty, element.guiContent);
+                            MaterialProperty extraProperty = null;
+                            if (element.extraProperty >= 0)
+                            {
+                                extraProperty = properties[element.extraProperty];
+                            }
+                            materialEditor.TexturePropertySingleLine(element.guiContent, materialProperty, extraProperty);
+                            if (!materialProperty.flags.HasFlag(MaterialProperty.PropFlags.NoScaleOffset))
+                            {
+                                materialEditor.TextureScaleOffsetProperty(materialProperty);
+                            }
                             if (element.linearWarning) LinearWarning(materialProperty);
                             break;
                         case PropertyElementType.MinMax:
@@ -329,6 +342,12 @@ namespace Graphlit
             }
 
             element.folder = TryParseStringParam(attributes, "Folder");
+            
+            string intent = TryParseStringParam(attributes, "Indent");
+            if (!string.IsNullOrEmpty(intent))
+            {
+                element.indent = int.Parse(intent);
+            }
 
             if (element.type == PropertyElementType.Texture)
             {
@@ -349,6 +368,12 @@ namespace Graphlit
                     {
                         element.onValueChange.Invoke(mat, element);
                     }
+                }
+                
+                string extraProperty = TryParseStringParam(attributes, "ExtraProperty");
+                if (!string.IsNullOrEmpty(extraProperty))
+                {
+                    element.extraProperty = Array.FindIndex(properties, x => x.name == extraProperty);
                 }
             }
 
@@ -446,10 +471,11 @@ namespace Graphlit
             CoreEditorUtils.DrawSplitter();
             EditorGUILayout.Space();
             Material t = editor.target as Material;
+
             if (t && t.HasProperty("_EmissionColor"))
             {
                 bool emission = t.IsKeywordEnabled("_EMISSION");
-                editor.LightmapEmissionFlagsProperty(MaterialEditor.kMiniTextureFieldLabelIndentLevel, emission);
+                editor.LightmapEmissionFlagsProperty(0, emission);
             }
             editor.RenderQueueField();
             editor.EnableInstancingField();
@@ -757,6 +783,68 @@ namespace Graphlit
             {
                 mat.SetShaderPassEnabled("GrabPass", property.floatValue > 0);
             }
+        }
+        
+        private void ExtraPropertyAfterTexture(MaterialEditor materialEditor, Rect r, MaterialProperty property)
+        {
+            if ((property.type == MaterialProperty.PropType.Float || property.type == MaterialProperty.PropType.Color) && r.width > EditorGUIUtility.fieldWidth)
+            {
+                float labelWidth = EditorGUIUtility.labelWidth;
+                EditorGUIUtility.labelWidth = r.width - EditorGUIUtility.fieldWidth - 2f;
+
+                var labelRect = new Rect(r.x, r.y, r.width - EditorGUIUtility.fieldWidth - 4f, r.height);
+                var style = new GUIStyle("label");
+                style.alignment = TextAnchor.MiddleRight;
+                EditorGUI.LabelField(labelRect, property.displayName, style);
+                materialEditor.ShaderProperty(r, property, " ");
+                EditorGUIUtility.labelWidth = labelWidth;
+            }
+            else
+            {
+                materialEditor.ShaderProperty(r, property, string.Empty);
+            }
+        }
+
+        public void TexturePropertySingleLineExtraProp(MaterialEditor editor, GUIContent label, MaterialProperty extraProperty1, MaterialProperty extraProperty2 = null)
+        {
+            Rect controlRectForSingleLine = GUILayoutUtility.GetLastRect();
+
+            if (controlRectForSingleLine.height > 20)
+            {
+                // fix offset when there is a normal map fix button
+                var pos = controlRectForSingleLine.position;
+                controlRectForSingleLine.position = new Vector2(pos.x, pos.y - 42);
+            }
+
+            int indentLevel = EditorGUI.indentLevel;
+            EditorGUI.indentLevel = 0;
+            if (extraProperty1 == null || extraProperty2 == null)
+            {
+                MaterialProperty materialProperty = extraProperty1 ?? extraProperty2;
+                if (materialProperty.type == MaterialProperty.PropType.Color)
+                {
+                    ExtraPropertyAfterTexture(editor, MaterialEditor.GetLeftAlignedFieldRect(controlRectForSingleLine), materialProperty);
+                }
+                else
+                {
+                    var r = MaterialEditor.GetRectAfterLabelWidth(controlRectForSingleLine);
+                    r.width -= 50;
+                    r.position = new Vector2(r.x + 50, r.y);
+                    ExtraPropertyAfterTexture(editor, r, materialProperty);
+                }
+            }
+            else if (extraProperty1.type == MaterialProperty.PropType.Color)
+            {
+                ExtraPropertyAfterTexture(editor, MaterialEditor.GetFlexibleRectBetweenFieldAndRightEdge(controlRectForSingleLine), extraProperty2);
+                ExtraPropertyAfterTexture(editor, MaterialEditor.GetLeftAlignedFieldRect(controlRectForSingleLine), extraProperty1);
+            }
+            else
+            {
+                ExtraPropertyAfterTexture(editor, MaterialEditor.GetRightAlignedFieldRect(controlRectForSingleLine), extraProperty2);
+                ExtraPropertyAfterTexture(editor, MaterialEditor.GetFlexibleRectBetweenLabelAndField(controlRectForSingleLine), extraProperty1);
+            }
+
+            EditorGUI.indentLevel = indentLevel;
         }
     }
 }
