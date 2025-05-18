@@ -228,14 +228,39 @@ inline half UnitySampleShadowmap(float3 vec)
 
 
     #if defined(SHADOWS_SOFT)
-        float z = 1.0/128.0;
-        float4 shadowVals;
-        shadowVals.x = SAMPLE_TEXTURECUBE_SHADOW(_ShadowMapTexture, sampler_LinearClampCompare, float4(vec+float3( z, z, z), mydist));
-        shadowVals.y = SAMPLE_TEXTURECUBE_SHADOW(_ShadowMapTexture, sampler_LinearClampCompare, float4(vec+float3(-z,-z, z), mydist));
-        shadowVals.z = SAMPLE_TEXTURECUBE_SHADOW(_ShadowMapTexture, sampler_LinearClampCompare, float4(vec+float3(-z, z,-z), mydist));
-        shadowVals.w = SAMPLE_TEXTURECUBE_SHADOW(_ShadowMapTexture, sampler_LinearClampCompare, float4(vec+float3( z,-z,-z), mydist));
-        half shadow = dot(shadowVals, 0.25);
-        return lerp(_LightShadowData.r, 1.0, shadow);
+        #if 0
+            float z = 1.0/128.0;
+            float4 shadowVals;
+            shadowVals.x = SAMPLE_TEXTURECUBE_SHADOW(_ShadowMapTexture, sampler_LinearClampCompare, float4(vec+float3( z, z, z), mydist));
+            shadowVals.y = SAMPLE_TEXTURECUBE_SHADOW(_ShadowMapTexture, sampler_LinearClampCompare, float4(vec+float3(-z,-z, z), mydist));
+            shadowVals.z = SAMPLE_TEXTURECUBE_SHADOW(_ShadowMapTexture, sampler_LinearClampCompare, float4(vec+float3(-z, z,-z), mydist));
+            shadowVals.w = SAMPLE_TEXTURECUBE_SHADOW(_ShadowMapTexture, sampler_LinearClampCompare, float4(vec+float3( z,-z,-z), mydist));
+            half shadow = dot(shadowVals, 0.25);
+            return lerp(_LightShadowData.r, 1.0, shadow);
+        #else
+            #ifdef QUALITY_LOW
+                return 1.0;
+            #else
+                float fetchesWeights[16];
+                float2 fetchesUV[16];
+                SampleShadow_ComputeSamples_Tent_7x7(_ShadowMapTexture_TexelSize, 0, fetchesWeights, fetchesUV);
+
+                float3 N = normalize(vec);
+                float3 up = abs(N.z) < 0.999 ? float3(0,0,1) : float3(0,1,0);
+
+                float3 tangent = normalize(cross(up, N));
+                float3 bitangent = cross(N, tangent);
+                half result = 0;
+                for (int i = 0; i < 16; i++)
+                {
+                    float2 offset = fetchesUV[i]; // offset in the tangent-bitangent plane
+                    float3 sampleDir = float3(N + offset.x * tangent + offset.y * bitangent);
+                    result += fetchesWeights[i] * SAMPLE_TEXTURECUBE_SHADOW(_ShadowMapTexture, sampler_LinearClampCompare, float4(sampleDir, mydist));
+                }
+                return lerp(_LightShadowData.r, 1.0, result);
+            #endif
+        #endif
+        return 1;
     #else
         half shadow = SAMPLE_TEXTURECUBE_SHADOW(_ShadowMapTexture, sampler_LinearClampCompare, float4(vec, mydist));
         return lerp(_LightShadowData.r, 1.0, shadow);
