@@ -298,13 +298,13 @@ namespace Graphlit
                 pass.attributes.RequirePositionOS();
                 pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
 
+                PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.FrontFace);
                 pass.varyings.RequirePositionCS();
                 pass.attributes.RequireUV(1, 2);
                 PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.PositionWS);
                 PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.BitangentWS);
                 PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.TangentWS);
                 PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.PositionWS);
-                PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.FrontFace);
 
                 PortBindings.Require(pass, ShaderStage.Vertex, PortBinding.UV2);
 
@@ -359,12 +359,12 @@ namespace Graphlit
                 pass.attributes.RequirePositionOS();
                 pass.attributes.Require("UNITY_VERTEX_INPUT_INSTANCE_ID");
 
+                PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.FrontFace);
                 pass.varyings.RequirePositionCS();
                 PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.PositionWS);
                 PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.BitangentWS);
                 PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.TangentWS);
                 PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.PositionWS);
-                PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.FrontFace);
 
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");

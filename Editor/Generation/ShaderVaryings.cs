@@ -121,6 +121,27 @@ namespace Graphlit
             }
             foreach (string var in customVaryingsStrings)
             {
+                if (var.Contains("cullFace"))
+                {
+                    continue;
+                }
+                string value = var;
+                if (value.Contains('*'))
+                {
+                    value = value.Replace("*", semanticCounter++.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                }
+                foreach (var split in value.Split('\n'))
+                {
+                    sb.AppendLine(split);
+                }
+            }
+            // quick hack to place cull face last
+            foreach (string var in customVaryingsStrings)
+            {
+                if (!var.Contains("cullFace"))
+                {
+                    continue;
+                }
                 string value = var;
                 if (value.Contains('*'))
                 {
