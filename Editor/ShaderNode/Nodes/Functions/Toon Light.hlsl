@@ -2,7 +2,7 @@
 
 #include "Main Light.hlsl"
 
-#ifdef UNIVERSAL_FORWARD
+#if defined(UNIVERSAL_FORWARD) || defined(LIGHTPROBE_SH)
 #define UNITY_SHOULD_SAMPLE_SH 1
 #endif
 
