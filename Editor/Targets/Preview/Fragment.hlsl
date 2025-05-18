@@ -71,17 +71,17 @@ half4 frag(Varyings varyings) : SV_Target
         );
         generatedUV.x += 0.75;
 
-        #ifdef UNPACK_UV0
-            UNPACK_UV0.xy = generatedUV;
+        #ifdef PACK_UV0
+            PACK_UV0.xy = generatedUV;
         #endif
-        #ifdef UNPACK_UV1
-            UNPACK_UV1.xy = generatedUV;
+        #ifdef PACK_UV1
+            PACK_UV1.xy = generatedUV;
         #endif
-        #ifdef UNPACK_UV2
-            UNPACK_UV2.xy = generatedUV;
+        #ifdef PACK_UV2
+            PACK_UV2.xy = generatedUV;
         #endif
-        #ifdef UNPACK_UV3
-            UNPACK_UV3.xy = generatedUV;
+        #ifdef PACK_UV3
+            PACK_UV3.xy = generatedUV;
         #endif
     }
     else // 2d preview
@@ -96,14 +96,14 @@ half4 frag(Varyings varyings) : SV_Target
         #ifdef UNPACK_TANGENTWS
             UNPACK_TANGENTWS = float4(float3(1,0,0), 1.0);
         #endif
-        #ifdef UNPACK_UV1
-            UNPACK_UV1.xy = UNPACK_UV0.xy;
+        #ifdef PACK_UV1
+            PACK_UV1.xy = PACK_UV0.xy;
         #endif
-        #ifdef UNPACK_UV2
-            UNPACK_UV2.xy = UNPACK_UV0.xy;
+        #ifdef PACK_UV2
+            PACK_UV2.xy = PACK_UV0.xy;
         #endif
-        #ifdef UNPACK_UV3
-            UNPACK_UV3.xy = UNPACK_UV0.xy;
+        #ifdef PACK_UV3
+            PACK_UV3.xy = PACK_UV0.xy;
         #endif
     }
     

@@ -182,7 +182,13 @@ namespace Graphlit
                     string input = Mask("varyings." + b.name, v.channels, offset);
                     if (v.name.StartsWith("uv") && v.channels == 2)
                     {
+                        _unpackDefines.Add($"#define PACK_{v.name.ToUpper()} {input}");
                         input = $"float4({input}, 0, 0)";
+                    }
+                    else if (v.name.StartsWith("uv") && v.channels == 3)
+                    {
+                        _unpackDefines.Add($"#define PACK_{v.name.ToUpper()} {input}");
+                        input = $"float4({input}, 0)";
                     }
                     _unpackDefines.Add($"#define UNPACK_{v.name.ToUpper()} {input}");
 

@@ -967,10 +967,10 @@ namespace Graphlit
             style.marginRight = 5;
             style.bottom = 5;
 
-            if (!DisablePreview && previewDrawer is not null && previewDrawer.HasShader)
-            {
-                ve.Add(previewDrawer.GetExtensionPreview(this));
-            }
+            // if (!DisablePreview && previewDrawer is not null && previewDrawer.HasShader)
+            // {
+            //     ve.Add(previewDrawer.GetExtensionPreview(this));
+            // }
 
             if (this is not TemplateOutput)
             {

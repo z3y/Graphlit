@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
@@ -51,7 +50,7 @@ namespace Graphlit
             name = "PreviewDrawer";
         }
 
-        public bool HasShader => _previewShader != null;
+        public bool HasShader => _previewShader;
         public void SetShader(ObjectRc<Shader> shader)
         {
             _shaderRc?.Drop();
@@ -99,7 +98,7 @@ namespace Graphlit
 
             _material.shader = HasShader ? _previewShader : _defaultShader;
 
-            if (_material.shader == null)
+            if (!_material.shader)
             {
                 return;
             }
