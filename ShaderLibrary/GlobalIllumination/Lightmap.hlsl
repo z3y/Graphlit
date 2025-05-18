@@ -23,7 +23,18 @@
     #define BAKERY_SHNONLINEAR
 #endif
 
-void SampleLightmap(out half3 illuminance, out half3 specular, float2 lightmapUV, float3 normalWS, float3 viewDirectionWS, half perceptualRoughness, inout half3 indirectOcclusion, float3 reflectVector)
+half3 DecodeRealtimeLightmap(half4 color)
+{
+    //@TODO: Temporary until Geomerics gives us an API to convert lightmaps to RGBM in gamma space on the enlighten thread before we upload the textures.
+#if defined(UNITY_FORCE_LINEAR_READ_FOR_RGBM)
+    return pow ((unity_DynamicLightmap_HDR.x * color.a) * sqrt(color.rgb), unity_DynamicLightmap_HDR.y);
+#else
+    return pow ((unity_DynamicLightmap_HDR.x * color.a) * color.rgb, unity_DynamicLightmap_HDR.y);
+#endif
+}
+    
+
+void SampleLightmap(out half3 illuminance, out half3 specular, float4 lightmapUV, float3 normalWS, float3 viewDirectionWS, half perceptualRoughness, inout half3 indirectOcclusion, float3 reflectVector)
 {
     illuminance = 0;
     specular = 0;
@@ -35,18 +46,20 @@ void SampleLightmap(out half3 illuminance, out half3 specular, float2 lightmapUV
 
     half4 decodeInstructions = half4(LIGHTMAP_HDR_MULTIPLIER, LIGHTMAP_HDR_EXPONENT, 0.0h, 0.0h);
     #ifdef BICUBIC_LIGHTMAP
-        half4 lightmap = SampleTexture2DBicubic(TEXTURE2D_ARGS(unity_Lightmap, sampler_BilinearClamp), lightmapUV, texelSize, 1.0, 0);
+        half4 lightmap = SampleTexture2DBicubic(TEXTURE2D_ARGS(unity_Lightmap, sampler_BilinearClamp), lightmapUV.xy, texelSize, 1.0, 0);
     #else
-        half4 lightmap = SAMPLE_TEXTURE2D_LOD(unity_Lightmap, sampler_BilinearClamp, lightmapUV, 0);
+        half4 lightmap = SAMPLE_TEXTURE2D_LOD(unity_Lightmap, sampler_BilinearClamp, lightmapUV.xy, 0);
     #endif
+    #ifdef LIGHTMAP_ON
     illuminance = DecodeLightmap(lightmap, decodeInstructions);
+    #endif
 
     #ifdef DIRLIGHTMAP_COMBINED
 
         #ifdef BICUBIC_DIRECTIONAL_LIGHTMAP
-            half4 directionalLightmap = SampleTexture2DBicubic(TEXTURE2D_ARGS(unity_LightmapInd, sampler_BilinearClamp), lightmapUV, texelSize, 1.0, 0);
+            half4 directionalLightmap = SampleTexture2DBicubic(TEXTURE2D_ARGS(unity_LightmapInd, sampler_BilinearClamp), lightmapUV.xy, texelSize, 1.0, 0);
         #else
-            half4 directionalLightmap = SAMPLE_TEXTURE2D_LOD(unity_LightmapInd, sampler_BilinearClamp, lightmapUV, 0);
+            half4 directionalLightmap = SAMPLE_TEXTURE2D_LOD(unity_LightmapInd, sampler_BilinearClamp, lightmapUV.xy, 0);
         #endif
 
         #ifdef BAKERY_MONOSH
@@ -85,6 +98,12 @@ void SampleLightmap(out half3 illuminance, out half3 specular, float2 lightmapUV
             illuminance = illuminance * halfLambert / max(1e-4, directionalLightmap.w);
         #endif
 
+    #endif
+
+    #ifdef DYNAMICLIGHTMAP_ON
+        half4 dynamicLightmap = SAMPLE_TEXTURE2D_LOD(unity_DynamicLightmap, sampler_BilinearClamp, lightmapUV.zw, 0);
+        half3 dynamicIlluminance = DecodeRealtimeLightmap(dynamicLightmap);
+        illuminance += dynamicIlluminance;
     #endif
 
     #if defined(BAKERY_MONOSH) && defined(DIRLIGHTMAP_COMBINED)

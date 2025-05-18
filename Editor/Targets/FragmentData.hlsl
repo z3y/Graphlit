@@ -17,7 +17,7 @@ struct FragmentData
     float4 positionCSR;
     float2 grabScreenPosition;
     float2 screenPosition;
-    float2 lightmapUV;
+    float4 lightmapUV;
     float4 shadowCoords;
     float3 positionNDC;
 
@@ -86,7 +86,10 @@ struct FragmentData
         output.positionNDC = ComputeNormalizedDeviceCoordinatesWithZ(output.positionWS, GetWorldToHClipMatrix());
 
         #ifdef LIGHTMAP_ON
-            output.lightmapUV = varyings.lightmapUV;
+            output.lightmapUV.xy = varyings.lightmapUV.xy;
+        #endif
+        #ifdef DYNAMICLIGHTMAP_ON
+            output.lightmapUV.zw = varyings.lightmapUV.zw;
         #endif
 
         output.shadowCoords = TransformWorldToShadowCoord(output.positionWS);

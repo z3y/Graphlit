@@ -56,6 +56,9 @@ Varyings vert(Attributes input)
     #if defined(LIGHTMAP_ON)
         varyings.lightmapUV.xy = mad(input.uv1.xy, unity_LightmapST.xy, unity_LightmapST.zw);
     #endif
+    #ifdef DYNAMICLIGHTMAP_ON
+        varyings.lightmapUV.zw = mad(input.uv2.xy, unity_DynamicLightmapST.xy, unity_DynamicLightmapST.zw);
+    #endif
 
     #ifdef EDITOR_VISUALIZATION
         UnityEditorVizData(input.positionOS, input.uv0.xy, input.uv1.xy, input.uv2.xy, varyings.VizUV, varyings.LightCoord);

@@ -6,6 +6,12 @@
 
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
 
+#ifdef DYNAMICLIGHTMAP_ON
+#define LIGHTMAP_COORD float4
+#else
+#define LIGHTMAP_COORD float2
+#endif
+
 #ifdef UNIVERSALRP
     #if UNITY_LIGHT_PROBE_PROXY_VOLUME
     #undef UNITY_LIGHT_PROBE_PROXY_VOLUME
@@ -113,6 +119,3 @@ float4 GetFlatNormal()
     return float4(0.5, 0.5, 1, 1);
     #endif
 }
-
-// untested keywords
-// DYNAMICLIGHTMAP_ON

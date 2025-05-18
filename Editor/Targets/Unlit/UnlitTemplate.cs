@@ -145,7 +145,7 @@ namespace Graphlit
                 if (_customLighting)
                 {
                     pass.attributes.RequireUV(1, 2);
-                    pass.varyings.RequireCustomString("#ifdef LIGHTMAP_ON\ncentroid float2 lightmapUV : LIGHTMAPUV;\n#endif");
+                    pass.varyings.RequireCustomString("#if defined(LIGHTMAP_ON) || defined(DYNAMICLIGHTMAP_ON)\ncentroid LIGHTMAP_COORD lightmapUV : LIGHTMAP;\n#endif");
                 }
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");

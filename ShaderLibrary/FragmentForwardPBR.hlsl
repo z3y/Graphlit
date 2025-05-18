@@ -60,14 +60,14 @@ float4 frag(Varyings input) : SV_Target
     half3 bakedGI = 0;
     half3 lightmapSpecular = 0;
     half3 indirectOcclusion = 0;
-    #if defined(LIGHTMAP_ON)
+    #if defined(LIGHTMAP_ON) || defined(DYNAMICLIGHTMAP_ON)
         SampleLightmap(bakedGI, lightmapSpecular, fragment.lightmapUV, normalWS, fragment.viewDirectionWS, shading.perceptualRoughness, indirectOcclusion, shading.reflectVector);
     #elif defined(LIGHTPROBE_SH)
         bakedGI = SampleSH(normalWS, positionWS);
     #endif
 
     float4 shadowCoord = TransformWorldToShadowCoord(positionWS);
-    Light light = GetMainLight(positionWS, shadowCoord, fragment.lightmapUV);
+    Light light = GetMainLight(positionWS, shadowCoord, fragment.lightmapUV.xy);
 
     #if defined(_MASKMAP) || defined(_OCCLUSION)
     // only for directional light

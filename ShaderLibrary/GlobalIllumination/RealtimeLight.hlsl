@@ -89,8 +89,9 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
             half shadowFade = half(1.0);
         #endif
 
+        light.distanceAttenuation = 1;
 
-        #ifdef UNITY_PASS_FORWARDADD
+        #if defined(SPOT) || defined(POINT)
             float4 lightCoord = mul(unity_WorldToLight, float4(positionWS, 1));
             float3 lightZ = float3(unity_WorldToLight[0][2], unity_WorldToLight[1][2], unity_WorldToLight[2][2]);
 
@@ -102,9 +103,6 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
                 float2 spotUV = lightCoord.xy / lightCoord.w + 0.5;
                 light.color *= SAMPLE_TEXTURE2D(_LightTexture0, sampler_LightTexture0, spotUV).a * (lightCoord.z > 0);
             #endif
-
-        #else
-        light.distanceAttenuation = 1;
         #endif
 
         #if defined(SHADOWS_DEPTH) || defined(SHADOWS_CUBE)
@@ -203,10 +201,9 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
         half LoH = saturate(dot(light.direction, halfVector));
         float NoH = saturate(dot(shading.normalWS, halfVector));
 
-        #ifdef QUALITY_LOW
         half3 Fd = lightColor;
-        #else
-        half3 Fd = lightColor * DisneyDiffuseNoPI(shading.NoV, NoL, LoV, shading.perceptualRoughness);
+        #ifndef QUALITY_LOW
+            Fd *= DisneyDiffuseNoPI(shading.NoV, NoL, LoV, shading.perceptualRoughness);
         #endif
 
         diffuse += Fd * !light.specularOnly;

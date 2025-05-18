@@ -243,6 +243,7 @@ CBUFFER_START(UnityLightmaps)
     float4 unity_DynamicLightmapST;
 CBUFFER_END
 
+half4 unity_DynamicLightmap_HDR;
 
 TEXTURECUBE(unity_SpecCube0);
 SAMPLER(samplerunity_SpecCube0);

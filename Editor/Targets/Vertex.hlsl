@@ -56,6 +56,9 @@ Varyings vert(Attributes input)
     #if defined(LIGHTMAP_ON)
         varyings.lightmapUV.xy = mad(input.uv1.xy, unity_LightmapST.xy, unity_LightmapST.zw);
     #endif
+    #ifdef DYNAMICLIGHTMAP_ON
+        varyings.lightmapUV.zw = mad(input.uv2.xy, unity_DynamicLightmapST.xy, unity_DynamicLightmapST.zw);
+    #endif
 
     #ifdef UNIVERSALRP
         #if defined(FOG_EXP) || defined(FOG_EXP2) || defined(FOG_LINEAR)

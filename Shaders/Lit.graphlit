@@ -194,7 +194,7 @@
                 "referenceName": "_EmissionMap",
                 "displayName": "Emission Map",
                 "type": 7,
-                "customAttributes": "[Toggle(_EMISSION)]\n[Folder(Emission)]",
+                "customAttributes": "[Folder(Emission)]",
                 "defaultAttributes": 32,
                 "rangeX": 0.0,
                 "rangeY": 0.0,
