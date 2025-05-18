@@ -245,6 +245,8 @@ inline half UnitySampleShadowmap(float3 vec)
                 float2 fetchesUV[16];
                 SampleShadow_ComputeSamples_Tent_7x7(_ShadowMapTexture_TexelSize, 0, fetchesWeights, fetchesUV);
 
+                // thanks bevy 
+                // https://github.com/bevyengine/bevy/blob/45ba5b9f0347710d0b84979631fae6f690434d62/crates/bevy_pbr/src/render/shadow_sampling.wgsl#L423
                 float3 N = normalize(vec);
                 float3 up = abs(N.z) < 0.999 ? float3(0,0,1) : float3(0,1,0);
 
@@ -253,7 +255,7 @@ inline half UnitySampleShadowmap(float3 vec)
                 half result = 0;
                 for (int i = 0; i < 16; i++)
                 {
-                    float2 offset = fetchesUV[i]; // offset in the tangent-bitangent plane
+                    float2 offset = fetchesUV[i];
                     float3 sampleDir = float3(N + offset.x * tangent + offset.y * bitangent);
                     result += fetchesWeights[i] * SAMPLE_TEXTURECUBE_SHADOW(_ShadowMapTexture, sampler_LinearClampCompare, float4(sampleDir, mydist));
                 }
