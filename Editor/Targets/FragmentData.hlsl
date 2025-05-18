@@ -44,6 +44,13 @@ struct FragmentData
             float4 tangentWS = 0;
         #endif
 
+        #if defined(VARYINGS_NEED_FACE) && defined(SHADER_STAGE_FRAGMENT)
+            output.frontFace = IS_FRONT_VFACE(varyings.cullFace, true, false);
+            #if !defined(LIGHTMAP_ON)
+                if (!output.frontFace) output.normalWS *= -1;
+            #endif
+        #endif
+
         float crossSign = (tangentWS.w > 0.0 ? 1.0 : -1.0) * unity_WorldTransformParams.w;
         output.bitangentWS = crossSign * cross(output.normalWS.xyz, tangentWS.xyz);
 
@@ -70,9 +77,11 @@ struct FragmentData
         output.viewDirectionOS = TransformWorldToObjectDir(output.viewDirectionWS);
         output.viewDirectionTS = mul(output.tangentSpaceTransform, output.viewDirectionWS);
 
-        #if defined(VARYINGS_NEED_FACE) && defined(SHADER_STAGE_FRAGMENT)
-        output.frontFace = IS_FRONT_VFACE(varyings.cullFace, true, false);
+
+
+        #if defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_FACE) && !defined(LIGHTMAP_ON)
         #endif
+
 
         // todo: find functions for urp
         #ifdef UNPACK_POSITIONCSR

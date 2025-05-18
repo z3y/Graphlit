@@ -40,10 +40,6 @@ float4 frag(Varyings input) : SV_Target
         float3 normalWS = SafeNormalize(mul(surface.Normal, fragment.tangentSpaceTransform));
     #endif
 
-    #if defined(SHADER_STAGE_FRAGMENT) && defined(VARYINGS_NEED_FACE) && !defined(LIGHTMAP_ON)
-        if (!fragment.frontFace) normalWS *= -1;
-    #endif
-
     ShadingData shading;
     shading.NoV = abs(dot(normalWS, fragment.viewDirectionWS)) + 1e-5f;
     shading.normalWS = normalWS;
@@ -85,8 +81,14 @@ float4 frag(Varyings input) : SV_Target
     light.color = 0;
     #endif
 
-    #ifdef LIGHTMAP_SPECULAR
-
+    #if defined(LIGHTMAP_SPECULAR) && !defined(LIGHTMAP_ON)
+    if (!light.enabled)
+    {
+        light.direction = normalize((unity_SHAr.xyz + unity_SHAg.xyz + unity_SHAb.xyz) * 1.0/3.0);
+        light.color = half3(unity_SHAr.w, unity_SHAg.w, unity_SHAb.w);
+        light.specularOnly = true;
+        light.enabled = true;
+    }
     #endif
 
     half3 indirectSpecular = 0;
