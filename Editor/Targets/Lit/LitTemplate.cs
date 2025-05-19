@@ -240,6 +240,7 @@ namespace Graphlit
                 pass.renderStates["Cull"] = "[_Cull]";
                 pass.renderStates["ZWrite"] = "[_ZWrite]";
                 pass.renderStates["ZTest"] = "[_ZTest]";
+                pass.renderStates["AlphaToMask"] = "[_AlphaToMask]";
                 pass.renderStates["Blend"] = "[_SrcBlend] [_DstBlend]";
 
 
@@ -330,8 +331,8 @@ namespace Graphlit
                 pass.renderStates["Blend"] = "[_SrcBlend] One";
                 pass.renderStates["ZWrite"] = "Off";
                 pass.renderStates["ZTest"] = "[_ZTest]";
-                pass.renderStates["ZTest"] = "LEqual";
-
+                pass.renderStates["AlphaToMask"] = "[_AlphaToMask]";
+                
                 if (_fwdAddBlendOpMax)
                 {
                     //pass.renderStates["BlendOp"] = "Max, Add";

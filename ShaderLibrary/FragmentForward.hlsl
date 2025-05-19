@@ -12,7 +12,7 @@ float4 frag(Varyings input) : SV_Target
 
     half alpha = surface.Alpha;
     #if defined(_ALPHATEST_ON)
-        half clippedAlpha = AlphaClip(surface.Alpha, surface.Cutoff);
+        alpha = AlphaClip(surface.Alpha, surface.Cutoff);
     #endif
 
     half3 diffuseColor = surface.Color;

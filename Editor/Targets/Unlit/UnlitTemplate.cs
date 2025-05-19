@@ -111,7 +111,8 @@ namespace Graphlit
                 pass.renderStates["ZWrite"] = "[_ZWrite]";
                 pass.renderStates["Blend"] = "[_SrcBlend] [_DstBlend]";
                 pass.renderStates["ZTest"] = "[_ZTest]";
-
+                pass.renderStates["AlphaToMask"] = "[_AlphaToMask]";
+                
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ALPHATEST_ON");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
@@ -164,6 +165,7 @@ namespace Graphlit
                 pass.renderStates["Blend"] = "[_SrcBlend] One";
                 pass.renderStates["ZWrite"] = "Off";
                 pass.renderStates["ZTest"] = "[_ZTest]";
+                pass.renderStates["AlphaToMask"] = "[_AlphaToMask]";
 
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ALPHATEST_ON");
