@@ -127,7 +127,7 @@ namespace LilGlitter
             bool clamp = maskUV.x == saturate(maskUV.x) && maskUV.y == saturate(maskUV.y);
             maskUV = (maskUV + floor(near.xy * glitterAtras.xy)) / glitterAtras.xy;
             float2 mipfactor = 0.125 / glitterParams1.z * glitterAtras.xy * glitterShapeTex_ST.xy * randomScale;
-            float4 shapeTex = SAMPLE_TEXTURE2D_GRAD(glitterShapeTex, custom_bilinear_clamp_sampler, maskUV, abs(ddx(pos)) * mipfactor.x, abs(ddy(pos)) * mipfactor.y);
+            float4 shapeTex = SAMPLE_TEXTURE2D_GRAD(glitterShapeTex, sampler_BilinearClamp, maskUV, abs(ddx(pos)) * mipfactor.x, abs(ddy(pos)) * mipfactor.y);
             shapeTex.a = clamp ? shapeTex.a : 0;
             glitterColor *= shapeTex.rgb * shapeTex.a;
         }
