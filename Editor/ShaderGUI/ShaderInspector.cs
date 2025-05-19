@@ -870,7 +870,7 @@ namespace Graphlit
         public static void CovertLitMaterial(Material m)
         {
             m.SetTexture("_DetailAlbedoMap", m.GetTexture("_DetailAlbedo"));
-            m.SetTexture("_DetailNormalMap", m.GetTexture("_DetailNormalMap"));
+            m.SetTexture("_DetailNormalMap", m.GetTexture("_DetailBumpMap"));
             m.SetFloat("_UVSec", m.GetFloat("_Detail_UV"));
 
             m.SetFloat("_Toggle_EMISSION", m.GetFloat("_EmissionToggle"));
