@@ -50,8 +50,8 @@
     #include "ShaderVariableFunctions.hlsl"
 #endif
 
-#define unity_LightShadowBias float4(unity_LightShadowBias.x != 0.0 ? -0.001 : unity_LightShadowBias.x, unity_LightShadowBias.yzw)
-#define _LightProjectionParams float4(_LightProjectionParams.xy, 0, .97)
+// #define unity_LightShadowBias float4(unity_LightShadowBias.x != 0.0 ? -0.001 : unity_LightShadowBias.x, unity_LightShadowBias.yzw)
+// #define _LightProjectionParams float4(_LightProjectionParams.xy, 0, .97)
 
 
 SamplerState sampler_BilinearClamp;
