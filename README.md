@@ -3,12 +3,17 @@
 A node shader editor for creating Toon and PBR shaders, with a variety of included nodes useful for VRChat Worlds and Avatars.
 Supports the built-in and universal render pipeline.
 
+### [Discord](https://discord.gg/bw46tKgRFT)
+
 ## Installation
 
 - Install with the [VRChat Creator Companion](https://z3y.github.io/vpm-package-listing/) or add the git url
 - To get started read the [Documentation](https://z3y.github.io/Graphlit)
 
-### [Discord](https://discord.gg/bw46tKgRFT)
+## Main Shader
+
+- Includes a main PBR shader created with the graph
+- `Graphlit/Lit`
 
 ## Highlighted Features
 
@@ -20,6 +25,10 @@ Supports the built-in and universal render pipeline.
 - Register/Fetch variable nodes
 - Live Preview
 - [Hotkeys](https://z3y.github.io/Graphlit/hotkeys)
+- Softer shadow filtering for point and spot lights
+- Inverse square falloff for lights
+- LTCGI
+- VRC Volumes
 
 ### Universal Render Pipeline
 
@@ -36,6 +45,8 @@ Currently not implemented:
 ![Image](/Docs~/public/shader-ball.jpg)
 
 ![Image](/Docs~/public/Unity_iGcR8rpLM9.png)
+
+![Image](/Docs~/public/Unity_qOcvTvZ5FS.png)
 
 ### Live Preview
 
