@@ -510,7 +510,7 @@ namespace Graphlit
 
             if (oldShader && newShader && oldShader.name == "Lit" && newShader.name == "Graphlit/Lit")
             {
-                CovertLitMaterial(material);
+                ConvertLitMaterial(material);
             }
             base.AssignNewShaderToMaterial(material, oldShader, newShader);
             material.shaderKeywords = null;
@@ -867,9 +867,13 @@ namespace Graphlit
             EditorGUI.indentLevel = indentLevel;
         }
 
-        public static void CovertLitMaterial(Material m)
+        public static void ConvertLitMaterial(Material m)
         {
             m.SetTexture("_DetailAlbedoMap", m.GetTexture("_DetailAlbedo"));
+            m.SetTextureScale("_DetailAlbedoMap", m.GetTextureScale("_DetailAlbedo"));
+            m.SetTextureOffset("_DetailAlbedoMap", m.GetTextureOffset("_DetailAlbedo"));
+            m.SetFloat("_DetailNormalMapScale", m.GetFloat("_DetailBumpScale"));
+
             m.SetTexture("_DetailNormalMap", m.GetTexture("_DetailBumpMap"));
             m.SetFloat("_UVSec", m.GetFloat("_Detail_UV"));
 
