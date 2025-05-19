@@ -239,10 +239,13 @@ namespace Graphlit
         {
             _folders = new List<PropertyFolder>();
 
-            var renderingFolder = new PropertyFolder("Surface Options");
+            var renderingFolder = new PropertyFolder("Rendering Options");
             _folders.Add(renderingFolder);
-
-            var mainFolder = new PropertyFolder("Properties");
+            
+            var advancedFolder = new PropertyFolder("Advanced Options");
+            _folders.Add(advancedFolder);
+            
+            var mainFolder = new PropertyFolder("Surface Inputs");
 
             _folders.Add(mainFolder);
 
@@ -296,7 +299,9 @@ namespace Graphlit
                 }
 
             }
-
+            
+            _folders.Remove(advancedFolder);
+            _folders.Add(advancedFolder);
         }
 
         PropertyElement ParseElement(MaterialEditor editor, MaterialProperty[] properties, int i)

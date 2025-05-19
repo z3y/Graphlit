@@ -8,7 +8,7 @@
                 "displayName": "Alpha Cutoff",
                 "type": 1,
                 "customAttributes": "",
-                "defaultAttributes": 0,
+                "defaultAttributes": 4,
                 "rangeX": 0.0,
                 "rangeY": 1.0,
                 "_value": "0.5",
@@ -1406,33 +1406,6 @@
             "data": ""
         },
         {
-            "type": "Graphlit.UnlitTemplate",
-            "guid": "31a6de1d-7e74-41cb-b79d-921e8cbf1dc4",
-            "x": 947,
-            "y": 259,
-            "connections": [
-                {
-                    "a": 0,
-                    "b": 3,
-                    "node": "da46e9b6-3298-466b-8772-d9a62d17ce19"
-                },
-                {
-                    "a": 1,
-                    "b": 4,
-                    "node": "da46e9b6-3298-466b-8772-d9a62d17ce19"
-                },
-                {
-                    "a": 0,
-                    "b": 5,
-                    "node": "0840305d-5728-40c4-9ecc-c71cac954d75"
-                }
-            ],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": false,
-            "data": "{\"defaultMode\":0,\"defaultCull\":2,\"_customLighting\":true}"
-        },
-        {
             "type": "Graphlit.CustomFunctionNode",
             "guid": "da34059b-491c-45f3-9d35-d6f83e3152a3",
             "x": 1847,
@@ -1525,6 +1498,33 @@
             "preview": 0,
             "previewDisabled": false,
             "data": "{}"
+        },
+        {
+            "type": "Graphlit.UnlitTemplate",
+            "guid": "31a6de1d-7e74-41cb-b79d-921e8cbf1dc4",
+            "x": 947,
+            "y": 259,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 3,
+                    "node": "da46e9b6-3298-466b-8772-d9a62d17ce19"
+                },
+                {
+                    "a": 1,
+                    "b": 4,
+                    "node": "da46e9b6-3298-466b-8772-d9a62d17ce19"
+                },
+                {
+                    "a": 0,
+                    "b": 5,
+                    "node": "0840305d-5728-40c4-9ecc-c71cac954d75"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": false,
+            "data": "{\"defaultMode\":0,\"defaultCull\":2,\"_customLighting\":true}"
         }
     ],
     "groups": [

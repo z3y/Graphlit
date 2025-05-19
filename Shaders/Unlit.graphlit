@@ -8,10 +8,11 @@
                 "displayName": "Alpha Cutoff",
                 "type": 1,
                 "customAttributes": "",
-                "defaultAttributes": 0,
+                "defaultAttributes": 4,
                 "rangeX": 0.0,
                 "rangeY": 1.0,
                 "_value": "0.5",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
@@ -28,6 +29,7 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "(1.00, 1.00, 1.00, 1.00)",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
@@ -44,6 +46,7 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
@@ -57,6 +60,7 @@
         "fallback": "",
         "include": "",
         "outlinePass": 0,
+        "depthFillPass": false,
         "stencil": false,
         "vrcFallbackTags": {
             "type": 1,
@@ -64,6 +68,8 @@
             "doubleSided": false
         },
         "unlocked": false,
+        "subgraphOutputs": [],
+        "subgraphInputs": [],
         "subgraphOutputIdCounter": 0
     },
     "nodes": [

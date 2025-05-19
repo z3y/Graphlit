@@ -143,17 +143,17 @@ namespace Graphlit
             root.Add(spec);
         }
 
-        static readonly PropertyDescriptor _monosh = new(PropertyType.Float, "Mono SH", "_MonoSH") { customAttributes = "[Toggle(_BAKERY_MONOSH)] [Folder(Surface Options)]" };
-        static readonly PropertyDescriptor _bicubicLightmap = new(PropertyType.Float, "Bicubic Lightmap", "_BicubicLightmap") { customAttributes = "[Toggle(_BICUBIC_LIGHTMAP)] [Folder(Surface Options)]" };
-        static readonly PropertyDescriptor _nonLinearLightprobeSh = new(PropertyType.Float, "Non Linear Light Probe SH", "_NonLinearLightProbeSH") { customAttributes = "[Toggle(_NONLINEAR_LIGHTPROBESH)] [Folder(Surface Options)]" };
-        static readonly PropertyDescriptor _specularHighlights = new(PropertyType.Float, "Specular Highlights", "_SpecularHighlights") { customAttributes = "[ToggleOff] [Folder(Surface Options)]", FloatValue = 1 };
-        static readonly PropertyDescriptor _glossyReflections = new(PropertyType.Float, "Environment Reflections", "_GlossyReflections") { customAttributes = "[ToggleOff] [Folder(Surface Options)]", FloatValue = 1 };
-        static readonly PropertyDescriptor _specularOcclusion = new(PropertyType.Float, "Specular Occlusion", "_SpecularOcclusion") { FloatValue = 1, Range = new Vector2(0, 5), customAttributes = "[Folder(Surface Options)]" };
+        static readonly PropertyDescriptor _monosh = new(PropertyType.Float, "Mono SH", "_MonoSH") { customAttributes = "[Toggle(_BAKERY_MONOSH)][Header(Baked GI)] [Folder(Advanced Options)]" };
+        static readonly PropertyDescriptor _bicubicLightmap = new(PropertyType.Float, "Bicubic Lightmap", "_BicubicLightmap") { customAttributes = "[Toggle(_BICUBIC_LIGHTMAP)] [Folder(Advanced Options)]" };
+        static readonly PropertyDescriptor _nonLinearLightprobeSh = new(PropertyType.Float, "Non Linear Light Probe SH", "_NonLinearLightProbeSH") { customAttributes = "[Toggle(_NONLINEAR_LIGHTPROBESH)] [Folder(Advanced Options)]" };
+        static readonly PropertyDescriptor _specularHighlights = new(PropertyType.Float, "Specular Highlights", "_SpecularHighlights") { customAttributes = "[ToggleOff] [Folder(Advanced Options)] [Header(Specular)]", FloatValue = 1 };
+        static readonly PropertyDescriptor _glossyReflections = new(PropertyType.Float, "Environment Reflections", "_GlossyReflections") { customAttributes = "[ToggleOff] [Folder(Advanced Options)]", FloatValue = 1 };
+        static readonly PropertyDescriptor _specularOcclusion = new(PropertyType.Float, "Specular Occlusion", "_SpecularOcclusion") { FloatValue = 1, Range = new Vector2(0, 5), customAttributes = "[Folder(Advanced Options)]" };
 
-        static readonly PropertyDescriptor _mirror = new(PropertyType.Float, "Mirror", "_Mirror") { customAttributes = "[Toggle(_MIRROR)] [Folder(Surface Options)]" };
-        static readonly PropertyDescriptor _lmSpec = new(PropertyType.Float, "Lightmapped Specular", "_LightmappedSpecular") { customAttributes = "[Toggle(_LIGHTMAPPED_SPECULAR)] [Folder(Surface Options)]" };
-        static readonly PropertyDescriptor _ltcgi = new(PropertyType.Float, "LTCGI", "_LTCGI") { customAttributes = "[Toggle(_LTCGI)] [Folder(Surface Options)]" };
-        static readonly PropertyDescriptor _lightVolumes = new(PropertyType.Float, "VRC Light Volumes", "_VRC_LightVolumes") { customAttributes = "[Toggle(_VRC_LIGHTVOLUMES)] [Folder(Surface Options)]" };
+        static readonly PropertyDescriptor _mirror = new(PropertyType.Float, "Mirror", "_Mirror") { customAttributes = "[Toggle(_MIRROR)] [Folder(Advanced Options)]" };
+        static readonly PropertyDescriptor _lmSpec = new(PropertyType.Float, "Lightmapped Specular", "_LightmappedSpecular") { customAttributes = "[Toggle(_LIGHTMAPPED_SPECULAR)] [Folder(Advanced Options)]" };
+        static readonly PropertyDescriptor _ltcgi = new(PropertyType.Float, "LTCGI", "_LTCGI") { customAttributes = "[Toggle(_LTCGI)] [Folder(Advanced Options)]" };
+        static readonly PropertyDescriptor _lightVolumes = new(PropertyType.Float, "VRC Light Volumes", "_VRC_LightVolumes") { customAttributes = "[Toggle(_VRC_LIGHTVOLUMES)] [Folder(Advanced Options)]" };
 
         const string _ltcgiPath = "Packages/at.pimaker.ltcgi/Shaders/LTCGI.cginc";
         const string _cbirpPath = "Packages/z3y.clusteredbirp/Shaders/cbirp.hlsl";
