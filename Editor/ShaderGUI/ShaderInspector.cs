@@ -507,6 +507,11 @@ namespace Graphlit
             {
                 material.SetFloat("_Roughness", 1.0f - material.GetFloat("_Glossiness"));
             }
+
+            if (oldShader && newShader && oldShader.name == "Lit" && newShader.name == "Graphlit/Lit")
+            {
+                CovertLitMaterial(material);
+            }
             base.AssignNewShaderToMaterial(material, oldShader, newShader);
             material.shaderKeywords = null;
             SetupSurfaceType(material);
@@ -860,6 +865,26 @@ namespace Graphlit
             }
 
             EditorGUI.indentLevel = indentLevel;
+        }
+
+        public static void CovertLitMaterial(Material m)
+        {
+            m.SetTexture("_DetailAlbedoMap", m.GetTexture("_DetailAlbedo"));
+            m.SetTexture("_DetailNormalMap", m.GetTexture("_DetailNormalMap"));
+            m.SetFloat("_UVSec", m.GetFloat("_Detail_UV"));
+
+            m.SetFloat("_Toggle_EMISSION", m.GetFloat("_EmissionToggle"));
+
+            m.SetFloat("_RoughnessScale", m.GetFloat("_Roughness"));
+            m.SetFloat("_MetallicScale", m.GetFloat("_Metallic"));
+
+            m.SetFloat("_Toggle_WIND", m.GetFloat("_WindToggle"));
+
+            m.SetFloat("_LightmappedSpecular", m.GetFloat("_LIGHTMAPPED_SPECULAR"));
+            m.SetFloat("_MonoSH", m.GetFloat("_BAKERY_MONOSH"));
+            m.SetFloat("_BicubicLightmap", m.GetFloat("_BICUBIC_LIGHTMAP"));
+
+            MaterialEditor.ApplyMaterialPropertyDrawers(m);
         }
     }
 }
