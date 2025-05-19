@@ -21,7 +21,7 @@ float2 GetMinUvSize(float2 baseUV, float4 texelSize)
 void ParallaxOcclusionMapping(Texture2D HeightMap, SamplerState Sampler, float strength, half offset, float steps, float2 UV, float3 viewDirectionTS, float4 texelSize, out float2 uvOffset)
 {
     viewDirectionTS = CalculateTangentViewDir(viewDirectionTS);
-    float surfaceHeight = SAMPLE_TEXTURE2D(HeightMap, Sampler, UV);
+    float surfaceHeight = SAMPLE_TEXTURE2D(HeightMap, Sampler, UV).r;
     uvOffset = 0;
 	float stepSize = 1.0 / (uint)steps;
     float3 uvDelta_stepSize = float3(viewDirectionTS.xy * (stepSize * strength), stepSize);
@@ -35,7 +35,7 @@ void ParallaxOcclusionMapping(Texture2D HeightMap, SamplerState Sampler, float s
     float2 previousUVOffset = 0;
 
     [loop]
-    for (uint j = 0; j < steps; j++)
+    for (uint j = 0; j < (uint)steps; j++)
     {
         if (uvOffset_stepHeight.z < surfaceHeight)
         {
@@ -48,7 +48,7 @@ void ParallaxOcclusionMapping(Texture2D HeightMap, SamplerState Sampler, float s
 
 
         uvOffset_stepHeight -= uvDelta_stepSize;
-        surfaceHeight = SAMPLE_TEXTURE2D_LOD(HeightMap, Sampler, (UV + uvOffset_stepHeight.xy), lod) + offset;
+        surfaceHeight = SAMPLE_TEXTURE2D_LOD(HeightMap, Sampler, (UV + uvOffset_stepHeight.xy), lod).r + offset;
     }
 
     // taken from filamented cause it looks better https://gitlab.com/s-ilent/filamented

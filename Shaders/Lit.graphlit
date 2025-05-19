@@ -2119,43 +2119,6 @@
             "data": "{\"_ref\":\"0897a043-5fe9-499c-8f3c-1668e6fa7ee4\"}"
         },
         {
-            "type": "Graphlit.CustomFunctionNode",
-            "guid": "3ee6093f-d300-4104-b2bc-436b451c74b8",
-            "x": -460,
-            "y": -1659,
-            "connections": [
-                {
-                    "a": 0,
-                    "b": 1,
-                    "node": "e537dd03-022c-4816-8bef-c0212d9b6340"
-                },
-                {
-                    "a": 1,
-                    "b": 2,
-                    "node": "e537dd03-022c-4816-8bef-c0212d9b6340"
-                },
-                {
-                    "a": 0,
-                    "b": 4,
-                    "node": "f090e508-11b1-427d-8143-1772f3693538"
-                },
-                {
-                    "a": 0,
-                    "b": 5,
-                    "node": "2ad31d2a-e840-4271-8605-fc61775391b7"
-                },
-                {
-                    "a": 0,
-                    "b": 6,
-                    "node": "bf82dde4-490e-4bcb-8d2e-7ad9f411c32e"
-                }
-            ],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n\\tOut = In;\\n}\",\"_file\":\"\",\"_shaderInclude\":{\"fileID\":10900000,\"guid\":\"8a20e3ff496abae4dab0f2cfb224a7ae\",\"type\":3},\"_useFile\":true}"
-        },
-        {
             "type": "Graphlit.Texture2DPropertyNode",
             "guid": "c0624e57-139a-40d7-9895-a133d36df016",
             "x": -2157,
@@ -2309,28 +2272,6 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_ref\":\"85006554-0e89-4a1f-9f63-0ae2c3f84dd4\"}"
-        },
-        {
-            "type": "Graphlit.KeywordPropertyNode",
-            "guid": "fca47b2b-4be2-4362-b5aa-6a52fc0e7368",
-            "x": -1467,
-            "y": -1631,
-            "connections": [
-                {
-                    "a": 108,
-                    "b": 1,
-                    "node": "a17bd71f-b089-4d6c-8e02-cc252f186f2e"
-                },
-                {
-                    "a": 0,
-                    "b": 2,
-                    "node": "b89a7c06-fa7b-4539-b208-d2fe6943cea5"
-                }
-            ],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": "{\"_ref\":\"b6aac9c9-5408-480e-bf01-f32aaf0964a6\"}"
         },
         {
             "type": "Graphlit.Float2Node",
@@ -2737,6 +2678,65 @@
             "preview": 0,
             "previewDisabled": false,
             "data": "{\"defaultMode\":0,\"defaultCull\":2,\"_cbirp\":false,\"_cbirpReflections\":false,\"_specular\":true,\"_fwdAddBlendOpMax\":false,\"_normal\":0}"
+        },
+        {
+            "type": "Graphlit.CustomFunctionNode",
+            "guid": "3ee6093f-d300-4104-b2bc-436b451c74b8",
+            "x": -460,
+            "y": -1660,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 1,
+                    "node": "e537dd03-022c-4816-8bef-c0212d9b6340"
+                },
+                {
+                    "a": 1,
+                    "b": 2,
+                    "node": "e537dd03-022c-4816-8bef-c0212d9b6340"
+                },
+                {
+                    "a": 0,
+                    "b": 4,
+                    "node": "f090e508-11b1-427d-8143-1772f3693538"
+                },
+                {
+                    "a": 0,
+                    "b": 5,
+                    "node": "2ad31d2a-e840-4271-8605-fc61775391b7"
+                },
+                {
+                    "a": 0,
+                    "b": 6,
+                    "node": "bf82dde4-490e-4bcb-8d2e-7ad9f411c32e"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n\\tOut = In;\\n}\",\"_file\":\"\",\"_shaderInclude\":{\"fileID\":10900000,\"guid\":\"8a20e3ff496abae4dab0f2cfb224a7ae\",\"type\":3},\"_useFile\":true}"
+        },
+        {
+            "type": "Graphlit.KeywordPropertyNode",
+            "guid": "fca47b2b-4be2-4362-b5aa-6a52fc0e7368",
+            "x": -1461,
+            "y": -1674,
+            "connections": [
+                {
+                    "a": 108,
+                    "b": 1,
+                    "node": "a17bd71f-b089-4d6c-8e02-cc252f186f2e"
+                },
+                {
+                    "a": 0,
+                    "b": 2,
+                    "node": "b89a7c06-fa7b-4539-b208-d2fe6943cea5"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"b6aac9c9-5408-480e-bf01-f32aaf0964a6\"}"
         }
     ],
     "groups": [
