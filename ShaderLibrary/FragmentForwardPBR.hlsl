@@ -62,6 +62,11 @@ float4 frag(Varyings input) : SV_Target
     half3 indirectOcclusion = 0;
     #if defined(LIGHTMAP_ON) || defined(DYNAMICLIGHTMAP_ON)
         SampleLightmap(bakedGI, lightmapSpecular, fragment.lightmapUV, normalWS, fragment.viewDirectionWS, shading.perceptualRoughness, indirectOcclusion, shading.reflectVector);
+        #ifdef _VRC_LIGHTVOLUMES
+            half3 lvL0; half3 lvL1r; half3 lvL1g; half3 lvL1b;
+            LightVolumeAdditiveSH(positionWS, lvL0, lvL1r, lvL1g, lvL1b);
+            bakedGI += LightVolumeEvaluate(normalWS, lvL0, lvL1r, lvL1g, lvL1b);
+        #endif 
     #elif defined(LIGHTPROBE_SH)
         bakedGI = SampleSH(normalWS, positionWS);
     #endif
