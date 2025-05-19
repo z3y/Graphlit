@@ -389,6 +389,14 @@ namespace Graphlit
                         var flag = (KeywordPassFlags)flagObj;
                         if (!property.keywordPassFlags.HasFlag(flag))
                         {
+                            var port = propertyNode.Inputs.FirstOrDefault(x => x.GetPortID() == KeywordPropertyNode.TRUE);
+                            if (port is not null && port.connected)
+                            {
+                                var incomingPort = port.connections.First().output;
+                                var incomingNode = (ShaderNode)incomingPort.node;
+                                incomingNode.PortData[incomingPort.GetPortID()] = new GeneratedPortData(new Float(1), "0");
+                            }
+                            
                             ports = new int[] { KeywordPropertyNode.FALSE };
                         }
                     }

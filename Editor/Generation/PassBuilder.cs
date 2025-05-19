@@ -130,7 +130,7 @@ namespace Graphlit
             {
                 if (property.type == PropertyType.KeywordToggle)
                 {
-                    if (property.keywordPassFlags == 0)
+                    if (property.keywordPassFlags == 0 || generationMode == GenerationMode.Preview)
                     {
                         sb.AppendLine(property.GetFieldDeclaration(generationMode));
                     }

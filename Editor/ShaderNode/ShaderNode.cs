@@ -577,7 +577,7 @@ namespace Graphlit
         }
 
 
-        GeneratedPortData GetDefaultInput(int portID, NodeVisitor visitor)
+        internal GeneratedPortData GetDefaultInput(int portID, NodeVisitor visitor)
         {
             var descriptor = portDescriptors[portID];
             string value = SetDefaultBinding(descriptor, visitor);
