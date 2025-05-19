@@ -12,11 +12,12 @@ Supports the built-in and universal render pipeline.
 
 ## Main Shader
 
-- Includes a main PBR shader created with the graph
+- Main PBR shader created with the graph included
 - `Graphlit/Lit`
 
 ## Highlighted Features
 
+- CoreRP
 - Create Toon shaders based on [Open Lit](https://github.com/lilxyzw/OpenLit)
 - Create PBR shaders with [Bakery](https://assetstore.unity.com/packages/tools/level-design/bakery-gpu-lightmapper-122218) Features
 - Full custom lighting with the Unlit graph with access to the Light Color, Direction, Shadow Attenuation and Distance Attenuation
@@ -42,11 +43,21 @@ Currently not implemented:
 
 ## Screenshots
 
+### Example Materials
+
 ![Image](/Docs~/public/shader-ball.jpg)
+
+### Graph
 
 ![Image](/Docs~/public/Unity_iGcR8rpLM9.png)
 
+### Main Shader
+
 ![Image](/Docs~/public/Unity_qOcvTvZ5FS.png)
+
+### Softer light shadows
+
+![Image](/Docs~/public/Unity_rQ4Jf1GE8o.png)
 
 ### Live Preview
 
