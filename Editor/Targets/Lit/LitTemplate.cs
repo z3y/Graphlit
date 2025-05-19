@@ -322,7 +322,7 @@ namespace Graphlit
             if (!urp)
             {
                 var portFlags = new List<int>() { POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, NORMAL_TS };
-                var pass = new PassBuilder("FORWARD_DELTA", Vertex, FragmentForward, portFlags.ToArray());
+                var pass = new PassBuilder("ForwardAdd", Vertex, FragmentForward, portFlags.ToArray());
                 pass.tags["LightMode"] = "ForwardAdd";
 
                 pass.renderStates["Fog"] = "{ Color (0,0,0,0) }";

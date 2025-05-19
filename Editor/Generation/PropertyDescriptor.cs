@@ -85,6 +85,17 @@ namespace Graphlit
         IntRange = 1 << 10,
         Linear = 1 << 11
     }
+    
+    [Serializable, Flags]
+    public enum KeywordPassFlags
+    {
+        Forward = 1 << 0,
+        ForwardAdd = 1 << 1,
+        ShadowCaster = 1 << 2,
+        Meta = 1 << 3,
+        DepthOnly = 1 << 4,
+        DepthNormals = 1 << 5
+    }
 
     [Serializable]
     public class PropertyDescriptor
@@ -102,6 +113,7 @@ namespace Graphlit
         [SerializeField] string _defaultTexture; // read only
         [SerializeField] Texture _defaultTextureObject;
         [SerializeField] public PropertyDeclaration declaration = PropertyDeclaration.Local;
+        [SerializeField] public KeywordPassFlags keywordPassFlags = (KeywordPassFlags)(-1);
 
         [NonSerialized] public bool autoKeyword = false;
 
@@ -220,7 +232,7 @@ namespace Graphlit
             }
             if (type == PropertyType.KeywordToggle)
             {
-                this.referenceName = "shader_feature_local _KEYWORD";
+                this.referenceName = "shader_feature_local_fragment _KEYWORD";
             }
         }
 
@@ -431,6 +443,11 @@ namespace Graphlit
                 }
 
                 _autoKeywordName = EditorGUILayout.TextField("Auto Keyword Name", _autoKeywordName);
+            }
+
+            if (type == PropertyType.KeywordToggle)
+            {
+                keywordPassFlags = (KeywordPassFlags)EditorGUILayout.EnumFlagsField("Pass Flags", keywordPassFlags);
             }
         }
 

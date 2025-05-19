@@ -156,7 +156,7 @@ namespace Graphlit
 
             if (_customLighting && !urp)
             {
-                var pass = new PassBuilder("FORWARD_DELTA", Vertex, FragmentForward, POSITION, NORMAL, TANGENT, COLOR, ALPHA, CUTOFF);
+                var pass = new PassBuilder("ForwardAdd", Vertex, FragmentForward, POSITION, NORMAL, TANGENT, COLOR, ALPHA, CUTOFF);
                 pass.tags["LightMode"] = "ForwardAdd";
 
                 pass.renderStates["Fog"] = "{ Color (0,0,0,0) }";

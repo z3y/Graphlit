@@ -44,7 +44,7 @@ namespace Graphlit
             visitor.AppendLine($"half3 {color};");
             visitor.AppendLine($"half {alpha};");
 
-            if (visitor._shaderBuilder.passBuilders[visitor.Pass].name != "SHADOWCASTER")
+            if (visitor._shaderBuilder.passBuilders[visitor.Pass].name != "ShadowCaster")
             {
                 visitor.AppendLine($"BlendFinalColor({color}, {alpha}, {PortData[DIFFUSE].Name}, {PortData[SPECULAR].Name}, {PortData[EMISSION].Name}, {PortData[ALBEDO].Name}, {PortData[ROUGHNESS].Name}, {PortData[METALLIC].Name}, {PortData[IN_ALPHA].Name});");
             }

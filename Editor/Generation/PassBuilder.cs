@@ -128,8 +128,21 @@ namespace Graphlit
             if (outlinePass) sb.AppendLine("#define OUTLINE_PASS");
             foreach (var property in properties)
             {
-                if (property.type != PropertyType.KeywordToggle) continue;
-                sb.AppendLine(property.GetFieldDeclaration(generationMode));
+                if (property.type == PropertyType.KeywordToggle)
+                {
+                    if (property.keywordPassFlags == 0)
+                    {
+                        sb.AppendLine(property.GetFieldDeclaration(generationMode));
+                    }
+                    else if (System.Enum.TryParse(typeof(KeywordPassFlags), name, out var flagObj))
+                    {
+                        var flag = (KeywordPassFlags)flagObj;
+                        if (property.keywordPassFlags.HasFlag(flag))
+                        {
+                            sb.AppendLine(property.GetFieldDeclaration(generationMode));
+                        }
+                    }
+                }
             }
             if (AudioLinkExists)
             {

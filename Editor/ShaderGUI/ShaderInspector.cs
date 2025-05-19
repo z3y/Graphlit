@@ -35,6 +35,7 @@ namespace Graphlit
             public string folder;
             public bool linearWarning;
             public int extraProperty = -1;
+            public bool helpBox;
         }
 
         public class PropertyFolder
@@ -159,6 +160,12 @@ namespace Graphlit
                     }
                     
                     EditorGUI.indentLevel = baseIndentation + element.indent;
+                    
+                    if (element.helpBox)
+                    {
+                        EditorGUILayout.HelpBox(element.guiContent.text, MessageType.Info);
+                        continue;
+                    }
 
                     bool hasOnValueChange = element.onValueChange is not null;
 
@@ -348,6 +355,8 @@ namespace Graphlit
 
             element.folder = TryParseStringParam(attributes, "Folder");
             
+            element.helpBox = attributes.Contains("HelpBox");
+            
             string intent = TryParseStringParam(attributes, "Indent");
             if (!string.IsNullOrEmpty(intent))
             {
@@ -489,6 +498,7 @@ namespace Graphlit
 
         public override void AssignNewShaderToMaterial(Material material, Shader oldShader, Shader newShader)
         {
+
             if (oldShader.FindPropertyIndex("_Mode") >= 0)
             {
                 UpgradeMode(material, true, false);

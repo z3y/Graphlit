@@ -10,8 +10,8 @@ namespace Graphlit
     {
         protected override PropertyType propertyType => PropertyType.KeywordToggle;
 
-        const int TRUE = 1;
-        const int FALSE = 2;
+        internal const int TRUE = 1;
+        internal const int FALSE = 2;
 
         public override void Initialize()
         {

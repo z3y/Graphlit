@@ -372,11 +372,29 @@ namespace Graphlit
         public void TraverseGraph(ShaderNode shaderNode, NodeVisitor visitor, int[] ports = null)
         {
             // skip unneded ports for shadowcaster
-            if (visitor._shaderBuilder.passBuilders[visitor.Pass].name == "SHADOWCASTER" && shaderNode is BlendFinalColorNode)
+            if (visitor._shaderBuilder.passBuilders[visitor.Pass].name == "ShadowCaster" && shaderNode is BlendFinalColorNode)
             {
                 ports = new int[] { BlendFinalColorNode.METALLIC, BlendFinalColorNode.IN_ALPHA };
             }
-
+            
+            // skip generating inputs for keyword toggle that will never be true
+            if (GenerationMode == GenerationMode.Final && shaderNode is KeywordPropertyNode propertyNode)
+            {
+                var property = propertyNode.propertyDescriptor;
+                if (property.keywordPassFlags != 0)
+                {
+                    var pass = passBuilders[visitor.Pass];
+                    if (Enum.TryParse(typeof(KeywordPassFlags), pass.name, out var flagObj))
+                    {
+                        var flag = (KeywordPassFlags)flagObj;
+                        if (!property.keywordPassFlags.HasFlag(flag))
+                        {
+                            ports = new int[] { KeywordPropertyNode.FALSE };
+                        }
+                    }
+                }
+            }
+            
             foreach (var port in shaderNode.Inputs)
             {
                 if (ports is not null && !ports.Contains(port.GetPortID()))
@@ -389,6 +407,8 @@ namespace Graphlit
                 {
                     continue;
                 }
+
+                
                 Edge input = connections[0];
 
                 var inputNode = (ShaderNode)input.output.node;

@@ -17,7 +17,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "e1ca94b3-4667-4599-958b-3255724b8029",
@@ -34,7 +35,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "1def5047-ee96-4414-98df-73a3507eaedd",
@@ -51,7 +53,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "0e92774a-ea69-40aa-a62a-2d2d37a4982c",
@@ -68,7 +71,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "b3b4c422-4e80-48f5-a3fc-d243962b6f65",
@@ -85,7 +89,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "2d2cb45e-029f-4828-ba46-169935e7b05f",
@@ -102,7 +107,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "8003d520-ea6c-43aa-a941-dfca94d5ac07",
@@ -119,7 +125,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "adf3efa8-25dc-471f-a1bf-2b22231e5a7f",
@@ -136,7 +143,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "b67f4fdb-26e1-4441-b381-8932243f25ff",
@@ -153,7 +161,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "4d592057-5f8c-4f7e-9522-c39766fdd8ab",
@@ -170,7 +179,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "2f675410-ba97-4ce0-aa12-d3aa3cd8bead",
@@ -187,7 +197,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "4c8eaa25-a004-468c-badc-e237b0dd38a2",
@@ -204,7 +215,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "06151f0b-8baf-42a2-8d6d-73bc34fb43ba",
@@ -221,7 +233,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "f0d53a4e-4974-4670-b10a-c291dfcc542c",
@@ -238,7 +251,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "9b321213-aabc-4028-b355-10559e8458ec",
@@ -255,7 +269,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "6dbcf349-554e-4ca3-af7e-d747b0e7793a",
@@ -272,7 +287,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "3a12811e-32b3-4559-982a-dd53b07f0512",
@@ -289,7 +305,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "2c0a29d5-6aac-4416-9086-ee1f4d7d004d",
@@ -306,7 +323,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "0ea8ff37-6ac1-48dd-86dd-56dc1248c170",
@@ -323,7 +341,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "55ae5405-d47f-43ba-91b8-e78c73e9591f",
@@ -340,7 +359,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "cc428241-eaaa-42ab-b013-2b882539ed01",
@@ -357,7 +377,8 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0
+                "declaration": 0,
+                "keywordPassFlags": 0
             }
         ],
         "precision": 0,
