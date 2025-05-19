@@ -86,7 +86,10 @@ float4 frag(Varyings input) : SV_Target
     light.color = 0;
     #endif
 
-    #if defined(LIGHTMAP_SPECULAR) && !defined(LIGHTMAP_ON)
+    half3 diffuse = 0;
+    half3 specular = 0;
+
+    #if defined(LIGHTMAP_SPECULAR) && !defined(LIGHTMAP_ON) && !defined(_VRC_LIGHTVOLUMES)
     if (!light.enabled)
     {
         light.direction = normalize((unity_SHAr.xyz + unity_SHAg.xyz + unity_SHAb.xyz) * 1.0/3.0);
@@ -94,6 +97,10 @@ float4 frag(Varyings input) : SV_Target
         light.specularOnly = true;
         light.enabled = true;
     }
+    #elif defined(LIGHTMAP_SPECULAR) && !defined(LIGHTMAP_ON) && defined(_VRC_LIGHTVOLUMES)
+        half3 lvL0; half3 lvL1r; half3 lvL1g; half3 lvL1b;
+        LightVolumeSH(positionWS, lvL0, lvL1r, lvL1g, lvL1b);
+        specular += LightVolumeSpecularDominant(surface.Albedo, 1.0 - surface.Roughness, surface.Metallic, normalWS, fragment.viewDirectionWS, lvL0, lvL1r, lvL1g, lvL1b) * INV_PI;
     #endif
 
     half3 indirectSpecular = 0;
@@ -104,8 +111,6 @@ float4 frag(Varyings input) : SV_Target
 #endif
 #endif
 
-    half3 diffuse = 0;
-    half3 specular = 0;
     ShadeLight(diffuse, specular, light, shading);
 
 
