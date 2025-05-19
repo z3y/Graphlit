@@ -22,7 +22,7 @@ void GetLTCGIDiffuseAndSpecular(inout float3 diffuse, inout float3 specular, Sha
 {
     float2 untransformedLightmapUV = 0;
     #ifdef LIGHTMAP_ON
-    untransformedLightmapUV = (fragment.lightmapUV - unity_LightmapST.zw) / unity_LightmapST.xy;
+    untransformedLightmapUV = (fragment.lightmapUV.xy - unity_LightmapST.zw) / unity_LightmapST.xy;
     #endif
     float3 ltcgiDiffuse = 0;
     float3 ltcgiSpecular = 0;

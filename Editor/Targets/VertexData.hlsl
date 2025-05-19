@@ -59,6 +59,7 @@ struct VertexData
                     float3 lightDirectionWS = _LightDirection;
                 #endif
                 output.positionCSR = TransformWorldToHClip(ApplyShadowBias(output.positionWS, output.normalWS, lightDirectionWS));
+                // output.positionCSR = ApplyShadowClamping(output.positionCSR);
             #else
                 output.positionCSR = TransformWorldToHClip(ApplyShadowBias(output.positionWS, output.normalWS, _WorldSpaceLightPos0.rgb));  
                 output.positionCSR = ApplyShadowClamping(output.positionCSR);

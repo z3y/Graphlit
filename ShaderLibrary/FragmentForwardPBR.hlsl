@@ -116,7 +116,7 @@ float4 frag(Varyings input) : SV_Target
         uint pixelLightCount = GetAdditionalLightsCount();
         uint meshRenderingLayers = GetMeshRenderingLayer();
     LIGHT_LOOP_BEGIN(pixelLightCount)
-        URPLight additionalURPLight = GetAdditionalLight(lightIndex, positionWS, SampleShadowMask(fragment.lightmapUV));
+        URPLight additionalURPLight = GetAdditionalLight(lightIndex, positionWS, SampleShadowMask(fragment.lightmapUV.xy));
 #ifdef _LIGHT_LAYERS
         if (IsMatchingLightLayer(additionalURPLight.layerMask, meshRenderingLayers))
 #endif
@@ -133,7 +133,7 @@ float4 frag(Varyings input) : SV_Target
     #endif
 
     #ifdef _CBIRP
-        half4 shadowmask = SampleShadowMask(fragment.lightmapUV);
+        half4 shadowmask = SampleShadowMask(fragment.lightmapUV.xy);
         uint3 cluster = CBIRP::GetCluster(fragment.positionWS);
 
         ComputeCBIRPLights(diffuse, specular, cluster, shadowmask, fragment, shading, surface);

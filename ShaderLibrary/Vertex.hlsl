@@ -38,7 +38,7 @@ Varyings vert(Attributes input)
                 float3 lightDirectionWS = _LightDirection;
             #endif
             varyings.positionCS = TransformWorldToHClip(ApplyShadowBias(positionWS, normalWS, lightDirectionWS));
-            varyings.positionCS = ApplyShadowClamping(varyings.positionCS);
+            // varyings.positionCS = ApplyShadowClamping(varyings.positionCS);
         #else
             varyings.positionCS = TransformWorldToHClip(ApplyShadowBias(positionWS, normalWS, _WorldSpaceLightPos0.rgb));   
             varyings.positionCS = ApplyShadowClamping(varyings.positionCS);

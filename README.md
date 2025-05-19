@@ -28,8 +28,8 @@ Supports the built-in and universal render pipeline.
 - [Hotkeys](https://z3y.github.io/Graphlit/hotkeys)
 - Softer shadow filtering for point and spot lights
 - Inverse square falloff for lights
-- LTCGI
-- VRC Volumes
+- [LTCGI](https://github.com/PiMaker/ltcgi)
+- [VRC Light Volumes](https://github.com/REDSIM/VRCLightVolumes)
 
 ### Universal Render Pipeline
 
