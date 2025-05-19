@@ -33,10 +33,15 @@ namespace Graphlit.Nodes.PortType
             };
         }
 
-        public static Color Float1Color = Color.grey;
+        /*public static Color Float1Color = Color.grey;
         public static Color Float2Color = new Color(232 / 255.0f, 255 / 255.0f, 183 / 255.0f); // yellow
         public static Color Float3Color = new Color(196 / 255.0f, 245 / 255.0f, 252 / 255.0f); // cyan
-        public static Color Float4Color = new Color(226 / 255.0f, 160 / 255.0f, 255 / 255.0f); // magenta
+        public static Color Float4Color = new Color(226 / 255.0f, 160 / 255.0f, 255 / 255.0f); // magenta*/
+
+        public static Color Float1Color = new Color(0.5176470588235295f, 0.8941176470588236f, 0.9058823529411765f);
+        public static Color Float2Color = new Color(0.44313725490196076f, 0.9098039215686274f, 0.4f);
+        public static Color Float3Color = new Color(0.9647058823529412f, 1f, 0.6039215686274509f);
+        public static Color Float4Color = new Color(0.984313725490196f, 0.796078431372549f, 0.9568627450980393f);
         public Color GetPortColor()
         {
             return GetPortColor(dimensions);

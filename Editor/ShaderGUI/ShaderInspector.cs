@@ -522,7 +522,7 @@ namespace Graphlit
             if (mode == 6)
             {
                 material.SetFloat("_TransClipping", 1.0f);
-                material.SetFloat("_BlendModePreserveSpecular", 1.0f);
+                material.SetFloat("_BlendModePreserveSpecular", 0.0f);
             }
 
             if (preserveQueue)

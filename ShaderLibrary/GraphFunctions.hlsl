@@ -46,16 +46,20 @@ void AlphaTransparentBlend(inout half alpha, inout half3 albedo, half metallic)
 {
     #if defined(_ALPHAPREMULTIPLY_ON)
         albedo.rgb *= alpha;
-        alpha = lerp(alpha, 1.0, metallic);
+        //alpha = lerp(alpha, 1.0, metallic);
     #endif
 
     #if defined(_ALPHAMODULATE_ON)
         albedo = lerp(1.0, albedo, alpha);
     #endif
 
-    #if !defined(_ALPHAFADE_ON) && !defined(_ALPHATEST_ON) && !defined(_ALPHAPREMULTIPLY_ON) && !defined(_ALPHAMODULATE_ON)
-        alpha = 1.0f;
+    #if defined(_SURFACE_TYPE_TRANSPARENT)
+    bool isTransparent = true;
+    #else
+    bool isTransparent = false;
     #endif
+    
+    alpha = OutputAlpha(alpha, isTransparent);
 }
 
 void BlendFinalColor(out half3 Color, out half Alpha, half3 diffuse = 1, half3 specular = 0, half3 emission = 0, half3 albedo = 1, half roughness = 0, half metallic = 0, half alpha = 1)
@@ -65,16 +69,20 @@ void BlendFinalColor(out half3 Color, out half Alpha, half3 diffuse = 1, half3 s
     #ifndef UNITY_PASS_SHADOWCASTER
         #if defined(_ALPHAPREMULTIPLY_ON)
             albedo *= alpha;
-            alpha = lerp(alpha, 1.0, metallic);
+            //alpha = lerp(alpha, 1.0, metallic);
         #endif
 
         #if defined(_ALPHAMODULATE_ON)
             albedo = lerp(1.0, albedo, alpha);
         #endif
 
-        #if !defined(_ALPHAFADE_ON) && !defined(_ALPHATEST_ON) && !defined(_ALPHAPREMULTIPLY_ON) && !defined(_ALPHAMODULATE_ON)
-            alpha = 1.0f;
+        #if defined(_SURFACE_TYPE_TRANSPARENT)
+        bool isTransparent = true;
+        #else
+        bool isTransparent = false;
         #endif
+        
+        alpha = OutputAlpha(alpha, isTransparent);
 
         Color = albedo * (1.0 - metallic) * diffuse;
         Color += specular;
