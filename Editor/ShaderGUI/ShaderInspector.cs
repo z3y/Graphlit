@@ -508,12 +508,12 @@ namespace Graphlit
                 material.SetFloat("_Roughness", 1.0f - material.GetFloat("_Glossiness"));
             }
 
+            material.shaderKeywords = null;
             if (oldShader && newShader && oldShader.name == "Lit" && newShader.name == "Graphlit/Lit")
             {
                 ConvertLitMaterial(material);
             }
             base.AssignNewShaderToMaterial(material, oldShader, newShader);
-            material.shaderKeywords = null;
             SetupSurfaceType(material);
         }
 
