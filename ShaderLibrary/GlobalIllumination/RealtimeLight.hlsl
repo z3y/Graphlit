@@ -208,13 +208,13 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
 
         diffuse += Fd * !light.specularOnly;
 #ifndef _SPECULARHIGHLIGHTS_OFF
-        #ifdef QUALITY_LOW
-            half roughness2 = shading.roughness * shading.roughness;
-            float d = NoH * NoH * (roughness2 - 1) + 1.00001f;
+    #ifdef QUALITY_LOW
+        half roughness2 = shading.roughness * shading.roughness;
+        float d = NoH * NoH * (roughness2 - 1) + 1.00001f;
 
-            half LoH2 = LoH * LoH;
-            half normalizationTerm = (shading.perceptualRoughness * shading.perceptualRoughness) * 4.0 + 2.0;
-            half specularTerm = roughness2 / ((d * d) * max(0.1h, LoH2) * normalizationTerm);
+        half LoH2 = LoH * LoH;
+        half normalizationTerm = (shading.perceptualRoughness * shading.perceptualRoughness) * 4.0 + 2.0;
+        half specularTerm = roughness2 / ((d * d) * max(0.1h, LoH2) * normalizationTerm);
         #if REAL_IS_HALF
             specularTerm = specularTerm - HALF_MIN;
             specularTerm = clamp(specularTerm, 0.0, 1000.0); // Prevent FP16 overflow on mobiles

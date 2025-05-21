@@ -23,6 +23,10 @@
     #define BAKERY_SHNONLINEAR
 #endif
 
+#if defined(LIGHTMAP_ON) && defined(BAKERY_MONOSH) 
+#define DIRLIGHTMAP_COMBINED
+#endif
+
 #ifdef DYNAMICLIGHTMAP_ON
 half3 DecodeRealtimeLightmap(half4 color)
 {
@@ -34,6 +38,14 @@ half3 DecodeRealtimeLightmap(half4 color)
 #endif
 }
 #endif
+
+// for some reason half precision doesnt work here
+float D_GGX_Lightmap(float NoH, half roughness)
+{
+    float a = NoH * roughness;
+    float k = roughness / (1.0 - NoH * NoH + a * a);
+    return k * k * (1.0 / PI);
+}
 
 void SampleLightmap(out half3 illuminance, out half3 specular, float4 lightmapUV, float3 normalWS, float3 viewDirectionWS, half perceptualRoughness, inout half3 indirectOcclusion, float3 reflectVector)
 {
@@ -58,14 +70,14 @@ void SampleLightmap(out half3 illuminance, out half3 specular, float4 lightmapUV
     #ifdef DIRLIGHTMAP_COMBINED
 
         #ifdef BICUBIC_DIRECTIONAL_LIGHTMAP
-            half4 directionalLightmap = SampleTexture2DBicubic(TEXTURE2D_ARGS(unity_LightmapInd, sampler_BilinearClamp), lightmapUV.xy, texelSize, 1.0, 0);
+            float4 directionalLightmap = SampleTexture2DBicubic(TEXTURE2D_ARGS(unity_LightmapInd, sampler_BilinearClamp), lightmapUV.xy, texelSize, 1.0, 0);
         #else
-            half4 directionalLightmap = SAMPLE_TEXTURE2D_LOD(unity_LightmapInd, sampler_BilinearClamp, lightmapUV.xy, 0);
+            float4 directionalLightmap = SAMPLE_TEXTURE2D_LOD(unity_LightmapInd, sampler_BilinearClamp, lightmapUV.xy, 0);
         #endif
 
         #ifdef BAKERY_MONOSH
             half3 L0 = illuminance;
-            half3 nL1 = directionalLightmap.rgb * 2.0 - 1.0;
+            float3 nL1 = directionalLightmap.rgb * 2.0 - 1.0;
             half3 L1x = nL1.x * L0 * 2.0;
             half3 L1y = nL1.y * L0 * 2.0;
             half3 L1z = nL1.z * L0 * 2.0;
@@ -88,8 +100,8 @@ void SampleLightmap(out half3 illuminance, out half3 specular, float4 lightmapUV
                 float3 dominantDir = nL1;
                 float3 directionality = normalize(dominantDir);
                 float3 halfVector = SafeNormalize(directionality + viewDirectionWS);
-                half NoH = saturate(dot(normalWS, halfVector));
-                half spec = D_GGX(NoH, max(perceptualRoughness * perceptualRoughness, 0.002));
+                float NoH = saturate(dot(normalWS, halfVector));
+                half spec = D_GGX_Lightmap(NoH, max(perceptualRoughness * perceptualRoughness, HALF_MIN_SQRT));
                 half3 sh2 = L0 + dominantDir.x * L1x + dominantDir.y * L1y + dominantDir.z * L1z;
                 half LoH = saturate(dot(directionality, halfVector));
                 specular = max(spec * sh2, 0.0);
