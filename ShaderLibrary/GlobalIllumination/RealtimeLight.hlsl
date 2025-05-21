@@ -65,6 +65,14 @@ float GetCotanHalfSpotAngle(float2 uv, float3 lightCoord)
     return 0.5 * (cotanHalfSpotAngle_xy.x + cotanHalfSpotAngle_xy.y);
 }
 
+bool IsDefaultCookie()
+{
+    #ifdef SPOT
+    return abs(_LightTexture0[int2(30, 30)].a - 0.853) < 0.01;
+    #endif
+    return true;
+}
+
 Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
 {
     Light light;
@@ -118,13 +126,14 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
                 half cotanHalfSpotAngle = GetCotanHalfSpotAngle(spotUV, lightCoord.xyz);
                 half outerAngle = degrees(atan(1.0 / cotanHalfSpotAngle) * 2.0);
                 float spotScale, spotOffset;
-                GetSpotScaleOffset(outerAngle, 75, spotScale, spotOffset);
+                GetSpotScaleOffset(outerAngle, 80, spotScale, spotOffset);
 
                 float3 spotForward = normalize(unity_WorldToLight[2].xyz);
                 light.distanceAttenuation *= GetSpotAngleAttenuation(spotForward, light.direction, spotScale, spotOffset);
                 #else
-                light.color *= SAMPLE_TEXTURE2D(_LightTexture0, sampler_LightTexture0, spotUV).a * (lightCoord.z > 0);
                 #endif
+                half4 cookieTex = SAMPLE_TEXTURE2D(_LightTexture0, sampler_LightTexture0, spotUV);
+                light.color *= IsDefaultCookie() ? 1.0 : lerp(1.0, cookieTex.rgb, cookieTex.a);
             #endif
         #endif
 
@@ -143,8 +152,10 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
 
         light.shadowAttenuation = UnityMixRealtimeAndBakedShadows(light.shadowAttenuation, shadowMaskAttenuation, shadowFade);
 
+        #ifndef UNITY_PASS_FORWARDADD
         half4 cookieTexture = SampleUdonRPDirectionalCookie(positionWS);
         light.color *= cookieTexture.rgb;
+        #endif
     #endif
 
     #ifdef SHADOWS_SHADOWMASK
