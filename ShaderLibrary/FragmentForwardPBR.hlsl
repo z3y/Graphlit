@@ -38,6 +38,7 @@ float4 frag(Varyings input) : SV_Target
         float3 normalWS = TransformObjectToWorldNormal(surface.Normal);
     #else // _NORMAL_DROPOFF_TS
         float3 normalWS = SafeNormalize(mul(surface.Normal, fragment.tangentSpaceTransform));
+        #define _NORMAL_DROPOFF_TS
     #endif
 
     ShadingData shading;
@@ -155,6 +156,10 @@ float4 frag(Varyings input) : SV_Target
 
     #ifdef _MIRROR
         float2 mirrorUV = fragment.positionNDC.xy;
+        #ifdef _NORMAL_DROPOFF_TS
+        mirrorUV.xy += surface.Normal.xy;
+        mirrorUV = saturate(mirrorUV);
+        #endif
         half4 mirrorReflection = unity_StereoEyeIndex == 0 ? 
             SAMPLE_TEXTURE2D(_ReflectionTex0, sampler_BilinearClamp, mirrorUV) :
             SAMPLE_TEXTURE2D(_ReflectionTex1, sampler_BilinearClamp, mirrorUV);
