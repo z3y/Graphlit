@@ -60,6 +60,7 @@ namespace Graphlit
         Shader _shader;
         List<PropertyFolder> _folders;
         static bool _reinitialize = false;
+        int _queuePropertyIndex = 0;
         public static void Reinitialize() => _reinitialize = true;
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
         {
@@ -92,7 +93,7 @@ namespace Graphlit
 
             DrawProperties(materialEditor, properties);
 
-            Footer(materialEditor);
+            Footer(materialEditor, properties);
             for (int i = 0; i < style.Length; i++)
             {
                 style[i].richText = richTextState[i];
@@ -244,6 +245,8 @@ namespace Graphlit
 
         void PraseProperties(MaterialEditor editor, MaterialProperty[] properties)
         {
+            _queuePropertyIndex = Array.FindIndex(properties, x => x.name == "_QueueOffset");
+
             _folders = new List<PropertyFolder>();
 
             var renderingFolder = new PropertyFolder("Rendering Options");
@@ -480,7 +483,7 @@ namespace Graphlit
             SetupSurfaceType(material);
         }
 
-        public void Footer(MaterialEditor editor)
+        public void Footer(MaterialEditor editor, MaterialProperty[] properties)
         {
             CoreEditorUtils.DrawSplitter();
             EditorGUILayout.Space();
@@ -492,6 +495,13 @@ namespace Graphlit
                 editor.LightmapEmissionFlagsProperty(0, emission);
             }
             editor.RenderQueueField();
+
+            /*EditorGUI.BeginChangeCheck();
+            editor.ShaderProperty(properties[_queuePropertyIndex], "Queue Offset");
+            if (EditorGUI.EndChangeCheck())
+            {
+
+            }*/
             editor.EnableInstancingField();
             editor.DoubleSidedGIField();
         }
@@ -654,6 +664,8 @@ namespace Graphlit
                 material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Geometry;
                 material.SetInt("_ZWrite", 1);
             }
+
+            // material.renderQueue += (int)material.GetFloat("_QueueOffset");
         }
 
         public static void ToggleKeyword(Material material, string keyword, bool value)

@@ -74,7 +74,7 @@ namespace Graphlit
             builder.properties.Add(_alphaClip);
             builder.properties.Add(_alphaToMask);
 
-
+            builder.properties.Add(_queueOffset);
             //builder.properties.Add(_blendModePreserveSpecular);
 
             builder.properties.Add(_mode);

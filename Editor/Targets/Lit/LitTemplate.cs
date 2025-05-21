@@ -200,6 +200,7 @@ namespace Graphlit
             builder.properties.Add(_bicubicLightmap);
             builder.properties.Add(_lmSpec);
             builder.properties.Add(_nonLinearLightprobeSh);
+            builder.properties.Add(_queueOffset);
 
 
             if (_specular)

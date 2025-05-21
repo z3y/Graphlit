@@ -154,6 +154,8 @@ namespace Graphlit
         internal static readonly PropertyDescriptor _ztest = new(PropertyType.Float, "ZTest", "_ZTest") { FloatValue = 4, customAttributes = "[Enum(UnityEngine.Rendering.CompareFunction)]" };
         
         internal PropertyDescriptor _cull => new(PropertyType.Float, "Cull", "_Cull") { FloatValue = (int)defaultCull, customAttributes = "[Enum(UnityEngine.Rendering.CullMode)]" };
+        internal PropertyDescriptor _queueOffset => new(PropertyType.Float, "Queue Offset", "_QueueOffset") { FloatValue = 0, customAttributes = "[HideInInspector] [IntRange]", Range = new Vector2(-50f, 50f) };
+
 
         [SerializeField] public MaterialRenderMode defaultMode = MaterialRenderMode.Opaque;
         [SerializeField] public UnityEngine.Rendering.CullMode defaultCull = UnityEngine.Rendering.CullMode.Back;
