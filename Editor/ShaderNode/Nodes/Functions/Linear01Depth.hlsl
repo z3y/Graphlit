@@ -1,4 +1,4 @@
-void Linear01Depth(float Depth, out float Out)
+void Linear01DepthNode(float Depth, out float Out)
 {
-    Out = Linear01Depth(Depth);
+    Out = Linear01Depth(Depth, _ZBufferParams);
 }

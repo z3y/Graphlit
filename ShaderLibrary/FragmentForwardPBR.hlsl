@@ -158,7 +158,6 @@ float4 frag(Varyings input) : SV_Target
         float2 mirrorUV = fragment.positionNDC.xy;
         #ifdef _NORMAL_DROPOFF_TS
         mirrorUV.xy += surface.Normal.xy;
-        mirrorUV = saturate(mirrorUV);
         #endif
         half4 mirrorReflection = unity_StereoEyeIndex == 0 ? 
             SAMPLE_TEXTURE2D(_ReflectionTex0, sampler_BilinearClamp, mirrorUV) :
