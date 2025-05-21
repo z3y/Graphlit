@@ -508,28 +508,33 @@ namespace Graphlit
 
         public override void AssignNewShaderToMaterial(Material material, Shader oldShader, Shader newShader)
         {
-
-            if (oldShader.FindPropertyIndex("_Mode") >= 0)
-            {
-                UpgradeMode(material, true, false);
-            }
-            if (oldShader.FindPropertyIndex("_Glossiness") >= 0)
-            {
-                material.SetFloat("_Roughness", 1.0f - material.GetFloat("_Glossiness"));
-            }
-
             material.shaderKeywords = null;
+
             if (oldShader && newShader && oldShader.name == "Lit" && newShader.name == "Graphlit/Lit")
             {
-                ConvertLitMaterial(material);
+                Debug.Log("Converting lit material");
+
+                ConvertLitMaterial(material, (m) => base.AssignNewShaderToMaterial(m, oldShader, newShader));
             }
-            base.AssignNewShaderToMaterial(material, oldShader, newShader);
+            else if (oldShader.FindPropertyIndex("_Mode") >= 0)
+            {
+                int previousMode = (int)material.GetFloat("_Mode");
+                base.AssignNewShaderToMaterial(material, oldShader, newShader);
+                UpgradeMode(material, true, false, previousMode);
+            }
+            else
+            {
+                base.AssignNewShaderToMaterial(material, oldShader, newShader);
+            }
+
+
+
             SetupSurfaceType(material);
         }
 
-        public static void UpgradeMode(Material material, bool preserveQueue, bool log)
+        public static void UpgradeMode(Material material, bool preserveQueue, bool log, int previousMode = -1)
         {
-            int mode = (int)material.GetFloat("_Mode");
+            int mode = previousMode >= 0 ? previousMode : (int)material.GetFloat("_Mode");
             if (mode == 0)
             {
                 return;
@@ -879,26 +884,50 @@ namespace Graphlit
             EditorGUI.indentLevel = indentLevel;
         }
 
-        public static void ConvertLitMaterial(Material m)
+        public static void ConvertLitMaterial(Material m, Action<Material> onAssignShader)
         {
-            m.SetTexture("_DetailAlbedoMap", m.GetTexture("_DetailAlbedo"));
-            m.SetTextureScale("_DetailAlbedoMap", m.GetTextureScale("_DetailAlbedo"));
-            m.SetTextureOffset("_DetailAlbedoMap", m.GetTextureOffset("_DetailAlbedo"));
-            m.SetFloat("_DetailNormalMapScale", m.GetFloat("_DetailBumpScale"));
+            int previousMode = (int)m.GetFloat("_Mode");
+            Texture detailAlbedo = m.GetTexture("_DetailAlbedo");
+            Vector2 detailAlbedoScale = m.GetTextureScale("_DetailAlbedo");
+            Vector2 detailAlbedoOffset = m.GetTextureOffset("_DetailAlbedo");
+            float detailNormalMapScale = m.GetFloat("_DetailBumpScale");
 
-            m.SetTexture("_DetailNormalMap", m.GetTexture("_DetailBumpMap"));
-            m.SetFloat("_UVSec", m.GetFloat("_Detail_UV"));
+            Texture detailNormalMap = m.GetTexture("_DetailBumpMap");
+            float uvSec = m.GetFloat("_Detail_UV");
 
-            m.SetFloat("_Toggle_EMISSION", m.GetFloat("_EmissionToggle"));
+            float toggleEmission = m.GetFloat("_EmissionToggle");
 
-            m.SetFloat("_RoughnessScale", m.GetFloat("_Roughness"));
-            m.SetFloat("_MetallicScale", m.GetFloat("_Metallic"));
+            float roughness = m.GetFloat("_Roughness");
+            float metallic = m.GetFloat("_Metallic");
 
-            m.SetFloat("_Toggle_WIND", m.GetFloat("_WindToggle"));
+            float toggleWind = m.GetFloat("_WindToggle");
 
-            m.SetFloat("_LightmappedSpecular", m.GetFloat("_LIGHTMAPPED_SPECULAR"));
-            m.SetFloat("_MonoSH", m.GetFloat("_BAKERY_MONOSH"));
-            m.SetFloat("_BicubicLightmap", m.GetFloat("_BICUBIC_LIGHTMAP"));
+            float lightmappedSpecular = m.GetFloat("_LIGHTMAPPED_SPECULAR");
+            float monoSH = m.GetFloat("_BAKERY_MONOSH");
+            float bicubicLightmap = m.GetFloat("_BICUBIC_LIGHTMAP");
+
+            onAssignShader(m);
+
+            m.SetTexture("_DetailAlbedoMap", detailAlbedo);
+            m.SetTextureScale("_DetailAlbedoMap", detailAlbedoScale);
+            m.SetTextureOffset("_DetailAlbedoMap", detailAlbedoOffset);
+            m.SetFloat("_DetailNormalMapScale", detailNormalMapScale);
+
+            m.SetTexture("_DetailNormalMap", detailNormalMap);
+            m.SetFloat("_UVSec", uvSec);
+
+            m.SetFloat("_Toggle_EMISSION", toggleEmission);
+
+            m.SetFloat("_RoughnessScale", roughness);
+
+            m.SetFloat("_MetallicScale", metallic);
+            m.SetFloat("_Toggle_WIND", toggleWind);
+
+            m.SetFloat("_LightmappedSpecular", lightmappedSpecular);
+            m.SetFloat("_MonoSH", monoSH);
+            m.SetFloat("_BicubicLightmap", bicubicLightmap);
+
+            UpgradeMode(m, true, false, previousMode);
 
             MaterialEditor.ApplyMaterialPropertyDrawers(m);
         }
