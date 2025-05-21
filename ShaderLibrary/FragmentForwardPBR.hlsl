@@ -67,7 +67,7 @@ float4 frag(Varyings input) : SV_Target
             LightVolumeAdditiveSH(positionWS, lvL0, lvL1r, lvL1g, lvL1b);
             bakedGI += LightVolumeEvaluate(normalWS, lvL0, lvL1r, lvL1g, lvL1b);
         #endif 
-    #elif defined(LIGHTPROBE_SH)
+    #elif defined(LIGHTPROBE_SH) || defined(UNIVERSALRP)
         bakedGI = SampleSH(normalWS, positionWS);
     #endif
 

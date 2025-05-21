@@ -210,7 +210,8 @@ namespace Graphlit
 
             // Universal Pipeline keywords
             pass.pragmas.Add("#pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN");
-            pass.pragmas.Add("#pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS");
+            // pass.pragmas.Add("#pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS");
+            pass.pragmas.Add("#pragma multi_compile _ _ADDITIONAL_LIGHTS");
             // pass.pragmas.Add("#pragma multi_compile _ EVALUATE_SH_MIXED EVALUATE_SH_VERTEX");
             pass.pragmas.Add("#pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS");
             // pass.pragmas.Add("#pragma multi_compile_fragment _ _REFLECTION_PROBE_BLENDING");
