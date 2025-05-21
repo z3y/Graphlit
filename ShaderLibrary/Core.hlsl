@@ -114,6 +114,8 @@ float shEvaluateDiffuseL1Geomerics(float L0, float3 L1, float3 n)
 #include "GraphFunctions.hlsl"
 #include "BlendModes.hlsl"
 
+#include "Decalery.hlsl"
+
 float4 GetFlatNormal()
 {
     #ifdef UNITY_ASTC_NORMALMAP_ENCODING

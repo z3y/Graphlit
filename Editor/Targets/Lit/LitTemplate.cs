@@ -155,6 +155,8 @@ namespace Graphlit
         static readonly PropertyDescriptor _ltcgi = new(PropertyType.Float, "LTCGI", "_LTCGI") { customAttributes = "[Toggle(_LTCGI)] [Folder(Advanced Options)]" };
         static readonly PropertyDescriptor _lightVolumes = new(PropertyType.Float, "VRC Light Volumes", "_VRC_LightVolumes") { customAttributes = "[Toggle(_VRC_LIGHTVOLUMES)] [Folder(Advanced Options)]" };
 
+        static readonly PropertyDescriptor _decalery = new(PropertyType.Float, "Decalery", "_Decalery") { customAttributes = "[Toggle(_DECALERY)] [Folder(Advanced Options)]" };
+
         const string _ltcgiPath = "Packages/at.pimaker.ltcgi/Shaders/LTCGI.cginc";
         const string _cbirpPath = "Packages/z3y.clusteredbirp/Shaders/cbirp.hlsl";
         const string _vrcLightVolumesPath = "Packages/red.sim.lightvolumes/Shaders/LightVolumes.cginc";
@@ -219,6 +221,8 @@ namespace Graphlit
                 builder.properties.Add(_lightVolumes);
             }
 
+            builder.properties.Add(_decalery);
+
             builder._defaultTextures["_DFG"] = _dfg;
 
             builder.subshaderTags["RenderType"] = "Opaque";
@@ -269,6 +273,7 @@ namespace Graphlit
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _LIGHTMAPPED_SPECULAR");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _NONLINEAR_LIGHTPROBESH");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _MIRROR");
+                pass.pragmas.Add("#pragma shader_feature_local_vertex _DECALERY");
 
 
                 if (!_specular)
@@ -355,6 +360,8 @@ namespace Graphlit
                     pass.pragmas.Add("#pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF");
                 }
 
+                pass.pragmas.Add("#pragma shader_feature_local_vertex _DECALERY");
+
                 pass.pragmas.Add(NormalDropoffDefine());
 
                 pass.attributes.RequirePositionOS();
@@ -373,10 +380,7 @@ namespace Graphlit
                 pass.properties.Add(_specularOcclusion);
 
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
-                if (!(_cbirpExists && _cbirp))
-                {
-                    builder.AddPass(pass);
-                }
+                builder.AddPass(pass);
             }
             if (urp)
             {
