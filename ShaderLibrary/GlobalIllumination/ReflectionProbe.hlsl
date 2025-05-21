@@ -2,10 +2,8 @@
 
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/ImageBasedLighting.hlsl"
 
-#ifdef UNITY_SPECCUBE_BOX_PROJECTION
 #ifndef _REFLECTION_PROBE_BOX_PROJECTION
 #define _REFLECTION_PROBE_BOX_PROJECTION
-#endif
 #endif
 
 #ifdef UNIVERSALRP
