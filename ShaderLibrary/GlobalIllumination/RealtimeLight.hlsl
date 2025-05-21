@@ -53,6 +53,18 @@ void CopyUniversalLight(inout Light light, URPLight urpLight)
 }
 #endif
 
+float GetCotanHalfSpotAngle(float2 uv, float3 lightCoord)
+{
+    // float cotanHalfSpotAngle_x = (2.0 * p.z * (uv.x - 0.5)) / p.x;
+    // float cotanHalfSpotAngle_y = (2.0 * p.z * (uv.y - 0.5)) / p.y;
+    uv = saturate(uv);
+    float2 p = lightCoord.xy;
+    // p += p == 0 ? 0.001 : 0;
+    float2 cotanHalfSpotAngle_xy = (2.0 * lightCoord.z * (uv - 0.5)) / p;
+
+    return 0.5 * (cotanHalfSpotAngle_xy.x + cotanHalfSpotAngle_xy.y);
+}
+
 Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
 {
     Light light;
@@ -101,7 +113,18 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
             // light.distanceAttenuation *= 2.0;
             #ifdef SPOT
                 float2 spotUV = lightCoord.xy / lightCoord.w + 0.5;
+
+                #if 1
+                half cotanHalfSpotAngle = GetCotanHalfSpotAngle(spotUV, lightCoord.xyz);
+                half outerAngle = degrees(atan(1.0 / cotanHalfSpotAngle) * 2.0);
+                float spotScale, spotOffset;
+                GetSpotScaleOffset(outerAngle, 75, spotScale, spotOffset);
+
+                float3 spotForward = normalize(unity_WorldToLight[2].xyz);
+                light.distanceAttenuation *= GetSpotAngleAttenuation(spotForward, light.direction, spotScale, spotOffset);
+                #else
                 light.color *= SAMPLE_TEXTURE2D(_LightTexture0, sampler_LightTexture0, spotUV).a * (lightCoord.z > 0);
+                #endif
             #endif
         #endif
 
