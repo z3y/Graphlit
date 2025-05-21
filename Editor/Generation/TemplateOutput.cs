@@ -256,6 +256,8 @@ namespace Graphlit
             pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
             pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
+            pass.pragmas.Add("#pragma shader_feature_local_vertex _DECALERY");
+
             pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
         }
 
@@ -274,6 +276,8 @@ namespace Graphlit
             pass.varyings.RequirePositionCS();
             pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
             pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
+
+            pass.pragmas.Add("#pragma shader_feature_local_vertex _DECALERY");
 
             pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
 
