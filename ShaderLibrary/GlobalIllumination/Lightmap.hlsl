@@ -23,8 +23,10 @@
     #define BAKERY_SHNONLINEAR
 #endif
 
-#if defined(LIGHTMAP_ON) && defined(BAKERY_MONOSH) 
+#if defined(LIGHTMAP_ON) && defined(BAKERY_MONOSH)
+#ifndef DIRLIGHTMAP_COMBINED
 #define DIRLIGHTMAP_COMBINED
+#endif
 #endif
 
 #ifdef DYNAMICLIGHTMAP_ON
