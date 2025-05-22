@@ -161,7 +161,7 @@ namespace Graphlit
         {
             var p = builder.properties;
             p.Add(new(PropertyType.Float, "Area Lit", "_AreaLitToggle") { customAttributes = "[Toggle(_AREALIT)] [Header(Area Lit)] [Folder(Advanced Options)]" });
-            p.Add(new(PropertyType.Texture2D, "Light Mesh", "_LightMesh") { customAttributes = "[Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.black});
+            p.Add(new(PropertyType.Texture2D, "Light Mesh", "_LightMesh") { customAttributes = "[Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.black });
             p.Add(new(PropertyType.Texture2D, "Light Texture 0", "_LightTex0") { customAttributes = "[Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.white });
             p.Add(new(PropertyType.Texture2D, "Light Texture 1", "_LightTex1") { customAttributes = "[Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.black });
             p.Add(new(PropertyType.Texture2D, "Light Texture 2", "_LightTex2") { customAttributes = "[Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.black });
@@ -228,7 +228,7 @@ namespace Graphlit
             }
 
 
-            if (_ltcgiExists && builder.BuildTarget != BuildTarget.Android)
+            if (_ltcgiExists)
             {
                 builder.properties.Add(_ltcgi);
                 builder.subshaderTags["LTCGI"] = "_LTCGI";
@@ -322,7 +322,7 @@ namespace Graphlit
 
                 pass.pragmas.Add(NormalDropoffDefine());
 
-                if (_ltcgiExists && builder.BuildTarget != BuildTarget.Android) pass.pragmas.Add("#pragma shader_feature_local_fragment _LTCGI");
+                if (_ltcgiExists) pass.pragmas.Add("#pragma shader_feature_local_fragment _LTCGI");
                 if (_lightVolumesExists) pass.pragmas.Add("#pragma shader_feature_local_fragment _VRC_LIGHTVOLUMES");
 
 
@@ -362,7 +362,7 @@ namespace Graphlit
                 pass.renderStates["ZWrite"] = "Off";
                 pass.renderStates["ZTest"] = "[_ZTest]";
                 pass.renderStates["AlphaToMask"] = "[_AlphaToMask]";
-                
+
                 if (_fwdAddBlendOpMax)
                 {
                     //pass.renderStates["BlendOp"] = "Max, Add";

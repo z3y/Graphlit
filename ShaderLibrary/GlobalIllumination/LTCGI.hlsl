@@ -4,7 +4,8 @@
 
 float3 DecodeLightmapLTCGI(float4 lm)
 {
-    return lm.rgb;
+    half4 decodeInstructions = half4(LIGHTMAP_HDR_MULTIPLIER, LIGHTMAP_HDR_EXPONENT, 0.0h, 0.0h);
+    return DecodeLightmap(lm, decodeInstructions);
 }
 #define UNITY_HALF_PI HALF_PI
 #define UNITY_PI PI

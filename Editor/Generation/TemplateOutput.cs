@@ -64,7 +64,7 @@ namespace Graphlit
             var outline = new EnumField("Outline Pass", graphData.outlinePass);
             outline.RegisterValueChangedCallback(x => graphData.outlinePass = (GraphData.OutlinePassMode)x.newValue);
             root.Add(outline);
-            
+
             // https://github.com/pema99/shader-knowledge/blob/main/tips-and-tricks.md#avoiding-draw-order-issues-with-transparent-shaders
             var depthFill = new Toggle("Depth Fill Pass") { value = graphData.depthFillPass, tooltip = "Avoid draw order issues with transparent shaders" };
             depthFill.RegisterValueChangedCallback(x => graphData.depthFillPass = x.newValue);
@@ -142,7 +142,7 @@ namespace Graphlit
 
         internal static readonly PropertyDescriptor _surfaceOptions = new(PropertyType.Float, "Surface Type", "_Surface") { customAttributes = "[Enum(Opaque, 0, Transparent, 1)]" };
         internal static readonly PropertyDescriptor _surfaceBlend = new(PropertyType.Float, "Blending Mode", "_Blend") { customAttributes = "[ShowIf(_Surface, 1)] [Enum(Alpha, 0, Premultiply, 1, Additive, 2, Multiply, 3)]" };
-        internal static readonly PropertyDescriptor _transClipping = new(PropertyType.Float, "Transparent Shadows", "_TransClipping") { customAttributes = "[ShowIf(_Surface, 1)] [ToggleUI]" };
+        internal static readonly PropertyDescriptor _transClipping = new(PropertyType.Float, "Transclipping", "_TransClipping") { customAttributes = "[ShowIf(_Surface, 1)] [ToggleUI]" };
         internal static readonly PropertyDescriptor _blendModePreserveSpecular = new(PropertyType.Float, "Preserve Specular", "_BlendModePreserveSpecular") { FloatValue = 1.0f, customAttributes = "[ShowIf(_Surface, 1)] [ShowIf(_Surface, 2)] [ToggleUI]" };
         internal static readonly PropertyDescriptor _alphaClip = new(PropertyType.Float, "Alpha Clipping", "_AlphaClip") { customAttributes = "[ToggleUI]" };
         internal static readonly PropertyDescriptor _alphaToMask = new(PropertyType.Float, "_AlphaToMask", "_AlphaToMask") { customAttributes = "[HideInInspector] [ToggleUI]" };
@@ -152,7 +152,7 @@ namespace Graphlit
         internal static readonly PropertyDescriptor _dstBlend = new(PropertyType.Float, "Destination Blend", "_DstBlend") { FloatValue = 0, customAttributes = "[Enum(UnityEngine.Rendering.BlendMode)]" };
         internal static readonly PropertyDescriptor _zwrite = new(PropertyType.Float, "ZWrite", "_ZWrite") { FloatValue = 1, customAttributes = "[Enum(Off, 0, On, 1)]" };
         internal static readonly PropertyDescriptor _ztest = new(PropertyType.Float, "ZTest", "_ZTest") { FloatValue = 4, customAttributes = "[Enum(UnityEngine.Rendering.CompareFunction)]" };
-        
+
         internal PropertyDescriptor _cull => new(PropertyType.Float, "Cull", "_Cull") { FloatValue = (int)defaultCull, customAttributes = "[Enum(UnityEngine.Rendering.CullMode)]" };
         internal PropertyDescriptor _queueOffset => new(PropertyType.Float, "Queue Offset", "_QueueOffset") { FloatValue = 0, customAttributes = "[HideInInspector] [IntRange]", Range = new Vector2(-50f, 50f) };
 
