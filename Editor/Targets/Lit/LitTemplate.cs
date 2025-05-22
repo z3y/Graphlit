@@ -219,7 +219,10 @@ namespace Graphlit
             builder.properties.Add(_lmSpec);
             builder.properties.Add(_nonLinearLightprobeSh);
             builder.properties.Add(_queueOffset);
-
+            if (_lightVolumesExists)
+            {
+                builder.properties.Add(_lightVolumes);
+            }
 
 
             if (_specular)
@@ -236,10 +239,7 @@ namespace Graphlit
                 builder.properties.Add(_ltcgi);
                 builder.subshaderTags["LTCGI"] = "_LTCGI";
             }
-            if (_lightVolumesExists)
-            {
-                builder.properties.Add(_lightVolumes);
-            }
+
             if (_areaLitExists)
             {
                 AddAreaLitProperties(builder);
