@@ -15,9 +15,9 @@ Varyings vert(Attributes input)
     #if !defined(UNITY_PASS_META) && !defined(SKIP_VERTEX_FUNCTION)
     float3 positionWS = vertexDescription.Position;
     float3 normalWS = vertexDescription.Normal;
+    ApplyDecalaryOffsets(positionWS);
     #endif
 
-    ApplyDecalaryOffsets(positionWS);
 
 #if !defined(UNITY_PASS_META) 
     #ifdef UNPACK_POSITIONWS
