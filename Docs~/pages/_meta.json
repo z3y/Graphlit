@@ -7,5 +7,6 @@
   "hotkeys": "Hotkeys",
   "custom-nodes": "Custom Nodes",
   "custom-lighting": "Custom Lighting",
+  "light-attenuation": "Light Attenuation",
   "changelog": "Change Log"
 }

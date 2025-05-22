@@ -1,0 +1,17 @@
+# Light Attenuation
+
+To match point lights with bakery point lights enable physically based light falloff. For spot lights use the cone projection mask with 80% inner angle
+
+![Image](/Unity_D4AZb4jaCL.png)
+
+Graphlit shaders use a physically based inverse square distance attenuation in the built-in pipeline.
+
+![Image](/Unity_9PE7H8txbM.png)
+
+![Image](/Unity_fC9R3xovBO.png)
+
+Spot lights also use angle attenuation, instead of the default unity cookie texture.
+
+![Image](/spot-default-cookie.png)
+
+![Image](/spot-cone.png)
