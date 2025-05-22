@@ -17,10 +17,10 @@ float4 frag(Varyings input) : SV_Target
 
     half3 diffuseColor = surface.Color;
     #if defined(_ALPHAMODULATE_ON)
-        diffuseColor = AlphaModulate(diffuseColor, alpha);
+        // diffuseColor = AlphaModulate(diffuseColor, alpha);
     #endif
     #if defined(_ALPHAPREMULTIPLY_ON)
-        diffuseColor *= alpha;
+        // diffuseColor *= alpha;
     #endif
 
     float4 color = float4(diffuseColor, alpha);

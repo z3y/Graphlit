@@ -138,9 +138,9 @@ namespace Graphlit
                         {
                             var targetProp = properties[keyPair.Key];
 
-                               if ((targetProp.type == MaterialProperty.PropType.Float ||
-                                targetProp.type == MaterialProperty.PropType.Range)
-                                && targetProp.floatValue == keyPair.Value)
+                            if ((targetProp.type == MaterialProperty.PropType.Float ||
+                             targetProp.type == MaterialProperty.PropType.Range)
+                             && targetProp.floatValue == keyPair.Value)
                             {
                                 isHidden = false;
                             }
@@ -159,9 +159,9 @@ namespace Graphlit
                             continue;
                         }
                     }
-                    
+
                     EditorGUI.indentLevel = baseIndentation + element.indent;
-                    
+
                     if (element.helpBox)
                     {
                         EditorGUILayout.HelpBox(element.guiContent.text, MessageType.Info);
@@ -251,10 +251,10 @@ namespace Graphlit
 
             var renderingFolder = new PropertyFolder("Rendering Options");
             _folders.Add(renderingFolder);
-            
+
             var advancedFolder = new PropertyFolder("Advanced Options");
             _folders.Add(advancedFolder);
-            
+
             var mainFolder = new PropertyFolder("Surface Inputs");
 
             _folders.Add(mainFolder);
@@ -309,7 +309,7 @@ namespace Graphlit
                 }
 
             }
-            
+
             _folders.Remove(advancedFolder);
             _folders.Add(advancedFolder);
         }
@@ -357,9 +357,9 @@ namespace Graphlit
             }
 
             element.folder = TryParseStringParam(attributes, "Folder");
-            
+
             element.helpBox = attributes.Contains("HelpBox");
-            
+
             string intent = TryParseStringParam(attributes, "Indent");
             if (!string.IsNullOrEmpty(intent))
             {
@@ -386,7 +386,7 @@ namespace Graphlit
                         element.onValueChange.Invoke(mat, element);
                     }
                 }
-                
+
                 string extraProperty = TryParseStringParam(attributes, "ExtraProperty");
                 if (!string.IsNullOrEmpty(extraProperty))
                 {
@@ -457,7 +457,7 @@ namespace Graphlit
             for (int i = 0; i < attributes.Count; i++)
             {
                 string input = attributes[i];
- 
+
 
                 var match = Regex.Match(input, @"ShowIf\s*\(\s*([a-zA-Z_][\w]*)\s*,\s*(-?\d+(?:\.\d+)?)\s*\)");
 
@@ -557,7 +557,7 @@ namespace Graphlit
             if (mode == 6)
             {
                 material.SetFloat("_TransClipping", 1.0f);
-                material.SetFloat("_BlendModePreserveSpecular", 0.0f);
+                material.SetFloat("_BlendModePreserveSpecular", 1.0f);
             }
 
             if (preserveQueue)
@@ -580,7 +580,7 @@ namespace Graphlit
                 .Select(x => AssetDatabase.LoadAssetAtPath<Material>(AssetDatabase.GUIDToAssetPath(x)))
                 .OfType<Material>();
 
-            foreach(var material in materials)
+            foreach (var material in materials)
             {
                 bool isGraplitMaterial = material.HasFloat("_GraphlitMaterial");
 
@@ -821,7 +821,7 @@ namespace Graphlit
                 mat.SetShaderPassEnabled("GrabPass", property.floatValue > 0);
             }
         }
-        
+
         private void ExtraPropertyAfterTexture(MaterialEditor materialEditor, Rect r, MaterialProperty property)
         {
             if ((property.type == MaterialProperty.PropType.Float || property.type == MaterialProperty.PropType.Color) && r.width > EditorGUIUtility.fieldWidth)
