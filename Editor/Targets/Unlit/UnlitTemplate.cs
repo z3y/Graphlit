@@ -85,6 +85,11 @@ namespace Graphlit
 
             builder.properties.Add(_cull);
 
+            if (forceNoShadowCasting)
+            {
+                builder.subshaderTags["ForceNoShadowCasting"] = "True";
+            }
+
             if (_customLighting)
             {
                 builder.properties.Add(_dfgProperty);

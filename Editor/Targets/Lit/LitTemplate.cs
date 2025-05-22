@@ -240,6 +240,11 @@ namespace Graphlit
                 builder.subshaderTags["LTCGI"] = "_LTCGI";
             }
 
+            if (forceNoShadowCasting)
+            {
+                builder.subshaderTags["ForceNoShadowCasting"] = "True";
+            }
+
             if (_areaLitExists)
             {
                 AddAreaLitProperties(builder);

@@ -78,6 +78,10 @@ namespace Graphlit
             mode.RegisterValueChangedCallback(x => defaultMode = (MaterialRenderMode)x.newValue);
             root.Add(mode);
 
+            var shadowCasting = new Toggle("No Shadow Casting") { value = forceNoShadowCasting };
+            shadowCasting.RegisterValueChangedCallback(x => forceNoShadowCasting = x.newValue);
+            root.Add(shadowCasting);
+
             var cull = new EnumField("Cull", defaultCull);
             cull.RegisterValueChangedCallback(x => defaultCull = (UnityEngine.Rendering.CullMode)x.newValue);
             root.Add(cull);
@@ -157,6 +161,7 @@ namespace Graphlit
         internal PropertyDescriptor _queueOffset => new(PropertyType.Float, "Queue Offset", "_QueueOffset") { FloatValue = 0, customAttributes = "[HideInInspector] [IntRange]", Range = new Vector2(-50f, 50f) };
 
 
+        [SerializeField] public bool forceNoShadowCasting = false;
         [SerializeField] public MaterialRenderMode defaultMode = MaterialRenderMode.Opaque;
         [SerializeField] public UnityEngine.Rendering.CullMode defaultCull = UnityEngine.Rendering.CullMode.Back;
         public enum MaterialRenderMode
