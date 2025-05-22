@@ -16,7 +16,7 @@ void IntegrateAreaLit(inout half3 diffuse, inout half3 reflection, FragmentData 
     areaLitInput.pos = float4(fragment.positionWS.xyz, 1);
     areaLitInput.normal = shading.normalWS;
     areaLitInput.view = fragment.viewDirectionWS;
-    areaLitInput.roughness = shading.roughness * shading.roughness;
+    areaLitInput.roughness = shading.perceptualRoughness * shading.perceptualRoughness;
     areaLitInput.occlusion = 1;
     areaLitInput.screenPos = fragment.positionNDC;
     ShadeAreaLights(areaLitInput, areaLitDiffuse, areaLitSpecular, true, areaLitSpecularEnabled);
