@@ -157,6 +157,9 @@ namespace Graphlit
 
         static readonly PropertyDescriptor _decalery = new(PropertyType.Float, "Decalery", "_Decalery") { customAttributes = "[Toggle(_DECALERY)] [Folder(Advanced Options)]" };
 
+        static readonly PropertyDescriptor _cbirpProp = new(PropertyType.Float, "CBIRP", "_CBIRP") { customAttributes = "[Toggle(_CBIRP)] [Header(Clustered BIRP)] [Folder(Advanced Options)]" };
+        static readonly PropertyDescriptor _cbirpReflectionsProp = new(PropertyType.Float, "CBIRP Reflections", "_CBIRP_Reflections") { customAttributes = "[Toggle(_CBIRP_REFLECTIONS)] [Folder(Advanced Options)]" };
+
         void AddAreaLitProperties(ShaderBuilder builder)
         {
             var p = builder.properties;
@@ -241,6 +244,11 @@ namespace Graphlit
             {
                 AddAreaLitProperties(builder);
             }
+            if (_cbirpExists && !_cbirp)
+            {
+                builder.properties.Add(_cbirpProp);
+                builder.properties.Add(_cbirpReflectionsProp);
+            }
 
             builder.properties.Add(_decalery);
 
@@ -314,6 +322,11 @@ namespace Graphlit
                     {
                         pass.pragmas.Add("#define _CBIRP_REFLECTIONS");
                     }
+                }
+                if (_cbirpExists && !_cbirp)
+                {
+                    pass.pragmas.Add("#pragma shader_feature_local_fragment _CBIRP");
+                    pass.pragmas.Add("#pragma shader_feature_local_fragment _CBIRP_REFLECTIONS");
                 }
                 if (_areaLitExists)
                 {
