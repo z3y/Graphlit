@@ -157,13 +157,28 @@ namespace Graphlit
 
         static readonly PropertyDescriptor _decalery = new(PropertyType.Float, "Decalery", "_Decalery") { customAttributes = "[Toggle(_DECALERY)] [Folder(Advanced Options)]" };
 
+        void AddAreaLitProperties(ShaderBuilder builder)
+        {
+            var p = builder.properties;
+            p.Add(new(PropertyType.Float, "Area Lit", "_AreaLitToggle") { customAttributes = "[Toggle(_AREALIT)] [Header(Area Lit)] [Folder(Advanced Options)]" });
+            p.Add(new(PropertyType.Texture2D, "Light Mesh", "_LightMesh") { customAttributes = "[Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.black});
+            p.Add(new(PropertyType.Texture2D, "Light Texture 0", "_LightTex0") { customAttributes = "[Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.white });
+            p.Add(new(PropertyType.Texture2D, "Light Texture 1", "_LightTex1") { customAttributes = "[Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.black });
+            p.Add(new(PropertyType.Texture2D, "Light Texture 2", "_LightTex2") { customAttributes = "[Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.black });
+            p.Add(new(PropertyType.Texture2DArray, "Light Texture 3", "_LightTex3") { customAttributes = "[Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.black });
+            p.Add(new(PropertyType.Float, "Opaque Lights", "_OpaqueLights") { customAttributes = "[ToggleOff] [Folder(Advanced Options)]", FloatValue = 1 });
+        }
+
         const string _ltcgiPath = "Packages/at.pimaker.ltcgi/Shaders/LTCGI.cginc";
         const string _cbirpPath = "Packages/z3y.clusteredbirp/Shaders/cbirp.hlsl";
         const string _vrcLightVolumesPath = "Packages/red.sim.lightvolumes/Shaders/LightVolumes.cginc";
+        const string _areaLitPath = "Assets/AreaLit/Shader/Lighting.hlsl";
+
 
         static bool _ltcgiExists = System.IO.File.Exists(_ltcgiPath);
         static bool _cbirpExists = System.IO.File.Exists(_cbirpPath);
         static bool _lightVolumesExists = System.IO.File.Exists(_vrcLightVolumesPath);
+        static bool _areaLitExists = System.IO.File.Exists(_areaLitPath);
 
         const string Vertex = "Packages/com.z3y.graphlit/ShaderLibrary/Vertex.hlsl";
         const string FragmentForward = "Packages/com.z3y.graphlit/ShaderLibrary/FragmentForwardPBR.hlsl";
@@ -172,12 +187,12 @@ namespace Graphlit
         const string FragmentDepth = "Packages/com.z3y.graphlit/ShaderLibrary/FragmentDepth.hlsl";
         const string FragmentDepthNormals = "Packages/com.z3y.graphlit/ShaderLibrary/FragmentDepthNormals.hlsl";
 
-
         public override void OnBeforeBuild(ShaderBuilder builder)
         {
             builder.dependencies.Add(_ltcgiPath);
             builder.dependencies.Add(_cbirpPath);
             builder.dependencies.Add(_vrcLightVolumesPath);
+            builder.dependencies.Add(_areaLitPath);
 
 
             builder.properties.Add(_surfaceOptions);
@@ -203,6 +218,7 @@ namespace Graphlit
             builder.properties.Add(_queueOffset);
 
 
+
             if (_specular)
             {
                 builder.properties.Add(_specularHighlights);
@@ -220,6 +236,10 @@ namespace Graphlit
             if (_lightVolumesExists)
             {
                 builder.properties.Add(_lightVolumes);
+            }
+            if (_areaLitExists)
+            {
+                AddAreaLitProperties(builder);
             }
 
             builder.properties.Add(_decalery);
@@ -294,6 +314,10 @@ namespace Graphlit
                     {
                         pass.pragmas.Add("#define _CBIRP_REFLECTIONS");
                     }
+                }
+                if (_areaLitExists)
+                {
+                    pass.pragmas.Add("#pragma shader_feature_local_fragment _AREALIT");
                 }
 
                 pass.pragmas.Add(NormalDropoffDefine());

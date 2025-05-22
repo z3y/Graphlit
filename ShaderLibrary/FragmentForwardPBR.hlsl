@@ -2,10 +2,12 @@
 
 #include "GlobalIllumination/ClusteredBIRP.hlsl"
 #include "GlobalIllumination/LTCGI.hlsl"
+#include "GlobalIllumination/AreaLit.hlsl"
 
 #ifdef _ACES
     #include "ACES.hlsl"
 #endif
+
 
 float4 frag(Varyings input) : SV_Target
 {
@@ -164,6 +166,10 @@ float4 frag(Varyings input) : SV_Target
             SAMPLE_TEXTURE2D(_ReflectionTex1, sampler_BilinearClamp, mirrorUV);
         alpha *= mirrorReflection.a;
         indirectSpecular = mirrorReflection.rgb;
+    #endif
+
+    #ifdef _AREALIT
+        IntegrateAreaLit(diffuse, indirectSpecular, fragment, shading);
     #endif
 
     half3 brdf;
