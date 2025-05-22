@@ -133,7 +133,7 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
                 #else
                 #endif
                 half4 cookieTex = SAMPLE_TEXTURE2D(_LightTexture0, sampler_LightTexture0, spotUV);
-                light.color *= IsDefaultCookie() ? 1.0 : lerp(1.0, cookieTex.rgb, cookieTex.a);
+                light.color *= IsDefaultCookie() ? 1.0 : cookieTex.rgb;
             #endif
         #endif
 
