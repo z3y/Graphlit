@@ -108,7 +108,7 @@ float4 frag(Varyings input) : SV_Target
 
     half3 indirectSpecular = 0;
 #ifndef UNITY_PASS_FORWARDADD
-#ifndef _GLOSSYREFLECTIONS_OFF
+#if !defined(_GLOSSYREFLECTIONS_OFF) && !defined(_CBIRP_REFLECTIONS)
     indirectSpecular = CalculateIrradianceFromReflectionProbes(shading.reflectVector,
         positionWS, shading.perceptualRoughness, 0, fragment.normalWS);
 #endif
@@ -152,7 +152,7 @@ float4 frag(Varyings input) : SV_Target
         ComputeCBIRPLights(diffuse, specular, cluster, shadowmask, fragment, shading, surface);
 
         #ifdef _CBIRP_REFLECTIONS
-            indirectSpecular = CBIRP::SampleProbes(cluster, shading.reflectVector, fragment.positionWS, surface.Roughness).xyz;
+            indirectSpecular += CBIRP::SampleProbes(cluster, shading.reflectVector, fragment.positionWS, surface.Roughness).xyz;
         #endif
     #endif
 
