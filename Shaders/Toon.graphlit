@@ -26,7 +26,7 @@
                 "displayName": "Color",
                 "type": 5,
                 "customAttributes": "",
-                "defaultAttributes": 0,
+                "defaultAttributes": 4,
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "(1.00, 1.00, 1.00, 1.00)",
@@ -43,7 +43,7 @@
                 "referenceName": "_MainTex",
                 "displayName": "Main Texture",
                 "type": 7,
-                "customAttributes": "",
+                "customAttributes": "[ExtraProperty(_Color)]",
                 "defaultAttributes": 0,
                 "rangeX": 0.0,
                 "rangeY": 0.0,
@@ -71,7 +71,7 @@
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
-                "declaration": 0,
+                "declaration": 1,
                 "keywordPassFlags": 0
             },
             {
@@ -80,7 +80,7 @@
                 "displayName": "Normal Scale",
                 "type": 1,
                 "customAttributes": "",
-                "defaultAttributes": 0,
+                "defaultAttributes": 4,
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "1",
@@ -97,7 +97,7 @@
                 "referenceName": "_BumpMap",
                 "displayName": "Normal Map",
                 "type": 7,
-                "customAttributes": "",
+                "customAttributes": "[Toggle(_NORMALMAP)]\n[ExtraProperty(_BumpScale)]",
                 "defaultAttributes": 96,
                 "rangeX": 0.0,
                 "rangeY": 0.0,
@@ -115,7 +115,7 @@
                 "referenceName": "shader_feature_local _EMISSION",
                 "displayName": "Enable Emission",
                 "type": 13,
-                "customAttributes": "",
+                "customAttributes": "[Folder(Emission)]",
                 "defaultAttributes": 0,
                 "rangeX": 0.0,
                 "rangeY": 0.0,
@@ -133,8 +133,8 @@
                 "referenceName": "_EmissionColor",
                 "displayName": "Emission Color",
                 "type": 5,
-                "customAttributes": "",
-                "defaultAttributes": 2,
+                "customAttributes": "[Folder(Emission)]",
+                "defaultAttributes": 6,
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "(1.00, 1.00, 1.00, 1.00)",
@@ -151,25 +151,7 @@
                 "referenceName": "_EmissionMap",
                 "displayName": "Emission Map",
                 "type": 7,
-                "customAttributes": "[Toggle(_EMISSION)]",
-                "defaultAttributes": 0,
-                "rangeX": 0.0,
-                "rangeY": 0.0,
-                "_value": "",
-                "_autoKeywordName": "",
-                "_defaultTexture": "",
-                "_defaultTextureObject": {
-                    "instanceID": 0
-                },
-                "declaration": 0,
-                "keywordPassFlags": 0
-            },
-            {
-                "guid": "4d592057-5f8c-4f7e-9522-c39766fdd8ab",
-                "referenceName": "",
-                "displayName": "Toon Shadow",
-                "type": 1,
-                "customAttributes": "[Foldout]",
+                "customAttributes": "[ExtraProperty(_EmissionColor)]\n[Folder(Emission)]",
                 "defaultAttributes": 0,
                 "rangeX": 0.0,
                 "rangeY": 0.0,
@@ -187,7 +169,7 @@
                 "referenceName": "_ShadowStrength",
                 "displayName": "Shadow Strength",
                 "type": 1,
-                "customAttributes": "",
+                "customAttributes": "[Folder(Toon Shadow)]",
                 "defaultAttributes": 0,
                 "rangeX": 0.0,
                 "rangeY": 1.0,
@@ -205,7 +187,7 @@
                 "referenceName": "_ShadowMainStrength",
                 "displayName": "Contrast",
                 "type": 1,
-                "customAttributes": "",
+                "customAttributes": "[Folder(Toon Shadow)]",
                 "defaultAttributes": 0,
                 "rangeX": 0.0,
                 "rangeY": 1.0,
@@ -223,7 +205,7 @@
                 "referenceName": "_ShadowColor",
                 "displayName": "Color",
                 "type": 5,
-                "customAttributes": "[Header(Layer 1)]",
+                "customAttributes": "[Header(Layer 1)]\n[Folder(Toon Shadow)]",
                 "defaultAttributes": 0,
                 "rangeX": 0.0,
                 "rangeY": 0.0,
@@ -241,7 +223,7 @@
                 "referenceName": "_ShadowBorder",
                 "displayName": "Border",
                 "type": 1,
-                "customAttributes": "",
+                "customAttributes": "\n[Folder(Toon Shadow)]",
                 "defaultAttributes": 0,
                 "rangeX": 0.0,
                 "rangeY": 1.0,
@@ -259,7 +241,7 @@
                 "referenceName": "_ShadowBlur",
                 "displayName": "Blur",
                 "type": 1,
-                "customAttributes": "",
+                "customAttributes": "\n[Folder(Toon Shadow)]",
                 "defaultAttributes": 0,
                 "rangeX": 0.0,
                 "rangeY": 1.0,
@@ -277,7 +259,7 @@
                 "referenceName": "_Shadow2ndColor",
                 "displayName": "Color",
                 "type": 5,
-                "customAttributes": "[Header(Layer 2)]",
+                "customAttributes": "[Header(Layer 2)]\n[Folder(Toon Shadow)]",
                 "defaultAttributes": 0,
                 "rangeX": 0.0,
                 "rangeY": 0.0,
@@ -295,7 +277,7 @@
                 "referenceName": "_Shadow2ndBorder",
                 "displayName": "Border",
                 "type": 1,
-                "customAttributes": "",
+                "customAttributes": "\n[Folder(Toon Shadow)]",
                 "defaultAttributes": 0,
                 "rangeX": 0.0,
                 "rangeY": 1.0,
@@ -313,7 +295,7 @@
                 "referenceName": "_Shadow2ndBlur",
                 "displayName": "Blur",
                 "type": 1,
-                "customAttributes": "",
+                "customAttributes": "\n[Folder(Toon Shadow)]",
                 "defaultAttributes": 0,
                 "rangeX": 0.0,
                 "rangeY": 1.0,
@@ -331,7 +313,7 @@
                 "referenceName": "_ShadowBorderColor",
                 "displayName": "Border Color",
                 "type": 5,
-                "customAttributes": "[Header(Border)]",
+                "customAttributes": "[Header(Border)]\n[Folder(Toon Shadow)]",
                 "defaultAttributes": 0,
                 "rangeX": 0.0,
                 "rangeY": 0.0,
@@ -349,29 +331,11 @@
                 "referenceName": "_ShadowBorderRange",
                 "displayName": "Border Range",
                 "type": 1,
-                "customAttributes": "",
+                "customAttributes": "\n[Folder(Toon Shadow)]",
                 "defaultAttributes": 0,
                 "rangeX": 0.0,
                 "rangeY": 1.0,
                 "_value": "0.08",
-                "_autoKeywordName": "",
-                "_defaultTexture": "",
-                "_defaultTextureObject": {
-                    "instanceID": 0
-                },
-                "declaration": 0,
-                "keywordPassFlags": 0
-            },
-            {
-                "guid": "cc428241-eaaa-42ab-b013-2b882539ed01",
-                "referenceName": "",
-                "displayName": "Other Properties",
-                "type": 1,
-                "customAttributes": "[Foldout]",
-                "defaultAttributes": 0,
-                "rangeX": 0.0,
-                "rangeY": 0.0,
-                "_value": "",
                 "_autoKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
@@ -385,7 +349,7 @@
         "defaultPreviewState": 1,
         "customEditor": "",
         "fallback": "",
-        "include": "",
+        "include": "// #define _VRC_LIGHTVOLUMES\r",
         "outlinePass": 0,
         "depthFillPass": false,
         "stencil": false,
@@ -636,28 +600,6 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n  Out = In;\\n}\",\"_file\":\"10900000|fa0b22f8d58a1354c91b9116d4de514b\",\"_shaderInclude\":{\"instanceID\":0},\"_useFile\":true}"
-        },
-        {
-            "type": "Graphlit.SampleTexture2DNode",
-            "guid": "4276950c-4957-4915-a814-32fb5aa5701d",
-            "x": -1577,
-            "y": 215,
-            "connections": [
-                {
-                    "a": 0,
-                    "b": 1,
-                    "node": "6402346a-12c4-4df6-82db-a806167357fc"
-                },
-                {
-                    "a": 1,
-                    "b": 0,
-                    "node": "cec36d1f-e00d-4974-aa29-f661ce5efa6d"
-                }
-            ],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": "{\"autoKeyword\":false}"
         },
         {
             "type": "Graphlit.KeywordPropertyNode",
@@ -1100,23 +1042,6 @@
             "data": "{\"_value\":0.0}"
         },
         {
-            "type": "Graphlit.CustomFunctionNode",
-            "guid": "fb66b3f1-9077-49a9-a96a-bfcf84ec8d2e",
-            "x": 1345,
-            "y": -847,
-            "connections": [
-                {
-                    "a": 0,
-                    "b": 12,
-                    "node": "fedc5239-8394-4a18-a5ed-724a110be3ee"
-                }
-            ],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n  Out = In;\\n}\",\"_file\":\"10900000|0a82b6bc76dc7334aaaf01a5783e3a91\",\"_shaderInclude\":{\"instanceID\":0},\"_useFile\":true}"
-        },
-        {
             "type": "Graphlit.FetchVariableNode",
             "guid": "feff15fd-d284-4f25-b604-d0adde5bc1a5",
             "x": 1623,
@@ -1427,6 +1352,45 @@
             "data": ""
         },
         {
+            "type": "Graphlit.PreviewNode",
+            "guid": "3adda51b-4e9e-43b2-8487-dd0a10ee46b4",
+            "x": -758,
+            "y": -907,
+            "connections": [
+                {
+                    "a": 102,
+                    "b": 0,
+                    "node": "c7813f37-f0c1-4c78-b8ad-742d7f99c181"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": false,
+            "data": "{}"
+        },
+        {
+            "type": "Graphlit.SampleTexture2DNode",
+            "guid": "4276950c-4957-4915-a814-32fb5aa5701d",
+            "x": -1577,
+            "y": 215,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 1,
+                    "node": "6402346a-12c4-4df6-82db-a806167357fc"
+                },
+                {
+                    "a": 1,
+                    "b": 0,
+                    "node": "cec36d1f-e00d-4974-aa29-f661ce5efa6d"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"autoKeyword\":false}"
+        },
+        {
             "type": "Graphlit.CustomFunctionNode",
             "guid": "da34059b-491c-45f3-9d35-d6f83e3152a3",
             "x": 1847,
@@ -1504,21 +1468,21 @@
             "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n  Out = In;\\n}\",\"_file\":\"10900000|42fecaeeebecd4a449f4c88a7df51734\",\"_shaderInclude\":{\"instanceID\":0},\"_useFile\":true}"
         },
         {
-            "type": "Graphlit.PreviewNode",
-            "guid": "3adda51b-4e9e-43b2-8487-dd0a10ee46b4",
-            "x": -758,
-            "y": -907,
+            "type": "Graphlit.CustomFunctionNode",
+            "guid": "fb66b3f1-9077-49a9-a96a-bfcf84ec8d2e",
+            "x": 1345,
+            "y": -847,
             "connections": [
                 {
-                    "a": 102,
-                    "b": 0,
-                    "node": "c7813f37-f0c1-4c78-b8ad-742d7f99c181"
+                    "a": 0,
+                    "b": 12,
+                    "node": "fedc5239-8394-4a18-a5ed-724a110be3ee"
                 }
             ],
             "precision": 0,
             "preview": 0,
-            "previewDisabled": false,
-            "data": "{}"
+            "previewDisabled": true,
+            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n  Out = In;\\n}\",\"_file\":\"10900000|0a82b6bc76dc7334aaaf01a5783e3a91\",\"_shaderInclude\":{\"instanceID\":0},\"_useFile\":true}"
         },
         {
             "type": "Graphlit.UnlitTemplate",
@@ -1545,7 +1509,18 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": false,
-            "data": "{\"defaultMode\":0,\"defaultCull\":2,\"_customLighting\":true}"
+            "data": "{\"forceNoShadowCasting\":false,\"defaultMode\":0,\"defaultCull\":2,\"_customLighting\":true}"
+        },
+        {
+            "type": "Graphlit.BooleanConstantNode",
+            "guid": "b6001b53-cbcf-4621-8944-627a6b1a65fa",
+            "x": 1106,
+            "y": -839,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_value\":false}"
         }
     ],
     "groups": [
