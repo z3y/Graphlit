@@ -116,7 +116,8 @@ namespace Graphlit
                 EditorGUI.indentLevel = baseIndentation;
                 CoreEditorUtils.DrawSplitter();
                 const string folderPrefix = "folder_";
-                bool folderVisible = _material.GetTag(folderPrefix + folder.name, false, "1") == "1";
+                string defaultValue = folder.name == "Surface Inputs" ? "1" : "0";
+                bool folderVisible = _material.GetTag(folderPrefix + folder.name, false, defaultValue) == "1";
                 bool folderVisibleChange = CoreEditorUtils.DrawHeaderFoldout(folder.name, folderVisible);
                 if (folderVisible != folderVisibleChange)
                 {
