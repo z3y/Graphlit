@@ -579,6 +579,24 @@
                 "keywordPassFlags": 0
             },
             {
+                "guid": "94845a02-3078-4e16-9e92-7e45268e10e2",
+                "referenceName": "_DetailMaskInfo",
+                "displayName": "Detail Mask sampled from Mask Map Alpha",
+                "type": 1,
+                "customAttributes": "[HelpBox]\n[Folder(Detail)]",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1
+            },
+            {
                 "guid": "c9accaf6-fbb8-4c71-b2d8-f56f0b214b28",
                 "referenceName": "shader_feature_local_vertex _WIND",
                 "displayName": "Enable Wind",

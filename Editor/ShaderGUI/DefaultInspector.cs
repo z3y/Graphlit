@@ -1,4 +1,4 @@
-using UnityEditor;
+/*using UnityEditor;
 using UnityEngine;
 using UnityEditor.Rendering;
 using System;
@@ -144,14 +144,14 @@ namespace Graphlit
                 {
                     p.onGui = (e, p, g) => RenderingModeProperty(e, p, g);
                 }
-                /*else if (referenceName == "_OutlineToggle")
+                *//*else if (referenceName == "_OutlineToggle")
                 {
                     p.onGui = (e, p, g) => OutlinePassToggle(e, p, g);
                 }*/
                 /*else if (referenceName == "_GrabpassToggle")
                 {
                     p.onGui = (e, p, g) => GrabpassToggle(e, p, g);
-                }*/
+                }*//*
                 else if (materialProperty.type == MaterialProperty.PropType.Texture)
                 {
                     var textureToggleAttribute = attributes.FirstOrDefault(x => x.StartsWith("AutoKeyword("));
@@ -373,4 +373,4 @@ namespace Graphlit
                 material.DisableKeyword(keyword);
         }
     }
-}
+}*/

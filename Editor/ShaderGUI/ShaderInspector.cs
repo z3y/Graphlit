@@ -202,6 +202,7 @@ namespace Graphlit
                                 materialEditor.TextureScaleOffsetProperty(materialProperty);
                             }
                             if (element.linearWarning) LinearWarning(materialProperty);
+                            if (materialProperty.flags.HasFlag(MaterialProperty.PropFlags.Normal)) GlNormalWarning(materialProperty);
                             break;
                         case PropertyElementType.MinMax:
                             Vector2MinMaxProperty(materialEditor, materialProperty, element.guiContent, element.minMax.x, element.minMax.y);
