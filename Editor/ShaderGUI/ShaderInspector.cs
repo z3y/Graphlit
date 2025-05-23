@@ -194,11 +194,12 @@ namespace Graphlit
                         case PropertyElementType.Texture:
                             //TextureProperty(materialEditor, materialProperty, element.guiContent);
                             MaterialProperty extraProperty = null;
+                            materialEditor.TexturePropertySingleLine(element.guiContent, materialProperty);
                             if (element.extraProperty >= 0)
                             {
                                 extraProperty = properties[element.extraProperty];
+                                TexturePropertySingleLineExtraProp(materialEditor, element.guiContent, extraProperty);
                             }
-                            materialEditor.TexturePropertySingleLine(element.guiContent, materialProperty, extraProperty);
                             if (!materialProperty.flags.HasFlag(MaterialProperty.PropFlags.NoScaleOffset))
                             {
                                 materialEditor.TextureScaleOffsetProperty(materialProperty);
