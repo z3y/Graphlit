@@ -6,23 +6,27 @@
 #define UNITY_SHOULD_SAMPLE_SH 1
 #endif
 
+#ifdef _VRC_LIGHTVOLUMES
+    #include "Packages/red.sim.lightvolumes/Shaders/LightVolumes.cginc"
+#endif
+
 #define OPENLIT_FALLBACK_DIRECTION  float4(0.001,0.002,0.001,0)
-void ShadeSH9ToonDouble(float3 lightDirection, out float3 shMax, out float3 shMin)
+void ShadeSH9ToonDouble(float3 lightDirection, out float3 shMax, out float3 shMin, half3 L1r, half3 L1g, half3 L1b, half3 L0)
 {
     #if !defined(LIGHTMAP_ON) && UNITY_SHOULD_SAMPLE_SH
         float3 N = lightDirection * 0.666666;
         float4 vB = N.xyzz * N.yzzx;
         // L0 L2
-        float3 res = float3(unity_SHAr.w,unity_SHAg.w,unity_SHAb.w);
+        float3 res = L0;
         res.r += dot(unity_SHBr, vB);
         res.g += dot(unity_SHBg, vB);
         res.b += dot(unity_SHBb, vB);
         res += unity_SHC.rgb * (N.x * N.x - N.y * N.y);
         // L1
         float3 l1;
-        l1.r = dot(unity_SHAr.rgb, N);
-        l1.g = dot(unity_SHAg.rgb, N);
-        l1.b = dot(unity_SHAb.rgb, N);
+        l1.r = dot(L1r.rgb, N);
+        l1.g = dot(L1g.rgb, N);
+        l1.b = dot(L1b.rgb, N);
         shMax = res + l1;
         shMin = res - l1;
         #if defined(UNITY_COLORSPACE_GAMMA)
@@ -54,7 +58,8 @@ float3 ComputeCustomLightDirection(float4 lightDirectionOverride)
     return lightDirectionOverride.w ? customDir : lightDirectionOverride.xyz;
 }
 
-void ComputeLightDirection(float3 mainLightDir, float3 mainLightCol, out float3 lightDirection, out float3 lightDirectionForSH9)
+void ComputeLightDirection(float3 mainLightDir, float3 mainLightCol, out float3 lightDirection, out float3 lightDirectionForSH9,
+    half3 L1r, half3 L1g, half3 L1b)
 {
     float3 mainDir = mainLightDir * OpenLitLuminance(mainLightCol);
     #if !defined(LIGHTMAP_ON) && UNITY_SHOULD_SAMPLE_SH
@@ -76,20 +81,29 @@ void FlatLightNode(float4 ShadowCoord, float2 LightmapUV, float3 PositionWS, out
 {
     shMin = 0;
     shMax = 0;
-	#ifdef PREVIEW
+	#if defined(PREVIEW) || defined(LIGHTMAP_ON)
 		Color = 1.0;
 		Direction = normalize(float3(1,1,0));
         DistanceAttenuation = 1;
         ShadowAttenuation = 1;
 	#else
+
+        half3 L0 = float3(unity_SHAr.w, unity_SHAg.w, unity_SHAb.w);
+        half3 L1r = unity_SHAr.rgb;
+        half3 L1g = unity_SHAg.rgb;
+        half3 L1b = unity_SHAb.rgb;
+    #ifdef _VRC_LIGHTVOLUMES
+        LightVolumeSH(PositionWS, L0, L1r, L1g, L1b);
+    #endif
+    
 		float3 lightCol;
 		float3 lightDir;
         MainLightData(ShadowCoord, LightmapUV, PositionWS, lightCol, lightDir, DistanceAttenuation, ShadowAttenuation);
 		float3 lightDirectionForSH9;
-		ComputeLightDirection(lightDir, lightCol, Direction, lightDirectionForSH9);
+		ComputeLightDirection(lightDir, lightCol, Direction, lightDirectionForSH9, L1r, L1g, L1b);
 
 		#if defined(UNITY_PASS_FORWARDBASE) || defined(OUTLINE_PASS) || defined(UNIVERSAL_FORWARD)
-			ShadeSH9ToonDouble(lightDirectionForSH9, shMax, shMin);
+			ShadeSH9ToonDouble(lightDirectionForSH9, shMax, shMin, L1r, L1g, L1b, L0);
 		#endif
 
         if (applyShadow)
