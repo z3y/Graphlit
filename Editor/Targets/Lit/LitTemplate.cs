@@ -164,12 +164,14 @@ namespace Graphlit
         {
             var p = builder.properties;
             p.Add(new(PropertyType.Float, "Area Lit", "_AreaLitToggle") { customAttributes = "[Toggle(_AREALIT)] [Header(Area Lit)] [Folder(Advanced Options)]" });
-            p.Add(new(PropertyType.Texture2D, "Light Mesh", "_LightMesh") { customAttributes = "[Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.black });
-            p.Add(new(PropertyType.Texture2D, "Light Texture 0", "_LightTex0") { customAttributes = "[Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.white });
-            p.Add(new(PropertyType.Texture2D, "Light Texture 1", "_LightTex1") { customAttributes = "[Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.black });
-            p.Add(new(PropertyType.Texture2D, "Light Texture 2", "_LightTex2") { customAttributes = "[Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.black });
-            p.Add(new(PropertyType.Texture2DArray, "Light Texture 3", "_LightTex3") { customAttributes = "[Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.black });
-            p.Add(new(PropertyType.Float, "Opaque Lights", "_OpaqueLights") { customAttributes = "[ToggleOff] [Folder(Advanced Options)]", FloatValue = 1 });
+            p.Add(new(PropertyType.Texture2D, "Light Mesh", "_LightMesh") { customAttributes = "[ShowIf(_AreaLitToggle, 1)] [Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.black });
+            p.Add(new(PropertyType.Texture2D, "Light Texture 0", "_LightTex0") { customAttributes = "[ShowIf(_AreaLitToggle, 1)] [Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.white });
+            p.Add(new(PropertyType.Texture2D, "Light Texture 1", "_LightTex1") { customAttributes = "[ShowIf(_AreaLitToggle, 1)] [Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.black });
+            p.Add(new(PropertyType.Texture2D, "Light Texture 2", "_LightTex2") { customAttributes = "[ShowIf(_AreaLitToggle, 1)] [Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.black });
+            p.Add(new(PropertyType.Texture2DArray, "Light Texture 3", "_LightTex3") { customAttributes = "[ShowIf(_AreaLitToggle, 1)] [Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.black });
+            p.Add(new(PropertyType.Float, "Opaque Lights", "_OpaqueLights") { customAttributes = "[ShowIf(_AreaLitToggle, 1)] [ToggleOff] [Folder(Advanced Options)]", FloatValue = 1 });
+            p.Add(new(PropertyType.Texture2D, "Shadow Mask (RGBA)", "_AreaLitOcclusion") { customAttributes = "[ShowIf(_AreaLitToggle, 1)] [Folder(Advanced Options)] [NoScaleOffset]", DefaultTextureEnum = DefaultTextureName.white });
+
         }
 
         const string _ltcgiPath = "Packages/at.pimaker.ltcgi/Shaders/LTCGI.cginc";

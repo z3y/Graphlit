@@ -3,6 +3,8 @@
 #ifdef _AREALIT
 #include "Assets/AreaLit/Shader/Lighting.hlsl"
 
+TEXTURE2D(_AreaLitOcclusion);
+
 void IntegrateAreaLit(inout half3 diffuse, inout half3 reflection, FragmentData fragment, ShadingData shading)
 {
     AreaLightFragInput areaLitInput = (AreaLightFragInput)0;
@@ -17,7 +19,11 @@ void IntegrateAreaLit(inout half3 diffuse, inout half3 reflection, FragmentData 
     areaLitInput.normal = shading.normalWS;
     areaLitInput.view = fragment.viewDirectionWS;
     areaLitInput.roughness = shading.perceptualRoughness * shading.perceptualRoughness;
+    #ifdef LIGHTMAP_ON
+    areaLitInput.occlusion = SAMPLE_TEXTURE2D_LOD(_AreaLitOcclusion, sampler_BilinearClamp, fragment.lightmapUV.xy, 0);
+    #else
     areaLitInput.occlusion = 1;
+    #endif
     areaLitInput.screenPos = fragment.positionNDC;
     ShadeAreaLights(areaLitInput, areaLitDiffuse, areaLitSpecular, true, areaLitSpecularEnabled);
     reflection += areaLitSpecular;
