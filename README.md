@@ -17,20 +17,35 @@ Supports the built-in and universal render pipeline.
 
 ## Highlighted Features
 
-- CoreRP
-- Create Toon shaders based on [Open Lit](https://github.com/lilxyzw/OpenLit)
-- Create PBR shaders with [Bakery](https://assetstore.unity.com/packages/tools/level-design/bakery-gpu-lightmapper-122218) Features
+### PBR Features
+
+- Based on CoreRP
+- [Bakery](https://assetstore.unity.com/packages/tools/level-design/bakery-gpu-lightmapper-122218) Features (MonoSH, Lightmapped Specular, Bicubic Lightmap)
+- [LTCGI](https://github.com/PiMaker/ltcgi), [AreaLit](https://booth.pm/ja/items/3661829)
+- [Clustered BIRP](https://github.com/z3y/ClusteredBIRP)
+- [VRC Light Volumes](https://github.com/REDSIM/VRCLightVolumes)
+- PCF shadow filtering for point and spot lights
+- Inverse square falloff
+- Specular Occlusion
+- Contact Hardening
+- Horizon Occlusion
+- Alpha To Coverage
+- Energy Conservation
+- Multi Bounce AO
+- Micro Shadowing
+
+### Shader Editor
+
+- Create PBR or Toon shaders
 - Full custom lighting with the Unlit graph with access to the Light Color, Direction, Shadow Attenuation and Distance Attenuation
 - Outlines
-- High quality node previews
+- Highest quality node previews
 - Register/Fetch variable nodes
 - Live Preview
+- Varyings Packing
+- Keyword properties pass flags option
+  - Reduces shader variants, code, varings and attributes for the true branch
 - [Hotkeys](https://z3y.github.io/Graphlit/hotkeys)
-- Softer shadow filtering for point and spot lights
-- Inverse square falloff for lights
-- [ClusteredBIRP](https://github.com/z3y/ClusteredBIRP)
-- [LTCGI](https://github.com/PiMaker/ltcgi)
-- [VRC Light Volumes](https://github.com/REDSIM/VRCLightVolumes)
 
 ### Universal Render Pipeline
 
