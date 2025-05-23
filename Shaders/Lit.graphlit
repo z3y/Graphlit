@@ -97,7 +97,7 @@
                 "referenceName": "_MaskMap",
                 "displayName": "Mask Map (ARM)",
                 "type": 7,
-                "customAttributes": "[Tooltip(AO, Roughness, Metallic, Detail Mask)]\n[Toggle(_MASKMAP)]",
+                "customAttributes": "[Tooltip(AO, Roughness, Metallic, Detail Mask)]\n[Toggle(_MASKMAP)]\n[PackMaskMap]",
                 "defaultAttributes": 2592,
                 "rangeX": 0.0,
                 "rangeY": 0.0,

@@ -36,6 +36,7 @@ namespace Graphlit
             public bool linearWarning;
             public int extraProperty = -1;
             public bool helpBox;
+            public bool maskMapPack;
         }
 
         public class PropertyFolder
@@ -201,8 +202,10 @@ namespace Graphlit
                             {
                                 materialEditor.TextureScaleOffsetProperty(materialProperty);
                             }
+                            if (element.maskMapPack) MaskMapPackingButton(materialEditor, materialProperty);
                             if (element.linearWarning) LinearWarning(materialProperty);
                             if (materialProperty.flags.HasFlag(MaterialProperty.PropFlags.Normal)) GlNormalWarning(materialProperty);
+
                             break;
                         case PropertyElementType.MinMax:
                             Vector2MinMaxProperty(materialEditor, materialProperty, element.guiContent, element.minMax.x, element.minMax.y);
@@ -360,6 +363,9 @@ namespace Graphlit
             element.folder = TryParseStringParam(attributes, "Folder");
 
             element.helpBox = attributes.Contains("HelpBox");
+
+            element.maskMapPack = attributes.Contains("PackMaskMap");
+
 
             string intent = TryParseStringParam(attributes, "Indent");
             if (!string.IsNullOrEmpty(intent))
@@ -931,6 +937,33 @@ namespace Graphlit
             UpgradeMode(m, true, false, previousMode);
 
             MaterialEditor.ApplyMaterialPropertyDrawers(m);
+        }
+
+        void MaskMapPackingButton(MaterialEditor editor, MaterialProperty property)
+        {
+            Rect rect = GUILayoutUtility.GetLastRect();
+            rect = MaterialEditor.GetRectAfterLabelWidth(rect);
+            rect.width = 50;
+            //rect.position = new Vector2(Screen.width / 2, rect.position.y);
+            if (editor.targets.Length == 1)
+            {
+                if (GUI.Button(rect, "Pack"))
+                {
+                    FreeImagePackingEditor.Init();
+                    FreeImagePackingEditor.ChannelR.Channel.DefaultColor = FreeImagePacking.DefaultColor.White;
+                    FreeImagePackingEditor.ChannelG.Channel.DefaultColor = FreeImagePacking.DefaultColor.White;
+                    FreeImagePackingEditor.ChannelB.Channel.DefaultColor = FreeImagePacking.DefaultColor.Black;
+                    FreeImagePackingEditor.ChannelA.Channel.DefaultColor = FreeImagePacking.DefaultColor.Black;
+
+                    FreeImagePackingEditor.ChannelR.DisplayName = "Ambient Occlusion";
+                    FreeImagePackingEditor.ChannelG.DisplayName = "Roughness";
+                    FreeImagePackingEditor.ChannelG.InvertDisplayName = "Smoothness";
+                    FreeImagePackingEditor.ChannelB.DisplayName = "Metallic";
+                    FreeImagePackingEditor.ChannelA.DisplayName = "Detail Mask";
+                    FreeImagePackingEditor.packingSuffix = "_MaskMap";
+                    FreeImagePackingEditor.AddPackingMaterial((Material)editor.target, property);
+                }
+            }
         }
     }
 }
