@@ -6,9 +6,6 @@
 #define UNITY_SHOULD_SAMPLE_SH 1
 #endif
 
-#ifdef _VRC_LIGHTVOLUMES
-    #include "Packages/red.sim.lightvolumes/Shaders/LightVolumes.cginc"
-#endif
 
 #define OPENLIT_FALLBACK_DIRECTION  float4(0.001,0.002,0.001,0)
 void ShadeSH9ToonDouble(float3 lightDirection, out float3 shMax, out float3 shMin, half3 L1r, half3 L1g, half3 L1b, half3 L0)

@@ -180,10 +180,10 @@ namespace Graphlit
         const string _areaLitPath = "Assets/AreaLit/Shader/Lighting.hlsl";
 
 
-        static bool _ltcgiExists = System.IO.File.Exists(_ltcgiPath);
-        static bool _cbirpExists = System.IO.File.Exists(_cbirpPath);
-        static bool _lightVolumesExists = System.IO.File.Exists(_vrcLightVolumesPath);
-        static bool _areaLitExists = System.IO.File.Exists(_areaLitPath);
+        bool _ltcgiExists = System.IO.File.Exists(_ltcgiPath);
+        bool _cbirpExists = System.IO.File.Exists(_cbirpPath);
+        bool _lightVolumesExists = System.IO.File.Exists(_vrcLightVolumesPath);
+        bool _areaLitExists = System.IO.File.Exists(_areaLitPath);
 
         const string Vertex = "Packages/com.z3y.graphlit/ShaderLibrary/Vertex.hlsl";
         const string FragmentForward = "Packages/com.z3y.graphlit/ShaderLibrary/FragmentForwardPBR.hlsl";

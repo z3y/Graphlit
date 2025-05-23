@@ -349,7 +349,7 @@
         "defaultPreviewState": 1,
         "customEditor": "",
         "fallback": "",
-        "include": "// #define _VRC_LIGHTVOLUMES\r",
+        "include": "",
         "outlinePass": 0,
         "depthFillPass": false,
         "stencil": false,
@@ -1485,6 +1485,17 @@
             "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n  Out = In;\\n}\",\"_file\":\"10900000|0a82b6bc76dc7334aaaf01a5783e3a91\",\"_shaderInclude\":{\"instanceID\":0},\"_useFile\":true}"
         },
         {
+            "type": "Graphlit.BooleanConstantNode",
+            "guid": "b6001b53-cbcf-4621-8944-627a6b1a65fa",
+            "x": 1106,
+            "y": -839,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_value\":false}"
+        },
+        {
             "type": "Graphlit.UnlitTemplate",
             "guid": "31a6de1d-7e74-41cb-b79d-921e8cbf1dc4",
             "x": 947,
@@ -1510,17 +1521,6 @@
             "preview": 0,
             "previewDisabled": false,
             "data": "{\"forceNoShadowCasting\":false,\"defaultMode\":0,\"defaultCull\":2,\"_customLighting\":true}"
-        },
-        {
-            "type": "Graphlit.BooleanConstantNode",
-            "guid": "b6001b53-cbcf-4621-8944-627a6b1a65fa",
-            "x": 1106,
-            "y": -839,
-            "connections": [],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": "{\"_value\":false}"
         }
     ],
     "groups": [

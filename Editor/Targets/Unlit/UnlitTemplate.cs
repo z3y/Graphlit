@@ -65,8 +65,13 @@ namespace Graphlit
         const string FragmentDepth = "Packages/com.z3y.graphlit/ShaderLibrary/FragmentDepth.hlsl";
         const string FragmentDepthNormals = "Packages/com.z3y.graphlit/ShaderLibrary/FragmentDepthNormals.hlsl";
 
+        const string _vrcLightVolumesPath = "Packages/red.sim.lightvolumes/Shaders/LightVolumes.cginc";
+        bool _lightVolumesExists = System.IO.File.Exists(_vrcLightVolumesPath);
+
         public override void OnBeforeBuild(ShaderBuilder builder)
         {
+            builder.dependencies.Add(_vrcLightVolumesPath);
+
             builder.properties.Add(_surfaceOptions);
             builder.properties.Add(_surfaceBlend);
             builder.properties.Add(_blendModePreserveSpecular);
@@ -155,6 +160,13 @@ namespace Graphlit
                 }
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
+
+
+
+                if (_customLighting && _lightVolumesExists)
+                {
+                    pass.pragmas.Add("#define _VRC_LIGHTVOLUMES");
+                }
 
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
                 builder.AddPass(pass);
