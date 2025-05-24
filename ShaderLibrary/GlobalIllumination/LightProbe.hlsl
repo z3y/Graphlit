@@ -2,6 +2,9 @@
 
 bool ProbeVolumeEnabled()
 {
+    #ifdef _VRC_LIGHTVOLUMES
+        return false;
+    #endif
     #if UNITY_LIGHT_PROBE_PROXY_VOLUME
         return unity_ProbeVolumeParams.x;
     #else
@@ -10,6 +13,8 @@ bool ProbeVolumeEnabled()
 }
 
 #include "ZH3.hlsl"
+
+// #define ZH3
 
 #ifdef _VRC_LIGHTVOLUMES
 #include "Packages/red.sim.lightvolumes/Shaders/LightVolumes.cginc"
@@ -59,12 +64,20 @@ half3 SHEvalLinearL0L1_SampleProbeVolume(float3 normalWS, float3 positionWS)
 half3 SampleSH(float3 normalWS, float3 positionWS)
 {
     #ifdef _VRC_LIGHTVOLUMES
+        #define SH_SKIP_L2
         half3 lvL0;
         half3 lvL1r;
         half3 lvL1g;
         half3 lvL1b;
         LightVolumeSH(positionWS, lvL0, lvL1r, lvL1g, lvL1b);
-        return LightVolumeEvaluate(normalWS, lvL0, lvL1r, lvL1g, lvL1b);
+        // return LightVolumeEvaluate(normalWS, lvL0, lvL1r, lvL1g, lvL1b);
+        unity_SHAr.rgb = lvL1r;
+        unity_SHAg.rgb = lvL1g;
+        unity_SHAb.rgb = lvL1b;
+
+        unity_SHAr.a = lvL0.r;
+        unity_SHAg.a = lvL0.g;
+        unity_SHAb.a = lvL0.b;
     #endif
 
     half3 res = 0;
@@ -76,12 +89,15 @@ half3 SampleSH(float3 normalWS, float3 positionWS)
     else
     {
         #ifdef ZH3
-            res += SHEvalLinearL0L1_ZH3Hallucinate(normalWS);
+            res += SHEvalLinearL0L1_ZH3Hallucinate(normalWS, unity_SHAr, unity_SHAg, unity_SHAb);
         #else
             res += SHEvalLinearL0L1(normalWS, unity_SHAr, unity_SHAg, unity_SHAb);
         #endif
     }
+
+    #ifndef SH_SKIP_L2
     res += SHEvalLinearL2(normalWS, unity_SHBr, unity_SHBg, unity_SHBb, unity_SHC);
+    #endif
 
     res = max(0, res);
 

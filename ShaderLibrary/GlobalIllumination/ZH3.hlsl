@@ -36,13 +36,17 @@ float SHEvalLinearL0L1_ZH3Hallucinate(float4 sh, float3 normal)
 // Evaluate irradiance in direction normal from the linear SH sh,
 // hallucinating the ZH3 coefficient and then using that and linear SH
 // for reconstruction.
-float3 SHEvalLinearL0L1_ZH3Hallucinate(float3 normal)
+float3 SHEvalLinearL0L1_ZH3Hallucinate(float3 normal, float4 SHAr, float4 SHAg, float4 SHAb)
 {
-    float3 shL0 = float3(unity_SHAr.w, unity_SHAg.w, unity_SHAb.w) +
-        float3(unity_SHBr.z, unity_SHBg.z, unity_SHBb.z) / 3.0;
-    float3 shL1_1 = float3(unity_SHAr.y, unity_SHAg.y, unity_SHAb.y);
-    float3 shL1_2 = float3(unity_SHAr.z, unity_SHAg.z, unity_SHAb.z);
-    float3 shL1_3 = float3(unity_SHAr.x, unity_SHAg.x, unity_SHAb.x);
+    float3 shL0 = float3(SHAr.w, SHAg.w, SHAb.w);
+    #ifndef SH_SKIP_L2
+        shL0 += float3(unity_SHBr.z, unity_SHBg.z, unity_SHBb.z) / 3.0;
+    #endif
+
+
+    float3 shL1_1 = float3(SHAr.y, SHAg.y, SHAb.y);
+    float3 shL1_2 = float3(SHAr.z, SHAg.z, SHAb.z);
+    float3 shL1_3 = float3(SHAr.x, SHAg.x, SHAb.x);
 
     float3 result = 0.0;
     float4 a = float4(shL0.r, shL1_1.r, shL1_2.r, shL1_3.r);
