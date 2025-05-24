@@ -5,10 +5,14 @@ Supports the built-in and universal render pipeline.
 
 ### [Discord](https://discord.gg/bw46tKgRFT)
 
-## Installation
+## Setup
 
 - Install with the [VRChat Creator Companion](https://z3y.github.io/vpm-package-listing/) or add the git url
 - To get started read the [Documentation](https://z3y.github.io/Graphlit)
+
+## Support
+
+- If you like this project consider supporting on [Patreon](https://www.patreon.com/z3y)
 
 ## Main Shader
 
