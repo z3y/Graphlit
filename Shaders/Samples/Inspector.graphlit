@@ -12,8 +12,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "9e5a47d6-6c6c-4874-916d-ec432ef2dd13",
@@ -25,8 +30,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "ecde8ef6-caa2-4608-b4a9-9caa7613de06",
@@ -38,8 +48,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "(0.14, 0.17, 0.00, 0.00)",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "7cf3a538-7410-4086-9b21-09f56651c65c",
@@ -51,8 +66,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "64904570-09c7-4e0f-a688-fe9aea15a8be",
@@ -64,8 +84,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "61efa38c-d6a4-4a5a-b329-2c9158252c33",
@@ -77,8 +102,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "(1.00, 0.84, 0.20, 1.00)",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "93ac8b15-aba3-4230-ba65-06c366fb3fc0",
@@ -90,8 +120,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "(1.00, 1.00, 1.00, 1.00)",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "9146b0e4-bf2c-4453-ad10-228b9a5f3fb0",
@@ -103,8 +138,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "9b62c557-156b-451f-9d6f-41bf6e641c57",
@@ -116,8 +156,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "aea20afc-429a-4b53-9219-8d7b2ce1ccf3",
@@ -129,8 +174,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "white",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "2c66f273-c68e-4601-97a9-2bbe55ccf04e",
@@ -142,8 +192,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "54ef52d1-ba85-4119-9abc-385a13d1607e",
@@ -155,8 +210,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "85ae5a77-f8f5-49da-8437-d5681c2fb7d0",
@@ -168,8 +228,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "969c8217-ec41-4e73-8e81-27d24a56feea",
@@ -181,8 +246,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "848c7b75-b18e-43a0-9a0e-aafdbe2b1359",
@@ -194,8 +264,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "d6a725e0-3a6a-4897-9515-7004a7c19f9b",
@@ -207,8 +282,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "fd701001-0a6a-43a3-93bf-e0c15d51b904",
@@ -220,8 +300,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "22869172-ff1f-4349-aa7d-87d20d77de27",
@@ -233,8 +318,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "76045ee2-fab2-4611-aab5-fc743864df2a",
@@ -246,8 +336,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "83fb3d26-7b61-46f2-9fc3-3723e96d666d",
@@ -259,8 +354,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             },
             {
                 "guid": "c3a2b624-c153-48c9-871e-7d39ea0285ac",
@@ -272,8 +372,13 @@
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "",
+                "_autoKeywordName": "",
                 "_defaultTexture": "",
-                "declaration": 0
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 0
             }
         ],
         "precision": 0,
@@ -282,14 +387,30 @@
         "fallback": "",
         "include": "",
         "outlinePass": 0,
+        "depthFillPass": false,
         "stencil": false,
         "vrcFallbackTags": {
             "type": 0,
             "mode": 0,
             "doubleSided": false
-        }
+        },
+        "unlocked": false,
+        "subgraphOutputs": [],
+        "subgraphInputs": [],
+        "subgraphOutputIdCounter": 0
     },
     "nodes": [
+        {
+            "type": "Graphlit.ColorPropertyNode",
+            "guid": "6bbd0a42-cccb-4943-98ef-719627975319",
+            "x": 2543,
+            "y": 104,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": false,
+            "data": "{\"_ref\":\"61efa38c-d6a4-4a5a-b329-2c9158252c33\"}"
+        },
         {
             "type": "Graphlit.UnlitTemplate",
             "guid": "6c88538a-d989-49e2-a626-887656ce0634",
@@ -305,18 +426,7 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": false,
-            "data": ""
-        },
-        {
-            "type": "Graphlit.ColorPropertyNode",
-            "guid": "6bbd0a42-cccb-4943-98ef-719627975319",
-            "x": 2543,
-            "y": 104,
-            "connections": [],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": false,
-            "data": "{\"_ref\":\"61efa38c-d6a4-4a5a-b329-2c9158252c33\"}"
+            "data": "{\"forceNoShadowCasting\":false,\"defaultMode\":0,\"defaultCull\":2,\"_customLighting\":false}"
         }
     ],
     "groups": []

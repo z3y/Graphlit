@@ -38,15 +38,28 @@ namespace Graphlit
 
         public static SerializableGraph StoreGraph(ShaderGraphView graphView)
         {
+            var graphElements = graphView.graphElements.ToList();
+
+            //graphElements.Sort((a, b) => string.Compare(a.viewDataKey, b.viewDataKey, StringComparison.Ordinal));
+
             var serializableGraph = new SerializableGraph
             {
                 data = graphView.graphData,
-                nodes = ElementsToSerializableNode(graphView.graphElements).ToList()
+                nodes = ElementsToSerializableNode(graphElements).ToList()
             };
 
-            serializableGraph.groups = graphView.graphElements
+            serializableGraph.nodes.Sort((a, b) => string.Compare(a.guid, b.guid, StringComparison.Ordinal));
+
+            serializableGraph.groups = graphElements
                 .OfType<Group>()
                 .Select(x => new SerializableGroup(x)).ToList();
+
+            serializableGraph.groups.Sort((a, b) => string.Compare(a.title, b.title, StringComparison.Ordinal));
+
+            foreach (var group in serializableGraph.groups)
+            {
+                group.elements.Sort((a, b) => string.Compare(a, b, StringComparison.Ordinal));
+            }
 
             return serializableGraph;
         }
