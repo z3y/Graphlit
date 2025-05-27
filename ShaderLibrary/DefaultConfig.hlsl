@@ -24,6 +24,9 @@
 // #define _CBIRP
 // #define _CBIRP_REFLECTIONS
 
+// Enable ZH3
+// #define ZH3
+
 // Force soft shadows (for the add pass)
 // #define SHADOWS_SOFT
 
