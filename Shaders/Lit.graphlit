@@ -879,6 +879,28 @@
             "data": "{\"_ref\":\"e99f762d-4d57-4b2a-bf13-297a7015f13d\"}"
         },
         {
+            "type": "Graphlit.MultiplyNode",
+            "guid": "07d64564-27e4-4c97-8a7b-c51532dae928",
+            "x": -590,
+            "y": -1598,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 0,
+                    "node": "434d6eb4-e55d-4361-9705-262a74392090"
+                },
+                {
+                    "a": 0,
+                    "b": 1,
+                    "node": "f090e508-11b1-427d-8143-1772f3693538"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
+        },
+        {
             "type": "Graphlit.KeywordPropertyNode",
             "guid": "0b7a29c0-a832-44b0-b11a-942479f125b1",
             "x": -1461,
@@ -1169,8 +1191,8 @@
         {
             "type": "Graphlit.FloatPropertyNode",
             "guid": "2ad31d2a-e840-4271-8605-fc61775391b7",
-            "x": -673,
-            "y": -1527,
+            "x": -667,
+            "y": -1496,
             "connections": [],
             "precision": 0,
             "preview": 0,
@@ -1364,9 +1386,9 @@
                     "node": "e537dd03-022c-4816-8bef-c0212d9b6340"
                 },
                 {
-                    "a": 0,
+                    "a": 2,
                     "b": 4,
-                    "node": "f090e508-11b1-427d-8143-1772f3693538"
+                    "node": "07d64564-27e4-4c97-8a7b-c51532dae928"
                 },
                 {
                     "a": 0,
@@ -1406,6 +1428,17 @@
                     "node": "f0926aa9-2516-46ec-bdd4-5417fed7df96"
                 }
             ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
+        },
+        {
+            "type": "Graphlit.VertexColorNode",
+            "guid": "434d6eb4-e55d-4361-9705-262a74392090",
+            "x": -757,
+            "y": -1629,
+            "connections": [],
             "precision": 0,
             "preview": 0,
             "previewDisabled": true,
@@ -2814,8 +2847,8 @@
         {
             "type": "Graphlit.FloatPropertyNode",
             "guid": "bf82dde4-490e-4bcb-8d2e-7ad9f411c32e",
-            "x": -673,
-            "y": -1452,
+            "x": -667,
+            "y": -1438,
             "connections": [],
             "precision": 0,
             "preview": 0,
@@ -3214,8 +3247,8 @@
         {
             "type": "Graphlit.Float3PropertyNode",
             "guid": "f090e508-11b1-427d-8143-1772f3693538",
-            "x": -680,
-            "y": -1594,
+            "x": -850,
+            "y": -1558,
             "connections": [],
             "precision": 0,
             "preview": 0,
@@ -3508,13 +3541,15 @@
             ]
         },
         {
-            "x": -743,
+            "x": -875,
             "y": -1805,
             "title": "Wind",
             "elements": [
+                "07d64564-27e4-4c97-8a7b-c51532dae928",
                 "163f7234-3d1c-4010-97cf-3e2431f5d695",
                 "2ad31d2a-e840-4271-8605-fc61775391b7",
                 "3ee6093f-d300-4104-b2bc-436b451c74b8",
+                "434d6eb4-e55d-4361-9705-262a74392090",
                 "4cfca783-8e93-4806-b4e9-85279d1c0b13",
                 "bda1b1d3-855d-4a26-ae1e-6fd907ecf9d5",
                 "bf82dde4-490e-4bcb-8d2e-7ad9f411c32e",
