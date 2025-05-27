@@ -15,6 +15,10 @@ struct Light
     uint layerMask;
 };
 
+#ifndef LIGHT_ATTENUATION_MULTIPLIER
+#define LIGHT_ATTENUATION_MULTIPLIER 1.0
+#endif
+
 float GetSquareFalloffAttenuation(float distanceSquare, float lightInvRadius2)
 {
     float factor = distanceSquare * lightInvRadius2;
@@ -118,7 +122,7 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
             float distanceSquare = dot(positionToLight, positionToLight);
             half range = length(lightZ);
             light.distanceAttenuation = GetSquareFalloffAttenuation(distanceSquare, range * range);
-            // light.distanceAttenuation *= 2.0;
+            light.distanceAttenuation *= LIGHT_ATTENUATION_MULTIPLIER;
             #ifdef SPOT
                 float2 spotUV = lightCoord.xy / lightCoord.w + 0.5;
 
@@ -263,9 +267,4 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
     #endif
 #endif
     }
-}
-
-half SampleAddShadowMap(float4 shadowCoord)
-{
-
 }

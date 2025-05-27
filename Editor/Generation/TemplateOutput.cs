@@ -168,7 +168,7 @@ namespace Graphlit
         {
             if (_graphlitConfigExists)
             {
-                pass.pragmas.Add($"#include \"{_graphlitConfigPath}\"");
+                pass.pragmas.Add($"#include_with_pragmas \"{_graphlitConfigPath}\"");
             }
         }
 
@@ -276,7 +276,7 @@ namespace Graphlit
             pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
             pass.pragmas.Add("#pragma shader_feature_local_vertex _DECALERY");
-
+            IncludeConfig(pass);
             pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
         }
 
@@ -298,6 +298,7 @@ namespace Graphlit
 
             pass.pragmas.Add("#pragma shader_feature_local_vertex _DECALERY");
 
+            IncludeConfig(pass);
             pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
 
             PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.PositionWS);
@@ -306,7 +307,7 @@ namespace Graphlit
             PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.PositionWS);
         }
 
-        public static void CreateShadowCaster(PassBuilder pass, bool urp)
+        public void CreateShadowCaster(PassBuilder pass, bool urp)
         {
             pass.tags["LightMode"] = "ShadowCaster";
             pass.renderStates["ZWrite"] = "On";
@@ -336,6 +337,7 @@ namespace Graphlit
             pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
             pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
+            IncludeConfig(pass);
             pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
         }
 

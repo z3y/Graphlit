@@ -70,6 +70,8 @@ namespace Graphlit
 
         public override void OnBeforeBuild(ShaderBuilder builder)
         {
+            builder.dependencies.Add(_graphlitConfigPath);
+
             builder.dependencies.Add(_vrcLightVolumesPath);
 
             builder.properties.Add(_surfaceOptions);
@@ -168,6 +170,7 @@ namespace Graphlit
                     pass.pragmas.Add("#define _VRC_LIGHTVOLUMES");
                 }
 
+                IncludeConfig(pass);
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
                 builder.AddPass(pass);
             }
@@ -204,6 +207,7 @@ namespace Graphlit
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
+                IncludeConfig(pass);
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
                 builder.AddPass(pass);
             }
