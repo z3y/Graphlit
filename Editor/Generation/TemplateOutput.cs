@@ -341,7 +341,7 @@ namespace Graphlit
             pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
         }
 
-        [MenuItem("Tools/Graphlit/Create Global Config")]
+        [MenuItem("Tools/Graphlit/Create Project Config")]
         public static void CreateConfigFile()
         {
             const string folder = "Assets/Settings/";

@@ -1,4 +1,4 @@
-// Global Graphlit Config
+// Graphlit Project Config
 // Remove prefix // to enable
 
 // Enable for android only
