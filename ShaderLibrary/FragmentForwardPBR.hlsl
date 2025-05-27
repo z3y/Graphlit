@@ -72,6 +72,7 @@ float4 frag(Varyings input) : SV_Target
         #endif 
     #elif defined(LIGHTPROBE_SH) || defined(UNIVERSALRP)
         bakedGI = SampleSH(normalWS, positionWS);
+        indirectOcclusion = bakedGI;
     #endif
 
     float4 shadowCoord = TransformWorldToShadowCoord(positionWS);
@@ -180,7 +181,7 @@ float4 frag(Varyings input) : SV_Target
     bakedGI *= 1.0 - brdf;
     specular *= energyCompensation * PI;
 
-    #ifdef LIGHTMAP_ON
+    #ifndef DISABLE_SPECULAR_OCCLUSION
         half indirectOcclusionIntensity = _SpecularOcclusion;
         half occlusionFromLightmap = saturate(lerp(1.0, saturate(sqrt(dot(indirectOcclusion + diffuse, 1.0))), indirectOcclusionIntensity));
         indirectSpecular *= occlusionFromLightmap;
