@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEditor.AssetImporters;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.Rendering;
+using System.IO;
 
 namespace Graphlit
 {
@@ -159,6 +160,17 @@ namespace Graphlit
 
         internal PropertyDescriptor _cull => new(PropertyType.Float, "Cull", "_Cull") { FloatValue = (int)defaultCull, customAttributes = "[Enum(UnityEngine.Rendering.CullMode)]" };
         internal PropertyDescriptor _queueOffset => new(PropertyType.Float, "Queue Offset", "_QueueOffset") { FloatValue = 0, customAttributes = "[HideInInspector] [IntRange]", Range = new Vector2(-50f, 50f) };
+
+        internal const string _graphlitConfigPath = "Assets/Settings/GraphlitConfig.hlsl";
+        internal bool _graphlitConfigExists = System.IO.File.Exists(_graphlitConfigPath);
+
+        protected void IncludeConfig(PassBuilder pass)
+        {
+            if (_graphlitConfigExists)
+            {
+                pass.pragmas.Add($"#include \"{_graphlitConfigPath}\"");
+            }
+        }
 
 
         [SerializeField] public bool forceNoShadowCasting = false;
@@ -325,6 +337,35 @@ namespace Graphlit
             pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
             pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
+        }
+
+        [MenuItem("Tools/Graphlit/Create Global Config")]
+        public static void CreateConfigFile()
+        {
+            const string folder = "Assets/Settings/";
+            const string fileName = "GraphlitConfig.hlsl";
+            const string fullPath = folder + fileName;
+
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+
+            if (File.Exists(fullPath))
+            {
+                EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(fullPath));
+                return;
+            }
+            const string defaultConfigPath = "Packages/com.z3y.graphlit/ShaderLibrary/DefaultConfig.hlsl";
+            string configText = File.ReadAllText(defaultConfigPath);
+
+            using (StreamWriter sw = File.CreateText(fullPath))
+            {
+                sw.WriteLine(configText);
+            }
+
+            AssetDatabase.Refresh();
+            EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(fullPath));
         }
     }
 }

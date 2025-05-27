@@ -194,6 +194,8 @@ namespace Graphlit
 
         public override void OnBeforeBuild(ShaderBuilder builder)
         {
+            builder.dependencies.Add(_graphlitConfigPath);
+
             builder.dependencies.Add(_ltcgiPath);
             builder.dependencies.Add(_cbirpPath);
             builder.dependencies.Add(_vrcLightVolumesPath);
@@ -363,6 +365,7 @@ namespace Graphlit
                 pass.varyings.RequireCustomString("UNITY_VERTEX_INPUT_INSTANCE_ID");
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
+                IncludeConfig(pass);
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
 
                 pass.properties.Add(_specularOcclusion);
@@ -424,6 +427,7 @@ namespace Graphlit
 
                 pass.properties.Add(_specularOcclusion);
 
+                IncludeConfig(pass);
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
                 builder.AddPass(pass);
             }
