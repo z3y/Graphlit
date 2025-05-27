@@ -9,6 +9,7 @@ Supports the built-in and universal render pipeline.
 
 - Install with the [VRChat Creator Companion](https://z3y.github.io/vpm-package-listing/) or add the git url
 - To get started read the [Documentation](https://z3y.github.io/Graphlit)
+- Setup the project [config file](https://z3y.github.io/Graphlit/config)
 
 ## Support
 
