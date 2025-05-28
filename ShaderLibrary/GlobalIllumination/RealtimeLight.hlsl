@@ -224,7 +224,6 @@ Light GetAdditionalLight(float3 positionWS, uint i)
     return light;
 }
 
-
 void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingData shading)
 {
     half NoL = saturate(dot(shading.normalWS, light.direction));
@@ -240,13 +239,13 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
         float NoH = saturate(dot(shading.normalWS, halfVector));
 
         half3 Fd = lightColor;
-        #ifndef QUALITY_LOW
+        #if !defined(QUALITY_LOW) && !defined(_CBIRP)
             Fd *= DisneyDiffuseNoPI(shading.NoV, NoL, LoV, shading.perceptualRoughness);
         #endif
 
         diffuse += Fd * !light.specularOnly;
 #ifndef _SPECULARHIGHLIGHTS_OFF
-    #ifdef QUALITY_LOW
+    #if defined(QUALITY_LOW) || defined(_CBIRP)
         half roughness2 = shading.roughness * shading.roughness;
         float d = NoH * NoH * (roughness2 - 1) + 1.00001f;
 
