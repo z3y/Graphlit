@@ -69,7 +69,8 @@ float4 frag(Varyings input) : SV_Target
             half3 lvL0; half3 lvL1r; half3 lvL1g; half3 lvL1b;
             LightVolumeAdditiveSH(positionWS, lvL0, lvL1r, lvL1g, lvL1b);
             bakedGI += LightVolumeEvaluate(normalWS, lvL0, lvL1r, lvL1g, lvL1b);
-        #endif 
+        #endif
+        bakedGI = max(0, bakedGI);
     #elif defined(LIGHTPROBE_SH) || defined(UNIVERSALRP)
         bakedGI = SampleSH(normalWS, positionWS);
         indirectOcclusion = bakedGI;
