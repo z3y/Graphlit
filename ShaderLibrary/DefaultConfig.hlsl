@@ -36,3 +36,8 @@
 // built-in add pass light distance attenuation multiplier
 // this might match the intensity of the default falloff better
 // #define LIGHT_ATTENUATION_MULTIPLIER 2.0
+
+// UdonRP
+// https://z3y.github.io/Graphlit/udonrp
+// #define _UDONRP_ENVIRONMENT_PROBE
+// #define _UDONRP_DIRECTIONAL_COOKIE

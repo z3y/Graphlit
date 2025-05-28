@@ -38,6 +38,7 @@ Supports the built-in and universal render pipeline.
 - Energy Conservation
 - Multi Bounce AO
 - Micro Shadowing
+- Improved [Box Projection](https://z3y.github.io/Graphlit/udonrp)
 
 ### Shader Editor
 

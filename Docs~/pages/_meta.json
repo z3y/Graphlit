@@ -9,5 +9,6 @@
   "custom-nodes": "Custom Nodes",
   "custom-lighting": "Custom Lighting",
   "light-attenuation": "Light Attenuation",
+  "udonrp": "UdonRP",
   "changelog": "Change Log"
 }
