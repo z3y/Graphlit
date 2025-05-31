@@ -63,6 +63,10 @@ half3 SHEvalLinearL0L1_SampleProbeVolume(float3 normalWS, float3 positionWS)
 
 half3 SampleSH(float3 normalWS, float3 positionWS)
 {
+    float4 SHAr = unity_SHAr;
+    float4 SHAg = unity_SHAg;
+    float4 SHAb = unity_SHAb;
+
     #ifdef _VRC_LIGHTVOLUMES
         #define SH_SKIP_L2
         half3 lvL0;
@@ -71,13 +75,13 @@ half3 SampleSH(float3 normalWS, float3 positionWS)
         half3 lvL1b;
         LightVolumeSH(positionWS, lvL0, lvL1r, lvL1g, lvL1b);
         // return LightVolumeEvaluate(normalWS, lvL0, lvL1r, lvL1g, lvL1b);
-        unity_SHAr.rgb = lvL1r;
-        unity_SHAg.rgb = lvL1g;
-        unity_SHAb.rgb = lvL1b;
+        SHAr.rgb = lvL1r;
+        SHAg.rgb = lvL1g;
+        SHAb.rgb = lvL1b;
 
-        unity_SHAr.a = lvL0.r;
-        unity_SHAg.a = lvL0.g;
-        unity_SHAb.a = lvL0.b;
+        SHAr.a = lvL0.r;
+        SHAg.a = lvL0.g;
+        SHAb.a = lvL0.b;
     #endif
 
     half3 res = 0;
@@ -89,9 +93,9 @@ half3 SampleSH(float3 normalWS, float3 positionWS)
     else
     {
         #ifdef ZH3
-            res += SHEvalLinearL0L1_ZH3Hallucinate(normalWS, unity_SHAr, unity_SHAg, unity_SHAb);
+            res += SHEvalLinearL0L1_ZH3Hallucinate(normalWS, SHAr, SHAg, SHAb);
         #else
-            res += SHEvalLinearL0L1(normalWS, unity_SHAr, unity_SHAg, unity_SHAb);
+            res += SHEvalLinearL0L1(normalWS, SHAr, SHAg, SHAb);
         #endif
     }
 
