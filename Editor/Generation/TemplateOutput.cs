@@ -83,6 +83,10 @@ namespace Graphlit
             shadowCasting.RegisterValueChangedCallback(x => forceNoShadowCasting = x.newValue);
             root.Add(shadowCasting);
 
+            var terrain = new Toggle("Terrain Compatible") { value = terrainCompatible };
+            terrain.RegisterValueChangedCallback(x => terrainCompatible = x.newValue);
+            root.Add(terrain);
+
             var cull = new EnumField("Cull", defaultCull);
             cull.RegisterValueChangedCallback(x => defaultCull = (UnityEngine.Rendering.CullMode)x.newValue);
             root.Add(cull);
@@ -176,6 +180,7 @@ namespace Graphlit
         [SerializeField] public bool forceNoShadowCasting = false;
         [SerializeField] public MaterialRenderMode defaultMode = MaterialRenderMode.Opaque;
         [SerializeField] public UnityEngine.Rendering.CullMode defaultCull = UnityEngine.Rendering.CullMode.Back;
+        [SerializeField] bool terrainCompatible;
         public enum MaterialRenderMode
         {
             Opaque = 0,
@@ -223,6 +228,23 @@ namespace Graphlit
             ctx.AddObjectToAsset("Material", material);
         }
 
+        protected void AddTerrainTag(ShaderBuilder builder)
+        {
+            if (terrainCompatible)
+            {
+                builder.subshaderTags["TerrainCompatible"] = "True";
+            }
+        }
+        protected void TerrainPass(PassBuilder pass)
+        {
+            if (terrainCompatible)
+            {
+                pass.attributes.RequirePositionOS();
+                pass.attributes.RequireNormalOS();
+                pass.attributes.RequireUV(0, 2);
+                pass.pragmas.Add("#define _TERRAIN");
+            }
+        }
         protected static void AddURPLightingPragmas(PassBuilder pass)
         {
             pass.pragmas.Add("#define UNIVERSAL_FORWARD");
@@ -260,6 +282,7 @@ namespace Graphlit
 
         public void CreateUniversalDepthPass(PassBuilder pass)
         {
+            TerrainPass(pass);
             pass.tags["LightMode"] = "DepthOnly";
             pass.renderStates["ZWrite"] = "On";
             pass.renderStates["ColorMask"] = "R";
@@ -282,6 +305,7 @@ namespace Graphlit
 
         public void CreateUniversalDepthNormalsPass(PassBuilder pass)
         {
+            TerrainPass(pass);
             pass.tags["LightMode"] = "DepthNormals";
             pass.renderStates["ZWrite"] = "On";
             pass.renderStates["Cull"] = "[_Cull]";
@@ -309,6 +333,7 @@ namespace Graphlit
 
         public void CreateShadowCaster(PassBuilder pass, bool urp)
         {
+            TerrainPass(pass);
             pass.tags["LightMode"] = "ShadowCaster";
             pass.renderStates["ZWrite"] = "On";
             pass.renderStates["ZTest"] = "LEqual";

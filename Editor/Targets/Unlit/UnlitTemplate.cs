@@ -70,6 +70,7 @@ namespace Graphlit
 
         public override void OnBeforeBuild(ShaderBuilder builder)
         {
+            AddTerrainTag(builder);
             builder.dependencies.Add(_graphlitConfigPath);
 
             builder.dependencies.Add(_vrcLightVolumesPath);
@@ -179,7 +180,7 @@ namespace Graphlit
             {
                 var pass = new PassBuilder("ForwardAdd", Vertex, FragmentForward, POSITION, NORMAL, TANGENT, COLOR, ALPHA, CUTOFF);
                 pass.tags["LightMode"] = "ForwardAdd";
-
+                TerrainPass(pass);
                 pass.renderStates["Fog"] = "{ Color (0,0,0,0) }";
                 pass.renderStates["Cull"] = "[_Cull]";
                 pass.renderStates["Blend"] = "[_SrcBlend] One";

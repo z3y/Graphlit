@@ -127,3 +127,7 @@ float4 GetFlatNormal()
     return float4(0.5, 0.5, 1, 1);
     #endif
 }
+
+#ifdef _TERRAIN
+#include "TerrainInput.hlsl"
+#endif

@@ -17,9 +17,13 @@ struct VertexData
     float4 positionCSR;
     float2 lightmapUV;
 
-    static VertexData Create(Attributes attributes)
+    static VertexData Create(inout Attributes attributes)
     {
         VertexData output = (VertexData)0;
+
+        #ifdef _TERRAIN
+        TerrainInstancing(attributes.positionOS, attributes.normalOS, attributes.uv0.xy);
+        #endif
 
         #ifdef ATTRIBUTES_NEED_POSITIONOS
             output.positionOS = attributes.positionOS;
@@ -28,7 +32,13 @@ struct VertexData
             output.normalOS = attributes.normalOS;
         #endif
         #ifdef ATTRIBUTES_NEED_TANGENTOS
-            float4 vertex_tangentOS = attributes.tangentOS;
+            #ifdef _TERRAIN
+                float4 vertex_tangentOS = ComputeTerrainTangent(attributes.normalOS);
+                attributes.tangentOS.w = 1;
+                attributes.tangentOS.xyz = vertex_tangentOS.xyz;
+            #else
+                float4 vertex_tangentOS = attributes.tangentOS;
+            #endif
         #else
             float4 vertex_tangentOS = 0;
         #endif

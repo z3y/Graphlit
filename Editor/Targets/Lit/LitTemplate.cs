@@ -194,6 +194,7 @@ namespace Graphlit
 
         public override void OnBeforeBuild(ShaderBuilder builder)
         {
+            AddTerrainTag(builder);
             builder.dependencies.Add(_graphlitConfigPath);
 
             builder.dependencies.Add(_ltcgiPath);
@@ -278,7 +279,7 @@ namespace Graphlit
                 var portFlags = new List<int>() { POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, EMISSION, NORMAL_TS };
                 var pass = new PassBuilder("Forward", Vertex, FragmentForward, portFlags.ToArray());
                 pass.tags["LightMode"] = urp ? "UniversalForward" : "ForwardBase";
-
+                TerrainPass(pass);
                 pass.renderStates["Cull"] = "[_Cull]";
                 pass.renderStates["ZWrite"] = "[_ZWrite]";
                 pass.renderStates["ZTest"] = "[_ZTest]";
@@ -378,6 +379,7 @@ namespace Graphlit
                 var portFlags = new List<int>() { POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, NORMAL_TS };
                 var pass = new PassBuilder("ForwardAdd", Vertex, FragmentForward, portFlags.ToArray());
                 pass.tags["LightMode"] = "ForwardAdd";
+                TerrainPass(pass);
 
                 pass.renderStates["Fog"] = "{ Color (0,0,0,0) }";
                 pass.renderStates["Cull"] = "[_Cull]";
@@ -453,7 +455,7 @@ namespace Graphlit
                 var pass = new PassBuilder("Meta", Vertex, FragmentMeta, ALPHA, CUTOFF, ALBEDO, METALLIC, ROUGHNESS, EMISSION);
                 pass.tags["LightMode"] = "Meta";
                 pass.renderStates["Cull"] = "Off";
-
+                TerrainPass(pass);
                 pass.pragmas.Add("#pragma shader_feature EDITOR_VISUALIZATION");
 
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT");
