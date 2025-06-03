@@ -1,9 +1,12 @@
-# Graphlit
+<div align="center">
+  <a href="https://z3y.github.io/Graphlit/">
+    <img alt="" height="138" src="./Docs~/public/graphlit-attribution.png">
+  </a>
+  <p>A node shader editor for Toon and PBR shaders<br>
+  Supports the Built-In and Universal Render Pipeline</p>
+</div>
 
-A node shader editor for creating Toon and PBR shaders, with a variety of included nodes useful for VRChat Worlds and Avatars.
-Supports the built-in and universal render pipeline.
-
-### [Discord](https://discord.gg/bw46tKgRFT)
+## [Discord](https://discord.gg/bw46tKgRFT)
 
 ## Setup
 
@@ -14,11 +17,11 @@ Supports the built-in and universal render pipeline.
 ## Support
 
 - If you like this project consider supporting on [Patreon](https://www.patreon.com/z3y)
+- Alternatively you can use the included `Packages/Graphlit/Runtime/Graphlit Attribution` prefab in your world
 
 ## Main Shader
 
-- Main PBR shader created with the graph included
-- `Graphlit/Lit`
+- Main PBR shader created with the graph included: `Graphlit/Lit`
 
 ## Highlighted Features
 
