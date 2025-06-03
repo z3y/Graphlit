@@ -243,6 +243,9 @@ namespace Graphlit
                 pass.attributes.RequireNormalOS();
                 pass.attributes.RequireUV(0, 2);
                 pass.pragmas.Add("#define _TERRAIN");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _NORMALMAP");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _MASKMAP");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _TERRAIN_BLEND_HEIGHT");
             }
         }
         protected static void AddURPLightingPragmas(PassBuilder pass)
