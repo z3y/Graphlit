@@ -1008,12 +1008,12 @@ namespace Graphlit
             EditorGUILayout.EndVertical();
             EditorGUILayout.Space(1);
 
-            if (GUILayout.Button(_githubIcon, GUILayout.Width(35), GUILayout.Height(35)))
+            if (GUILayout.Button(new GUIContent(_githubIcon, "github.com/z3y/Graphlit"), GUILayout.Width(36), GUILayout.Height(36)))
             {
                 Application.OpenURL("https://github.com/z3y/Graphlit");
             }
             EditorGUILayout.Space(1);
-            if (GUILayout.Button(_patreonIcon, GUILayout.Width(35), GUILayout.Height(35)))
+            if (GUILayout.Button(new GUIContent(_patreonIcon, "patreon.com/z3y"), GUILayout.Width(36), GUILayout.Height(36)))
             {
                 Application.OpenURL("https://www.patreon.com/z3y");
             }
