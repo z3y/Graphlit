@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditor.Rendering;
+using UnityEditorInternal;
 using UnityEngine;
 
 namespace Graphlit
@@ -95,6 +96,8 @@ namespace Graphlit
             DrawProperties(materialEditor, properties);
 
             Footer(materialEditor, properties);
+            Links();
+
             for (int i = 0; i < style.Length; i++)
             {
                 style[i].richText = richTextState[i];
@@ -966,6 +969,58 @@ namespace Graphlit
                     FreeImagePackingEditor.AddPackingMaterial((Material)editor.target, property);
                 }
             }
+        }
+
+        static Texture2D _githubIcon;
+        static Texture2D _patreonIcon;
+        static string _versionText = string.Empty;
+        [System.Serializable]
+        public struct DummyPackage
+        {
+            public string version;
+        }
+        void Links()
+        {
+            EditorGUILayout.Space(20);
+
+            var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleRight, richText = true };
+
+            if (!_githubIcon)
+            {
+                _githubIcon = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.z3y.graphlit/Editor/Icons/github-mark-white.png");
+            }
+            if (!_patreonIcon)
+            {
+                _patreonIcon = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.z3y.graphlit/Editor/Icons/patreon-white.png");
+            }
+            if (string.IsNullOrEmpty(_versionText))
+            {
+                var json = AssetDatabase.LoadAssetAtPath<PackageManifest>("Packages/com.z3y.graphlit/package.json").text;
+                _versionText = JsonUtility.FromJson<DummyPackage>(json).version;
+            }
+            EditorGUILayout.BeginHorizontal();
+
+            GUILayout.FlexibleSpace();
+
+            EditorGUILayout.BeginVertical();
+            EditorGUILayout.LabelField("<b>Graphlit</b>", style, GUILayout.Width(50));
+            EditorGUILayout.LabelField(_versionText, style, GUILayout.Width(50));
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.Space(1);
+
+            if (GUILayout.Button(_githubIcon, GUILayout.Width(35), GUILayout.Height(35)))
+            {
+                Application.OpenURL("https://github.com/z3y/Graphlit");
+            }
+            EditorGUILayout.Space(1);
+            if (GUILayout.Button(_patreonIcon, GUILayout.Width(35), GUILayout.Height(35)))
+            {
+                Application.OpenURL("https://www.patreon.com/z3y");
+            }
+            EditorGUILayout.Space(35);
+
+            GUILayout.FlexibleSpace();
+            EditorGUILayout.EndHorizontal();
         }
     }
 }
