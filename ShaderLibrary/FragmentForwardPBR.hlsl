@@ -182,13 +182,15 @@ float4 frag(Varyings input) : SV_Target
     bakedGI *= 1.0 - brdf;
     specular *= energyCompensation * PI;
 
+#ifdef UNITY_PASS_FORWARDBASE
     #ifndef DISABLE_SPECULAR_OCCLUSION
         half indirectOcclusionIntensity = _SpecularOcclusion;
         half occlusionFromLightmap = saturate(lerp(1.0, saturate(sqrt(dot(indirectOcclusion + diffuse, 1.0))), indirectOcclusionIntensity));
         indirectSpecular *= occlusionFromLightmap;
     #endif
+#endif
     
-    #if defined(_MASKMAP) || defined(_OCCLUSION) // doesnt get optimized out even if occlusion is 1
+    #if defined(_MASKMAP) || defined(_OCCLUSION) || defined(_OCCLUSIONMAP) // doesnt get optimized out even if occlusion is 1
         half singleBounceAO = GetSpecularOcclusionFromAmbientOcclusion(shading.NoV, surface.Occlusion,
             surface.Roughness * surface.Roughness);
         indirectSpecular *= GTAOMultiBounce(singleBounceAO, shading.f0);
