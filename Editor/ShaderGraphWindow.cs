@@ -20,6 +20,7 @@ namespace Graphlit
         // private ShaderGraphImporter _importer;
         [NonSerialized] public bool disabled = false;
 
+        static Texture2D _graphlitIcon;
         public void Initialize(string importerGuid, bool focus = true)
         {
             this.importerGuid = importerGuid;
@@ -39,7 +40,13 @@ namespace Graphlit
             AddBar(rootVisualElement);
             container.Add(GetNodePropertiesElement());
 
-            titleContent = new GUIContent(GetShaderDisplayName(serializableGraph.data));
+            if (!_graphlitIcon)
+            {
+                _graphlitIcon = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.z3y.graphlit/Editor/icon.psd");
+            }
+
+            titleContent = new GUIContent(GetShaderDisplayName(serializableGraph.data), _graphlitIcon);
+            
 
             if (focus)
             {
