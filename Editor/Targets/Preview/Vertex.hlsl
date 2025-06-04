@@ -1,4 +1,4 @@
-#pragma vertex vert
+// #pragma vertex vert
 
 Varyings vert(Attributes input)
 {

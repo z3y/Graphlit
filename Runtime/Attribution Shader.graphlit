@@ -132,7 +132,7 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": false,
-            "data": "{\"forceNoShadowCasting\":false,\"defaultMode\":2,\"defaultCull\":2,\"terrainCompatible\":false,\"_customLighting\":false}"
+            "data": "{\"forceNoShadowCasting\":false,\"defaultMode\":2,\"defaultCull\":0,\"terrainCompatible\":false,\"_customLighting\":false}"
         },
         {
             "type": "Graphlit.MultiplyNode",

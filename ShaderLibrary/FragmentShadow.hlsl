@@ -1,4 +1,4 @@
-#pragma fragment frag
+// #pragma fragment frag
 
 void frag(Varyings input)
 {

@@ -1,4 +1,4 @@
-#pragma fragment frag
+ // #pragma fragment frag
 
 float4 frag(Varyings input) : SV_Target
 {

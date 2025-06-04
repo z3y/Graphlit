@@ -116,6 +116,8 @@ namespace Graphlit
             sb.AppendLine();
 
             sb.AppendLine("#pragma target " + target);
+            sb.AppendLine("#pragma vertex vert");
+            sb.AppendLine("#pragma fragment frag");
 
             if (TemplateOutput.GetRenderPipeline() == TemplateOutput.RenderPipeline.URP)
             {

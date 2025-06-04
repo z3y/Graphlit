@@ -1,4 +1,4 @@
-#pragma fragment frag
+// #pragma fragment frag
 
 // https://www.iquilezles.org/www/articles/spherefunctions/spherefunctions.htm
 float sphIntersect_Preview(float3 ro, float3 rd, float4 sph)

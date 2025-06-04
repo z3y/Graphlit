@@ -1,4 +1,4 @@
-#pragma fragment frag
+// #pragma fragment frag
 
 half4 frag(Varyings varyings) : SV_Target
 {

@@ -1,4 +1,4 @@
-#pragma fragment frag
+// #pragma fragment frag
 
 #include "GlobalIllumination/ClusteredBIRP.hlsl"
 #include "GlobalIllumination/LTCGI.hlsl"
