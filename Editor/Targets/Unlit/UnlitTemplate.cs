@@ -231,6 +231,8 @@ namespace Graphlit
                 CreateShadowCaster(pass, urp);
                 builder.AddPass(pass);
             }
+
+            ApplySPS(builder);
         }
     }
 }

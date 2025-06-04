@@ -35,6 +35,7 @@ namespace Graphlit
 
         private HashSet<string> visitedNodes = new HashSet<string>();
         public List<PropertyDescriptor> properties = new();
+        public List<string> propertiesStrings = new();
         public List<PropertyDescriptor> generatedTextures = new();
         public int generatedTextureResolution = 512;
 
@@ -462,6 +463,10 @@ namespace Graphlit
                         {
                             _sb.AppendLine(StencilPropertiesOutline);
                         }
+                    }
+                    foreach (var str in propertiesStrings)
+                    {
+                        _sb.AppendLine(str);
                     }
                 }
                 _sb.UnIndent();

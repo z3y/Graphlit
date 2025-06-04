@@ -1,5 +1,9 @@
 #pragma vertex vert
 
+#ifdef _SPS
+    #include "SPS.hlsl"
+#endif
+
 Varyings vert(Attributes input)
 {
     Varyings varyings = (Varyings)0;
@@ -10,6 +14,10 @@ Varyings vert(Attributes input)
     UNITY_TRANSFER_INSTANCE_ID(input, varyings);
 #endif
     UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(varyings);
+
+    #ifdef _SPS
+        sps_apply(input);
+    #endif
 
     VertexDescription vertexDescription = VertexDescriptionFunction(input, varyings);
     #if !defined(UNITY_PASS_META) && !defined(SKIP_VERTEX_FUNCTION)

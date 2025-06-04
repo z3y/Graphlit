@@ -63,6 +63,7 @@ namespace Graphlit
         public string RequireNormalOS(int channels = 3) => RequireInternal(AttributeType.NormalOS, "normalOS", "NORMAL", channels);
         public string RequireTangentOS(int channels = 4) => RequireInternal(AttributeType.TangentOS, "tangentOS", "TANGENT", channels);
         public string RequireColor(int channels = 4) => RequireInternal(AttributeType.Color, "color", "COLOR", channels);
+        public string RequireVertexID(int channels = 1) => RequireInternal(AttributeType.VertexID, "vertexID", "SV_VertexID", channels);
 
         public void Require(string attribute)
         {
@@ -117,7 +118,12 @@ namespace Graphlit
         {
             foreach (var attr in attributes)
             {
-                sb.AppendLine($"float{attr.channels} {attr.name} : {attr.semantic};");
+                string type = $"float{attr.channels}";
+                if (attr.type == AttributeType.VertexID)
+                {
+                    type = "uint";
+                }
+                sb.AppendLine($"{type} {attr.name} : {attr.semantic};");
             }
             foreach (var attr in customAttributes)
             {

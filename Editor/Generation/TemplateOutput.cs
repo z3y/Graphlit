@@ -397,5 +397,32 @@ namespace Graphlit
             AssetDatabase.Refresh();
             EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(fullPath));
         }
+
+        public void ApplySPS(ShaderBuilder builder)
+        {
+            const string path = "Packages/com.vrcfury.vrcfury/SPS/sps_props.cginc";
+            builder.dependencies.Add(path);
+
+            if (!File.Exists(path))
+            {
+                return;
+            }
+
+            var props = File.ReadLines(path);
+            builder.propertiesStrings.Add("[Folder(SPS)] [Toggle(_SPS)] _Toggle_SPS(\"SPS\", Float) = 0");
+            foreach (var item in props)
+            {
+                builder.propertiesStrings.Add("[Folder(SPS)] " + item);
+            }
+
+            foreach (var pass in builder.passBuilders)
+            {
+                pass.pragmas.Add("#pragma shader_feature_local_vertex _SPS");
+                pass.attributes.RequireColor();
+                pass.attributes.RequireNormalOS();
+                pass.attributes.RequireTangentOS();
+                pass.attributes.RequireVertexID();
+            }
+        }
     }
 }

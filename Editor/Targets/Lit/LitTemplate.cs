@@ -482,6 +482,8 @@ namespace Graphlit
 
                 builder.AddPass(pass);
             }
+
+            ApplySPS(builder);
         }
     }
 }
