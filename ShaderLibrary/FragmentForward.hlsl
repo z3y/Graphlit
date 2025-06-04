@@ -35,5 +35,9 @@ float4 frag(Varyings input) : SV_Target
     
     color.a = OutputAlpha(color.a, isTransparent);
 
+    #ifdef _MODIFY_FINAL_COLOR
+        ModifyFinalColor(color);
+    #endif
+
     return color;
 }

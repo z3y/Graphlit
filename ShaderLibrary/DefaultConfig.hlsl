@@ -41,3 +41,12 @@
 // https://z3y.github.io/Graphlit/udonrp
 // #define _UDONRP_ENVIRONMENT_PROBE
 // #define _UDONRP_DIRECTIONAL_COOKIE
+
+// Modify Final Color
+/*
+#define _MODIFY_FINAL_COLOR
+void ModifyFinalColor(inout half4 color)
+{
+
+}
+*/
