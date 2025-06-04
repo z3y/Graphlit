@@ -471,6 +471,60 @@
                 "keywordPassFlags": 0
             },
             {
+                "guid": "13f08a00-f750-4cdc-be9b-36a6450c1fdc",
+                "referenceName": "shader_feature_local_fragment _AUDIOLINK_EMISSION",
+                "displayName": "Audio Link",
+                "type": 13,
+                "customAttributes": "[Folder(Emission)]",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 1
+            },
+            {
+                "guid": "a416d311-fc04-45ff-a410-2e116531d210",
+                "referenceName": "_AudioLinkEmissionBand",
+                "displayName": "Band",
+                "type": 1,
+                "customAttributes": "[ShowIf(_Toggle_AUDIOLINK_EMISSION,  1)]\r\n[Folder(Emission)]\r\n[Enum(Bass, 0, Low Mids, 1, High Mids, 2, Treble, 3)]\r\n[Indent(2)]",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1
+            },
+            {
+                "guid": "2201854e-785e-4352-bcc6-877fd5ebf6ce",
+                "referenceName": "_AudioLinkEmissionIntensity",
+                "displayName": "Intensity",
+                "type": 1,
+                "customAttributes": "[ShowIf(_Toggle_AUDIOLINK_EMISSION,  1)]\r\n[Folder(Emission)]\r\n[Indent(2)]",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 1.0,
+                "_value": "0.5",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1
+            },
+            {
                 "guid": "a1f777dc-945b-49c8-bde4-9505a824f1fe",
                 "referenceName": "_DetailAlbedoBlendMode",
                 "displayName": "Blend Mode",
@@ -902,6 +956,28 @@
         },
         {
             "type": "Graphlit.KeywordPropertyNode",
+            "guid": "09833061-66e9-4b43-b0c0-fa5744cb79f3",
+            "x": -361,
+            "y": 1864,
+            "connections": [
+                {
+                    "a": 3,
+                    "b": 1,
+                    "node": "4553bc80-1f45-493a-b4fb-0b265fc6990b"
+                },
+                {
+                    "a": 3,
+                    "b": 2,
+                    "node": "a0d32daf-806b-4e8d-bbf3-f7264a2803cc"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"13f08a00-f750-4cdc-be9b-36a6450c1fdc\"}"
+        },
+        {
+            "type": "Graphlit.KeywordPropertyNode",
             "guid": "0b7a29c0-a832-44b0-b11a-942479f125b1",
             "x": -1461,
             "y": -26,
@@ -1006,6 +1082,17 @@
             "data": ""
         },
         {
+            "type": "Graphlit.FloatPropertyNode",
+            "guid": "15b08c61-0af2-49e6-9372-f27086f09a0a",
+            "x": -1036,
+            "y": 1676,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"a416d311-fc04-45ff-a410-2e116531d210\"}"
+        },
+        {
             "type": "Graphlit.RegisterVariableNode",
             "guid": "163f7234-3d1c-4010-97cf-3e2431f5d695",
             "x": 55,
@@ -1029,9 +1116,9 @@
             "y": 456,
             "connections": [
                 {
-                    "a": 3,
+                    "a": 0,
                     "b": 0,
-                    "node": "a0d32daf-806b-4e8d-bbf3-f7264a2803cc"
+                    "node": "09833061-66e9-4b43-b0c0-fa5744cb79f3"
                 }
             ],
             "precision": 0,
@@ -1148,6 +1235,17 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"autoKeyword\":false}"
+        },
+        {
+            "type": "Graphlit.FloatPropertyNode",
+            "guid": "291ccab0-d2a1-4738-aeb8-2071daf201e7",
+            "x": -609,
+            "y": 1807,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"2201854e-785e-4352-bcc6-877fd5ebf6ce\"}"
         },
         {
             "type": "Graphlit.FetchVariableNode",
@@ -1496,6 +1594,33 @@
         },
         {
             "type": "Graphlit.LerpNode",
+            "guid": "4553bc80-1f45-493a-b4fb-0b265fc6990b",
+            "x": -481,
+            "y": 1686,
+            "connections": [
+                {
+                    "a": 3,
+                    "b": 0,
+                    "node": "a0d32daf-806b-4e8d-bbf3-f7264a2803cc"
+                },
+                {
+                    "a": 2,
+                    "b": 1,
+                    "node": "52395032-6a0c-4f3f-8951-638c85f875e1"
+                },
+                {
+                    "a": 0,
+                    "b": 2,
+                    "node": "291ccab0-d2a1-4738-aeb8-2071daf201e7"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
+        },
+        {
+            "type": "Graphlit.LerpNode",
             "guid": "46a61731-5656-428a-b3aa-9ed30199b8ab",
             "x": -3551,
             "y": 297,
@@ -1631,6 +1756,28 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_ref\":\"64776814-021c-485c-a795-294456fa0ffc\"}"
+        },
+        {
+            "type": "Graphlit.MultiplyNode",
+            "guid": "52395032-6a0c-4f3f-8951-638c85f875e1",
+            "x": -688,
+            "y": 1676,
+            "connections": [
+                {
+                    "a": 102,
+                    "b": 0,
+                    "node": "e091329a-23ae-47a5-b14c-99f1d1bd7f6c"
+                },
+                {
+                    "a": 3,
+                    "b": 1,
+                    "node": "a0d32daf-806b-4e8d-bbf3-f7264a2803cc"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
         },
         {
             "type": "Graphlit.BlendModeNode",
@@ -2311,13 +2458,13 @@
         {
             "type": "Graphlit.RegisterVariableNode",
             "guid": "99a495a5-12e4-453f-a7e4-fde668da2f50",
-            "x": -631,
-            "y": 1907,
+            "x": -213,
+            "y": 1864,
             "connections": [
                 {
-                    "a": 3,
+                    "a": 0,
                     "b": 0,
-                    "node": "a0d32daf-806b-4e8d-bbf3-f7264a2803cc"
+                    "node": "09833061-66e9-4b43-b0c0-fa5744cb79f3"
                 }
             ],
             "precision": 0,
@@ -2592,7 +2739,7 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": false,
-            "data": "{\"forceNoShadowCasting\":false,\"defaultMode\":0,\"defaultCull\":2,\"_cbirp\":false,\"_cbirpReflections\":false,\"_specular\":true,\"_fwdAddBlendOpMax\":false,\"_normal\":0}"
+            "data": "{\"forceNoShadowCasting\":false,\"defaultMode\":0,\"defaultCull\":2,\"terrainCompatible\":false,\"_cbirp\":false,\"_cbirpReflections\":false,\"_specular\":true,\"_fwdAddBlendOpMax\":false,\"_normal\":0}"
         },
         {
             "type": "Graphlit.SampleTexture2DNode",
@@ -3103,6 +3250,23 @@
             "data": ""
         },
         {
+            "type": "Graphlit.CustomFunctionNode",
+            "guid": "e091329a-23ae-47a5-b14c-99f1d1bd7f6c",
+            "x": -939,
+            "y": 1676,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 0,
+                    "node": "15b08c61-0af2-49e6-9372-f27086f09a0a"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n\\tOut = In;\\n}\",\"_file\":\"\",\"_shaderInclude\":{\"fileID\":10900000,\"guid\":\"ae4a5e0f20e40b74ba2498a0e82520f4\",\"type\":3},\"_useFile\":true}"
+        },
+        {
             "type": "Graphlit.MultiplyNode",
             "guid": "e0a1d36b-ce3c-4d9b-a042-02e4476ff04d",
             "x": -1320,
@@ -3454,14 +3618,19 @@
         },
         {
             "x": -1755,
-            "y": 1635,
+            "y": 1617,
             "title": "Emission",
             "elements": [
                 "01892653-e808-4f9c-8954-f1f669a7c37b",
+                "09833061-66e9-4b43-b0c0-fa5744cb79f3",
                 "0d6d90e5-3144-425b-ad9d-786a443f2ae8",
+                "15b08c61-0af2-49e6-9372-f27086f09a0a",
+                "291ccab0-d2a1-4738-aeb8-2071daf201e7",
                 "319a4204-0b13-4adb-ab9c-04675c1007f0",
                 "3af4f5e2-1fc3-4dc8-8467-7fefe267d76f",
                 "44d37cda-5bb7-4f2d-8c48-f48ec7b82aaa",
+                "4553bc80-1f45-493a-b4fb-0b265fc6990b",
+                "52395032-6a0c-4f3f-8951-638c85f875e1",
                 "5f9ea917-a0fb-4a32-be18-5b6d0b0ba7ee",
                 "7101cfee-f4cb-476e-ac70-acacf2e06f67",
                 "7accc4af-e5e3-4370-8822-6e8794320b91",
@@ -3472,6 +3641,7 @@
                 "a0d32daf-806b-4e8d-bbf3-f7264a2803cc",
                 "a24fb922-d875-401a-9f9e-20ee7626fc8b",
                 "b7bf2cfc-dcf7-4682-b4c7-a6c2c1edf2e2",
+                "e091329a-23ae-47a5-b14c-99f1d1bd7f6c",
                 "f28324c5-2380-45cf-9490-575f9235eb78"
             ]
         },
