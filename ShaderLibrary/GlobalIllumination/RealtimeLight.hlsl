@@ -224,6 +224,14 @@ Light GetAdditionalLight(float3 positionWS, uint i)
     return light;
 }
 
+half2 GetAtAb(half roughness, half anisotropy)
+{
+    half at = max(roughness * (1.0 + anisotropy), 0.001);
+    half ab = max(roughness * (1.0 - anisotropy), 0.001);
+
+    return half2(at, ab);
+}
+
 void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingData shading)
 {
     half NoL = saturate(dot(shading.normalWS, light.direction));
@@ -262,7 +270,25 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
         real D = D_GGX(NoH, shading.roughness);
         real V = V_SmithJointGGX(NoL, shading.NoV, shading.roughness);
 
+        #ifdef _ANISOTROPY
+            float3 l = light.direction;
+            float3 t = shading.tangentWS;
+            float3 b = shading.bitangentWS;
+            float3 v = shading.viewDirectionWS;
+
+            half ToV = dot(t, v);
+            half BoV = dot(b, v);
+            half ToL = dot(t, l);
+            half BoL = dot(b, l);
+            half ToH = dot(t, halfVector);
+            half BoH = dot(b, halfVector);
+            half2 atab = GetAtAb(shading.roughness, shading.anisotropy);
+            D = D_GGXAniso(ToH, BoH, NoH, atab.x, atab.y);
+            V = V_SmithJointGGXAniso(ToV, BoV, shading.NoV, ToL, BoL, NoL, atab.x, atab.y);
+        #endif
+
         specular += max(0.0, (D * V) * F) * lightColor;
+        
     #endif
 #endif
     }

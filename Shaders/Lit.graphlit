@@ -867,6 +867,78 @@
                 },
                 "declaration": 0,
                 "keywordPassFlags": 35
+            },
+            {
+                "guid": "8d3994f2-669a-44e7-9d52-f86f576f8e0f",
+                "referenceName": "shader_feature_local_fragment _ANISOTROPY",
+                "displayName": "Anisotropy",
+                "type": 13,
+                "customAttributes": "[Folder(Anisotropy)]",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": 3
+            },
+            {
+                "guid": "ec32bb2a-09e0-4832-ab6b-b97e0ffeaccf",
+                "referenceName": "_TangentMap",
+                "displayName": "Anisotropy Map",
+                "type": 7,
+                "customAttributes": "[Toggle(_TANGENTMAP)]\n[Tooltip(Mask, X, 0, Y)]\n[Folder(Anisotropy)]",
+                "defaultAttributes": 32,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1
+            },
+            {
+                "guid": "1ae24a7d-9522-400e-a6c4-fb7512cf63d3",
+                "referenceName": "_",
+                "displayName": "Anisotropy",
+                "type": 1,
+                "customAttributes": "[Folder(Anisotropy)]",
+                "defaultAttributes": 0,
+                "rangeX": -1.0,
+                "rangeY": 1.0,
+                "_value": "",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1
+            },
+            {
+                "guid": "f757f59c-50d2-426b-957c-965d6ffcf077",
+                "referenceName": "shader_feature_local_fragment _TANGENTMAP",
+                "displayName": "Tangent Map",
+                "type": 13,
+                "customAttributes": "[Folder(Anisotropy)]",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 1,
+                "keywordPassFlags": -1
             }
         ],
         "precision": 0,
@@ -1112,8 +1184,8 @@
         {
             "type": "Graphlit.FetchVariableNode",
             "guid": "168c9776-dc61-4ad8-868a-9c64f5162f95",
-            "x": -45,
-            "y": 456,
+            "x": 22,
+            "y": 449,
             "connections": [
                 {
                     "a": 0,
@@ -1359,6 +1431,23 @@
             "data": ""
         },
         {
+            "type": "Graphlit.FetchVariableNode",
+            "guid": "319e66b5-8ad9-49d5-8385-24dd2f211629",
+            "x": -521,
+            "y": 1341,
+            "connections": [
+                {
+                    "a": 2,
+                    "b": 0,
+                    "node": "29a7d325-6d3f-4adc-a6f0-ae7485b84337"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_name\":\"UV\"}"
+        },
+        {
             "type": "Graphlit.CustomFunctionNode",
             "guid": "31a6189f-c182-4fcd-92e1-ccd9c43e0f2c",
             "x": -2797,
@@ -1384,6 +1473,28 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n    Out = In;\\n}\",\"_file\":\"10900000|c63569117ea5bc04e913aa954fa423d7\",\"_shaderInclude\":{\"instanceID\":0},\"_useFile\":true}"
+        },
+        {
+            "type": "Graphlit.KeywordPropertyNode",
+            "guid": "33e76a9a-7f7f-4285-9772-671ee4995b20",
+            "x": -41,
+            "y": 1302,
+            "connections": [
+                {
+                    "a": 100,
+                    "b": 1,
+                    "node": "f4d1eba6-6822-48b6-92a0-5279e0440a4d"
+                },
+                {
+                    "a": 0,
+                    "b": 2,
+                    "node": "ad8b4e66-4798-41bd-a071-54a236b22297"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"f757f59c-50d2-426b-957c-965d6ffcf077\"}"
         },
         {
             "type": "Graphlit.CustomFunctionNode",
@@ -1647,6 +1758,17 @@
             "data": ""
         },
         {
+            "type": "Graphlit.Texture2DPropertyNode",
+            "guid": "49b708cc-e0b4-4218-861c-ed3e554d9fbe",
+            "x": -623,
+            "y": 1240,
+            "connections": [],
+            "precision": 1,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"ec32bb2a-09e0-4832-ab6b-b97e0ffeaccf\"}"
+        },
+        {
             "type": "Graphlit.FetchVariableNode",
             "guid": "49d1860d-a137-456b-a7c4-392c73681568",
             "x": -1439,
@@ -1772,6 +1894,28 @@
                     "a": 3,
                     "b": 1,
                     "node": "a0d32daf-806b-4e8d-bbf3-f7264a2803cc"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
+        },
+        {
+            "type": "Graphlit.MultiplyNode",
+            "guid": "5bfb0a69-13e2-46cc-8bba-1a646978b011",
+            "x": -138,
+            "y": 1125,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 0,
+                    "node": "9e6dac55-eefc-49e9-b33c-00dbedb33848"
+                },
+                {
+                    "a": 4,
+                    "b": 1,
+                    "node": "8c54f526-57d9-46c1-91df-8b7fa39d69f9"
                 }
             ],
             "precision": 0,
@@ -2254,8 +2398,8 @@
         {
             "type": "Graphlit.FloatPropertyNode",
             "guid": "7fc498b7-228e-4214-a1d4-8356f0916ddd",
-            "x": 62,
-            "y": 372,
+            "x": 76,
+            "y": 300,
             "connections": [],
             "precision": 0,
             "preview": 0,
@@ -2363,6 +2507,45 @@
             "data": "{\"_uv\":0,\"_channels\":2}"
         },
         {
+            "type": "Graphlit.RegisterVariableNode",
+            "guid": "8b53953d-9c59-48b0-9444-d692c29b8f46",
+            "x": 118,
+            "y": 1306,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 0,
+                    "node": "33e76a9a-7f7f-4285-9772-671ee4995b20"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_name\":\"tangent\"}"
+        },
+        {
+            "type": "Graphlit.SampleTexture2DNode",
+            "guid": "8c54f526-57d9-46c1-91df-8b7fa39d69f9",
+            "x": -462,
+            "y": 1240,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 1,
+                    "node": "49b708cc-e0b4-4218-861c-ed3e554d9fbe"
+                },
+                {
+                    "a": 1,
+                    "b": 0,
+                    "node": "319e66b5-8ad9-49d5-8385-24dd2f211629"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"autoKeyword\":false}"
+        },
+        {
             "type": "Graphlit.FloatNode",
             "guid": "8c6e8cd0-e266-4526-86f2-2b429d4de36e",
             "x": -1528,
@@ -2445,6 +2628,23 @@
             "data": ""
         },
         {
+            "type": "Graphlit.RegisterVariableNode",
+            "guid": "97e13da4-5590-405d-b58f-aa29277c91e8",
+            "x": 112,
+            "y": 1200,
+            "connections": [
+                {
+                    "a": 2,
+                    "b": 0,
+                    "node": "5bfb0a69-13e2-46cc-8bba-1a646978b011"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_name\":\"anisotropy\"}"
+        },
+        {
             "type": "Graphlit.FloatPropertyNode",
             "guid": "9834c9ad-f7b8-44be-af3e-cae23d068406",
             "x": -3528,
@@ -2475,8 +2675,8 @@
         {
             "type": "Graphlit.FetchVariableNode",
             "guid": "9b9dcfe8-731e-4999-ad30-0717a886c715",
-            "x": -238,
-            "y": 403,
+            "x": -229,
+            "y": 362,
             "connections": [
                 {
                     "a": 0,
@@ -2521,6 +2721,17 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_ref\":\"8e127eca-df1a-44cd-8409-3c9fe43a8c2c\"}"
+        },
+        {
+            "type": "Graphlit.FloatPropertyNode",
+            "guid": "9e6dac55-eefc-49e9-b33c-00dbedb33848",
+            "x": -283,
+            "y": 1068,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"1ae24a7d-9522-400e-a6c4-fb7512cf63d3\"}"
         },
         {
             "type": "Graphlit.FetchVariableNode",
@@ -2696,9 +2907,9 @@
                     "node": "7b31e4d5-6a99-4d64-b9a1-4bcca6448069"
                 },
                 {
-                    "a": 1,
-                    "b": 4,
-                    "node": "29375d49-5df6-41ab-988a-c817ec490e27"
+                    "a": 2,
+                    "b": 7,
+                    "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
                 },
                 {
                     "a": 0,
@@ -2711,9 +2922,9 @@
                     "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
                 },
                 {
-                    "a": 2,
-                    "b": 7,
-                    "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
+                    "a": 1,
+                    "b": 16,
+                    "node": "af5bf8ac-6945-4841-adc2-c184bc00e66f"
                 },
                 {
                     "a": 0,
@@ -2727,13 +2938,23 @@
                 },
                 {
                     "a": 1,
-                    "b": 9,
-                    "node": "168c9776-dc61-4ad8-868a-9c64f5162f95"
+                    "b": 18,
+                    "node": "c6a6a025-c394-47bd-8798-813969680271"
+                },
+                {
+                    "a": 1,
+                    "b": 4,
+                    "node": "29375d49-5df6-41ab-988a-c817ec490e27"
                 },
                 {
                     "a": 0,
                     "b": 5,
                     "node": "f78ffb9c-64cb-4ecf-8da9-dfc30d9c896a"
+                },
+                {
+                    "a": 1,
+                    "b": 9,
+                    "node": "168c9776-dc61-4ad8-868a-9c64f5162f95"
                 }
             ],
             "precision": 0,
@@ -2800,6 +3021,34 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_ref\":\"9a7393b8-3650-405d-b34b-2d0ce5e9feeb\"}"
+        },
+        {
+            "type": "Graphlit.Float3Node",
+            "guid": "ad8b4e66-4798-41bd-a071-54a236b22297",
+            "x": -221,
+            "y": 1372,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_value\":{\"x\":0.0,\"y\":1.0,\"z\":0.0}}"
+        },
+        {
+            "type": "Graphlit.FetchVariableNode",
+            "guid": "af5bf8ac-6945-4841-adc2-c184bc00e66f",
+            "x": -83,
+            "y": 424,
+            "connections": [
+                {
+                    "a": 2,
+                    "b": 0,
+                    "node": "5bfb0a69-13e2-46cc-8bba-1a646978b011"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_name\":\"anisotropy\"}"
         },
         {
             "type": "Graphlit.RegisterVariableNode",
@@ -3083,6 +3332,23 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_ref\":\"1b5c1c96-75dd-4faa-9ddb-704a02d2a05e\"}"
+        },
+        {
+            "type": "Graphlit.FetchVariableNode",
+            "guid": "c6a6a025-c394-47bd-8798-813969680271",
+            "x": 94,
+            "y": 387,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 0,
+                    "node": "33e76a9a-7f7f-4285-9772-671ee4995b20"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_name\":\"tangent\"}"
         },
         {
             "type": "Graphlit.CustomFunctionNode",
@@ -3475,6 +3741,23 @@
             "data": "{\"_ref\":\"e99f762d-4d57-4b2a-bf13-297a7015f13d\"}"
         },
         {
+            "type": "Graphlit.CustomFunctionNode",
+            "guid": "f4d1eba6-6822-48b6-92a0-5279e0440a4d",
+            "x": -265,
+            "y": 1240,
+            "connections": [
+                {
+                    "a": 3,
+                    "b": 1,
+                    "node": "8c54f526-57d9-46c1-91df-8b7fa39d69f9"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n\\tOut = In;\\n}\",\"_file\":\"\",\"_shaderInclude\":{\"fileID\":10900000,\"guid\":\"caa18676e8d4f0846b878d9c13c635de\",\"type\":3},\"_useFile\":true}"
+        },
+        {
             "type": "Graphlit.MultiplyNode",
             "guid": "f722ba12-f2ba-4311-9aaf-d6e7ab7b8965",
             "x": -3819,
@@ -3499,8 +3782,8 @@
         {
             "type": "Graphlit.FloatPropertyNode",
             "guid": "f78ffb9c-64cb-4ecf-8da9-dfc30d9c896a",
-            "x": 25,
-            "y": 541,
+            "x": 22,
+            "y": 527,
             "connections": [],
             "precision": 0,
             "preview": 0,
@@ -3574,6 +3857,23 @@
                 "e519f896-449b-444d-a802-4dedb5eada34",
                 "f0926aa9-2516-46ec-bdd4-5417fed7df96",
                 "f722ba12-f2ba-4311-9aaf-d6e7ab7b8965"
+            ]
+        },
+        {
+            "x": -648,
+            "y": 1009,
+            "title": "Anisotropy",
+            "elements": [
+                "319e66b5-8ad9-49d5-8385-24dd2f211629",
+                "33e76a9a-7f7f-4285-9772-671ee4995b20",
+                "49b708cc-e0b4-4218-861c-ed3e554d9fbe",
+                "5bfb0a69-13e2-46cc-8bba-1a646978b011",
+                "8b53953d-9c59-48b0-9444-d692c29b8f46",
+                "8c54f526-57d9-46c1-91df-8b7fa39d69f9",
+                "97e13da4-5590-405d-b58f-aa29277c91e8",
+                "9e6dac55-eefc-49e9-b33c-00dbedb33848",
+                "ad8b4e66-4798-41bd-a071-54a236b22297",
+                "f4d1eba6-6822-48b6-92a0-5279e0440a4d"
             ]
         },
         {

@@ -116,7 +116,7 @@ namespace Graphlit
         protected abstract void Generate(NodeVisitor visitor);
 
         public Dictionary<int, PortDescriptor> portDescriptors = new();
-        public Port AddPort(PortDescriptor portDescriptor, bool addDescriptors = true)
+        public Port AddPort(PortDescriptor portDescriptor, bool addDescriptors = true, string displayName = "")
         {
             if (addDescriptors)
             {
@@ -142,7 +142,7 @@ namespace Graphlit
             */
 
             port.AddManipulator(new EdgeConnector<Edge>(new EdgeConnectorListener()));
-            port.portName = portDescriptor.Name;
+            port.portName = string.IsNullOrEmpty(displayName) ? portDescriptor.Name : displayName;
             port.userData = portDescriptor.ID;
             if (portDescriptor.Type is Float @float)
             {
@@ -156,7 +156,7 @@ namespace Graphlit
 
             container.Add(port);
 
-            if (this is TemplateOutput o && o.TallOutputs)
+           /* if (this is TemplateOutput o && o.TallOutputs)
             {
                 port.style.height = 38;
                 port.style.SetBorderWidth(2);
@@ -168,7 +168,7 @@ namespace Graphlit
 
 
                 port.Q<Label>().style.fontSize = 12;
-            }
+            }*/
 
 
             return port;

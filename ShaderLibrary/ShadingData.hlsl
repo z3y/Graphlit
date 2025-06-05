@@ -6,7 +6,13 @@ struct ShadingData
     float3 normalWS;
     float3 reflectVector;
     half3 f0;
+    half3 f90;
+    half3 f82;
+    half3 diffuseColor;
     half perceptualRoughness;
     half roughness;
     float3 viewDirectionWS;
+    float3 tangentWS;
+    float3 bitangentWS;
+    half anisotropy;
 };

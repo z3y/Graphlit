@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 
 namespace Graphlit
 {
@@ -38,65 +39,107 @@ namespace Graphlit
 
 
         public override string Name { get; } = "Lit";
-        public override int[] VertexPorts => new int[] { POSITION, NORMAL_VERTEX, TANGENT };
-        public override int[] FragmentPorts => new int[] { ALBEDO, ALPHA, METALLIC, OCCLUSION, EMISSION, ROUGHNESS, REFLECTANCE, NORMAL_TS, CUTOFF };
+        public override int[] VertexPorts => new int[] { VERTEX_POSITION, VERTEX_NORMAL, VERTEX_TANGENT };
+        public override int[] FragmentPorts => new int[] { ALBEDO, ALPHA, METALLIC, OCCLUSION, EMISSION, SPECULAR_ROUGHNESS, REFLECTANCE, NORMAL_TS, CUTOFF,
+            BASE_WEIGHT, SPECULAR_WEIGHT, SPECULAR_COLOR, DIFFUSE_ROUGHNESS, SPECULAR_ROUGHNESS_ANISOTROPY, SPECULAR_IOR, TANGENT
+        };
 
         public override string TemplateGUID => "131fe11a59ae68b498c21549d0ebdd85";
 
-        const int POSITION = 0;
-        const int NORMAL_VERTEX = 1;
-        const int TANGENT = 2;
+        const int VERTEX_POSITION = 0;
+        const int VERTEX_NORMAL = 1;
+        const int VERTEX_TANGENT = 2;
         const int ALBEDO = 3;
         const int ALPHA = 4;
         const int CUTOFF = 5;
-        const int ROUGHNESS = 6;
+        const int SPECULAR_ROUGHNESS = 6;
         const int METALLIC = 7;
         const int OCCLUSION = 8;
         const int EMISSION = 9;
         const int NORMAL_TS = 10;
         const int REFLECTANCE = 11;
 
+        const int BASE_WEIGHT = 12;
+        const int SPECULAR_WEIGHT = 13;
+        const int SPECULAR_COLOR = 14;
+        const int DIFFUSE_ROUGHNESS = 15;
+        const int SPECULAR_IOR = 17;
+
+        const int SPECULAR_ROUGHNESS_ANISOTROPY = 16;
+        const int TANGENT = 18;
+
+
+        public override IEnumerable<Port> Inputs => base.Inputs;
         public override void Initialize()
         {
             inputContainer.Clear();
-            AddPort(new(PortDirection.Input, new Float(3, false), POSITION, "Position"));
-            AddPort(new(PortDirection.Input, new Float(3, false), NORMAL_VERTEX, "Normal"));
-            AddPort(new(PortDirection.Input, new Float(3, false), TANGENT, "Tangent"));
 
-            var separator = new VisualElement();
-            separator.style.height = 16;
-            separator.style.backgroundColor = Color.clear;
-            inputContainer.Add(separator);
+            var vertexStage = new Label("Vertex") { style = { fontSize = 13, marginLeft = 23 } };
+            inputContainer.Add(vertexStage);
+            AddPort(new(PortDirection.Input, new Float(3), VERTEX_POSITION, "Position"));
+            AddPort(new(PortDirection.Input, new Float(3), VERTEX_NORMAL, "Normal"));
+            AddPort(new(PortDirection.Input, new Float(3), VERTEX_TANGENT, "Tangent"));
 
-            AddPort(new(PortDirection.Input, new Float(3, false), ALBEDO, "Albedo"));
-            AddPort(new(PortDirection.Input, new Float(1, false), ALPHA, "Alpha"));
+            AddSeparator();
 
-            AddPort(new(PortDirection.Input, new Float(1, false), OCCLUSION, "Occlusion"));
-            AddPort(new(PortDirection.Input, new Float(1, false), ROUGHNESS, "Roughness"));
-            AddPort(new(PortDirection.Input, new Float(1, false), METALLIC, "Metallic"));
-            AddPort(new(PortDirection.Input, new Float(1, false), REFLECTANCE, "Reflectance"));
+            var fragmentStage = new Label("Fragment") { style = { fontSize = 13, marginLeft = 23 } };
+            inputContainer.Add(fragmentStage);
 
-            AddPort(new(PortDirection.Input, new Float(3, false), NORMAL_TS, "Normal"));
-            AddPort(new(PortDirection.Input, new Float(3, false), EMISSION, "Emission"));
+            AddSeparator();
+            inputContainer.Add(new Label("Base") { style = { marginLeft = 23 } });
+            // AddPort(new(PortDirection.Input, new Float(1), BASE_WEIGHT, "BaseWeight"), true, "Weight");
+            AddPort(new(PortDirection.Input, new Float(3), ALBEDO, "Albedo"), true, "Color");
+            AddPort(new(PortDirection.Input, new Float(1), METALLIC, "Metallic"), true, "Metallic");
+            AddPort(new(PortDirection.Input, new Float(1), OCCLUSION, "Occlusion"));
+            //AddPort(new(PortDirection.Input, new Float(1), DIFFUSE_ROUGHNESS, "DiffuseRoughness"), true, "Diffuse Roughness");
+
+            AddSeparator();
+            inputContainer.Add(new Label("Specular") { style = { marginLeft = 23 } });
+            //AddPort(new(PortDirection.Input, new Float(1), SPECULAR_WEIGHT, "SpecularWeight"), true, "Weight");
+            //AddPort(new(PortDirection.Input, new Float(3), SPECULAR_COLOR, "SpecularColor"), true, "Color");
+            AddPort(new(PortDirection.Input, new Float(1), SPECULAR_ROUGHNESS, "Roughness"), true, "Roughness");
+            AddPort(new(PortDirection.Input, new Float(1), SPECULAR_ROUGHNESS_ANISOTROPY, "Anisotropy"), true, "Anisotropy");
+            //AddPort(new(PortDirection.Input, new Float(1), SPECULAR_IOR, "IOR"), true, "IOR");
+            AddPort(new(PortDirection.Input, new Float(1), REFLECTANCE, "Reflectance"));
 
 
-            AddPort(new(PortDirection.Input, new Float(1, false), CUTOFF, "Cutoff"));
+            AddSeparator();
+            inputContainer.Add(new Label("Geometry") { style = { marginLeft = 23 } });
+            AddPort(new(PortDirection.Input, new Float(3), NORMAL_TS, "Normal"));
+            AddPort(new(PortDirection.Input, new Float(3), TANGENT, "Tangent"));
+
+            AddPort(new(PortDirection.Input, new Float(1), ALPHA, "Alpha"), true, "Opacity");
+            AddPort(new(PortDirection.Input, new Float(1), CUTOFF, "Cutoff"));
+
+            AddSeparator();
+            inputContainer.Add(new Label("Emission") { style = { marginLeft = 23 } });
+            AddPort(new(PortDirection.Input, new Float(3), EMISSION, "Emission"));
+
+
             inputContainer.style.paddingBottom = 8;
 
-            Bind(POSITION, PortBinding.PositionWS);
-            Bind(NORMAL_VERTEX, PortBinding.NormalWS);
-            Bind(TANGENT, PortBinding.TangentWS);
+            Bind(VERTEX_POSITION, PortBinding.PositionWS);
+            Bind(VERTEX_NORMAL, PortBinding.NormalWS);
+            Bind(VERTEX_TANGENT, PortBinding.TangentWS);
             DefaultValues[ALBEDO] = "float3(1.0, 1.0, 1.0)";
             DefaultValues[ALPHA] = "1.0";
             DefaultValues[CUTOFF] = "0.5";
-            DefaultValues[ROUGHNESS] = "0.5";
+            DefaultValues[SPECULAR_ROUGHNESS] = "0.5";
             DefaultValues[REFLECTANCE] = "0.5";
             DefaultValues[METALLIC] = "0.0";
             DefaultValues[OCCLUSION] = "1.0";
             DefaultValues[EMISSION] = "float3(0.0, 0.0, 0.0)";
             DefaultValues[NORMAL_TS] = "float3(0.0, 0.0, 1.0)";
-        }
 
+            DefaultValues[BASE_WEIGHT] = "1.0";
+            DefaultValues[DIFFUSE_ROUGHNESS] = "output.Roughness";
+            DefaultValues[SPECULAR_WEIGHT] = "1.0";
+            DefaultValues[SPECULAR_COLOR] = "float3(1.0, 1.0, 1.0)";
+            DefaultValues[SPECULAR_ROUGHNESS_ANISOTROPY] = "0";
+            DefaultValues[SPECULAR_IOR] = "1.5";
+
+            DefaultValues[TANGENT] = "float3(0,1,0)";
+        }
 
         [SerializeField] bool _cbirp = false;
         [SerializeField] bool _cbirpReflections = false;
@@ -276,7 +319,8 @@ namespace Graphlit
 
 
             {
-                var portFlags = new List<int>() { POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, EMISSION, NORMAL_TS };
+                var portFlags = new List<int>() { VERTEX_POSITION, VERTEX_NORMAL, VERTEX_TANGENT, ALBEDO, ALPHA, CUTOFF, SPECULAR_ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, EMISSION, NORMAL_TS,
+                BASE_WEIGHT, SPECULAR_WEIGHT, SPECULAR_COLOR, DIFFUSE_ROUGHNESS, SPECULAR_ROUGHNESS_ANISOTROPY, TANGENT, SPECULAR_IOR };
                 var pass = new PassBuilder("Forward", Vertex, FragmentForward, portFlags.ToArray());
                 pass.tags["LightMode"] = urp ? "UniversalForward" : "ForwardBase";
                 TerrainPass(pass);
@@ -312,6 +356,8 @@ namespace Graphlit
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _LIGHTMAPPED_SPECULAR");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _NONLINEAR_LIGHTPROBESH");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _MIRROR");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _ANISOTROPY");
+
                 pass.pragmas.Add("#pragma shader_feature_local_vertex _DECALERY");
 
 
@@ -376,7 +422,8 @@ namespace Graphlit
 
             if (!urp)
             {
-                var portFlags = new List<int>() { POSITION, NORMAL_VERTEX, TANGENT, ALBEDO, ALPHA, CUTOFF, ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, NORMAL_TS };
+                var portFlags = new List<int>() { VERTEX_POSITION, VERTEX_NORMAL, VERTEX_TANGENT, ALBEDO, ALPHA, CUTOFF, SPECULAR_ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, NORMAL_TS,
+                BASE_WEIGHT, SPECULAR_WEIGHT, SPECULAR_COLOR, DIFFUSE_ROUGHNESS, SPECULAR_ROUGHNESS_ANISOTROPY, TANGENT, SPECULAR_IOR};
                 var pass = new PassBuilder("ForwardAdd", Vertex, FragmentForward, portFlags.ToArray());
                 pass.tags["LightMode"] = "ForwardAdd";
                 TerrainPass(pass);
@@ -409,7 +456,7 @@ namespace Graphlit
                 {
                     pass.pragmas.Add("#pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF");
                 }
-
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _ANISOTROPY");
                 pass.pragmas.Add("#pragma shader_feature_local_vertex _DECALERY");
 
                 pass.pragmas.Add(NormalDropoffDefine());
@@ -436,23 +483,23 @@ namespace Graphlit
             if (urp)
             {
                 {
-                    var pass = new PassBuilder("DepthOnly", Vertex, FragmentDepth, NORMAL_VERTEX, TANGENT, POSITION, ALPHA, CUTOFF);
+                    var pass = new PassBuilder("DepthOnly", Vertex, FragmentDepth, VERTEX_NORMAL, VERTEX_TANGENT, VERTEX_POSITION, ALPHA, CUTOFF);
                     CreateUniversalDepthPass(pass);
                     builder.AddPass(pass);
                 }
                 {
-                    var pass = new PassBuilder("DepthNormals", Vertex, FragmentDepthNormals, POSITION, NORMAL_VERTEX, TANGENT, ALPHA, CUTOFF, NORMAL_TS);
+                    var pass = new PassBuilder("DepthNormals", Vertex, FragmentDepthNormals, VERTEX_POSITION, VERTEX_NORMAL, VERTEX_TANGENT, ALPHA, CUTOFF, NORMAL_TS);
                     CreateUniversalDepthNormalsPass(pass);
                     builder.AddPass(pass);
                 }
             }
             {
-                var pass = new PassBuilder("ShadowCaster", Vertex, FragmentShadow, POSITION, NORMAL_VERTEX, TANGENT, ALPHA, CUTOFF);
+                var pass = new PassBuilder("ShadowCaster", Vertex, FragmentShadow, VERTEX_POSITION, VERTEX_NORMAL, VERTEX_TANGENT, ALPHA, CUTOFF);
                 CreateShadowCaster(pass, urp);
                 builder.AddPass(pass);
             }
             {
-                var pass = new PassBuilder("Meta", Vertex, FragmentMeta, ALPHA, CUTOFF, ALBEDO, METALLIC, ROUGHNESS, EMISSION);
+                var pass = new PassBuilder("Meta", Vertex, FragmentMeta, ALPHA, CUTOFF, ALBEDO, METALLIC, SPECULAR_ROUGHNESS, EMISSION);
                 pass.tags["LightMode"] = "Meta";
                 pass.renderStates["Cull"] = "Off";
                 TerrainPass(pass);

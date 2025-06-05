@@ -8,6 +8,7 @@ using UnityEditor.AssetImporters;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.Rendering;
 using System.IO;
+using System.Collections.Generic;
 
 namespace Graphlit
 {
@@ -96,6 +97,7 @@ namespace Graphlit
             root.Add(PropertyDescriptor.CreateReordableListElement(graphData.properties, GraphView));
         }
 
+        //public override IEnumerable<Port> Inputs => inputContainer.Query<Port>().ToList();
 
         void AddVRCTagsElements(VisualElement root, GraphData graphData)
         {
@@ -405,6 +407,11 @@ namespace Graphlit
 
             AssetDatabase.Refresh();
             EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(fullPath));
+        }
+
+        protected void AddSeparator()
+        {
+            inputContainer.Add(new VisualElement() { style = { height = 16, backgroundColor = Color.clear } });
         }
     }
 }

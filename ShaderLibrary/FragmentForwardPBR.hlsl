@@ -58,6 +58,22 @@ float4 frag(Varyings input) : SV_Target
     half dielectricSpecularF0 = 0.16 * surface.Reflectance * surface.Reflectance;
     shading.f0 = surface.Albedo * surface.Metallic + dielectricSpecularF0 * (1.0 - surface.Metallic);
 
+    #ifdef _ANISOTROPY
+        float3 tangentWS = TransformTangentToWorld(surface.Tangent, fragment.tangentSpaceTransform);
+        float3 bitangentWS = Orthonormalize(tangentWS, normalWS);
+        tangentWS = normalize(cross(normalWS, bitangentWS));
+
+        float3 anisotropicDirection = surface.Anisotropy >= 0.0 ? bitangentWS : tangentWS;
+        float3 anisotropicTangent = cross(anisotropicDirection, fragment.viewDirectionWS);
+        float3 anisotropicNormal = cross(anisotropicTangent, anisotropicDirection);
+        float bendFactor = abs(surface.Anisotropy) * saturate(1.0 - (pow5(1.0 - surface.Roughness)));
+        float3 bentNormal = normalize(lerp(normalWS, anisotropicNormal, bendFactor));
+        shading.reflectVector = reflect(-fragment.viewDirectionWS, bentNormal);
+        shading.bitangentWS = bitangentWS;
+        shading.tangentWS = tangentWS;
+        shading.anisotropy = surface.Anisotropy;
+    #endif
+
     float3 positionWS = fragment.positionWS;
 
     half3 bakedGI = 0;
