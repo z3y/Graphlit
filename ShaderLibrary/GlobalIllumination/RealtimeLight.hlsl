@@ -235,8 +235,8 @@ half2 GetAtAb(half roughness, half anisotropy)
 // https://renderwonk.com/publications/wp-generalization-adobe/gen-adobe.pdf
 half3 F_SchlickHoffman(float cosTheta, half3 f0, half3 f82)
 {
-    const float COS_THETA_MAX = 1.0 / 7.0;
-    const float COS_THETA_FACTOR = 1.0 / (COS_THETA_MAX * pow(1.0 - COS_THETA_MAX, 6.0));
+    float COS_THETA_MAX = 1.0 / 7.0;
+    float COS_THETA_FACTOR = 1.0 / (COS_THETA_MAX * pow(1.0 - COS_THETA_MAX, 6.0));
 
     half exponent = 5;
     half3 f90 = 1;

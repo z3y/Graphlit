@@ -105,7 +105,13 @@ namespace Graphlit
                 hasUnsavedChanges = true;
             }
 
-            titleContent = new GUIContent(GetShaderDisplayName(graphView.graphData));
+            if (!_graphlitIcon)
+            {
+                _graphlitIcon = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.z3y.graphlit/Editor/icon.psd");
+            }
+
+
+            titleContent = new GUIContent(GetShaderDisplayName(graphView.graphData), _graphlitIcon);
         }
 
         public void OnEnable()

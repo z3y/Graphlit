@@ -219,9 +219,9 @@ void EnvironmentBRDF(half NoV, half perceptualRoughness, half3 f0, out half3 brd
         energyCompensation = 1.0 + f0 * (1.0 / dfg.y - 1.0);
 
         // f82
-        float f = 6.0f / 7.0f;
+        float f = 6.0 / 7.0;
         float3 schlick = lerp(f0, 1.0, pow(f, 5));
-        brdf -= schlick * (7.0f / pow(f, 6)) * (1.0f - f82) * dfg.z * metallic;
+        brdf -= schlick * (7.0 / pow(f, 6)) * (1.0 - f82) * dfg.z * metallic;
         brdf *= lerp(f82, 1.0, metallic);
     #endif
 }
