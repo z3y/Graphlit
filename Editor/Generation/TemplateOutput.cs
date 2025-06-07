@@ -204,6 +204,7 @@ namespace Graphlit
             GraphlitImporter._lastImport = result;
             var shader = ShaderUtil.CreateShaderAsset(ctx, result, false);
 
+            builder._nonModifiableTextures.Add("_DFG", _dfg);
             if (builder._nonModifiableTextures.Count > 0)
             {
                 EditorMaterialUtility.SetShaderNonModifiableDefaults(shader, builder._nonModifiableTextures.Keys.ToArray(), builder._nonModifiableTextures.Values.ToArray());
