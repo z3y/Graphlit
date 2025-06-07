@@ -11,7 +11,7 @@ namespace Graphlit
     {
         [SerializeField] bool _enableDirectionalCookie;
         [SerializeField] Light _mainDirectionalLight;
-        [SerializeField] Texture2D _directionalCookie;
+        [SerializeField] Texture _directionalCookie;
         [SerializeField] Vector2 _cookieScale = Vector2.one;
 
         [SerializeField] bool _enableEnvironmentProbe;

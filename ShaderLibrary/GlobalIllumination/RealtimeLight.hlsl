@@ -115,8 +115,11 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
 
         light.distanceAttenuation = 1;
 
-        #if defined(SPOT) || defined(POINT)
+        #ifdef UNITY_PASS_FORWARDADD
             float4 lightCoord = mul(unity_WorldToLight, float4(positionWS, 1));
+        #endif
+
+        #if defined(SPOT) || defined(POINT)
             float3 lightZ = float3(unity_WorldToLight[0][2], unity_WorldToLight[1][2], unity_WorldToLight[2][2]);
 
             float distanceSquare = dot(positionToLight, positionToLight);
@@ -159,6 +162,10 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
         #ifndef UNITY_PASS_FORWARDADD
         half4 cookieTexture = SampleUdonRPDirectionalCookie(positionWS);
         light.color *= cookieTexture.rgb;
+        #endif
+
+        #ifdef DIRECTIONAL_COOKIE
+            light.color *= SAMPLE_TEXTURE2D(_LightTexture0, sampler_LightTexture0, lightCoord.xy).rgb;
         #endif
     #endif
 
