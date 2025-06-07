@@ -57,6 +57,8 @@ float4 frag(Varyings input) : SV_Target
     shading.viewDirectionWS = fragment.viewDirectionWS;
     half dielectricSpecularF0 = 0.16 * surface.Reflectance * surface.Reflectance;
     shading.f0 = surface.Albedo * surface.Metallic + dielectricSpecularF0 * (1.0 - surface.Metallic);
+    shading.f82 = surface.SpecularColor;
+    shading.metallic = surface.Metallic;
 
     #ifdef _ANISOTROPY
         float3 tangentWS = TransformTangentToWorld(surface.Tangent, fragment.tangentSpaceTransform);

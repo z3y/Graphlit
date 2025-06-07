@@ -11,6 +11,7 @@ struct ShadingData
     half3 diffuseColor;
     half perceptualRoughness;
     half roughness;
+    half metallic;
     float3 viewDirectionWS;
     float3 tangentWS;
     float3 bitangentWS;

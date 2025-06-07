@@ -110,6 +110,13 @@ namespace Graphlit
             }
         }
 
+        static void LoadDFG()
+        {
+            if (!_dfg)
+                _dfg = AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.z3y.graphlit/Editor/Targets/Lit/dfg-multiscatter.exr");
+        }
+        static Texture2D _dfg;
+
         void DrawProperties(MaterialEditor materialEditor, MaterialProperty[] properties)
         {
             int baseIndentation = EditorGUI.indentLevel;
@@ -229,10 +236,19 @@ namespace Graphlit
         {
             _material = (Material)editor.target;
             _shader = _material.shader;
+            ApplyDFG(_material);
 
             PraseProperties(editor, properties);
         }
 
+        public static void ApplyDFG(Material m)
+        {
+            LoadDFG();
+            if (m.HasProperty("_DFG"))
+            {
+                m.SetTexture("_DFG", _dfg);// non modifiable texture doesnt get applied always
+            }
+        }
 
         readonly string[] _renderingFolderProps =
         {
@@ -540,7 +556,7 @@ namespace Graphlit
             }
 
 
-
+            ApplyDFG(material);
             SetupSurfaceType(material);
         }
 
