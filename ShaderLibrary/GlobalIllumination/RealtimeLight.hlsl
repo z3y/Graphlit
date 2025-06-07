@@ -232,6 +232,19 @@ half2 GetAtAb(half roughness, half anisotropy)
     return half2(at, ab);
 }
 
+// https://renderwonk.com/publications/wp-generalization-adobe/gen-adobe.pdf
+half3 F_SchlickHoffman(float cosTheta, half3 f0, half3 f82)
+{
+    const float COS_THETA_MAX = 1.0 / 7.0;
+    const float COS_THETA_FACTOR = 1.0 / (COS_THETA_MAX * pow(1.0 - COS_THETA_MAX, 6.0));
+
+    half exponent = 5;
+    half3 f90 = 1;
+    float x = cosTheta;
+    float3 a = lerp(f0, f90, pow(1.0 - COS_THETA_MAX, exponent)) * (1.0 - f82) * COS_THETA_FACTOR;
+    return lerp(f0, f90, pow(1.0 - x, exponent)) - a * x * pow(1.0 - x, 6);
+}
+
 void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingData shading)
 {
     half NoL = saturate(dot(shading.normalWS, light.direction));
@@ -266,7 +279,9 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
         #endif
         specular += specularTerm * shading.f0 * lightColor * (1.0/PI);
     #else
-        real3 F = F_Schlick(shading.f0, LoH);
+        // real3 F = F_Schlick(shading.f0, LoH);
+        real3 F = F_SchlickHoffman(LoH, shading.f0, lerp(1.0, shading.f82, shading.metallic));
+        F *= lerp(shading.f82, 1.0, shading.metallic);
         real D = D_GGX(NoH, shading.roughness);
         real V = V_SmithJointGGX(NoL, shading.NoV, shading.roughness);
 
