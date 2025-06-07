@@ -74,6 +74,10 @@ float4 frag(Varyings input) : SV_Target
         shading.anisotropy = surface.Anisotropy;
     #endif
 
+    #ifndef QUALITY_LOW
+        shading.reflectVector = lerp(shading.reflectVector, normalWS, surface.Roughness * surface.Roughness);
+    #endif
+
     float3 positionWS = fragment.positionWS;
 
     half3 bakedGI = 0;
@@ -191,11 +195,12 @@ float4 frag(Varyings input) : SV_Target
     #endif
 
     half3 brdf;
+    half3 invBrdf;
     half3 energyCompensation;
-    EnvironmentBRDF(shading.NoV, shading.perceptualRoughness, shading.f0, brdf, energyCompensation);
+    EnvironmentBRDF(shading.NoV, shading.perceptualRoughness, shading.f0, brdf, invBrdf, energyCompensation, surface.SpecularColor, surface.Metallic);
     indirectSpecular *= brdf * energyCompensation;
     lightmapSpecular *= brdf * energyCompensation;
-    bakedGI *= 1.0 - brdf;
+    bakedGI *= invBrdf;
     specular *= energyCompensation * PI;
 
 #ifdef UNITY_PASS_FORWARDBASE

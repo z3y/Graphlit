@@ -19,7 +19,7 @@ void EnvironmentBRDFNode(out float3 BRDF, out half3 energyCompensation, float3 n
 		energyCompensation = 1.0;
 		BRDF = EnvironmentBRDFApproximation_1(roughness, NoV, f0);
 	#else
-        float2 dfg = SAMPLE_TEXTURE2D_LOD(_DFG, sampler_BilinearClamp, float2(NoV, roughness), 0).rg;
+		float2 dfg = SAMPLE_TEXTURE2D_LOD(_DFG, sampler_BilinearClamp, float2(sqrt(NoV), roughness), 0).rg;
 
 		BRDF = lerp(dfg.xxx, dfg.yyy, f0);
 		energyCompensation = 1.0 + f0 * (1.0 / dfg.y - 1.0);

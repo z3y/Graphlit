@@ -96,7 +96,8 @@ namespace Graphlit
             AddSeparator();
             inputContainer.Add(new Label("Specular") { style = { marginLeft = 23 } });
             //AddPort(new(PortDirection.Input, new Float(1), SPECULAR_WEIGHT, "SpecularWeight"), true, "Weight");
-            //AddPort(new(PortDirection.Input, new Float(3), SPECULAR_COLOR, "SpecularColor"), true, "Color");
+            AddPort(new(PortDirection.Input, new Float(3), SPECULAR_COLOR, "SpecularColor"), true, "Color");
+
             AddPort(new(PortDirection.Input, new Float(1), SPECULAR_ROUGHNESS, "Roughness"), true, "Roughness");
             AddPort(new(PortDirection.Input, new Float(1), SPECULAR_ROUGHNESS_ANISOTROPY, "Anisotropy"), true, "Anisotropy");
             //AddPort(new(PortDirection.Input, new Float(1), SPECULAR_IOR, "IOR"), true, "IOR");

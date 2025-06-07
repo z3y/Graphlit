@@ -204,15 +204,24 @@ half3 EnvironmentBRDFApproximation(half perceptualRoughness, half NoV, half3 f0)
     return saturate(lerp(a0, a1, f0));
 }
 
-void EnvironmentBRDF(half NoV, half perceptualRoughness, half3 f0, out half3 brdf, out half3 energyCompensation)
+void EnvironmentBRDF(half NoV, half perceptualRoughness, half3 f0, out half3 brdf, out half3 invBrdf, out half3 energyCompensation, float3 f82 = 0, half metallic = 0)
 {
     #if defined(QUALITY_LOW)
         energyCompensation = 1.0;
         brdf = EnvironmentBRDFApproximation(perceptualRoughness, NoV, f0);
+        invBrdf = 1.0 - brdf;
     #else   
-        // from google filament
-        float2 dfg = SAMPLE_TEXTURE2D_LOD(_DFG, sampler_DFG, float2(NoV, perceptualRoughness), 0).rg;
+        const float lutRes = 128;
+        float2 coordLUT = Remap01ToHalfTexelCoord(float2(sqrt(NoV), perceptualRoughness), lutRes);
+        float4 dfg = SAMPLE_TEXTURE2D_LOD(_DFG, sampler_DFG, coordLUT, 0);
         brdf = lerp(dfg.xxx, dfg.yyy, f0);
+        invBrdf = 1.0 - brdf;
         energyCompensation = 1.0 + f0 * (1.0 / dfg.y - 1.0);
+
+        // f82
+        float f = 6.0f / 7.0f;
+        float3 schlick = lerp(f0, 1.0, pow(f, 5));
+        brdf -= schlick * (7.0f / pow(f, 6)) * (1.0f - f82) * dfg.z * metallic;
+        brdf *= lerp(f82, 1.0, metallic);
     #endif
 }

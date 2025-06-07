@@ -939,6 +939,24 @@
                 },
                 "declaration": 1,
                 "keywordPassFlags": -1
+            },
+            {
+                "guid": "540e90a9-8514-44bf-b58b-cf998339299c",
+                "referenceName": "_SpecularColor",
+                "displayName": "Specular Color",
+                "type": 5,
+                "customAttributes": "",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "(1.00, 1.00, 1.00, 1.00)",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1
             }
         ],
         "precision": 0,
@@ -2312,6 +2330,17 @@
             "data": "{\"_ref\":\"297341ee-cfd4-44cb-86a1-103f79528965\"}"
         },
         {
+            "type": "Graphlit.ColorPropertyNode",
+            "guid": "7a1524f9-b74a-4a1b-a5ef-23c7277ac1e9",
+            "x": -94,
+            "y": 192,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"540e90a9-8514-44bf-b58b-cf998339299c\"}"
+        },
+        {
             "type": "Graphlit.CustomFunctionNode",
             "guid": "7a803c8d-8a82-46c5-9c9a-cb850e0eb4d1",
             "x": -1644,
@@ -2364,8 +2393,8 @@
         {
             "type": "Graphlit.FetchVariableNode",
             "guid": "7b31e4d5-6a99-4d64-b9a1-4bcca6448069",
-            "x": -34,
-            "y": 112,
+            "x": -321,
+            "y": 12,
             "connections": [
                 {
                     "a": 0,
@@ -2915,6 +2944,11 @@
                     "a": 0,
                     "b": 8,
                     "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
+                },
+                {
+                    "a": 0,
+                    "b": 14,
+                    "node": "7a1524f9-b74a-4a1b-a5ef-23c7277ac1e9"
                 },
                 {
                     "a": 1,
@@ -3789,6 +3823,17 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_ref\":\"33453acb-825e-4ca2-8e90-24b60130cec9\"}"
+        },
+        {
+            "type": "Graphlit.AddNode",
+            "guid": "fc40e9ad-6548-4471-9856-8219cc9ff497",
+            "x": -3000,
+            "y": 464,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
         },
         {
             "type": "Graphlit.KeywordPropertyNode",
