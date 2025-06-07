@@ -63,9 +63,12 @@ void DFG(float2 UV, out float4 Out)
 {
 	Out = 0;
 	float NdotV = UV.x * UV.x;
+	// float NdotV = UV.x;
 	float perceptualRoughness = UV.y;
 
 	float4 dfg = IntegrateGGXAndDisneyDiffuseFGD_F82(NdotV, PerceptualRoughnessToRoughness(perceptualRoughness));
 
 	Out.rgb = dfg.rga;
+
+    Out = saturate(Out);
 }

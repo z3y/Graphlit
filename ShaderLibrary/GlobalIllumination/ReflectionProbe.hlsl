@@ -211,7 +211,7 @@ void EnvironmentBRDF(half NoV, half perceptualRoughness, half3 f0, out half3 brd
         brdf = EnvironmentBRDFApproximation(perceptualRoughness, NoV, f0);
         invBrdf = 1.0 - brdf;
     #else   
-        const float lutRes = 128;
+        const float lutRes = 64;
         float2 coordLUT = Remap01ToHalfTexelCoord(float2(sqrt(NoV), perceptualRoughness), lutRes);
         float4 dfg = SAMPLE_TEXTURE2D_LOD(_DFG, sampler_DFG, coordLUT, 0);
         brdf = lerp(dfg.xxx, dfg.yyy, f0);

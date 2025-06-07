@@ -381,6 +381,24 @@
                 "keywordPassFlags": 0
             },
             {
+                "guid": "540e90a9-8514-44bf-b58b-cf998339299c",
+                "referenceName": "_SpecularColor",
+                "displayName": "Specular Color",
+                "type": 5,
+                "customAttributes": "[Tooltip(Metallic edge tint and dielectric specular tint)]",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "(1.00, 1.00, 1.00, 1.00)",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1
+            },
+            {
                 "guid": "8003d520-ea6c-43aa-a941-dfca94d5ac07",
                 "referenceName": "shader_feature_local_fragment _EMISSION",
                 "displayName": "Enable Emission",
@@ -938,24 +956,6 @@
                     "instanceID": 0
                 },
                 "declaration": 1,
-                "keywordPassFlags": -1
-            },
-            {
-                "guid": "540e90a9-8514-44bf-b58b-cf998339299c",
-                "referenceName": "_SpecularColor",
-                "displayName": "Specular Color",
-                "type": 5,
-                "customAttributes": "",
-                "defaultAttributes": 0,
-                "rangeX": 0.0,
-                "rangeY": 0.0,
-                "_value": "(1.00, 1.00, 1.00, 1.00)",
-                "_autoKeywordName": "",
-                "_defaultTexture": "",
-                "_defaultTextureObject": {
-                    "instanceID": 0
-                },
-                "declaration": 0,
                 "keywordPassFlags": -1
             }
         ],
@@ -3823,17 +3823,6 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_ref\":\"33453acb-825e-4ca2-8e90-24b60130cec9\"}"
-        },
-        {
-            "type": "Graphlit.AddNode",
-            "guid": "fc40e9ad-6548-4471-9856-8219cc9ff497",
-            "x": -3000,
-            "y": 464,
-            "connections": [],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": ""
         },
         {
             "type": "Graphlit.KeywordPropertyNode",

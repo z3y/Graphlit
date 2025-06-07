@@ -9,7 +9,7 @@ namespace Graphlit
 {
     public class BakeDFG : MonoBehaviour
     {
-        // [MenuItem("Tools/Graphlit/Bake DFG")]
+        [MenuItem("Tools/Graphlit/Bake DFG")]
         public static void Bake()
         {
             var shader = Shader.Find("Hidden/Graphlit/DFG");
@@ -35,7 +35,7 @@ namespace Graphlit
 
             Graphics.Blit(Texture2D.blackTexture, rt, mat, 0);
 
-            var tex = new Texture2D(res, res, TextureFormat.RGBA32, false, true);
+            var tex = new Texture2D(res, res, TextureFormat.RGBAFloat, false, true);
             tex.ReadPixels(new Rect(Vector2.zero, new Vector2(res, res)), 0, 0);
 
             var bytes = tex.EncodeToEXR();
