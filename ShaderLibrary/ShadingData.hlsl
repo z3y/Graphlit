@@ -5,6 +5,7 @@ struct ShadingData
     half NoV;
     float3 normalWS;
     float3 reflectVector;
+    float3 coatReflectVector;
     half3 f0;
     half3 f90;
     half3 f82;
@@ -16,4 +17,5 @@ struct ShadingData
     float3 tangentWS;
     float3 bitangentWS;
     half anisotropy;
+    half3 coatf0;
 };

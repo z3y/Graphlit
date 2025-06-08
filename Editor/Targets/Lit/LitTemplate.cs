@@ -41,7 +41,8 @@ namespace Graphlit
         public override string Name { get; } = "Lit";
         public override int[] VertexPorts => new int[] { VERTEX_POSITION, VERTEX_NORMAL, VERTEX_TANGENT };
         public override int[] FragmentPorts => new int[] { ALBEDO, ALPHA, METALLIC, OCCLUSION, EMISSION, SPECULAR_ROUGHNESS, REFLECTANCE, NORMAL_TS, CUTOFF,
-            BASE_WEIGHT, SPECULAR_WEIGHT, SPECULAR_COLOR, DIFFUSE_ROUGHNESS, SPECULAR_ROUGHNESS_ANISOTROPY, SPECULAR_IOR, TANGENT
+            BASE_WEIGHT, SPECULAR_WEIGHT, SPECULAR_COLOR, DIFFUSE_ROUGHNESS, SPECULAR_ROUGHNESS_ANISOTROPY, SPECULAR_IOR, TANGENT,
+            COAT_WEIGHT, COAT_COLOR, COAT_ROUGHNESS, COAT_ROUGHNESS_ANISOTROPY, COAT_IOR, COAT_DARKENING
         };
 
         public override string TemplateGUID => "131fe11a59ae68b498c21549d0ebdd85";
@@ -67,6 +68,13 @@ namespace Graphlit
 
         const int SPECULAR_ROUGHNESS_ANISOTROPY = 16;
         const int TANGENT = 18;
+
+        const int COAT_WEIGHT = 19;
+        const int COAT_COLOR = 20;
+        const int COAT_ROUGHNESS = 21;
+        const int COAT_ROUGHNESS_ANISOTROPY = 22;
+        const int COAT_IOR = 23;
+        const int COAT_DARKENING = 24;
 
 
         public override IEnumerable<Port> Inputs => base.Inputs;
@@ -102,6 +110,15 @@ namespace Graphlit
             AddPort(new(PortDirection.Input, new Float(1), SPECULAR_ROUGHNESS_ANISOTROPY, "Anisotropy"), true, "Anisotropy");
             //AddPort(new(PortDirection.Input, new Float(1), SPECULAR_IOR, "IOR"), true, "IOR");
             AddPort(new(PortDirection.Input, new Float(1), REFLECTANCE, "Reflectance"));
+
+            AddSeparator();
+            inputContainer.Add(new Label("Coat") { style = { marginLeft = 23 } });
+            AddPort(new(PortDirection.Input, new Float(1), COAT_WEIGHT, "CoatWeight"), true, "Weight");
+            AddPort(new(PortDirection.Input, new Float(3), COAT_COLOR, "CoatColor"), true, "Color");
+            AddPort(new(PortDirection.Input, new Float(1), COAT_ROUGHNESS, "CoatRoughness"), true, "Roughness");
+            AddPort(new(PortDirection.Input, new Float(1), COAT_ROUGHNESS_ANISOTROPY, "CoatAnisotropy"), true, "Anisotropy");
+            AddPort(new(PortDirection.Input, new Float(1), COAT_IOR, "CoatIOR"), true, "IOR");
+            AddPort(new(PortDirection.Input, new Float(1), COAT_DARKENING, "CoatDarkening"), true, "Darkening");
 
 
             AddSeparator();
@@ -140,6 +157,14 @@ namespace Graphlit
             DefaultValues[SPECULAR_IOR] = "1.5";
 
             DefaultValues[TANGENT] = "float3(0,1,0)";
+
+            DefaultValues[COAT_WEIGHT] = "0";
+            DefaultValues[COAT_COLOR] = "1";
+            DefaultValues[COAT_ROUGHNESS] = "0";
+            DefaultValues[COAT_ROUGHNESS_ANISOTROPY] = "0";
+            DefaultValues[COAT_IOR] = "1.6";
+            DefaultValues[COAT_DARKENING] = "1";
+
         }
 
         [SerializeField] bool _cbirp = false;
@@ -321,7 +346,9 @@ namespace Graphlit
 
             {
                 var portFlags = new List<int>() { VERTEX_POSITION, VERTEX_NORMAL, VERTEX_TANGENT, ALBEDO, ALPHA, CUTOFF, SPECULAR_ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, EMISSION, NORMAL_TS,
-                BASE_WEIGHT, SPECULAR_WEIGHT, SPECULAR_COLOR, DIFFUSE_ROUGHNESS, SPECULAR_ROUGHNESS_ANISOTROPY, TANGENT, SPECULAR_IOR };
+                BASE_WEIGHT, SPECULAR_WEIGHT, SPECULAR_COLOR, DIFFUSE_ROUGHNESS, SPECULAR_ROUGHNESS_ANISOTROPY, TANGENT, SPECULAR_IOR,
+                COAT_WEIGHT, COAT_COLOR, COAT_ROUGHNESS, COAT_ROUGHNESS_ANISOTROPY, COAT_IOR, COAT_DARKENING
+                };
                 var pass = new PassBuilder("Forward", Vertex, FragmentForward, portFlags.ToArray());
                 pass.tags["LightMode"] = urp ? "UniversalForward" : "ForwardBase";
                 TerrainPass(pass);
@@ -357,7 +384,11 @@ namespace Graphlit
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _LIGHTMAPPED_SPECULAR");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _NONLINEAR_LIGHTPROBESH");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _MIRROR");
+
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ANISOTROPY");
+
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _COAT");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _COATANISOTROPY");
 
                 pass.pragmas.Add("#pragma shader_feature_local_vertex _DECALERY");
 
@@ -424,7 +455,9 @@ namespace Graphlit
             if (!urp)
             {
                 var portFlags = new List<int>() { VERTEX_POSITION, VERTEX_NORMAL, VERTEX_TANGENT, ALBEDO, ALPHA, CUTOFF, SPECULAR_ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, NORMAL_TS,
-                BASE_WEIGHT, SPECULAR_WEIGHT, SPECULAR_COLOR, DIFFUSE_ROUGHNESS, SPECULAR_ROUGHNESS_ANISOTROPY, TANGENT, SPECULAR_IOR};
+                BASE_WEIGHT, SPECULAR_WEIGHT, SPECULAR_COLOR, DIFFUSE_ROUGHNESS, SPECULAR_ROUGHNESS_ANISOTROPY, TANGENT, SPECULAR_IOR,
+                COAT_WEIGHT, COAT_COLOR, COAT_ROUGHNESS, COAT_ROUGHNESS_ANISOTROPY, COAT_IOR, COAT_DARKENING
+                };
                 var pass = new PassBuilder("ForwardAdd", Vertex, FragmentForward, portFlags.ToArray());
                 pass.tags["LightMode"] = "ForwardAdd";
                 TerrainPass(pass);
@@ -457,7 +490,11 @@ namespace Graphlit
                 {
                     pass.pragmas.Add("#pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF");
                 }
+
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ANISOTROPY");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _COAT");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _COATANISOTROPY");
+
                 pass.pragmas.Add("#pragma shader_feature_local_vertex _DECALERY");
 
                 pass.pragmas.Add(NormalDropoffDefine());

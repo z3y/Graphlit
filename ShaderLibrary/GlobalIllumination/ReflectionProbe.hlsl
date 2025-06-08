@@ -13,6 +13,15 @@
 TEXTURE2D(_DFG);
 SAMPLER(sampler_DFG);
 
+half ComputeCoatAffectedRoughness(half specularRoughness, half coatRoughness, half coatWeight)
+{
+    half rB4 = pow(specularRoughness, 4.0);
+    half rC4 = pow(coatRoughness, 4.0);
+    half modified = pow(rB4 + 2.0 * rC4, 0.25);
+    half clamped = min(1.0, modified);
+    return lerp(specularRoughness, clamped, coatWeight);
+}
+
 bool IsBoxProjection(float4 cubemapPositionWS)
 {
     bool boxProjection = cubemapPositionWS.w > 0.0f;

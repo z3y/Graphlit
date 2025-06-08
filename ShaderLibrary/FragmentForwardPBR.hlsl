@@ -24,6 +24,12 @@ float4 frag(Varyings input) : SV_Target
         alpha = AlphaClip(surface.Alpha, surface.Cutoff);
     #endif
 
+    #ifdef _COAT
+        surface.Roughness = ComputeCoatAffectedRoughness(surface.Roughness, surface.CoatRoughness, surface.CoatWeight);
+        half3 coatAttenuation = lerp(1.0, surface.CoatColor, surface.CoatWeight);
+        surface.Albedo *= coatAttenuation;
+    #endif
+
     half3 diffuseColor = surface.Albedo * (1.0 - surface.Metallic);
     #if defined(_ALPHAMODULATE_ON)
         diffuseColor = AlphaModulate(diffuseColor, alpha);
@@ -47,6 +53,7 @@ float4 frag(Varyings input) : SV_Target
     shading.NoV = abs(dot(normalWS, fragment.viewDirectionWS)) + 1e-5f;
     shading.normalWS = normalWS;
     shading.reflectVector = reflect(-fragment.viewDirectionWS, normalWS);
+    shading.coatReflectVector = shading.reflectVector;
     shading.perceptualRoughness = surface.Roughness;
     #ifdef QUALITY_LOW
     shading.roughness = max(shading.perceptualRoughness * shading.perceptualRoughness, HALF_MIN_SQRT);
@@ -59,6 +66,8 @@ float4 frag(Varyings input) : SV_Target
     shading.f0 = surface.Albedo * surface.Metallic + dielectricSpecularF0 * (1.0 - surface.Metallic);
     shading.f82 = surface.SpecularColor;
     shading.metallic = surface.Metallic;
+
+    shading.coatf0 = IorToFresnel0(surface.CoatIOR);
 
     #ifdef _ANISOTROPY
         float3 tangentWS = TransformTangentToWorld(surface.Tangent, fragment.tangentSpaceTransform);
@@ -141,6 +150,15 @@ float4 frag(Varyings input) : SV_Target
 #endif
 #endif
 
+#if defined(_COAT) && !defined(UNITY_PASS_FORWARDADD)
+    half3 coatResponse = CalculateIrradianceFromReflectionProbes(shading.coatReflectVector, positionWS, surface.CoatRoughness, 0, fragment.normalWS);
+    half3 coatBrdf, coatInvBrdf, coatEnergyCompensation;
+    EnvironmentBRDF(shading.NoV, surface.CoatRoughness, shading.coatf0, coatBrdf, coatInvBrdf, coatEnergyCompensation, 1, 0);
+    half3 coatDirAlbedo = coatBrdf;
+    half3 coatThroughput = 1.0 - coatDirAlbedo * surface.CoatWeight;
+    indirectSpecular *= coatThroughput;
+#endif
+
     ShadeLight(diffuse, specular, light, shading);
 
 
@@ -207,6 +225,11 @@ float4 frag(Varyings input) : SV_Target
     lightmapSpecular *= brdf * energyCompensation;
     bakedGI *= invBrdf;
     specular *= energyCompensation * PI;
+
+#if defined(_COAT) && !defined(UNITY_PASS_FORWARDADD)
+    coatResponse *= coatBrdf * surface.CoatWeight;
+    indirectSpecular += coatResponse;
+#endif
 
 #ifdef UNITY_PASS_FORWARDBASE
     #ifndef DISABLE_SPECULAR_OCCLUSION
