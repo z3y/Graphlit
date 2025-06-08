@@ -18,6 +18,12 @@ float4 frag(Varyings input) : SV_Target
 
     SurfaceDescription surface = SurfaceDescriptionFunction(input);
 
+    #if defined(_EMISSION) && !defined(UNITY_PASS_FORWARDADD)
+        half3 emissionEDF = surface.Emission;
+    #else
+        half3 emissionEDF = 0;
+    #endif
+
 
     half alpha = surface.Alpha;
     #if defined(_ALPHATEST_ON)
@@ -53,7 +59,7 @@ float4 frag(Varyings input) : SV_Target
     shading.NoV = abs(dot(normalWS, fragment.viewDirectionWS)) + 1e-5f;
     shading.normalWS = normalWS;
     shading.reflectVector = reflect(-fragment.viewDirectionWS, normalWS);
-    shading.coatReflectVector = shading.reflectVector;
+    shading.coatReflectVector = reflect(-fragment.viewDirectionWS, fragment.normalWS);
     shading.perceptualRoughness = surface.Roughness;
     #ifdef QUALITY_LOW
     shading.roughness = max(shading.perceptualRoughness * shading.perceptualRoughness, HALF_MIN_SQRT);
@@ -224,6 +230,9 @@ float4 frag(Varyings input) : SV_Target
     indirectSpecular *= brdf * energyCompensation;
     lightmapSpecular *= brdf * energyCompensation;
     bakedGI *= invBrdf;
+    #if defined(_COAT) && !defined(UNITY_PASS_FORWARDADD)
+    bakedGI *= lerp(1.0, coatInvBrdf, surface.CoatWeight);
+    #endif
     specular *= energyCompensation * PI;
 
 #if defined(_COAT) && !defined(UNITY_PASS_FORWARDADD)
@@ -250,7 +259,13 @@ float4 frag(Varyings input) : SV_Target
     float4 color = float4(diffuseColor * (diffuse + bakedGI) + specular + lightmapSpecular + indirectSpecular, alpha);
 
 #ifndef UNITY_PASS_FORWARDADD
-    color.rgb += surface.Emission;
+// todo handle meta pass
+    #ifdef _COAT
+        half3 coatTintedEmisionEDF = emissionEDF * surface.CoatColor;
+        half3 coatedEmissionEDF = F_Schlick(1.0 - shading.coatf0, 0, shading.NoV) * coatTintedEmisionEDF;
+        emissionEDF = lerp(emissionEDF, coatedEmissionEDF, surface.CoatWeight);
+    #endif
+    color.rgb += emissionEDF;
 #endif
 
     color.rgb = MixFog(color.rgb, InitializeInputDataFog(float4(positionWS, 1), 0));
