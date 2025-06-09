@@ -227,9 +227,10 @@ float4 frag(Varyings input) : SV_Target
 
     half3 brdf, energyCompensation;
     EnvironmentBRDF(shading.NoV, shading.perceptualRoughness, shading.f0, brdf, energyCompensation, surface.SpecularColor, surface.Metallic);
-    half avgDirAlbedo = dot(brdf, 1.0 / 3.0);
-    indirectSpecular *= brdf * energyCompensation;
-    lightmapSpecular *= brdf * energyCompensation;
+    half3 dirAlbedo = brdf * energyCompensation;
+    half avgDirAlbedo = dot(dirAlbedo, 1.0 / 3.0);
+    indirectSpecular *= dirAlbedo;
+    lightmapSpecular *= dirAlbedo;
     specular *= energyCompensation * PI;
     half3 indirectSpecularThroughput = 1.0 - avgDirAlbedo * 1;
 
