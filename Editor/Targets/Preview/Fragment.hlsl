@@ -97,13 +97,13 @@ half4 frag(Varyings varyings) : SV_Target
             UNPACK_TANGENTWS = float4(float3(1,0,0), 1.0);
         #endif
         #ifdef PACK_UV1
-            PACK_UV1.xy = PACK_UV0.xy;
+            PACK_UV1.xy = PACK_UV1.xy;
         #endif
         #ifdef PACK_UV2
-            PACK_UV2.xy = PACK_UV0.xy;
+            PACK_UV2.xy = PACK_UV2.xy;
         #endif
         #ifdef PACK_UV3
-            PACK_UV3.xy = PACK_UV0.xy;
+            PACK_UV3.xy = PACK_UV3.xy;
         #endif
     }
     
