@@ -1260,9 +1260,9 @@
                     "node": "7b31e4d5-6a99-4d64-b9a1-4bcca6448069"
                 },
                 {
-                    "a": 1,
-                    "b": 4,
-                    "node": "29375d49-5df6-41ab-988a-c817ec490e27"
+                    "a": 2,
+                    "b": 7,
+                    "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
                 },
                 {
                     "a": 0,
@@ -1275,30 +1275,30 @@
                     "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
                 },
                 {
-                    "a": 2,
-                    "b": 7,
-                    "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
-                },
-                {
                     "a": 1,
                     "b": 10,
                     "node": "9b9dcfe8-731e-4999-ad30-0717a886c715"
                 },
                 {
                     "a": 1,
-                    "b": 9,
-                    "node": "168c9776-dc61-4ad8-868a-9c64f5162f95"
+                    "b": 4,
+                    "node": "29375d49-5df6-41ab-988a-c817ec490e27"
                 },
                 {
                     "a": 0,
                     "b": 5,
                     "node": "f78ffb9c-64cb-4ecf-8da9-dfc30d9c896a"
+                },
+                {
+                    "a": 1,
+                    "b": 9,
+                    "node": "168c9776-dc61-4ad8-868a-9c64f5162f95"
                 }
             ],
             "precision": 0,
             "preview": 0,
             "previewDisabled": false,
-            "data": "{\"forceNoShadowCasting\":false,\"defaultMode\":0,\"defaultCull\":2,\"_cbirp\":false,\"_cbirpReflections\":false,\"_specular\":true,\"_fwdAddBlendOpMax\":false,\"_normal\":0}"
+            "data": "{\"forceNoShadowCasting\":false,\"defaultMode\":0,\"defaultCull\":2,\"terrainCompatible\":false,\"_cbirp\":false,\"_cbirpReflections\":false,\"_specular\":true,\"_fwdAddBlendOpMax\":false,\"_normal\":0}"
         },
         {
             "type": "Graphlit.SampleTexture2DNode",

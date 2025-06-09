@@ -68,7 +68,8 @@ float4 frag(Varyings input) : SV_Target
     #endif
 
     shading.viewDirectionWS = fragment.viewDirectionWS;
-    half dielectricSpecularF0 = 0.16 * surface.Reflectance * surface.Reflectance;
+    // half dielectricSpecularF0 = 0.16 * surface.Reflectance * surface.Reflectance;
+    half dielectricSpecularF0 = IorToFresnel0(surface.IOR);
     shading.f0 = surface.Albedo * surface.Metallic + dielectricSpecularF0 * (1.0 - surface.Metallic);
     shading.f82 = surface.SpecularColor;
     shading.metallic = surface.Metallic;

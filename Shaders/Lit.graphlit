@@ -364,14 +364,14 @@
             },
             {
                 "guid": "0897a043-5fe9-499c-8f3c-1668e6fa7ee4",
-                "referenceName": "_Reflectance",
-                "displayName": "Reflectance",
+                "referenceName": "_IOR",
+                "displayName": "IOR",
                 "type": 1,
                 "customAttributes": "",
                 "defaultAttributes": 0,
-                "rangeX": 0.0,
-                "rangeY": 1.0,
-                "_value": "0.5",
+                "rangeX": 1.0,
+                "rangeY": 3.0,
+                "_value": "1.5",
                 "_autoKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
@@ -3271,7 +3271,7 @@
                 },
                 {
                     "a": 0,
-                    "b": 11,
+                    "b": 17,
                     "node": "7fc498b7-228e-4214-a1d4-8356f0916ddd"
                 },
                 {

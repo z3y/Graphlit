@@ -108,8 +108,8 @@ namespace Graphlit
 
             AddPort(new(PortDirection.Input, new Float(1), SPECULAR_ROUGHNESS, "Roughness"), true, "Roughness");
             AddPort(new(PortDirection.Input, new Float(1), SPECULAR_ROUGHNESS_ANISOTROPY, "Anisotropy"), true, "Anisotropy");
-            //AddPort(new(PortDirection.Input, new Float(1), SPECULAR_IOR, "IOR"), true, "IOR");
-            AddPort(new(PortDirection.Input, new Float(1), REFLECTANCE, "Reflectance"));
+            AddPort(new(PortDirection.Input, new Float(1), SPECULAR_IOR, "IOR"), true, "IOR");
+            //AddPort(new(PortDirection.Input, new Float(1), REFLECTANCE, "Reflectance"));
 
             AddSeparator();
             inputContainer.Add(new Label("Coat") { style = { marginLeft = 23 } });
