@@ -98,10 +98,11 @@ float4 frag(Varyings input) : SV_Target
     
     #ifdef _THINFILM
         float topIor = 1.0;
-        #ifdef _COAT
-            topIor = lerp(1.0, clamp(1.0, 1.5, surface.CoatIOR), surface.CoatWeight);
+        half3 tfNoV = shading.NoV;
+        #ifdef _ANISOTROPY
+            tfNoV = abs(dot(bentNormal, fragment.viewDirectionWS)) + 1e-5f;
         #endif
-        shading.f0 = lerp(shading.f0, EvalIridescence(topIor, shading.NoV, surface.ThinFilmThickness, shading.f0), surface.ThinFilmWeight);
+        shading.f0 = lerp(shading.f0, EvalIridescence(topIor, tfNoV, surface.ThinFilmThickness, shading.f0, surface.IOR), surface.ThinFilmWeight);
     #endif
 
     #ifndef QUALITY_LOW
