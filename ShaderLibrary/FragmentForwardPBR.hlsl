@@ -57,6 +57,7 @@ float4 frag(Varyings input) : SV_Target
 
     ShadingData shading;
     shading.NoV = abs(dot(normalWS, fragment.viewDirectionWS)) + 1e-5f;
+    shading.coatNoV = abs(dot(fragment.normalWS, fragment.viewDirectionWS)) + 1e-5f;
     shading.normalWS = normalWS;
     shading.reflectVector = reflect(-fragment.viewDirectionWS, normalWS);
     shading.coatReflectVector = reflect(-fragment.viewDirectionWS, fragment.normalWS);
@@ -162,7 +163,7 @@ float4 frag(Varyings input) : SV_Target
 #if defined(_COAT) && !defined(UNITY_PASS_FORWARDADD)
     half3 coatResponse = CalculateIrradianceFromReflectionProbes(shading.coatReflectVector, positionWS, surface.CoatRoughness, 0, fragment.normalWS);
     half3 coatBrdf, coatEnergyCompensation;
-    EnvironmentBRDF(shading.NoV, surface.CoatRoughness, shading.coatf0, coatBrdf, coatEnergyCompensation, 1, 0);
+    EnvironmentBRDF(shading.coatNoV, surface.CoatRoughness, shading.coatf0, coatBrdf, coatEnergyCompensation, 1, 0);
     half3 coatAvgDirAlbedo = dot(coatBrdf, 1.0 / 3.0);
     half3 coatThroughput = 1.0 - coatAvgDirAlbedo * surface.CoatWeight;
     indirectSpecular *= coatThroughput;
@@ -265,7 +266,7 @@ float4 frag(Varyings input) : SV_Target
 // todo handle meta pass
     #ifdef _COAT
         half3 coatTintedEmisionEDF = emissionEDF * surface.CoatColor;
-        half3 coatedEmissionEDF = F_Schlick(1.0 - shading.coatf0, 0, shading.NoV) * coatTintedEmisionEDF;
+        half3 coatedEmissionEDF = F_Schlick(1.0 - shading.coatf0, 0, shading.coatNoV) * coatTintedEmisionEDF;
         emissionEDF = lerp(emissionEDF, coatedEmissionEDF, surface.CoatWeight);
     #endif
     color.rgb += emissionEDF;

@@ -3,6 +3,7 @@
 struct ShadingData
 {
     half NoV;
+    half coatNoV;
     float3 normalWS;
     float3 reflectVector;
     float3 coatReflectVector;

@@ -1107,7 +1107,7 @@
         "defaultPreviewState": 1,
         "customEditor": "",
         "fallback": "",
-        "include": "",
+        "include": "#ifndef _NORMALMAP\n#define _NORMAL_DROPOFF_OFF\n#endif",
         "outlinePass": 0,
         "depthFillPass": false,
         "stencil": false,
