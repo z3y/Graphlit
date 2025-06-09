@@ -42,6 +42,8 @@
 - Multi Bounce AO
 - Micro Shadowing
 - F82 metallic edge tint
+- Coat
+- Thin Film iridescence
 - Improved [Box Projection](https://z3y.github.io/Graphlit/udonrp)
 
 ### Shader Editor

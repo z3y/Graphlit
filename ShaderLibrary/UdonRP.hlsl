@@ -12,7 +12,12 @@ SAMPLER(sampler_UdonRPDirectionalCookie);
 TEXTURECUBE(_UdonRPGlossyEnvironmentCubeMap);
 #define _GlossyEnvironmentCubeMap _UdonRPGlossyEnvironmentCubeMap
 #define ENABLE_ENVIRONMENT_PROBE
-#define _GlossyEnvironmentCubeMap_HDR float4(1, 1, 0, 0)
+
+#ifdef QUALITY_LOW
+    #define _GlossyEnvironmentCubeMap_HDR float4(34, 2.2, 0, 1)
+#else
+    #define _GlossyEnvironmentCubeMap_HDR float4(1, 1, 0, 0)
+#endif
 #endif
 
 half4 SampleUdonRPDirectionalCookie(float3 positionWS)

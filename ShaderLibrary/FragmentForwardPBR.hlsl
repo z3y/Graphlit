@@ -96,7 +96,7 @@ float4 frag(Varyings input) : SV_Target
     #endif
 
     
-    #ifdef _THINFILM
+    #if defined(_THINFILM) && !defined(QUALITY_LOW)
         float topIor = 1.0;
         half tfNoV = shading.NoV;
         #ifdef _ANISOTROPY
