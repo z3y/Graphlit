@@ -538,7 +538,9 @@ namespace Graphlit
                 builder.AddPass(pass);
             }
             {
-                var pass = new PassBuilder("Meta", Vertex, FragmentMeta, ALPHA, CUTOFF, ALBEDO, METALLIC, SPECULAR_ROUGHNESS, EMISSION);
+                var pass = new PassBuilder("Meta", Vertex, FragmentMeta, ALPHA, CUTOFF, ALBEDO, METALLIC, SPECULAR_ROUGHNESS, EMISSION,
+                    COAT_WEIGHT, COAT_COLOR, COAT_ROUGHNESS, COAT_IOR, SPECULAR_IOR
+                    );
                 pass.tags["LightMode"] = "Meta";
                 pass.renderStates["Cull"] = "Off";
                 TerrainPass(pass);
@@ -547,6 +549,7 @@ namespace Graphlit
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ALPHATEST_ON");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
+                pass.pragmas.Add("#pragma shader_feature_local_fragment _COAT");
 
                 pass.attributes.RequireUV(0, 2);
                 pass.attributes.RequireUV(1, 2);

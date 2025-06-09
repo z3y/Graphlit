@@ -11,19 +11,29 @@ float4 frag(Varyings input) : SV_Target
 
     half3 albedo = surface.Albedo;
     half alpha = surface.Alpha;
-    half3 emission = surface.Emission;
+    half3 emissionEDF = surface.Emission;
     half metallic = surface.Metallic;
-    half reflectance = 0.5;
     half perceptualRoughness = surface.Roughness;
 
+    #ifdef _COAT
+        half3 coatTintedEmisionEDF = emissionEDF * surface.CoatColor;
+        half3 coatf0 = IorToFresnel0(surface.CoatIOR);
+        half3 coatedEmissionEDF = coatf0 * coatTintedEmisionEDF;
+        emissionEDF = lerp(emissionEDF, coatedEmissionEDF, surface.CoatWeight);
+
+        perceptualRoughness = ComputeCoatAffectedRoughness(perceptualRoughness, surface.CoatRoughness, surface.CoatWeight);
+        half3 coatAttenuation = lerp(1.0, surface.CoatColor, surface.CoatWeight);
+        albedo *= coatAttenuation;
+    #endif
+
     half3 diffuse = albedo * (1.0 - metallic);
-    half dielectricSpecularF0 = 0.16 * reflectance * reflectance;
+    half dielectricSpecularF0 = IorToFresnel0(surface.IOR);
     half3 specular = albedo * metallic + dielectricSpecularF0 * (1.0 - metallic);
 
     UnityMetaInput meta;
     ZERO_INITIALIZE(UnityMetaInput, meta);
     meta.Albedo = diffuse + specular * perceptualRoughness * perceptualRoughness * 0.5;
-    meta.Emission = emission;
+    meta.Emission = emissionEDF;
     #ifdef EDITOR_VISUALIZATION
         meta.VizUV = input.VizUV;
         meta.LightCoord = input.LightCoord;
