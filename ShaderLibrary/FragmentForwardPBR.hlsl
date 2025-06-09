@@ -70,12 +70,12 @@ float4 frag(Varyings input) : SV_Target
 
     shading.viewDirectionWS = fragment.viewDirectionWS;
     // half dielectricSpecularF0 = 0.16 * surface.Reflectance * surface.Reflectance;
-    half dielectricSpecularF0 = IorToFresnel0(surface.IOR);
+    half dielectricSpecularF0 = IorToFresnel0(surface.IOR + 0.0001);
     shading.f0 = surface.Albedo * surface.Metallic + dielectricSpecularF0 * (1.0 - surface.Metallic);
     shading.f82 = surface.SpecularColor;
     shading.metallic = surface.Metallic;
 
-    shading.coatf0 = IorToFresnel0(surface.CoatIOR);
+    shading.coatf0 = IorToFresnel0(surface.CoatIOR + 0.0001);
     shading.coatWeight = surface.CoatWeight;
     shading.coatSpecularRoughness = max(surface.CoatRoughness * surface.CoatRoughness, 0.002);
 
@@ -93,6 +93,15 @@ float4 frag(Varyings input) : SV_Target
         shading.bitangentWS = bitangentWS;
         shading.tangentWS = tangentWS;
         shading.anisotropy = surface.Anisotropy;
+    #endif
+
+    
+    #ifdef _THINFILM
+        float topIor = 1.0;
+        #ifdef _COAT
+            topIor = lerp(1.0, clamp(1.0, 1.5, surface.CoatIOR), surface.CoatWeight);
+        #endif
+        shading.f0 = lerp(shading.f0, EvalIridescence(topIor, shading.NoV, surface.ThinFilmThickness, shading.f0), surface.ThinFilmWeight);
     #endif
 
     #ifndef QUALITY_LOW

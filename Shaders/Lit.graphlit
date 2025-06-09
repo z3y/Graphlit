@@ -1101,6 +1101,78 @@
                 },
                 "declaration": 0,
                 "keywordPassFlags": -1
+            },
+            {
+                "guid": "abea3ae3-8ea6-4b1d-a877-5d3546294cec",
+                "referenceName": "shader_feature_local_fragment _THINFILM",
+                "displayName": "Thin Film",
+                "type": 13,
+                "customAttributes": "[Folder(Thin Film)]",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1
+            },
+            {
+                "guid": "48c3ee9c-3cd2-4221-a55c-5e015f8002dc",
+                "referenceName": "_ThinFilmWeight",
+                "displayName": "Weight",
+                "type": 1,
+                "customAttributes": "[Folder(Thin Film)]",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 1.0,
+                "_value": "",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1
+            },
+            {
+                "guid": "c9092d58-c98e-40cf-9f1f-ce0b4aae1e5d",
+                "referenceName": "_ThinFilmThickness",
+                "displayName": "Thickness",
+                "type": 1,
+                "customAttributes": "[Folder(Thin Film)]",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 1.0,
+                "_value": "0.5",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1
+            },
+            {
+                "guid": "111aa135-4743-4711-bbb6-9c67e56553a5",
+                "referenceName": "_ThinFilmIOR",
+                "displayName": "IOR",
+                "type": 1,
+                "customAttributes": "[Folder(Thin Film)]",
+                "defaultAttributes": 4,
+                "rangeX": 1.0,
+                "rangeY": 3.0,
+                "_value": "1.4",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1
             }
         ],
         "precision": 0,
@@ -1357,8 +1429,8 @@
         {
             "type": "Graphlit.FetchVariableNode",
             "guid": "168c9776-dc61-4ad8-868a-9c64f5162f95",
-            "x": 14,
-            "y": 709,
+            "x": 105,
+            "y": 791,
             "connections": [
                 {
                     "a": 0,
@@ -1539,8 +1611,8 @@
         {
             "type": "Graphlit.FetchVariableNode",
             "guid": "29375d49-5df6-41ab-988a-c817ec490e27",
-            "x": -83,
-            "y": 616,
+            "x": -84,
+            "y": 701,
             "connections": [
                 {
                     "a": 1,
@@ -2357,6 +2429,17 @@
             "data": "{\"_name\":\"detailMask\"}"
         },
         {
+            "type": "Graphlit.FloatPropertyNode",
+            "guid": "66bdc849-3c5a-42f1-8a6e-80174c4dea1d",
+            "x": -289,
+            "y": 548,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"111aa135-4743-4711-bbb6-9c67e56553a5\"}"
+        },
+        {
             "type": "Graphlit.Texture2DPropertyNode",
             "guid": "66d9ce50-e153-404e-a1ea-5e96ae44ad91",
             "x": -4653,
@@ -3030,8 +3113,8 @@
         {
             "type": "Graphlit.FetchVariableNode",
             "guid": "9b9dcfe8-731e-4999-ad30-0717a886c715",
-            "x": -110,
-            "y": 523,
+            "x": -216,
+            "y": 611,
             "connections": [
                 {
                     "a": 0,
@@ -3076,6 +3159,17 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_ref\":\"8e127eca-df1a-44cd-8409-3c9fe43a8c2c\"}"
+        },
+        {
+            "type": "Graphlit.FloatPropertyNode",
+            "guid": "9d1c1f75-69be-4182-9f4e-85f64c55d2c4",
+            "x": -216,
+            "y": 517,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"c9092d58-c98e-40cf-9f1f-ce0b4aae1e5d\"}"
         },
         {
             "type": "Graphlit.FloatPropertyNode",
@@ -3310,6 +3404,16 @@
                     "a": 0,
                     "b": 23,
                     "node": "95ebca58-6702-47b2-b129-78ed4d176706"
+                },
+                {
+                    "a": 0,
+                    "b": 25,
+                    "node": "f9a5c143-c63d-4b2d-b424-7b897312e182"
+                },
+                {
+                    "a": 0,
+                    "b": 26,
+                    "node": "9d1c1f75-69be-4182-9f4e-85f64c55d2c4"
                 },
                 {
                     "a": 1,
@@ -3738,8 +3842,8 @@
         {
             "type": "Graphlit.FetchVariableNode",
             "guid": "c6a6a025-c394-47bd-8798-813969680271",
-            "x": 11,
-            "y": 585,
+            "x": -164,
+            "y": 647,
             "connections": [
                 {
                     "a": 0,
@@ -4262,13 +4366,24 @@
         {
             "type": "Graphlit.FloatPropertyNode",
             "guid": "f78ffb9c-64cb-4ecf-8da9-dfc30d9c896a",
-            "x": 8,
-            "y": 647,
+            "x": 49,
+            "y": 729,
             "connections": [],
             "precision": 0,
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_ref\":\"33453acb-825e-4ca2-8e90-24b60130cec9\"}"
+        },
+        {
+            "type": "Graphlit.FloatPropertyNode",
+            "guid": "f9a5c143-c63d-4b2d-b424-7b897312e182",
+            "x": -142,
+            "y": 486,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"48c3ee9c-3cd2-4221-a55c-5e015f8002dc\"}"
         },
         {
             "type": "Graphlit.KeywordPropertyNode",
