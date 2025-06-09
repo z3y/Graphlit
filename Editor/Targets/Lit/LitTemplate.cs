@@ -116,9 +116,10 @@ namespace Graphlit
             AddPort(new(PortDirection.Input, new Float(1), COAT_WEIGHT, "CoatWeight"), true, "Weight");
             AddPort(new(PortDirection.Input, new Float(3), COAT_COLOR, "CoatColor"), true, "Color");
             AddPort(new(PortDirection.Input, new Float(1), COAT_ROUGHNESS, "CoatRoughness"), true, "Roughness");
-            AddPort(new(PortDirection.Input, new Float(1), COAT_ROUGHNESS_ANISOTROPY, "CoatAnisotropy"), true, "Anisotropy");
+            //AddPort(new(PortDirection.Input, new Float(1), COAT_ROUGHNESS_ANISOTROPY, "CoatAnisotropy"), true, "Anisotropy");
             AddPort(new(PortDirection.Input, new Float(1), COAT_IOR, "CoatIOR"), true, "IOR");
-            AddPort(new(PortDirection.Input, new Float(1), COAT_DARKENING, "CoatDarkening"), true, "Darkening");
+            //AddPort(new(PortDirection.Input, new Float(1), COAT_DARKENING, "CoatDarkening"), true, "Darkening");
+
 
 
             AddSeparator();
