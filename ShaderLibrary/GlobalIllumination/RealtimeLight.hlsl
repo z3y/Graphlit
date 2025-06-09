@@ -305,8 +305,8 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
             half ToH = dot(t, halfVector);
             half BoH = dot(b, halfVector);
             half2 atab = GetAtAb(shading.specularRoughness, shading.anisotropy);
-            D = D_GGXAniso(ToH, BoH, NoH, atab.x, atab.y);
-            V = V_SmithJointGGXAniso(ToV, BoV, shading.NoV, ToL, BoL, NoL, atab.x, atab.y);
+            D = D_GGXAniso(ToH, BoH, NoH, atab.y, atab.x);
+            V = V_SmithJointGGXAniso(ToV, BoV, shading.NoV, ToL, BoL, NoL, atab.y, atab.x);
         #endif
 
         half3 response = max(0.0, (D * V) * F);
