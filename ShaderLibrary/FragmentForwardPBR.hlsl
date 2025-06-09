@@ -98,7 +98,7 @@ float4 frag(Varyings input) : SV_Target
     
     #ifdef _THINFILM
         float topIor = 1.0;
-        half3 tfNoV = shading.NoV;
+        half tfNoV = shading.NoV;
         #ifdef _ANISOTROPY
             tfNoV = abs(dot(bentNormal, fragment.viewDirectionWS)) + 1e-5f;
         #endif
