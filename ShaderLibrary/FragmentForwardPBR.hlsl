@@ -81,8 +81,8 @@ float4 frag(Varyings input) : SV_Target
 
     #ifdef _ANISOTROPY
         float3 tangentWS = TransformTangentToWorld(surface.Tangent, fragment.tangentSpaceTransform);
-        float3 bitangentWS = Orthonormalize(tangentWS, normalWS);
-        tangentWS = normalize(cross(normalWS, bitangentWS));
+        tangentWS = Orthonormalize(tangentWS, normalWS);
+        float3 bitangentWS = normalize(cross(normalWS, tangentWS));
 
         float3 anisotropicDirection = surface.Anisotropy >= 0.0 ? bitangentWS : tangentWS;
         float3 anisotropicTangent = cross(anisotropicDirection, fragment.viewDirectionWS);

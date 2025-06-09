@@ -167,7 +167,7 @@ namespace Graphlit
             DefaultValues[SPECULAR_ROUGHNESS_ANISOTROPY] = "0";
             DefaultValues[SPECULAR_IOR] = "1.5";
 
-            DefaultValues[TANGENT] = "float3(0,1,0)";
+            DefaultValues[TANGENT] = "float3(1,0,0)";
 
             DefaultValues[COAT_WEIGHT] = "0";
             DefaultValues[COAT_COLOR] = "1";
