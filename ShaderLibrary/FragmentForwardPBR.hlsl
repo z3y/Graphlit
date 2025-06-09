@@ -62,9 +62,9 @@ float4 frag(Varyings input) : SV_Target
     shading.coatReflectVector = reflect(-fragment.viewDirectionWS, fragment.normalWS);
     shading.perceptualRoughness = surface.Roughness;
     #ifdef QUALITY_LOW
-    shading.roughness = max(shading.perceptualRoughness * shading.perceptualRoughness, HALF_MIN_SQRT);
+    shading.specularRoughness = max(surface.Roughness * surface.Roughness, HALF_MIN_SQRT);
     #else
-    shading.roughness = max(shading.perceptualRoughness * shading.perceptualRoughness, 0.002);
+    shading.specularRoughness = max(surface.Roughness * surface.Roughness, 0.002);
     #endif
 
     shading.viewDirectionWS = fragment.viewDirectionWS;
@@ -74,6 +74,8 @@ float4 frag(Varyings input) : SV_Target
     shading.metallic = surface.Metallic;
 
     shading.coatf0 = IorToFresnel0(surface.CoatIOR);
+    shading.coatWeight = surface.CoatWeight;
+    shading.coatSpecularRoughness = max(surface.CoatRoughness * surface.CoatRoughness, 0.002);
 
     #ifdef _ANISOTROPY
         float3 tangentWS = TransformTangentToWorld(surface.Tangent, fragment.tangentSpaceTransform);
@@ -158,10 +160,10 @@ float4 frag(Varyings input) : SV_Target
 
 #if defined(_COAT) && !defined(UNITY_PASS_FORWARDADD)
     half3 coatResponse = CalculateIrradianceFromReflectionProbes(shading.coatReflectVector, positionWS, surface.CoatRoughness, 0, fragment.normalWS);
-    half3 coatBrdf, coatInvBrdf, coatEnergyCompensation;
-    EnvironmentBRDF(shading.NoV, surface.CoatRoughness, shading.coatf0, coatBrdf, coatInvBrdf, coatEnergyCompensation, 1, 0);
-    half3 coatDirAlbedo = coatBrdf;
-    half3 coatThroughput = 1.0 - coatDirAlbedo * surface.CoatWeight;
+    half3 coatBrdf, coatEnergyCompensation;
+    EnvironmentBRDF(shading.NoV, surface.CoatRoughness, shading.coatf0, coatBrdf, coatEnergyCompensation, 1, 0);
+    half3 coatAvgDirAlbedo = dot(coatBrdf, 1.0 / 3.0);
+    half3 coatThroughput = 1.0 - coatAvgDirAlbedo * surface.CoatWeight;
     indirectSpecular *= coatThroughput;
 #endif
 
@@ -223,22 +225,21 @@ float4 frag(Varyings input) : SV_Target
         IntegrateAreaLit(diffuse, indirectSpecular, fragment, shading);
     #endif
 
-    half3 brdf;
-    half3 invBrdf;
-    half3 energyCompensation;
-    EnvironmentBRDF(shading.NoV, shading.perceptualRoughness, shading.f0, brdf, invBrdf, energyCompensation, surface.SpecularColor, surface.Metallic);
+    half3 brdf, energyCompensation;
+    EnvironmentBRDF(shading.NoV, shading.perceptualRoughness, shading.f0, brdf, energyCompensation, surface.SpecularColor, surface.Metallic);
+    half avgDirAlbedo = dot(brdf, 1.0 / 3.0);
     indirectSpecular *= brdf * energyCompensation;
     lightmapSpecular *= brdf * energyCompensation;
-    bakedGI *= invBrdf;
-    #if defined(_COAT) && !defined(UNITY_PASS_FORWARDADD)
-    bakedGI *= lerp(1.0, coatInvBrdf, surface.CoatWeight);
-    #endif
     specular *= energyCompensation * PI;
+    half3 indirectSpecularThroughput = 1.0 - avgDirAlbedo * 1;
 
 #if defined(_COAT) && !defined(UNITY_PASS_FORWARDADD)
     coatResponse *= coatBrdf * surface.CoatWeight;
     indirectSpecular += coatResponse;
+    indirectSpecularThroughput = coatThroughput * indirectSpecularThroughput;
 #endif
+
+    bakedGI *= indirectSpecularThroughput;
 
 #ifdef UNITY_PASS_FORWARDBASE
     #ifndef DISABLE_SPECULAR_OCCLUSION

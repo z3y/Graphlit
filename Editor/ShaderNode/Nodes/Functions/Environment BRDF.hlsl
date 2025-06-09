@@ -3,6 +3,5 @@ void EnvironmentBRDFNode(out float3 BRDF, out half3 energyCompensation, float3 n
     half NoV = abs(dot(normalWS, viewDirectionWS)) + 1e-5f;
   	half3 f0 = 0.16 * reflectance * reflectance * (1.0 - metallic) + albedo * metallic;
 
-    half3 invBrdf = 0;
-    EnvironmentBRDF(NoV, roughness, f0, BRDF, invBrdf, energyCompensation);
+    EnvironmentBRDF(NoV, roughness, f0, BRDF, energyCompensation);
 }

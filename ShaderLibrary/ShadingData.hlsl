@@ -11,11 +11,13 @@ struct ShadingData
     half3 f82;
     half3 diffuseColor;
     half perceptualRoughness;
-    half roughness;
+    half specularRoughness;
     half metallic;
     float3 viewDirectionWS;
     float3 tangentWS;
     float3 bitangentWS;
     half anisotropy;
     half3 coatf0;
+    half coatWeight;
+    half coatSpecularRoughness;
 };

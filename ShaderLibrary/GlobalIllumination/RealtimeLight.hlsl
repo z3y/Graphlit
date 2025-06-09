@@ -274,7 +274,7 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
         diffuse += Fd * !light.specularOnly;
 #ifndef _SPECULARHIGHLIGHTS_OFF
     #if defined(QUALITY_LOW) || defined(_CBIRP)
-        half roughness2 = shading.roughness * shading.roughness;
+        half roughness2 = shading.specularRoughness * shading.specularRoughness;
         float d = NoH * NoH * (roughness2 - 1) + 1.00001f;
 
         half LoH2 = LoH * LoH;
@@ -289,8 +289,8 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
         // real3 F = F_Schlick(shading.f0, LoH);
         real3 F = F_SchlickHoffman(LoH, shading.f0, lerp(1.0, shading.f82, shading.metallic));
         F *= lerp(shading.f82, 1.0, shading.metallic);
-        real D = D_GGX(NoH, shading.roughness);
-        real V = V_SmithJointGGX(NoL, shading.NoV, shading.roughness);
+        real D = D_GGX(NoH, shading.specularRoughness);
+        real V = V_SmithJointGGX(NoL, shading.NoV, shading.specularRoughness);
 
         #ifdef _ANISOTROPY
             float3 l = light.direction;
@@ -304,12 +304,26 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
             half BoL = dot(b, l);
             half ToH = dot(t, halfVector);
             half BoH = dot(b, halfVector);
-            half2 atab = GetAtAb(shading.roughness, shading.anisotropy);
+            half2 atab = GetAtAb(shading.specularRoughness, shading.anisotropy);
             D = D_GGXAniso(ToH, BoH, NoH, atab.x, atab.y);
             V = V_SmithJointGGXAniso(ToV, BoV, shading.NoV, ToL, BoL, NoL, atab.x, atab.y);
         #endif
 
-        specular += max(0.0, (D * V) * F) * lightColor;
+        half3 response = max(0.0, (D * V) * F);
+        half3 throughput = 1.0 - dot(F, 1.0 / 3.0);
+
+        #if defined(_COAT)
+            real3 coatF = F_Schlick(shading.coatf0, LoH);
+            real coatD = D_GGX(NoH, shading.coatSpecularRoughness);
+            real coatV = V_SmithJointGGX(NoL, shading.NoV, shading.coatSpecularRoughness);
+
+            half3 coatThroughput = 1.0 - dot(coatF, 1.0 / 3.0) * shading.coatWeight;
+            half3 coatResponse = max(0.0, (coatD * coatV) * coatF) * shading.coatWeight;
+            response = coatResponse + response * coatThroughput;
+            throughput = coatThroughput * throughput;
+        #endif
+
+        specular += response * lightColor;
         
     #endif
 #endif

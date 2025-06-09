@@ -213,18 +213,16 @@ half3 EnvironmentBRDFApproximation(half perceptualRoughness, half NoV, half3 f0)
     return saturate(lerp(a0, a1, f0));
 }
 
-void EnvironmentBRDF(half NoV, half perceptualRoughness, half3 f0, out half3 brdf, out half3 invBrdf, out half3 energyCompensation, float3 f82 = 1, half metallic = 0)
+void EnvironmentBRDF(half NoV, half perceptualRoughness, half3 f0, out half3 brdf, out half3 energyCompensation, float3 f82 = 1, half metallic = 0)
 {
     #if defined(QUALITY_LOW)
         energyCompensation = 1.0;
         brdf = EnvironmentBRDFApproximation(perceptualRoughness, NoV, f0);
-        invBrdf = 1.0 - brdf;
     #else   
         const float lutRes = 64;
         float2 coordLUT = Remap01ToHalfTexelCoord(float2(sqrt(NoV), perceptualRoughness), lutRes);
         float4 dfg = SAMPLE_TEXTURE2D_LOD(_DFG, sampler_BilinearClamp, coordLUT, 0);
         brdf = lerp(dfg.xxx, dfg.yyy, f0);
-        invBrdf = 1.0 - brdf;
         energyCompensation = 1.0 + f0 * (1.0 / dfg.y - 1.0);
 
         // f82
