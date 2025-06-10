@@ -262,6 +262,15 @@ half3 F_SchlickHoffman(float cosTheta, half3 f0, half3 f82)
     return lerp(f0, f90, pow(1.0 - x, exponent)) - a * x * pow(1.0 - x, 6);
 }
 
+half BurleyDiffuse(half NoV, half NoL, half LoH, half roughness)
+{
+	// Burley 2012, "Physically-Based Shading at Disney"
+	half f90 = 0.5 + 2.0 * roughness * LoH * LoH;
+	float lightScatter = F_Schlick(1.0, f90, NoL);
+	float viewScatter  = F_Schlick(1.0, f90, NoV);
+	return lightScatter * viewScatter;
+}
+
 void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingData shading)
 {
     half NoL = saturate(dot(shading.normalWS, light.direction));
@@ -278,7 +287,7 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
 
         half3 Fd = lightColor;
         #if !defined(QUALITY_LOW) && !defined(_CBIRP)
-            Fd *= DisneyDiffuseNoPI(shading.NoV, NoL, LoH, shading.perceptualRoughness);
+            Fd *= BurleyDiffuse(shading.NoV, NoL, LoH, shading.perceptualRoughness * shading.perceptualRoughness);
         #endif
 
         diffuse += Fd * !light.specularOnly;
