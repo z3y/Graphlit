@@ -154,7 +154,7 @@ namespace Graphlit
         internal static readonly PropertyDescriptor _surfaceOptions = new(PropertyType.Float, "Surface Type", "_Surface") { customAttributes = "[Enum(Opaque, 0, Transparent, 1)]" };
         internal static readonly PropertyDescriptor _surfaceBlend = new(PropertyType.Float, "Blending Mode", "_Blend") { customAttributes = "[ShowIf(_Surface, 1)] [Enum(Alpha, 0, Premultiply, 1, Additive, 2, Multiply, 3)]" };
         internal static readonly PropertyDescriptor _transClipping = new(PropertyType.Float, "Transclipping", "_TransClipping") { customAttributes = "[ShowIf(_Surface, 1)] [ToggleUI]" };
-        internal static readonly PropertyDescriptor _blendModePreserveSpecular = new(PropertyType.Float, "Preserve Specular", "_BlendModePreserveSpecular") { FloatValue = 1.0f, customAttributes = "[ShowIf(_Surface, 1)] [ShowIf(_Surface, 2)] [ToggleUI]" };
+        internal static readonly PropertyDescriptor _blendModePreserveSpecular = new(PropertyType.Float, "Preserve Specular", "_BlendModePreserveSpecular") { FloatValue = 1.0f, customAttributes = "[ShowIf(_Surface, 1)] [ToggleUI]" };
         internal static readonly PropertyDescriptor _alphaClip = new(PropertyType.Float, "Alpha Clipping", "_AlphaClip") { customAttributes = "[ToggleUI]" };
         internal static readonly PropertyDescriptor _alphaToMask = new(PropertyType.Float, "_AlphaToMask", "_AlphaToMask") { customAttributes = "[HideInInspector] [ToggleUI]" };
 

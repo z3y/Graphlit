@@ -367,7 +367,7 @@
         "defaultPreviewState": 1,
         "customEditor": "",
         "fallback": "",
-        "include": "#ifndef UNITY_PBS_USE_BRDF1\n// #define _ACES \n#endif",
+        "include": "",
         "outlinePass": 0,
         "depthFillPass": false,
         "stencil": false,
