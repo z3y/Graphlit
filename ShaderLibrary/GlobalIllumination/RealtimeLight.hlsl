@@ -305,8 +305,8 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
         half3 Fd = lightColor;
         #if !defined(QUALITY_LOW) && !defined(_CBIRP)
             // Fd *= BurleyDiffuse(shading.NoV, NoL, LoH, shading.perceptualRoughness * shading.perceptualRoughness);
-            // Fd *= DisneyDiffuseNoPI(shading.NoV, NoL, LoV, shading.perceptualRoughness);
-            Fd *= OrenNayarDiffuse(shading.NoV, NoL, LoV, shading.perceptualRoughness * shading.perceptualRoughness);
+            Fd *= DisneyDiffuseNoPI(shading.NoV, NoL, LoV, shading.perceptualRoughness);
+            // Fd *= OrenNayarDiffuse(shading.NoV, NoL, LoV, shading.perceptualRoughness * shading.perceptualRoughness);
         #endif
 
         diffuse += Fd * !light.specularOnly;
