@@ -2,6 +2,8 @@
 
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/BSDF.hlsl"
 
+// #define SQUARE_FALLOFF_ATTENUATION
+
 struct Light
 {
     float3 direction;
@@ -93,7 +95,8 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
         light.direction = positionToLight;
         #ifdef UNITY_PASS_FORWARDBASE
             light.enabled = any(_LightColor0.rgb) > 0;
-        #else
+        #endif
+        #if defined(SPOT) || defined(POINT)
             light.direction = SafeNormalize(light.direction);
         #endif
 
@@ -271,6 +274,20 @@ half BurleyDiffuse(half NoV, half NoL, half LoH, half roughness)
 	return lightScatter * viewScatter;
 }
 
+// Qualitative Oren-Nayar diffuse with simplified math:
+// https://www1.cs.columbia.edu/CAVE/publications/pdfs/Oren_SIGGRAPH94.pdf
+float OrenNayarDiffuse(float NdotV, float NdotL, float LdotV, float roughness)
+{
+    float s = LdotV - NdotL * NdotV;
+    float stinv = (s > 0.0) ? s / max(NdotL, NdotV) : 0.0;
+
+    float sigma2 = roughness;
+    float A = 1.0 - 0.5 * (sigma2 / (sigma2 + 0.33));
+    float B = 0.45 * sigma2 / (sigma2 + 0.09);
+
+    return A + B * stinv;
+}
+
 void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingData shading)
 {
     half NoL = saturate(dot(shading.normalWS, light.direction));
@@ -287,7 +304,9 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
 
         half3 Fd = lightColor;
         #if !defined(QUALITY_LOW) && !defined(_CBIRP)
-            Fd *= BurleyDiffuse(shading.NoV, NoL, LoH, shading.perceptualRoughness * shading.perceptualRoughness);
+            // Fd *= BurleyDiffuse(shading.NoV, NoL, LoH, shading.perceptualRoughness * shading.perceptualRoughness);
+            // Fd *= DisneyDiffuseNoPI(shading.NoV, NoL, LoV, shading.perceptualRoughness);
+            Fd *= OrenNayarDiffuse(shading.NoV, NoL, LoV, shading.perceptualRoughness * shading.perceptualRoughness);
         #endif
 
         diffuse += Fd * !light.specularOnly;
