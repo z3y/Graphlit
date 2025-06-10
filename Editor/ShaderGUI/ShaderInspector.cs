@@ -138,28 +138,28 @@ namespace Graphlit
 
                     if (element.showIf is not null)
                     {
-                        bool isHidden = true;
+                        bool visible = true;
                         foreach (var keyPair in element.showIf)
                         {
                             var targetProp = properties[keyPair.Key];
 
                             if ((targetProp.type == MaterialProperty.PropType.Float ||
                              targetProp.type == MaterialProperty.PropType.Range)
-                             && targetProp.floatValue == keyPair.Value)
+                             && targetProp.floatValue != keyPair.Value)
                             {
-                                isHidden = false;
+                                visible = false;
                             }
-                            else if (targetProp.type == MaterialProperty.PropType.Int && targetProp.intValue == keyPair.Value)
+                            else if (targetProp.type == MaterialProperty.PropType.Int && targetProp.intValue != keyPair.Value)
                             {
-                                isHidden = false;
+                                visible = false;
                             }
-                            else if (targetProp.type == MaterialProperty.PropType.Texture && targetProp.textureValue == (keyPair.Value > 0))
+                            else if (targetProp.type == MaterialProperty.PropType.Texture && targetProp.textureValue != (keyPair.Value > 0))
                             {
-                                isHidden = false;
+                                visible = false;
                             }
                         }
 
-                        if (isHidden)
+                        if (!visible)
                         {
                             continue;
                         }
@@ -359,10 +359,11 @@ namespace Graphlit
                 element.minMax = new Vector2(min, max);
             }
 
-            if (TryParseShowIf(attributes, out string showIfProperty, out float showIfValue))
+            while (TryParseShowIf(attributes, out string showIfProperty, out float showIfValue))
             {
                 element.showIf ??= new();
-                element.showIf.Add(Array.FindIndex(properties, x => x.name == showIfProperty), showIfValue);
+                element.showIf[Array.FindIndex(properties, x => x.name == showIfProperty)] = showIfValue;
+                //Debug.Log($"{element.referenceName}: {showIfProperty}, {showIfValue}");
             }
 
             element.folder = TryParseStringParam(attributes, "Folder");
@@ -871,6 +872,13 @@ namespace Graphlit
                 if (materialProperty.type == MaterialProperty.PropType.Color)
                 {
                     ExtraPropertyAfterTexture(editor, MaterialEditor.GetLeftAlignedFieldRect(controlRectForSingleLine), materialProperty);
+                }
+                else if (materialProperty.type == MaterialProperty.PropType.Range)
+                {
+                    var r = MaterialEditor.GetRectAfterLabelWidth(controlRectForSingleLine);
+                    //r.width -= 50;
+                    r.position = new Vector2(r.x, r.y);
+                    ExtraPropertyAfterTexture(editor, r, materialProperty);
                 }
                 else
                 {
