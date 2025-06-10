@@ -12,30 +12,17 @@ namespace Graphlit
     [NodeInfo("Targets/Lit Target"), Serializable]
     public class LitTemplate : TemplateOutput
     {
-        [MenuItem("Assets/Create/Graphlit/Lit Graph")]
-        public static void CreateVariantFile() => GraphlitImporter.CreateEmptyTemplate<LitTemplate>();
+        [MenuItem("Assets/Create/Graphlit/Lit Graph (Full)")]
+        public static void CreateLitVariantFull() => GraphlitImporter.CreateFromSample("Packages/com.z3y.graphlit/Shaders/Lit.graphlit");
+
+        [MenuItem("Assets/Create/Graphlit/Lit Graph (Simple)")]
+        public static void CreateLitVariantSimple() => GraphlitImporter.CreateFromSample("Packages/com.z3y.graphlit/Shaders/Samples/Lit Simple.graphlit");
 
         [MenuItem("Assets/Create/Graphlit/Toon Graph")]
-        public static void CreateToonVariant()
-        {
-            const string samplePath = "Packages/com.z3y.graphlit/Shaders/Toon.graphlit";
-            var graph = GraphlitImporter.ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
-            graph.data.shaderName = "Default Shader";
-
-            var jsonData = EditorJsonUtility.ToJson(graph, true);
-            ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.graphlit", jsonData);
-        }
+        public static void CreateToonVariant() => GraphlitImporter.CreateFromSample("Packages/com.z3y.graphlit/Shaders/Toon.graphlit");
 
         [MenuItem("Assets/Create/Graphlit/Custom Graph")]
-        public static void CreateCustomVariant()
-        {
-            const string samplePath = "Packages/com.z3y.graphlit/Shaders/Custom.graphlit";
-            var graph = GraphlitImporter.ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
-            graph.data.shaderName = "Default Shader";
-
-            var jsonData = EditorJsonUtility.ToJson(graph, true);
-            ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.graphlit", jsonData);
-        }
+        public static void CreateCustomVariant() => GraphlitImporter.CreateFromSample("Packages/com.z3y.graphlit/Shaders/Custom.graphlit");
 
 
         public override string Name { get; } = "Lit";

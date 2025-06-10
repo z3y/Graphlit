@@ -135,6 +135,16 @@ namespace Graphlit
             CreateEmptyTemplate(instance);
         }
 
+        public static void CreateFromSample(Shader shader) => CreateFromSample(AssetDatabase.GetAssetPath(shader));
+        public static void CreateFromSample(string samplePath)
+        {
+            var graph = GraphlitImporter.ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
+            graph.data.shaderName = "Default Shader";
+
+            var jsonData = EditorJsonUtility.ToJson(graph, true);
+            ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.graphlit", jsonData);
+        }
+
         public static void OpenInGraphView(string guid)
         {
             if (ShaderGraphWindow.editorInstances.TryGetValue(guid, out var win))
