@@ -36,6 +36,7 @@ namespace Graphlit
         void SetDirectionalCookie()
         {
             bool hasCookie = _mainDirectionalLight && _enableDirectionalCookie && _directionalCookie;
+            VRCShader.SetGlobalFloat(VRCShader.PropertyToID("_UdonRPDirectionalCookieEnabled"), _enableDirectionalCookie ? 1.0f : 0.0f);
             VRCShader.SetGlobalTexture(VRCShader.PropertyToID("_UdonRPDirectionalCookie"), _enableDirectionalCookie ? _directionalCookie : null);
             if (_mainDirectionalLight)
             {

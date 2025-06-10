@@ -4,6 +4,7 @@
 
 #ifdef _UDONRP_DIRECTIONAL_COOKIE
 float4x4 _UdonRPWorldToDirectionalLight;
+bool _UdonRPDirectionalCookieEnabled;
 TEXTURE2D(_UdonRPDirectionalCookie);
 SAMPLER(sampler_UdonRPDirectionalCookie);
 #endif
@@ -25,7 +26,7 @@ half4 SampleUdonRPDirectionalCookie(float3 positionWS)
     #ifdef _UDONRP_DIRECTIONAL_COOKIE
         float2 cookieUV = mul(_UdonRPWorldToDirectionalLight, float4(positionWS, 1)).xy;
         half4 cookieTexture = SAMPLE_TEXTURE2D(_UdonRPDirectionalCookie, sampler_UdonRPDirectionalCookie, cookieUV);
-        return cookieTexture;
+        return _UdonRPDirectionalCookieEnabled ? cookieTexture : 1.0;
     #else
         return 1.0;
     #endif
