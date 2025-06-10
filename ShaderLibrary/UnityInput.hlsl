@@ -303,3 +303,8 @@ TEXTURECUBE(_LightTexture0);
 TEXTURE2D(_LightTexture0);
 #endif
 SAMPLER(sampler_LightTexture0);
+
+#ifdef SPOT
+TEXTURE2D(_LightTextureB0);
+SAMPLER(sampler_LightTextureB0);
+#endif

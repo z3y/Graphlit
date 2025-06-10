@@ -124,7 +124,17 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
 
             float distanceSquare = dot(positionToLight, positionToLight);
             half range = length(lightZ);
-            light.distanceAttenuation = GetSquareFalloffAttenuation(distanceSquare, range * range);
+
+            #ifndef SQUARE_FALLOFF_ATTENUATION
+                #if defined(POINT)
+                    light.distanceAttenuation = SAMPLE_TEXTURE2D(_LightTexture0, sampler_LightTexture0, dot(lightCoord.xyz, lightCoord.xyz).xx);
+                #elif defined(SPOT)
+                    light.distanceAttenuation = SAMPLE_TEXTURE2D(_LightTextureB0, sampler_LightTextureB0, dot(lightCoord.xyz, lightCoord.xyz).xx);
+                #endif
+            #else
+                light.distanceAttenuation = GetSquareFalloffAttenuation(distanceSquare, range * range);
+            #endif
+
             light.distanceAttenuation *= LIGHT_ATTENUATION_MULTIPLIER;
             #ifdef SPOT
                 float2 spotUV = lightCoord.xy / lightCoord.w + 0.5;

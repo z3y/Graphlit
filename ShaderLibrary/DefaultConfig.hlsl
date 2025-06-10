@@ -37,6 +37,9 @@
 // this might match the intensity of the default falloff better
 // #define LIGHT_ATTENUATION_MULTIPLIER 2.0
 
+// Use square falloff instead of the default unity light attenuation
+// #define SQUARE_FALLOFF_ATTENUATION
+
 // UdonRP
 // https://z3y.github.io/Graphlit/udonrp
 // #define _UDONRP_ENVIRONMENT_PROBE
