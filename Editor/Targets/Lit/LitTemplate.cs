@@ -219,6 +219,7 @@ namespace Graphlit
         static readonly PropertyDescriptor _specularHighlights = new(PropertyType.Float, "Specular Highlights", "_SpecularHighlights") { customAttributes = "[ToggleOff] [Folder(Advanced Options)] [Header(Specular)]", FloatValue = 1 };
         static readonly PropertyDescriptor _glossyReflections = new(PropertyType.Float, "Environment Reflections", "_GlossyReflections") { customAttributes = "[ToggleOff] [Folder(Advanced Options)]", FloatValue = 1 };
         static readonly PropertyDescriptor _specularOcclusion = new(PropertyType.Float, "Specular Occlusion", "_SpecularOcclusion") { FloatValue = 1, Range = new Vector2(0, 5), customAttributes = "[Folder(Advanced Options)]" };
+        static readonly PropertyDescriptor _specularOcclusionExp = new(PropertyType.Float, "Specular Occlusion Exponent", "_SpecularOcclusionExp") { FloatValue = 1, Range = new Vector2(0, 25), customAttributes = "[Folder(Advanced Options)]" };
 
         static readonly PropertyDescriptor _mirror = new(PropertyType.Float, "Mirror", "_Mirror") { customAttributes = "[Toggle(_MIRROR)] [Folder(Advanced Options)]" };
         static readonly PropertyDescriptor _lmSpec = new(PropertyType.Float, "Lightmapped Specular", "_LightmappedSpecular") { customAttributes = "[Toggle(_LIGHTMAPPED_SPECULAR)] [Folder(Advanced Options)]" };
@@ -306,6 +307,7 @@ namespace Graphlit
                 builder.properties.Add(_glossyReflections);
                 builder.properties.Add(_mirror);
                 builder.properties.Add(_specularOcclusion);
+                builder.properties.Add(_specularOcclusionExp);
             }
 
 
@@ -451,6 +453,7 @@ namespace Graphlit
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
 
                 pass.properties.Add(_specularOcclusion);
+                pass.properties.Add(_specularOcclusionExp);
                 builder.AddPass(pass);
 
             }
@@ -518,6 +521,7 @@ namespace Graphlit
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
                 pass.properties.Add(_specularOcclusion);
+                pass.properties.Add(_specularOcclusionExp);
 
                 IncludeConfig(pass);
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
@@ -569,6 +573,7 @@ namespace Graphlit
                 pass.varyings.RequireCustomString("UNITY_VERTEX_OUTPUT_STEREO");
 
                 pass.properties.Add(_specularOcclusion);
+                pass.properties.Add(_specularOcclusionExp);
 
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
                 pass.pragmas.Add("#include \"Packages/com.unity.render-pipelines.core/ShaderLibrary/MetaPass.hlsl\"");

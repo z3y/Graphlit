@@ -254,12 +254,10 @@ float4 frag(Varyings input) : SV_Target
 
     bakedGI *= indirectSpecularThroughput;
 
-#ifdef UNITY_PASS_FORWARDBASE
-    #ifndef DISABLE_SPECULAR_OCCLUSION
-        half indirectOcclusionIntensity = _SpecularOcclusion;
-        half occlusionFromLightmap = saturate(lerp(1.0, saturate(sqrt(dot(indirectOcclusion + diffuse, 1.0))), indirectOcclusionIntensity));
-        indirectSpecular *= occlusionFromLightmap;
-    #endif
+#if !defined(UNITY_PASS_FORWARDADD) && !defined(DISABLE_SPECULAR_OCCLUSION)
+    half occlusionFromLightmap = sqrt(dot(indirectOcclusion + diffuse, _SpecularOcclusionExp));
+    occlusionFromLightmap = saturate(lerp(1.0, occlusionFromLightmap, _SpecularOcclusion));
+    indirectSpecular *= occlusionFromLightmap;
 #endif
     
     #if defined(_MASKMAP) || defined(_OCCLUSION) || defined(_OCCLUSIONMAP) // doesnt get optimized out even if occlusion is 1
