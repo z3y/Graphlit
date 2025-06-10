@@ -12,13 +12,20 @@ bool ProbeVolumeEnabled()
     #endif
 }
 
-#include "ZH3.hlsl"
-
-// #define ZH3
-
 #ifdef _VRC_LIGHTVOLUMES
 #include "Packages/red.sim.lightvolumes/Shaders/LightVolumes.cginc"
 #endif
+
+bool LightVolumeEnabled()
+{
+    #ifdef _VRC_LIGHTVOLUMES
+        return _UdonLightVolumeEnabled;
+    #endif
+    return false;
+}
+
+#include "ZH3.hlsl"
+// #define ZH3
 
 #ifndef UNIVERSALRP
 half3 SHEvalLinearL0L1_SampleProbeVolume(float3 normalWS, float3 positionWS)
@@ -68,7 +75,6 @@ half3 SampleSH(float3 normalWS, float3 positionWS)
     float4 SHAb = unity_SHAb;
 
     #ifdef _VRC_LIGHTVOLUMES
-        #define SH_SKIP_L2
         half3 lvL0;
         half3 lvL1r;
         half3 lvL1g;
@@ -99,9 +105,10 @@ half3 SampleSH(float3 normalWS, float3 positionWS)
         #endif
     }
 
-    #ifndef SH_SKIP_L2
-    res += SHEvalLinearL2(normalWS, unity_SHBr, unity_SHBg, unity_SHBb, unity_SHC);
-    #endif
+    if (!LightVolumeEnabled())
+    {
+        res += SHEvalLinearL2(normalWS, unity_SHBr, unity_SHBg, unity_SHBb, unity_SHC);
+    }
 
     res = max(0, res);
 

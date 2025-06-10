@@ -39,10 +39,10 @@ float SHEvalLinearL0L1_ZH3Hallucinate(float4 sh, float3 normal)
 float3 SHEvalLinearL0L1_ZH3Hallucinate(float3 normal, float4 SHAr, float4 SHAg, float4 SHAb)
 {
     float3 shL0 = float3(SHAr.w, SHAg.w, SHAb.w);
-    #ifndef SH_SKIP_L2
+    if (!LightVolumeEnabled())
+    {
         shL0 += float3(unity_SHBr.z, unity_SHBg.z, unity_SHBb.z) / 3.0;
-    #endif
-
+    }
 
     float3 shL1_1 = float3(SHAr.y, SHAg.y, SHAb.y);
     float3 shL1_2 = float3(SHAr.z, SHAg.z, SHAb.z);

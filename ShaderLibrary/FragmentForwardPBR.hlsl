@@ -273,7 +273,6 @@ float4 frag(Varyings input) : SV_Target
     float4 color = float4(diffuseColor * (diffuse + bakedGI) + specular + lightmapSpecular + indirectSpecular, alpha);
 
 #ifndef UNITY_PASS_FORWARDADD
-// todo handle meta pass
     #ifdef _COAT
         half3 coatTintedEmisionEDF = emissionEDF * surface.CoatColor;
         half3 coatedEmissionEDF = F_Schlick(1.0 - shading.coatf0, 0, shading.coatNoV) * coatTintedEmisionEDF;
