@@ -185,6 +185,23 @@
             "data": "{\"_ref\":\"e1ca94b3-4667-4599-958b-3255724b8029\"}"
         },
         {
+            "type": "Graphlit.FracNode",
+            "guid": "5ec202a2-13ad-49a4-8bb4-8a43973b8ea5",
+            "x": -145,
+            "y": -62,
+            "connections": [
+                {
+                    "a": 2,
+                    "b": 0,
+                    "node": "b764a46a-047d-4db1-8f4e-f125f02f1a16"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
+        },
+        {
             "type": "Graphlit.SampleTexture2DNode",
             "guid": "60fab7be-41fa-4fcf-8d0b-4512bdb5ebc5",
             "x": -449,
@@ -232,8 +249,8 @@
         {
             "type": "Graphlit.MultiplyNode",
             "guid": "b764a46a-047d-4db1-8f4e-f125f02f1a16",
-            "x": -205,
-            "y": -148,
+            "x": -250,
+            "y": -119,
             "connections": [
                 {
                     "a": 0,
@@ -263,9 +280,9 @@
                     "node": "3831f770-e979-4091-b948-48ea94d51d18"
                 },
                 {
-                    "a": 2,
+                    "a": 1,
                     "b": 2,
-                    "node": "b764a46a-047d-4db1-8f4e-f125f02f1a16"
+                    "node": "5ec202a2-13ad-49a4-8bb4-8a43973b8ea5"
                 }
             ],
             "precision": 0,
