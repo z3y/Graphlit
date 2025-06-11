@@ -391,10 +391,6 @@ namespace Graphlit
 
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ANISOTROPY");
 
-                pass.pragmas.Add("#pragma shader_feature_local_fragment _COAT");
-                //pass.pragmas.Add("#pragma shader_feature_local_fragment _COATANISOTROPY");
-                pass.pragmas.Add("#pragma shader_feature_local_fragment _THINFILM");
-
                 pass.pragmas.Add("#pragma shader_feature_local_vertex _DECALERY");
 
 
@@ -499,9 +495,6 @@ namespace Graphlit
                 }
 
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ANISOTROPY");
-                pass.pragmas.Add("#pragma shader_feature_local_fragment _COAT");
-                //pass.pragmas.Add("#pragma shader_feature_local_fragment _COATANISOTROPY");
-                pass.pragmas.Add("#pragma shader_feature_local_fragment _THINFILM");
 
                 pass.pragmas.Add("#pragma shader_feature_local_vertex _DECALERY");
 
@@ -557,7 +550,6 @@ namespace Graphlit
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ALPHATEST_ON");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
-                pass.pragmas.Add("#pragma shader_feature_local_fragment _COAT");
 
                 pass.attributes.RequireUV(0, 2);
                 pass.attributes.RequireUV(1, 2);

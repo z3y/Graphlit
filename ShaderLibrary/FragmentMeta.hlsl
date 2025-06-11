@@ -15,16 +15,14 @@ float4 frag(Varyings input) : SV_Target
     half metallic = surface.Metallic;
     half perceptualRoughness = surface.Roughness;
 
-    #ifdef _COAT
-        half3 coatTintedEmisionEDF = emissionEDF * surface.CoatColor;
-        half3 coatf0 = IorToFresnel0(surface.CoatIOR);
-        half3 coatedEmissionEDF = coatf0 * coatTintedEmisionEDF;
-        emissionEDF = lerp(emissionEDF, coatedEmissionEDF, surface.CoatWeight);
+    half3 coatTintedEmisionEDF = emissionEDF * surface.CoatColor;
+    half3 coatf0 = IorToFresnel0(surface.CoatIOR);
+    half3 coatedEmissionEDF = coatf0 * coatTintedEmisionEDF;
+    emissionEDF = lerp(emissionEDF, coatedEmissionEDF, surface.CoatWeight);
 
-        perceptualRoughness = ComputeCoatAffectedRoughness(perceptualRoughness, surface.CoatRoughness, surface.CoatWeight);
-        half3 coatAttenuation = lerp(1.0, surface.CoatColor, surface.CoatWeight);
-        albedo *= coatAttenuation;
-    #endif
+    perceptualRoughness = ComputeCoatAffectedRoughness(perceptualRoughness, surface.CoatRoughness, surface.CoatWeight);
+    half3 coatAttenuation = lerp(1.0, surface.CoatColor, surface.CoatWeight);
+    albedo *= coatAttenuation;
 
     half3 diffuse = albedo * (1.0 - metallic);
     half dielectricSpecularF0 = IorToFresnel0(surface.IOR);

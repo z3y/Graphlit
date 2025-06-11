@@ -350,16 +350,15 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
         half3 response = max(0.0, (D * V) * F);
         half3 throughput = 1.0 - dot(F, 1.0 / 3.0);
 
-        #if defined(_COAT)
-            real3 coatF = F_Schlick(shading.coatf0, LoH);
-            real coatD = D_GGX(NoH, shading.coatSpecularRoughness);
-            real coatV = V_SmithJointGGX(NoL, shading.coatNoV, shading.coatSpecularRoughness);
+        real3 coatF = F_Schlick(shading.coatf0, LoH);
+        real coatD = D_GGX(NoH, shading.coatSpecularRoughness);
+        real coatV = V_SmithJointGGX(NoL, shading.coatNoV, shading.coatSpecularRoughness);
 
-            half3 coatThroughput = 1.0 - dot(coatF, 1.0 / 3.0) * shading.coatWeight;
-            half3 coatResponse = max(0.0, (coatD * coatV) * coatF) * shading.coatWeight;
-            response = coatResponse + response * coatThroughput;
-            throughput = coatThroughput * throughput;
-        #endif
+        half3 coatThroughput = 1.0 - dot(coatF, 1.0 / 3.0) * shading.coatWeight;
+        half3 coatResponse = max(0.0, (coatD * coatV) * coatF) * shading.coatWeight;
+        response = coatResponse + response * coatThroughput;
+        throughput = coatThroughput * throughput;
+
 
         specular += response * lightColor;
         

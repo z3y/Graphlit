@@ -30,11 +30,9 @@ float4 frag(Varyings input) : SV_Target
         alpha = AlphaClip(surface.Alpha, surface.Cutoff);
     #endif
 
-    #ifdef _COAT
-        surface.Roughness = ComputeCoatAffectedRoughness(surface.Roughness, surface.CoatRoughness, surface.CoatWeight);
-        half3 coatAttenuation = lerp(1.0, surface.CoatColor, surface.CoatWeight);
-        surface.Albedo *= coatAttenuation;
-    #endif
+    surface.Roughness = ComputeCoatAffectedRoughness(surface.Roughness, surface.CoatRoughness, surface.CoatWeight);
+    half3 coatAttenuation = lerp(1.0, surface.CoatColor, surface.CoatWeight);
+    surface.Albedo *= coatAttenuation;
 
     half3 diffuseColor = surface.Albedo * (1.0 - surface.Metallic);
     #if defined(_ALPHAMODULATE_ON)
@@ -96,7 +94,7 @@ float4 frag(Varyings input) : SV_Target
     #endif
 
     
-    #if defined(_THINFILM) && !defined(QUALITY_LOW)
+    #if !defined(QUALITY_LOW)
         float topIor = 1.0;
         half tfNoV = shading.NoV;
         #ifdef _ANISOTROPY
@@ -170,7 +168,7 @@ float4 frag(Varyings input) : SV_Target
 #endif
 #endif
 
-#if defined(_COAT) && !defined(UNITY_PASS_FORWARDADD)
+#if !defined(UNITY_PASS_FORWARDADD)
     half3 coatResponse = CalculateIrradianceFromReflectionProbes(shading.coatReflectVector, positionWS, surface.CoatRoughness, 0, fragment.normalWS);
     half3 coatBrdf, coatEnergyCompensation;
     EnvironmentBRDF(shading.coatNoV, surface.CoatRoughness, shading.coatf0, coatBrdf, coatEnergyCompensation, 1, 0);
@@ -246,7 +244,7 @@ float4 frag(Varyings input) : SV_Target
     specular *= energyCompensation * PI;
     half3 indirectSpecularThroughput = 1.0 - avgDirAlbedo * 1;
 
-#if defined(_COAT) && !defined(UNITY_PASS_FORWARDADD)
+#if !defined(UNITY_PASS_FORWARDADD)
     coatResponse *= coatBrdf * surface.CoatWeight;
     indirectSpecular += coatResponse;
     indirectSpecularThroughput = coatThroughput * indirectSpecularThroughput;
@@ -271,11 +269,10 @@ float4 frag(Varyings input) : SV_Target
     float4 color = float4(diffuseColor * (diffuse + bakedGI) + specular + lightmapSpecular + indirectSpecular, alpha);
 
 #ifndef UNITY_PASS_FORWARDADD
-    #ifdef _COAT
-        half3 coatTintedEmisionEDF = emissionEDF * surface.CoatColor;
-        half3 coatedEmissionEDF = F_Schlick(1.0 - shading.coatf0, 0, shading.coatNoV) * coatTintedEmisionEDF;
-        emissionEDF = lerp(emissionEDF, coatedEmissionEDF, surface.CoatWeight);
-    #endif
+    half3 coatTintedEmisionEDF = emissionEDF * surface.CoatColor;
+    half3 coatedEmissionEDF = F_Schlick(1.0 - shading.coatf0, 0, shading.coatNoV) * coatTintedEmisionEDF;
+    emissionEDF = lerp(emissionEDF, coatedEmissionEDF, surface.CoatWeight);
+
     color.rgb += emissionEDF;
 #endif
 

@@ -974,7 +974,7 @@
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": -1
+                "keywordPassFlags": 11
             },
             {
                 "guid": "c884614d-7b96-4fb8-a86d-283cade17415",
@@ -1118,7 +1118,7 @@
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": -1
+                "keywordPassFlags": 3
             },
             {
                 "guid": "66071a9f-b679-4cb1-a95b-ddf8b2b371c4",
@@ -2021,6 +2021,23 @@
             "data": ""
         },
         {
+            "type": "Graphlit.KeywordPropertyNode",
+            "guid": "43b45a9a-31da-4ff8-ae8f-bad600ace7d9",
+            "x": -129,
+            "y": 292,
+            "connections": [
+                {
+                    "a": 1,
+                    "b": 1,
+                    "node": "e2a7c81a-1568-4d55-b5dc-6aa3e356ab19"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"5df9c635-65b5-43ff-88d6-b4f1ae85236c\"}"
+        },
+        {
             "type": "Graphlit.CustomFunctionNode",
             "guid": "43f27c05-26a0-4052-9d01-a975a25dbe83",
             "x": -1802,
@@ -2134,6 +2151,23 @@
             "preview": 0,
             "previewDisabled": true,
             "data": ""
+        },
+        {
+            "type": "Graphlit.KeywordPropertyNode",
+            "guid": "499fd6cc-462c-4c7e-944a-35e99dc4896d",
+            "x": -109,
+            "y": 466,
+            "connections": [
+                {
+                    "a": 2,
+                    "b": 1,
+                    "node": "f0d71bf6-0c67-4904-9ab5-660c207d0be6"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"abea3ae3-8ea6-4b1d-a877-5d3546294cec\"}"
         },
         {
             "type": "Graphlit.Texture2DPropertyNode",
@@ -3415,9 +3449,9 @@
                     "node": "1f70e162-ff65-4f27-a346-6ab1c47bcf96"
                 },
                 {
-                    "a": 1,
+                    "a": 0,
                     "b": 19,
-                    "node": "e2a7c81a-1568-4d55-b5dc-6aa3e356ab19"
+                    "node": "43b45a9a-31da-4ff8-ae8f-bad600ace7d9"
                 },
                 {
                     "a": 0,
@@ -3435,9 +3469,9 @@
                     "node": "95ebca58-6702-47b2-b129-78ed4d176706"
                 },
                 {
-                    "a": 2,
+                    "a": 0,
                     "b": 25,
-                    "node": "f0d71bf6-0c67-4904-9ab5-660c207d0be6"
+                    "node": "499fd6cc-462c-4c7e-944a-35e99dc4896d"
                 },
                 {
                     "a": 0,
@@ -4120,8 +4154,8 @@
         {
             "type": "Graphlit.FetchVariableNode",
             "guid": "e2a7c81a-1568-4d55-b5dc-6aa3e356ab19",
-            "x": -205,
-            "y": 321,
+            "x": -234,
+            "y": 292,
             "connections": [
                 {
                     "a": 2,
