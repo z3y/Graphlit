@@ -1,5 +1,7 @@
 fileFormatVersion: 2
-guid: fcb6919e09a6f8f4c91d36305da420dd
+guid: 06647fe1f1938a0428b0ed9ad8b28ab2
+labels:
+- SetupGraphlitMaterial
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
