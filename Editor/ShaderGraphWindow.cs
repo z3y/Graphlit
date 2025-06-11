@@ -230,7 +230,7 @@ namespace Graphlit
         {
             var properties = new VisualElement();
             var style = properties.style;
-            style.width = 400;
+            style.width = 500;
             style.paddingTop = 25;
             //style.paddingLeft = 5;
             //style.paddingRight = 6;

@@ -686,8 +686,8 @@ namespace Graphlit
 
                 //EditorGUI.LabelField(rect, $"<b>{p.type}</b>", style);
                 EditorGUI.LabelField(rect, $"{p.displayName}", style);
-                rect.x += 140;
-                rect.width -= 140;
+                rect.x += 220;
+                rect.width -= 220;
                 rect.y += 2;
                 rect.height = EditorGUIUtility.singleLineHeight;
                 p.MaterialPropertyGUI(rect);
