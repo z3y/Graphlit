@@ -1,6 +1,6 @@
 {
     "data": {
-        "shaderName": "Graphlit/Lit Simple",
+        "shaderName": "Graphlit/Samples/Lit Simple",
         "properties": [
             {
                 "guid": "680d1962-c4ab-4a7e-8776-a104698eba52",
@@ -246,24 +246,6 @@
                 "rangeX": 0.0,
                 "rangeY": 1.0,
                 "_value": "0.1",
-                "_autoKeywordName": "",
-                "_defaultTexture": "",
-                "_defaultTextureObject": {
-                    "instanceID": 0
-                },
-                "declaration": 0,
-                "keywordPassFlags": 0
-            },
-            {
-                "guid": "0897a043-5fe9-499c-8f3c-1668e6fa7ee4",
-                "referenceName": "_IOR",
-                "displayName": "IOR",
-                "type": 1,
-                "customAttributes": "",
-                "defaultAttributes": 0,
-                "rangeX": 1.0,
-                "rangeY": 3.0,
-                "_value": "1.5",
                 "_autoKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
@@ -1396,17 +1378,6 @@
         },
         {
             "type": "Graphlit.FloatPropertyNode",
-            "guid": "7fc498b7-228e-4214-a1d4-8356f0916ddd",
-            "x": 532,
-            "y": -80,
-            "connections": [],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": "{\"_ref\":\"0897a043-5fe9-499c-8f3c-1668e6fa7ee4\"}"
-        },
-        {
-            "type": "Graphlit.FloatPropertyNode",
             "guid": "80c8e3ee-d183-465a-b217-6be3147bcdeb",
             "x": -2219,
             "y": 322,
@@ -1762,11 +1733,6 @@
                     "a": 1,
                     "b": 6,
                     "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
-                },
-                {
-                    "a": 0,
-                    "b": 17,
-                    "node": "7fc498b7-228e-4214-a1d4-8356f0916ddd"
                 },
                 {
                     "a": 1,
@@ -2346,7 +2312,7 @@
         },
         {
             "x": -2977,
-            "y": 2527,
+            "y": 2528,
             "title": "Detail",
             "elements": [
                 "1f0258e7-7805-4639-8242-28ea280488f4",
