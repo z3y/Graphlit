@@ -364,14 +364,14 @@
             },
             {
                 "guid": "0897a043-5fe9-499c-8f3c-1668e6fa7ee4",
-                "referenceName": "_Reflectance",
-                "displayName": "Reflectance",
+                "referenceName": "_IOR",
+                "displayName": "IOR",
                 "type": 1,
                 "customAttributes": "",
                 "defaultAttributes": 0,
-                "rangeX": 0.0,
-                "rangeY": 1.0,
-                "_value": "0.5",
+                "rangeX": 1.0,
+                "rangeY": 3.0,
+                "_value": "1.5",
                 "_autoKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
@@ -1564,23 +1564,6 @@
             "preview": 0,
             "previewDisabled": false,
             "data": "{}"
-        },
-        {
-            "type": "Graphlit.CustomFunctionNode",
-            "guid": "1f70e162-ff65-4f27-a346-6ab1c47bcf96",
-            "x": -408,
-            "y": 249,
-            "connections": [
-                {
-                    "a": 0,
-                    "b": 0,
-                    "node": "7fc498b7-228e-4214-a1d4-8356f0916ddd"
-                }
-            ],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n\\tOut = In;\\n}\",\"_file\":\"\",\"_shaderInclude\":{\"fileID\":10900000,\"guid\":\"a3fa28bdf9444c94b940de71c824dc96\",\"type\":3},\"_useFile\":true}"
         },
         {
             "type": "Graphlit.Float3Node",
@@ -2866,8 +2849,8 @@
         {
             "type": "Graphlit.FloatPropertyNode",
             "guid": "7fc498b7-228e-4214-a1d4-8356f0916ddd",
-            "x": -540,
-            "y": 249,
+            "x": -3,
+            "y": 331,
             "connections": [],
             "precision": 0,
             "preview": 0,
@@ -3138,7 +3121,7 @@
             "type": "Graphlit.FloatPropertyNode",
             "guid": "95ebca58-6702-47b2-b129-78ed4d176706",
             "x": -3,
-            "y": 442,
+            "y": 435,
             "connections": [],
             "precision": 0,
             "preview": 0,
@@ -3461,9 +3444,9 @@
                     "node": "8eb632cb-dde4-4f9c-9b04-ee9764e64df7"
                 },
                 {
-                    "a": 101,
+                    "a": 0,
                     "b": 17,
-                    "node": "1f70e162-ff65-4f27-a346-6ab1c47bcf96"
+                    "node": "7fc498b7-228e-4214-a1d4-8356f0916ddd"
                 },
                 {
                     "a": 0,
