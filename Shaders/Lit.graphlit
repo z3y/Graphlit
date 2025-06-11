@@ -3079,6 +3079,23 @@
             "data": "{\"_code\":\"void SwitchDetailMode(float mode, half3 mulx2, half3 screen, half3 overlay, out half3 Out)\\n{\\n\\tOut = mode == 0 ? mulx2 : \\nmode  > 1 ? screen : overlay;\\n}\",\"_file\":\"\",\"_shaderInclude\":{\"instanceID\":0},\"_useFile\":false}"
         },
         {
+            "type": "Graphlit.KeywordPropertyNode",
+            "guid": "8eb632cb-dde4-4f9c-9b04-ee9764e64df7",
+            "x": 49,
+            "y": 249,
+            "connections": [
+                {
+                    "a": 1,
+                    "b": 1,
+                    "node": "af5bf8ac-6945-4841-adc2-c184bc00e66f"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"8d3994f2-669a-44e7-9d52-f86f576f8e0f\"}"
+        },
+        {
             "type": "Graphlit.FloatPropertyNode",
             "guid": "8eba2140-0473-4be2-ab33-56bec0ffae0f",
             "x": -1172,
@@ -3439,9 +3456,9 @@
                     "node": "9115765f-9f73-4dda-bc1c-33f25e449159"
                 },
                 {
-                    "a": 1,
+                    "a": 0,
                     "b": 16,
-                    "node": "af5bf8ac-6945-4841-adc2-c184bc00e66f"
+                    "node": "8eb632cb-dde4-4f9c-9b04-ee9764e64df7"
                 },
                 {
                     "a": 101,
@@ -3594,8 +3611,8 @@
         {
             "type": "Graphlit.FetchVariableNode",
             "guid": "af5bf8ac-6945-4841-adc2-c184bc00e66f",
-            "x": -10,
-            "y": 259,
+            "x": -50,
+            "y": 249,
             "connections": [
                 {
                     "a": 2,

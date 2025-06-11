@@ -389,8 +389,6 @@ namespace Graphlit
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _NONLINEAR_LIGHTPROBESH");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _MIRROR");
 
-                pass.pragmas.Add("#pragma shader_feature_local_fragment _ANISOTROPY");
-
                 pass.pragmas.Add("#pragma shader_feature_local_vertex _DECALERY");
 
 
@@ -493,8 +491,6 @@ namespace Graphlit
                 {
                     pass.pragmas.Add("#pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF");
                 }
-
-                pass.pragmas.Add("#pragma shader_feature_local_fragment _ANISOTROPY");
 
                 pass.pragmas.Add("#pragma shader_feature_local_vertex _DECALERY");
 
