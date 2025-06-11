@@ -111,6 +111,24 @@
                 "keywordPassFlags": -1
             },
             {
+                "guid": "e45a2c81-07bb-4411-8974-9ef835ffe992",
+                "referenceName": "_SmoothnessTextureChannel",
+                "displayName": "Smoothness texture channel",
+                "type": 1,
+                "customAttributes": "[ShowIf(_SetupMode, 1)]\n[Enum(Metallic Alpha,0,Albedo Alpha,1)]",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1
+            },
+            {
                 "guid": "9777dfe1-c006-4b0a-86bb-e80c8a92be53",
                 "referenceName": "_MaskMap",
                 "displayName": "Mask Map",
@@ -1743,6 +1761,23 @@
             "data": "{\"_ref\":\"e68b53ec-d1bb-4cf4-b8b1-76a34ae625ba\"}"
         },
         {
+            "type": "Graphlit.CustomFunctionNode",
+            "guid": "1babfac9-7b61-4dde-8a7d-325e9174735f",
+            "x": -4269,
+            "y": -335,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 0,
+                    "node": "8823ba38-559b-4f41-8f60-aa04591e11eb"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n\\tOut = In;\\n}\",\"_file\":\"\",\"_shaderInclude\":{\"fileID\":10900000,\"guid\":\"6299db53c780aac4197af19f93b507c9\",\"type\":3},\"_useFile\":true}"
+        },
+        {
             "type": "Graphlit.FloatPropertyNode",
             "guid": "1c9604ef-f5a3-40be-a684-0bc254a502da",
             "x": -2053,
@@ -1903,6 +1938,28 @@
             "data": "{\"_name\":\"alpha\"}"
         },
         {
+            "type": "Graphlit.MultiplyNode",
+            "guid": "2998d97e-c5a2-4adf-b3b7-8aaa53b5ed0a",
+            "x": -3674,
+            "y": -273,
+            "connections": [
+                {
+                    "a": 1,
+                    "b": 0,
+                    "node": "84d3f8f3-373a-48cc-a5db-af58c1cf3f16"
+                },
+                {
+                    "a": 0,
+                    "b": 1,
+                    "node": "578dc67b-a828-4f3d-a995-6518c5a300dd"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
+        },
+        {
             "type": "Graphlit.AddNode",
             "guid": "29a7d325-6d3f-4adc-a6f0-ae7485b84337",
             "x": -1258,
@@ -1945,6 +2002,23 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_ref\":\"dfe53c12-44c8-43c1-a98a-4362af9ecffc\"}"
+        },
+        {
+            "type": "Graphlit.CustomFunctionNode",
+            "guid": "2aed9dbd-12cc-4777-adc9-250ca1d3f347",
+            "x": -3620,
+            "y": -335,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 0,
+                    "node": "ef7d22bf-45f0-4acc-81ec-05dceaa97d9b"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n\\tOut = In;\\n}\",\"_file\":\"\",\"_shaderInclude\":{\"fileID\":10900000,\"guid\":\"6299db53c780aac4197af19f93b507c9\",\"type\":3},\"_useFile\":true}"
         },
         {
             "type": "Graphlit.AddNode",
@@ -2678,9 +2752,9 @@
                     "node": "07b5ca69-c003-4f11-83d6-a3399f2085d0"
                 },
                 {
-                    "a": 7,
+                    "a": 3,
                     "b": 1,
-                    "node": "c021542c-b088-4ac8-b893-8987aa250f37"
+                    "node": "ae3b2b49-2d40-4613-82c6-c11dd341361f"
                 }
             ],
             "precision": 0,
@@ -3366,6 +3440,23 @@
             "data": "{\"_ref\":\"3b0193dc-f2a4-47b9-8abe-6ea8464cbd8e\"}"
         },
         {
+            "type": "Graphlit.FetchVariableNode",
+            "guid": "84d3f8f3-373a-48cc-a5db-af58c1cf3f16",
+            "x": -3803,
+            "y": -273,
+            "connections": [
+                {
+                    "a": 7,
+                    "b": 0,
+                    "node": "2597f835-fe72-42b9-92c2-c07f6273c28e"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_name\":\"Albedo Alpha\"}"
+        },
+        {
             "type": "Graphlit.FloatPropertyNode",
             "guid": "85016be7-965f-4b48-9c1b-0f6501f3b1ec",
             "x": -3653,
@@ -3392,6 +3483,33 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_name\":\"Vertex Position\"}"
+        },
+        {
+            "type": "Graphlit.BranchNode",
+            "guid": "85bf9906-e58b-4b05-b9ab-23d1c049d535",
+            "x": -3435,
+            "y": -335,
+            "connections": [
+                {
+                    "a": 101,
+                    "b": 0,
+                    "node": "2aed9dbd-12cc-4777-adc9-250ca1d3f347"
+                },
+                {
+                    "a": 2,
+                    "b": 1,
+                    "node": "2998d97e-c5a2-4adf-b3b7-8aaa53b5ed0a"
+                },
+                {
+                    "a": 0,
+                    "b": 2,
+                    "node": "578dc67b-a828-4f3d-a995-6518c5a300dd"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_dynamicBranch\":false}"
         },
         {
             "type": "Graphlit.Texture2DPropertyNode",
@@ -3425,6 +3543,17 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_uv\":0,\"_channels\":2}"
+        },
+        {
+            "type": "Graphlit.FloatPropertyNode",
+            "guid": "8823ba38-559b-4f41-8f60-aa04591e11eb",
+            "x": -4491,
+            "y": -335,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"e45a2c81-07bb-4411-8974-9ef835ffe992\"}"
         },
         {
             "type": "Graphlit.Texture2DPropertyNode",
@@ -3811,6 +3940,23 @@
             "data": ""
         },
         {
+            "type": "Graphlit.FetchVariableNode",
+            "guid": "a32ed48b-9b5f-4b7e-8f3b-0a0aba070cc1",
+            "x": -4282,
+            "y": -265,
+            "connections": [
+                {
+                    "a": 7,
+                    "b": 0,
+                    "node": "2597f835-fe72-42b9-92c2-c07f6273c28e"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_name\":\"Albedo Alpha\"}"
+        },
+        {
             "type": "Graphlit.MultiplyNode",
             "guid": "a4d29d7e-6076-4cd8-9c83-8b45242c5778",
             "x": -3543,
@@ -4082,6 +4228,33 @@
             "data": "{\"_value\":{\"x\":1.0,\"y\":0.0,\"z\":0.0}}"
         },
         {
+            "type": "Graphlit.BranchNode",
+            "guid": "ae3b2b49-2d40-4613-82c6-c11dd341361f",
+            "x": -4084,
+            "y": -335,
+            "connections": [
+                {
+                    "a": 101,
+                    "b": 0,
+                    "node": "1babfac9-7b61-4dde-8a7d-325e9174735f"
+                },
+                {
+                    "a": 1,
+                    "b": 1,
+                    "node": "a32ed48b-9b5f-4b7e-8f3b-0a0aba070cc1"
+                },
+                {
+                    "a": 7,
+                    "b": 2,
+                    "node": "c021542c-b088-4ac8-b893-8987aa250f37"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_dynamicBranch\":false}"
+        },
+        {
             "type": "Graphlit.FetchVariableNode",
             "guid": "af5bf8ac-6945-4841-adc2-c184bc00e66f",
             "x": 22,
@@ -4200,9 +4373,9 @@
             "y": 200,
             "connections": [
                 {
-                    "a": 0,
+                    "a": 3,
                     "b": 0,
-                    "node": "578dc67b-a828-4f3d-a995-6518c5a300dd"
+                    "node": "85bf9906-e58b-4b05-b9ab-23d1c049d535"
                 }
             ],
             "precision": 0,
@@ -4603,6 +4776,23 @@
             "data": ""
         },
         {
+            "type": "Graphlit.RegisterVariableNode",
+            "guid": "ce749ace-d3d1-424e-aad2-9068a0e10a4c",
+            "x": -1076,
+            "y": 29,
+            "connections": [
+                {
+                    "a": 7,
+                    "b": 0,
+                    "node": "2597f835-fe72-42b9-92c2-c07f6273c28e"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_name\":\"Albedo Alpha\"}"
+        },
+        {
             "type": "Graphlit.UVNode",
             "guid": "d2289409-c874-4429-9205-e9b07bf1efe8",
             "x": -2478,
@@ -4916,6 +5106,17 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"autoKeyword\":false}"
+        },
+        {
+            "type": "Graphlit.FloatPropertyNode",
+            "guid": "ef7d22bf-45f0-4acc-81ec-05dceaa97d9b",
+            "x": -3842,
+            "y": -335,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"e45a2c81-07bb-4411-8974-9ef835ffe992\"}"
         },
         {
             "type": "Graphlit.FloatPropertyNode",
@@ -5342,6 +5543,7 @@
                 "c8aae71d-611a-453d-90a3-27e9e7e52321",
                 "ccfdf1e7-3b63-469c-a8a3-b43bbf0c21fb",
                 "ce59d953-7136-481f-83bb-cd85811068b7",
+                "ce749ace-d3d1-424e-aad2-9068a0e10a4c",
                 "e2bd02b6-b290-423a-935f-368f544848ad",
                 "e302a4fb-50e5-429a-b3a2-6c060ce13876"
             ]
@@ -5391,7 +5593,7 @@
         },
         {
             "x": -4791,
-            "y": -235,
+            "y": -394,
             "title": "Occlusion Roughness Metallic",
             "elements": [
                 "068a5ba5-b511-40dc-8701-a942b99f0801",
@@ -5399,6 +5601,9 @@
                 "0d6492ac-41c3-4f2c-8d9c-9b673fed5689",
                 "161a64d2-a286-4a24-8f3f-d5e9ed53528a",
                 "16aa8485-8610-4965-ab23-b5a96ff26de9",
+                "1babfac9-7b61-4dde-8a7d-325e9174735f",
+                "2998d97e-c5a2-4adf-b3b7-8aaa53b5ed0a",
+                "2aed9dbd-12cc-4777-adc9-250ca1d3f347",
                 "31a6189f-c182-4fcd-92e1-ccd9c43e0f2c",
                 "3acc2398-f789-4ba9-8306-6b4bbf4ca40a",
                 "3f985371-c794-4c3a-bea8-5f0d0084fa0a",
@@ -5421,16 +5626,21 @@
                 "7aaa2eec-e332-4059-9f29-c2e704138b97",
                 "80c8e3ee-d183-465a-b217-6be3147bcdeb",
                 "8378aa9c-b1a7-4991-873b-675e2d87bc94",
+                "84d3f8f3-373a-48cc-a5db-af58c1cf3f16",
                 "85016be7-965f-4b48-9c1b-0f6501f3b1ec",
+                "85bf9906-e58b-4b05-b9ab-23d1c049d535",
                 "87755d34-d507-4b35-a785-89a3e3cbbf86",
+                "8823ba38-559b-4f41-8f60-aa04591e11eb",
                 "9834c9ad-f7b8-44be-af3e-cae23d068406",
                 "9b9eb08b-9fac-4d74-ad09-71cd768d0fc2",
                 "9c550389-5571-40f8-9ce5-0e126260b2c6",
+                "a32ed48b-9b5f-4b7e-8f3b-0a0aba070cc1",
                 "a4d29d7e-6076-4cd8-9c83-8b45242c5778",
                 "a512eb24-10cd-46b4-85ad-c7103cafa096",
                 "a9063074-ec30-4bf2-884f-cf79d4b03465",
                 "a97423d4-f843-4056-a684-c8f3146c2018",
                 "acd2ec6a-bfad-44bb-b4fb-bf2af6d5e53b",
+                "ae3b2b49-2d40-4613-82c6-c11dd341361f",
                 "b04a0f7a-a209-4c8b-877d-bc02c096bc7b",
                 "b415331a-be46-4efd-a035-fef836df6e41",
                 "ba8c26f2-ba72-4adc-b5fc-1efcb087d1f5",
@@ -5442,6 +5652,7 @@
                 "e4021e1f-e61b-48d3-bc66-24514fb955e4",
                 "e42a6be6-d64d-41ef-a172-18651269502c",
                 "e519f896-449b-444d-a802-4dedb5eada34",
+                "ef7d22bf-45f0-4acc-81ec-05dceaa97d9b",
                 "f0926aa9-2516-46ec-bdd4-5417fed7df96",
                 "f0a81393-7be6-4bac-928a-10f5c8c561e6",
                 "f17f09d8-0b00-49ff-97ec-574715d4b275",
