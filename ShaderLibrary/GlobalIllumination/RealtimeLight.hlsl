@@ -132,7 +132,7 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
                 #if defined(POINT)
                     light.distanceAttenuation = SAMPLE_TEXTURE2D(_LightTexture0, sampler_LightTexture0, dot(lightCoord.xyz, lightCoord.xyz).xx).r;
                 #elif defined(SPOT)
-                    light.distanceAttenuation = SAMPLE_TEXTURE2D(_LightTextureB0, sampler_LightTextureB0, dot(lightCoord.xyz, lightCoord.xyz).xx).r;
+                        light.distanceAttenuation = SAMPLE_TEXTURE2D(_LightTextureB0, sampler_LightTextureB0, dot(lightCoord.xyz, lightCoord.xyz).xx).r;
                 #endif
             #else
                 light.distanceAttenuation = GetSquareFalloffAttenuation(distanceSquare, range * range);
@@ -153,7 +153,11 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
                 #else
                 #endif
                 half4 cookieTex = SAMPLE_TEXTURE2D(_LightTexture0, sampler_LightTexture0, spotUV);
-                light.color *= IsDefaultCookie() ? 1.0 : cookieTex.rgb;
+                #ifdef COLORED_COOKIES
+                    light.color *= IsDefaultCookie() ? 1.0 : cookieTex.rgb;
+                #else
+                    light.color *= IsDefaultCookie() ? 1.0 : cookieTex.a;
+                #endif
             #endif
         #endif
 
@@ -178,7 +182,12 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
         #endif
 
         #ifdef DIRECTIONAL_COOKIE
-            light.color *= SAMPLE_TEXTURE2D(_LightTexture0, sampler_LightTexture0, lightCoord.xy).rgb;
+            half4 unityCookieDirTex = SAMPLE_TEXTURE2D(_LightTexture0, sampler_LightTexture0, lightCoord.xy);
+            #ifdef COLORED_COOKIES
+                light.color *= unityCookieDirTex.rgb;
+            #else
+                light.color *= unityCookieDirTex.a;
+            #endif
         #endif
     #endif
 

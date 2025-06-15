@@ -40,6 +40,9 @@
 // Use square falloff instead of the default unity light attenuation
 // #define SQUARE_FALLOFF_ATTENUATION
 
+// Use colored light cookies instead of only sampling the alpha
+// #define COLORED_COOKIES
+
 // UdonRP
 // https://z3y.github.io/Graphlit/udonrp
 // #define _UDONRP_ENVIRONMENT_PROBE
