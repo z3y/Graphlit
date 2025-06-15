@@ -376,6 +376,10 @@ float3 MixFogColor(float3 fragColor, float3 fogColor, float fogFactor)
     return fragColor;
 }
 
+#ifdef UNITY_PASS_FORWARDADD
+#define unity_FogColor float4(0,0,0,0)
+#endif
+
 half3 MixFog(half3 fragColor, half fogFactor)
 {
     return MixFogColor(fragColor, half3(unity_FogColor.rgb), fogFactor);
