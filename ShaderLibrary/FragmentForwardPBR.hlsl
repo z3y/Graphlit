@@ -57,6 +57,7 @@ float4 frag(Varyings input) : SV_Target
     shading.NoV = abs(dot(normalWS, fragment.viewDirectionWS)) + 1e-5f;
     shading.coatNoV = abs(dot(fragment.normalWS, fragment.viewDirectionWS)) + 1e-5f;
     shading.normalWS = normalWS;
+    shading.geometricNormalWS = fragment.normalWS;
     shading.reflectVector = reflect(-fragment.viewDirectionWS, normalWS);
     shading.coatReflectVector = reflect(-fragment.viewDirectionWS, fragment.normalWS);
     shading.perceptualRoughness = surface.Roughness;

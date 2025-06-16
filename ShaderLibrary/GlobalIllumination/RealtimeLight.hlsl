@@ -300,9 +300,10 @@ float OrenNayarDiffuse(float NdotV, float NdotL, float LdotV, float roughness)
 void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingData shading)
 {
     half NoL = saturate(dot(shading.normalWS, light.direction));
+    half coatNoL = saturate(dot(shading.geometricNormalWS, light.direction));
 
     UNITY_BRANCH
-    if (light.enabled && light.distanceAttenuation * NoL > 0)
+    if (light.enabled && (NoL * light.distanceAttenuation + (coatNoL * shading.coatWeight)) > 0)
     {
         half3 lightColor = NoL * light.distanceAttenuation * light.shadowAttenuation * light.color;
 
@@ -356,20 +357,22 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
             V = V_SmithJointGGXAniso(ToV, BoV, shading.NoV, ToL, BoL, NoL, atab.x, atab.y);
         #endif
 
-        half3 response = max(0.0, (D * V) * F);
+        half3 response = max(0.0, (D * V) * F) * lightColor;
         half3 throughput = 1.0 - dot(F, 1.0 / 3.0);
 
+        float coatNoH = saturate(dot(shading.geometricNormalWS, halfVector));
         real3 coatF = F_Schlick(shading.coatf0, LoH);
-        real coatD = D_GGX(NoH, shading.coatSpecularRoughness);
-        real coatV = V_SmithJointGGX(NoL, shading.coatNoV, shading.coatSpecularRoughness);
+        real coatD = D_GGX(coatNoH, shading.coatSpecularRoughness);
+        real coatV = V_SmithJointGGX(coatNoL, shading.coatNoV, shading.coatSpecularRoughness);
 
         half3 coatThroughput = 1.0 - dot(coatF, 1.0 / 3.0) * shading.coatWeight;
         half3 coatResponse = max(0.0, (coatD * coatV) * coatF) * shading.coatWeight;
+        coatResponse *= coatNoL * light.distanceAttenuation * light.shadowAttenuation * light.color;
         response = coatResponse + response * coatThroughput;
         throughput = coatThroughput * throughput;
 
 
-        specular += response * lightColor;
+        specular += response;
         
     #endif
 #endif
