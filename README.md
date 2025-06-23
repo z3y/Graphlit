@@ -19,9 +19,10 @@
 - If you like this project consider supporting on [Patreon](https://www.patreon.com/z3y)
 - Alternatively you can use the included `Packages/Graphlit/Runtime/Graphlit Attribution` prefab in your world
 
-## Main Shader
+## Included Shaders
 
-- Main PBR shader created with the graph included: `Graphlit/Lit`
+- Main PBR shader created with the graph included (Recommended): `Graphlit/Lit`
+- PBR shader with standard input: `Graphlit/Standard Compatible`
 
 ## Highlighted Features
 
