@@ -1,6 +1,6 @@
 {
     "data": {
-        "shaderName": "Graphlit/Samples/Toon",
+        "shaderName": "Graphlit/Toon",
         "properties": [
             {
                 "guid": "75870dec-983a-4ddd-9da2-8370764ba786",
@@ -512,7 +512,7 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": false,
-            "data": "{\"forceNoShadowCasting\":false,\"defaultMode\":0,\"defaultCull\":2,\"_customLighting\":true}"
+            "data": "{\"forceNoShadowCasting\":false,\"defaultMode\":0,\"defaultCull\":2,\"terrainCompatible\":false,\"_customLighting\":true}"
         },
         {
             "type": "Graphlit.MultiplyNode",
@@ -1050,17 +1050,6 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_ref\":\"1def5047-ee96-4414-98df-73a3507eaedd\"}"
-        },
-        {
-            "type": "Graphlit.BooleanConstantNode",
-            "guid": "b6001b53-cbcf-4621-8944-627a6b1a65fa",
-            "x": 1106,
-            "y": -839,
-            "connections": [],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": "{\"_value\":false}"
         },
         {
             "type": "Graphlit.CustomFunctionNode",
