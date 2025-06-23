@@ -1197,7 +1197,7 @@
         "defaultPreviewState": 1,
         "customEditor": "",
         "fallback": "",
-        "include": "#ifndef _NORMALMAP\n#define _NORMAL_DROPOFF_OFF\n#endif",
+        "include": "#if !defined(_NORMALMAP) && !defined(_DETAIL_NORMAL)\n#define _NORMAL_DROPOFF_OFF\n#endif",
         "outlinePass": 0,
         "depthFillPass": false,
         "stencil": false,
