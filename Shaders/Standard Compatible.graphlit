@@ -59,7 +59,7 @@
             {
                 "guid": "4b195471-c856-4808-8ad2-0107eaad4ea0",
                 "referenceName": "_SmoothnessTextureChannel",
-                "displayName": "Smoothness Texture Channel",
+                "displayName": "Smoothness Source",
                 "type": 1,
                 "customAttributes": "[Enum(Metallic Alpha,0,Albedo Alpha,1)]",
                 "defaultAttributes": 0,
@@ -1373,9 +1373,9 @@
                     "node": "c119e0bd-c7d2-45ca-af75-d71946979ee6"
                 },
                 {
-                    "a": 2,
+                    "a": 0,
                     "b": 3,
-                    "node": "e0a1d36b-ce3c-4d9b-a042-02e4476ff04d"
+                    "node": "131ffbde-646d-4bc3-9cbc-fdf44e220e0e"
                 }
             ],
             "precision": 0,
@@ -2045,9 +2045,9 @@
             "y": 3070,
             "connections": [
                 {
-                    "a": 2,
+                    "a": 0,
                     "b": 0,
-                    "node": "e0a1d36b-ce3c-4d9b-a042-02e4476ff04d"
+                    "node": "131ffbde-646d-4bc3-9cbc-fdf44e220e0e"
                 },
                 {
                     "a": 0,
@@ -2261,28 +2261,6 @@
             "data": "{\"_name\":\"smoothness\"}"
         },
         {
-            "type": "Graphlit.MultiplyNode",
-            "guid": "e0a1d36b-ce3c-4d9b-a042-02e4476ff04d",
-            "x": -1320,
-            "y": 2926,
-            "connections": [
-                {
-                    "a": 7,
-                    "b": 0,
-                    "node": "c119e0bd-c7d2-45ca-af75-d71946979ee6"
-                },
-                {
-                    "a": 0,
-                    "b": 1,
-                    "node": "131ffbde-646d-4bc3-9cbc-fdf44e220e0e"
-                }
-            ],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": ""
-        },
-        {
             "type": "Graphlit.ColorPropertyNode",
             "guid": "e2bd02b6-b290-423a-935f-368f544848ad",
             "x": -1248,
@@ -2460,8 +2438,7 @@
                 "c55fdf62-8577-41a2-b0e0-2389d418db40",
                 "c91a29a8-e4fa-45b6-bf24-2cd6722e35c1",
                 "ca6d876e-3005-4eb5-9bdb-1033f12f7803",
-                "d2289409-c874-4429-9205-e9b07bf1efe8",
-                "e0a1d36b-ce3c-4d9b-a042-02e4476ff04d"
+                "d2289409-c874-4429-9205-e9b07bf1efe8"
             ]
         },
         {
