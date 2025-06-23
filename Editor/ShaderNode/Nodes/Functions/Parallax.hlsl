@@ -20,6 +20,11 @@ float2 GetMinUvSize(float2 baseUV, float4 texelSize)
 
 void ParallaxOcclusionMapping(Texture2D HeightMap, SamplerState Sampler, float strength, half offset, float steps, float2 UV, float3 viewDirectionTS, float4 texelSize, out float2 uvOffset)
 {
+    #ifdef QUALITY_LOW
+    uvOffset = 0;
+    return;
+    #endif
+
     viewDirectionTS = CalculateTangentViewDir(viewDirectionTS);
     float surfaceHeight = SAMPLE_TEXTURE2D(HeightMap, Sampler, UV).r;
     uvOffset = 0;
