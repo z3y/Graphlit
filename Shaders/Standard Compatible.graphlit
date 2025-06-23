@@ -77,9 +77,9 @@
             {
                 "guid": "9777dfe1-c006-4b0a-86bb-e80c8a92be53",
                 "referenceName": "_MetallicGlossMap",
-                "displayName": "Metallic Gloss Map",
+                "displayName": "Metallic Gloss",
                 "type": 7,
-                "customAttributes": "[Tooltip(R Metallic, A Smoothness)]\n[Toggle(_MASKMAP)]",
+                "customAttributes": "[Tooltip(R Metallic, A Smoothness)]\n[Toggle(_METALLICGLOSSMAP)]",
                 "defaultAttributes": 2592,
                 "rangeX": 0.0,
                 "rangeY": 0.0,
@@ -149,9 +149,9 @@
             {
                 "guid": "8edaa05d-efbd-443e-bad9-e4dd5837f81e",
                 "referenceName": "_OcclusionMap",
-                "displayName": "Occlusion Map",
+                "displayName": "Occlusion",
                 "type": 7,
-                "customAttributes": "[Toggle(_OCCLUSION)]",
+                "customAttributes": "[Toggle(_OCCLUSION)]\n[ExtraProperty(_OcclusionStrength)]",
                 "defaultAttributes": 32,
                 "rangeX": 0.0,
                 "rangeY": 0.0,
@@ -170,7 +170,7 @@
                 "displayName": "Occlusion",
                 "type": 1,
                 "customAttributes": "[ShowIf(_MetallicGlossMap, 1)]\n[Indent(2)]",
-                "defaultAttributes": 0,
+                "defaultAttributes": 4,
                 "rangeX": 0.0,
                 "rangeY": 1.0,
                 "_value": "1",
@@ -345,6 +345,24 @@
                 "keywordPassFlags": 0
             },
             {
+                "guid": "e0d4adec-7c8e-48d4-8a7c-2f1b95bf7e14",
+                "referenceName": "_DetailMask",
+                "displayName": "Mask",
+                "type": 7,
+                "customAttributes": "[Folder(Detail)]\n[Toggle(_DETAIL_MASK)]",
+                "defaultAttributes": 32,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1
+            },
+            {
                 "guid": "3b0193dc-f2a4-47b9-8abe-6ea8464cbd8e",
                 "referenceName": "_UVSec",
                 "displayName": "UV",
@@ -361,24 +379,6 @@
                 },
                 "declaration": 0,
                 "keywordPassFlags": 0
-            },
-            {
-                "guid": "e0d4adec-7c8e-48d4-8a7c-2f1b95bf7e14",
-                "referenceName": "_DetailMask",
-                "displayName": "Mask",
-                "type": 7,
-                "customAttributes": "[Folder(Detail)]\n[Toggle(_DETAIL_MASK)]",
-                "defaultAttributes": 0,
-                "rangeX": 0.0,
-                "rangeY": 0.0,
-                "_value": "",
-                "_autoKeywordName": "",
-                "_defaultTexture": "",
-                "_defaultTextureObject": {
-                    "instanceID": 0
-                },
-                "declaration": 0,
-                "keywordPassFlags": -1
             },
             {
                 "guid": "9a7393b8-3650-405d-b34b-2d0ce5e9feeb",
@@ -1552,6 +1552,28 @@
             "data": "{\"_uv\":0,\"_channels\":2}"
         },
         {
+            "type": "Graphlit.KeywordPropertyNode",
+            "guid": "89991f1b-ac1a-4477-96c9-16bdafbca734",
+            "x": -3947,
+            "y": 573,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 1,
+                    "node": "fa39fe74-a2a9-4f70-8499-36a690d96e1a"
+                },
+                {
+                    "a": 0,
+                    "b": 2,
+                    "node": "9834c9ad-f7b8-44be-af3e-cae23d068406"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"c0692c30-42a7-46da-b770-c7d478b47202\"}"
+        },
+        {
             "type": "Graphlit.Texture2DPropertyNode",
             "guid": "8da816ce-9884-4a50-ab59-4807ce4ce781",
             "x": -1730,
@@ -1582,8 +1604,8 @@
         {
             "type": "Graphlit.FloatPropertyNode",
             "guid": "9834c9ad-f7b8-44be-af3e-cae23d068406",
-            "x": -3818,
-            "y": 616,
+            "x": -4080,
+            "y": 595,
             "connections": [],
             "precision": 0,
             "preview": 0,
@@ -1882,7 +1904,7 @@
                 {
                     "a": 0,
                     "b": 0,
-                    "node": "9834c9ad-f7b8-44be-af3e-cae23d068406"
+                    "node": "89991f1b-ac1a-4477-96c9-16bdafbca734"
                 },
                 {
                     "a": 3,
@@ -2361,6 +2383,17 @@
             "data": "{\"_ref\":\"33453acb-825e-4ca2-8e90-24b60130cec9\"}"
         },
         {
+            "type": "Graphlit.FloatPropertyNode",
+            "guid": "fa39fe74-a2a9-4f70-8499-36a690d96e1a",
+            "x": -4075,
+            "y": 533,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"17015760-88c4-4d4e-8aa8-f557a9b10a1a\"}"
+        },
+        {
             "type": "Graphlit.KeywordPropertyNode",
             "guid": "fca47b2b-4be2-4362-b5aa-6a52fc0e7368",
             "x": -1519,
@@ -2502,6 +2535,7 @@
                 "6a41240c-b0fe-452d-bbb7-a076fab9a7d4",
                 "7ebb8e97-2ee1-4eda-8836-d386aee44e51",
                 "80c8e3ee-d183-465a-b217-6be3147bcdeb",
+                "89991f1b-ac1a-4477-96c9-16bdafbca734",
                 "954beff3-b47b-45cd-ab61-7a261eabebf9",
                 "9834c9ad-f7b8-44be-af3e-cae23d068406",
                 "9e089bb7-160a-43f9-b24c-dc4af73b855c",
@@ -2511,7 +2545,8 @@
                 "c8702270-2205-428a-827b-a5d8eac7fca3",
                 "d5060aa3-6e54-4db4-8494-e64ff6ca8123",
                 "e42a6be6-d64d-41ef-a172-18651269502c",
-                "e8d8e5ec-edbc-41d1-8b67-82f3849a20f4"
+                "e8d8e5ec-edbc-41d1-8b67-82f3849a20f4",
+                "fa39fe74-a2a9-4f70-8499-36a690d96e1a"
             ]
         },
         {
