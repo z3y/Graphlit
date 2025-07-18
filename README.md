@@ -28,7 +28,7 @@
 
 ### PBR Features
 
-- Based on CoreRP
+- Based on CoreRP, Google Filament, OpenPBR
 - [Bakery](https://assetstore.unity.com/packages/tools/level-design/bakery-gpu-lightmapper-122218) Features (MonoSH, Lightmapped Specular, Bicubic Lightmap)
 - [LTCGI](https://github.com/PiMaker/ltcgi), [AreaLit](https://booth.pm/ja/items/3661829)
 - [Clustered BIRP](https://github.com/z3y/ClusteredBIRP)
