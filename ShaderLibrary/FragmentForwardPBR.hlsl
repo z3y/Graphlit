@@ -18,7 +18,7 @@ float4 frag(Varyings input) : SV_Target
 
     SurfaceDescription surface = SurfaceDescriptionFunction(input);
 
-    #if defined(_EMISSION) && !defined(UNITY_PASS_FORWARDADD)
+    #if !defined(UNITY_PASS_FORWARDADD)
         half3 emissionEDF = surface.Emission;
     #else
         half3 emissionEDF = 0;
