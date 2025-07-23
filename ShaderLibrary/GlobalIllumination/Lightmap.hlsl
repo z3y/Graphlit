@@ -110,7 +110,8 @@ void SampleLightmap(out half3 illuminance, out half3 specular, float4 lightmapUV
             #endif
         #else
             half halfLambert = dot(normalWS, directionalLightmap.xyz - 0.5) + 0.5;
-            illuminance = illuminance * halfLambert / max(1e-4, directionalLightmap.w);
+            halfLambert *= halfLambert;
+            illuminance = illuminance * halfLambert / max(1e-4, directionalLightmap.w * directionalLightmap.w);
         #endif
 
     #endif
