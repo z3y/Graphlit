@@ -80,7 +80,7 @@ struct VertexData
             output.positionCSR = TransformWorldToHClip(output.positionWS);
         #endif
 
-        #ifdef LIGHTMAP_ON
+        #if defined(LIGHTMAP_ON) || defined(SHADOWS_SHADOWMASK)
             output.lightmapUV = mad(attributes.uv1.xy, unity_LightmapST.xy, unity_LightmapST.zw);
         #endif
 

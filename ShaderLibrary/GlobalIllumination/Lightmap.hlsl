@@ -155,7 +155,7 @@ half4 LPPV_SampleProbeOcclusion(float3 positionWS)
 
 half4 SampleShadowMask(float2 lightmapUV)
 {
-    #if defined(SHADOWS_SHADOWMASK) && defined(LIGHTMAP_ON)
+    #if defined(SHADOWS_SHADOWMASK)
         #ifdef BICUBIC_SHADOWMASK
             float4 texelSize;
             unity_Lightmap.GetDimensions(texelSize.x, texelSize.y);
@@ -182,7 +182,7 @@ half UnitySampleBakedOcclusion(float2 lightmapUV, float3 positionWS)
     // #if !(defined(SHADOWS_SHADOWMASK) || defined(LIGHTMAP_SHADOW_MIXING))
     // return 1;
     // #endif
-    #if defined(SHADOWS_SHADOWMASK) && defined(LIGHTMAP_ON)
+    #if defined(SHADOWS_SHADOWMASK)
         half4 rawOcclusionMask = SampleShadowMask(lightmapUV);
         return saturate(dot(rawOcclusionMask, unity_OcclusionMaskSelector));
     #elif defined(LIGHTPROBE_SH)

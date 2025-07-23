@@ -94,7 +94,7 @@ struct FragmentData
 
         output.positionNDC = ComputeNormalizedDeviceCoordinatesWithZ(output.positionWS, GetWorldToHClipMatrix());
 
-        #ifdef LIGHTMAP_ON
+        #if defined(LIGHTMAP_ON) || defined(SHADOWS_SHADOWMASK)
             output.lightmapUV.xy = varyings.lightmapUV.xy;
         #endif
         #ifdef DYNAMICLIGHTMAP_ON

@@ -55,7 +55,7 @@ Varyings vert(Attributes input)
         #endif
     #endif
 
-    #if defined(LIGHTMAP_ON)
+    #if defined(LIGHTMAP_ON) || defined(SHADOWS_SHADOWMASK)
         varyings.lightmapUV.xy = mad(input.uv1.xy, unity_LightmapST.xy, unity_LightmapST.zw);
     #endif
     #ifdef DYNAMICLIGHTMAP_ON
