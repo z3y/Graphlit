@@ -32,4 +32,19 @@ namespace Graphlit
             AddPort(new(PortDirection.Input, new Float(1), INDEX, "Index"));
         }
     }
+
+    [NodeInfo("Texture/Sample Texture 2D Array BIAS")]
+    public class SampleTexture2DArrayBiasNode : SampleTextureNode
+    {
+        const int INDEX = 10;
+        public override IPortType TextureType => new Texture2DArrayObject();
+        public override bool HasBias => true;
+        public override string SampleMethod => $"SAMPLE_TEXTURE2D_ARRAY_BIAS({PortData[TEX].Name}, {GetSamplerName(PortData[TEX].Name)}, {PortData[UV].Name}, {PortData[INDEX].Name}, {PortData[BIAS].Name})";
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            AddPort(new(PortDirection.Input, new Float(1), INDEX, "Index"));
+        }
+    }
 }
