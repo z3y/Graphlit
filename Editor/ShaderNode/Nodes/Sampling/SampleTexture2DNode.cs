@@ -26,4 +26,11 @@ namespace Graphlit
         public override bool HasLod => true;
         public override string SampleMethod => $"SAMPLE_TEXTURE2D_LOD({PortData[TEX].Name}, {GetSamplerName(PortData[TEX].Name)}, {PortData[UV].Name}, {PortData[LOD].Name})";
     }
+
+    [NodeInfo("Texture/Sample Texture 2D BIAS"), System.Serializable]
+    public class SampleTexture2DBiasNode : SampleTexture2DNode
+    {
+        public override bool HasBias => true;
+        public override string SampleMethod => $"SAMPLE_TEXTURE2D_BIAS({PortData[TEX].Name}, {GetSamplerName(PortData[TEX].Name)}, {PortData[UV].Name}, {PortData[BIAS].Name})";
+    }
 }

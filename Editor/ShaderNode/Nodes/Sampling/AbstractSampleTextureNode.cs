@@ -21,6 +21,7 @@ namespace Graphlit
         protected const int OUT_A = 7;
 
         protected const int LOD = 9;
+        protected const int BIAS = 10;
 
         public override Color Accent => new Color(0.8f, 0.2f, 0.2f);
 
@@ -29,6 +30,7 @@ namespace Graphlit
 
         public virtual IPortType TextureType => new Texture2DObject();
         public virtual bool HasLod => false;
+        public virtual bool HasBias => false;
         public virtual int Coords => 2;
         public virtual PortBinding UVBinding => PortBinding.UV0;
         public virtual string SampleMethod => $"SAMPLE_TEXTURE2D({PortData[TEX].Name}, {GetSamplerName(PortData[TEX].Name)}, {PortData[UV].Name})";
@@ -53,6 +55,11 @@ namespace Graphlit
             if (HasLod)
             {
                 AddPort(new(PortDirection.Input, new Float(1), LOD, "LOD"));
+            }
+
+            if (HasBias)
+            {
+                AddPort(new(PortDirection.Input, new Float(1), BIAS, "BIAS"));
             }
 
             Bind(UV, UVBinding);
