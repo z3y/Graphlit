@@ -213,7 +213,7 @@ namespace Graphlit
             root.Add(spec);
         }
 
-        static readonly PropertyDescriptor _monosh = new(PropertyType.Float, "Mono SH", "_MonoSH") { customAttributes = "[Toggle(_BAKERY_MONOSH)][Header(Baked GI)] [Folder(Advanced Options)]" };
+        static readonly PropertyDescriptor _monosh = new(PropertyType.Float, "Mono SH", "_MonoSH") { customAttributes = "[Toggle(_BAKERY_MONOSH)][Folder(Advanced Options)]" };
         static readonly PropertyDescriptor _bicubicLightmap = new(PropertyType.Float, "Bicubic Lightmap", "_BicubicLightmap") { customAttributes = "[Toggle(_BICUBIC_LIGHTMAP)] [Folder(Advanced Options)]" };
         static readonly PropertyDescriptor _nonLinearLightprobeSh = new(PropertyType.Float, "Non Linear Light Probe SH", "_NonLinearLightProbeSH") { customAttributes = "[Toggle(_NONLINEAR_LIGHTPROBESH)] [Folder(Advanced Options)]" };
         static readonly PropertyDescriptor _specularHighlights = new(PropertyType.Float, "Specular Highlights", "_SpecularHighlights") { customAttributes = "[ToggleOff] [Folder(Advanced Options)] [Header(Specular)]", FloatValue = 1 };
@@ -230,6 +230,10 @@ namespace Graphlit
 
         static readonly PropertyDescriptor _cbirpProp = new(PropertyType.Float, "CBIRP", "_CBIRP") { customAttributes = "[Toggle(_CBIRP)] [Header(Clustered BIRP)] [Folder(Advanced Options)]" };
         static readonly PropertyDescriptor _cbirpReflectionsProp = new(PropertyType.Float, "CBIRP Reflections", "_CBIRP_Reflections") { customAttributes = "[Toggle(_CBIRP_REFLECTIONS)] [Folder(Advanced Options)]" };
+
+        static readonly PropertyDescriptor _lightmapOverride = new(PropertyType.Texture2D, "Lightmap", "_Lightmap") { DefaultTextureEnum = DefaultTextureName.unity_Lightmap, customAttributes = "[Folder(Advanced Options)][Header(Baked GI)]", defaultAttributes = MaterialPropertyAttribute.NoScaleOffset };
+        static readonly PropertyDescriptor _lightmapOverrideInd = new(PropertyType.Texture2D, "Lightmap Dir", "_LightmapInd") { DefaultTextureEnum = DefaultTextureName.unity_LightmapInd, customAttributes = "[Folder(Advanced Options)]", defaultAttributes = MaterialPropertyAttribute.NoScaleOffset };
+
 
         void AddAreaLitProperties(ShaderBuilder builder)
         {
@@ -289,6 +293,9 @@ namespace Graphlit
             builder.properties.Add(_cull);
             //if (GraphView.graphData.outlinePass != GraphData.OutlinePassMode.Disabled) builder.properties.Add(_outlineToggle);
             builder.properties.Add(_dfgProperty);
+
+            builder.properties.Add(_lightmapOverride);
+            builder.properties.Add(_lightmapOverrideInd);
 
             builder.properties.Add(_monosh);
             builder.properties.Add(_bicubicLightmap);
@@ -366,6 +373,8 @@ namespace Graphlit
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ALPHATEST_ON");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
+                pass.pragmas.Add("#define unity_Lightmap _Lightmap");
+                pass.pragmas.Add("#define unity_LightmapInd _LightmapInd");
 
 
                 if (urp)
