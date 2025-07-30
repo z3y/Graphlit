@@ -304,7 +304,7 @@ TEXTURE2D(_LightTexture0);
 #endif
 SAMPLER(sampler_LightTexture0);
 
-#ifdef SPOT
+#if defined(SPOT) || defined(POINT_COOKIE)
 TEXTURE2D(_LightTextureB0);
 SAMPLER(sampler_LightTextureB0);
 #endif

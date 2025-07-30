@@ -96,7 +96,7 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
         #ifdef UNITY_PASS_FORWARDBASE
             light.enabled = any(_LightColor0.rgb) > 0;
         #endif
-        #if defined(SPOT) || defined(POINT)
+        #if defined(SPOT) || defined(POINT) || defined(POINT_COOKIE)
             light.direction = SafeNormalize(light.direction);
         #endif
 
@@ -122,20 +122,29 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
             float4 lightCoord = mul(unity_WorldToLight, float4(positionWS, 1));
         #endif
 
-        #if defined(SPOT) || defined(POINT)
+        #if defined(SPOT) || defined(POINT) || defined(POINT_COOKIE)
             float3 lightZ = float3(unity_WorldToLight[0][2], unity_WorldToLight[1][2], unity_WorldToLight[2][2]);
 
             float distanceSquare = dot(positionToLight, positionToLight);
             half range = length(lightZ);
 
             #ifndef SQUARE_FALLOFF_ATTENUATION
-                #if defined(POINT)
+                #if defined(POINT_COOKIE) || defined(SPOT)
+                    light.distanceAttenuation = SAMPLE_TEXTURE2D(_LightTextureB0, sampler_LightTextureB0, dot(lightCoord.xyz, lightCoord.xyz).xx).r;
+                #elif defined(POINT)
                     light.distanceAttenuation = SAMPLE_TEXTURE2D(_LightTexture0, sampler_LightTexture0, dot(lightCoord.xyz, lightCoord.xyz).xx).r;
-                #elif defined(SPOT)
-                        light.distanceAttenuation = SAMPLE_TEXTURE2D(_LightTextureB0, sampler_LightTextureB0, dot(lightCoord.xyz, lightCoord.xyz).xx).r;
                 #endif
             #else
                 light.distanceAttenuation = GetSquareFalloffAttenuation(distanceSquare, range * range);
+            #endif
+
+            #ifdef POINT_COOKIE
+                half4 pointCookie = SAMPLE_TEXTURECUBE(_LightTexture0, sampler_LightTexture0, lightCoord.xyz);
+                #ifdef COLORED_COOKIES
+                    light.color *= pointCookie.rgb;
+                #else
+                    light.color *= pointCookie.a;
+                #endif
             #endif
 
             light.distanceAttenuation *= LIGHT_ATTENUATION_MULTIPLIER;
@@ -168,7 +177,7 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
             #if defined(SHADOWS_DEPTH) && defined(SPOT)
                 float4 spotShadowCoord = mul(unity_WorldToShadow[0], float4(positionWS, 1));
                 light.shadowAttenuation = SampleShadowmap(TEXTURE2D_SHADOW_ARGS(_ShadowMapTexture, sampler_LinearClampCompare), spotShadowCoord, _ShadowMapTexture_TexelSize);
-            #elif defined(SHADOWS_CUBE) && defined(POINT)
+            #elif defined(SHADOWS_CUBE) && (defined(POINT) || defined(POINT_COOKIE))
                 light.shadowAttenuation = UnitySampleShadowmap(positionWS - _LightPositionRange.xyz);
             #endif
         }
