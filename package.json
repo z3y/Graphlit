@@ -1,6 +1,6 @@
 {
   "name": "com.z3y.graphlit",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "unity": "2022.3",
   "displayName": "Graphlit",
   "hideInEditor": false,
@@ -15,5 +15,5 @@
   "dependencies": {
     "com.unity.render-pipelines.core": "14.0.10"
   },
-  "description": "A Node shader editor"
+  "description": "A node shader editor for Toon and PBR shaders"
 }
