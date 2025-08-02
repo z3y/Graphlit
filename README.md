@@ -12,6 +12,7 @@
 
 - Install with the [VRChat Creator Companion](https://z3y.github.io/vpm-package-listing/) or add the git url
 - To get started read the [Documentation](https://z3y.github.io/Graphlit)
+- You can try out the shader in the [VRChat World](https://vrchat.com/home/world/wrld_6fd2e6c4-d4f2-49ea-8cf6-ce7ccb0e7111)
 - Setup the project [config file](https://z3y.github.io/Graphlit/config)
 
 ## Support
