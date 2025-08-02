@@ -108,6 +108,7 @@ namespace Graphlit
             builder.subshaderTags["Queue"] = "Geometry";
 
             bool urp = GetRenderPipeline() == RenderPipeline.URP;
+            bool isLowQuality = builder.BuildTarget == BuildTarget.Android || builder.BuildTarget == BuildTarget.iOS;
 
             if (urp)
             {
@@ -174,7 +175,7 @@ namespace Graphlit
                 builder.AddPass(pass);
             }
 
-            if (_customLighting && !urp)
+            if (_customLighting && !urp && !isLowQuality)
             {
                 var pass = new PassBuilder("ForwardAdd", Vertex, FragmentForward, POSITION, NORMAL, TANGENT, COLOR, ALPHA, CUTOFF);
                 pass.tags["LightMode"] = "ForwardAdd";

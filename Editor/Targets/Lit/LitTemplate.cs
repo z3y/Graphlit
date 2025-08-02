@@ -347,6 +347,7 @@ namespace Graphlit
             builder.subshaderTags["Queue"] = "Geometry";
 
             bool urp = GetRenderPipeline() == RenderPipeline.URP;
+            bool isLowQuality = builder.BuildTarget == BuildTarget.Android || builder.BuildTarget == BuildTarget.iOS;
 
             if (urp)
             {
@@ -461,7 +462,7 @@ namespace Graphlit
 
             }
 
-            if (!urp)
+            if (!urp && !isLowQuality)
             {
                 var portFlags = new List<int>() { VERTEX_POSITION, VERTEX_NORMAL, VERTEX_TANGENT, ALBEDO, ALPHA, CUTOFF, SPECULAR_ROUGHNESS, METALLIC, OCCLUSION, REFLECTANCE, NORMAL_TS,
                 BASE_WEIGHT, SPECULAR_WEIGHT, SPECULAR_COLOR, DIFFUSE_ROUGHNESS, SPECULAR_ROUGHNESS_ANISOTROPY, TANGENT, SPECULAR_IOR,

@@ -48,7 +48,7 @@ namespace Graphlit
         public Dictionary<string, Texture> _defaultTextures = new();
         public HashSet<string> dependencies = new();
 
-        bool SupportsGrabpas => BuildTarget != BuildTarget.Android;
+        bool SupportsGrabpas => BuildTarget != BuildTarget.Android && BuildTarget != BuildTarget.iOS;
         public bool grabpass = false;
 
         const string StencilProperties = @"
