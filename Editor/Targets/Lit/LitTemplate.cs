@@ -385,10 +385,10 @@ namespace Graphlit
                 else
                 {
                     pass.pragmas.Add("#pragma multi_compile_fwdbase");
-                    pass.pragmas.Add("#pragma multi_compile_fragment _ VERTEXLIGHT_ON");
+                    pass.pragmas.Add("#pragma shader_feature_local_fragment VERTEXLIGHT_ON");
                 }
 
-                //pass.pragmas.Add("#pragma skip_variants LIGHTPROBE_SH");
+                pass.pragmas.Add("#pragma skip_variants LIGHTPROBE_SH");
                 pass.pragmas.Add("#pragma multi_compile_fog");
                 pass.pragmas.Add("#pragma multi_compile_instancing");
 

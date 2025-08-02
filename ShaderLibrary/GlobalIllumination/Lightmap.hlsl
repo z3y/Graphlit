@@ -186,7 +186,7 @@ half UnitySampleBakedOcclusion(float2 lightmapUV, float3 positionWS)
     #if defined(SHADOWS_SHADOWMASK)
         half4 rawOcclusionMask = SampleShadowMask(lightmapUV);
         return saturate(dot(rawOcclusionMask, unity_OcclusionMaskSelector));
-    #elif defined(LIGHTPROBE_SH)
+    #elif !defined(LIGHTMAP_ON)
         //In forward dynamic objects can only get baked occlusion from LPPV, light probe occlusion is done on the CPU by attenuating the light color.
         half attenuation = 1.0f;
         #if defined(UNITY_INSTANCING_ENABLED) && defined(UNITY_USE_SHCOEFFS_ARRAYS)
