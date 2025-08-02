@@ -11,7 +11,7 @@ half frag(Varyings varyings) : SV_TARGET
         if (surfaceDescription.Alpha < surfaceDescription.Cutoff) discard;
     #endif
 
-    #if defined(_ALPHAPREMULTIPLY_ON) || defined(_ALPHAMODULATE_ON) || defined(_ALPHAFADE_ON)
+    #if defined(_SURFACE_TYPE_TRANSPARENT)
         #if defined(SHADOWS_DEPTH)
             if(UNITY_MATRIX_P._m33 != 0.0) // thanks liltoon
         #endif
