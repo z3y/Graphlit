@@ -620,8 +620,6 @@ namespace Graphlit
                 material.GetFloat("_BlendModePreserveSpecular") > 0 : false;
 
             ToggleKeyword(material, "_SURFACE_TYPE_TRANSPARENT", surfaceType > 0);
-            ToggleKeyword(material, "_ALPHAPREMULTIPLY_ON", false);
-            ToggleKeyword(material, "_ALPHAMODULATE_ON", false);
             ToggleKeyword(material, "_ALPHATEST_ON", alphaClip);
             material.SetFloat("_AlphaToMask", alphaClip ? 1 : 0);
 
@@ -637,7 +635,6 @@ namespace Graphlit
                         (int)UnityEngine.Rendering.BlendMode.One :
                         (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
                     material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                    ToggleKeyword(material, "_ALPHAPREMULTIPLY_ON", preserveSpecular);
                 }
                 else if (surfaceBlend == 1)
                 {
@@ -653,7 +650,6 @@ namespace Graphlit
                 {
                     material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.DstColor);
                     material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
-                    ToggleKeyword(material, "_ALPHAMODULATE_ON", true);
                 }
             }
 

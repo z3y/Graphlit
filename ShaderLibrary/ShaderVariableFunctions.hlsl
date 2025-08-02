@@ -212,30 +212,40 @@ half OutputAlpha(half alpha, bool isTransparent)
     }
 }
 
-half3 AlphaModulate(half3 albedo, half alpha)
-{
-    // Fake alpha for multiply blend by lerping albedo towards 1 (white) using alpha.
-    // Manual adjustment for "lighter" multiply effect (similar to "premultiplied alpha")
-    // would be painting whiter pixels in the texture.
-    // This emulates that procedure in shader, so it should be applied to the base/source color.
-#if defined(_ALPHAMODULATE_ON)
-    return lerp(half3(1.0, 1.0, 1.0), albedo, alpha);
-#else
-    return albedo;
-#endif
-}
 
-half3 AlphaPremultiply(half3 albedo, half alpha)
-{
-    // Multiply alpha into albedo only for Preserve Specular material diffuse part.
-    // Preserve Specular material (glass like) has different alpha for diffuse and specular lighting.
-    // Logically this is "variable" Alpha blending.
-    // (HW blend mode is premultiply, but with alpha multiply in shader.)
-#if defined(_ALPHAPREMULTIPLY_ON)
-    return albedo * alpha;
+#ifdef _SURFACE_TYPE_TRANSPARENT
+    #define USE_ALPHAPREMULTIPLY (_Blend == 0 && _BlendModePreserveSpecular != 0)
+    #define USE_ALPHAMULTIPLY (_Blend == 3)
+#else
+    #define USE_ALPHAPREMULTIPLY false
+    #define USE_ALPHAMULTIPLY false
 #endif
-    return albedo;
-}
+
+// half3 AlphaModulate(half3 albedo, half alpha)
+// {
+//     // Fake alpha for multiply blend by lerping albedo towards 1 (white) using alpha.
+//     // Manual adjustment for "lighter" multiply effect (similar to "premultiplied alpha")
+//     // would be painting whiter pixels in the texture.
+//     // This emulates that procedure in shader, so it should be applied to the base/source color.
+//     if (USE_ALPHAMULTIPLY)
+//     {
+//         return lerp(1.0, albedo, alpha);
+//     }
+//     return albedo;
+// }
+
+// half3 AlphaPremultiply(half3 albedo, half alpha)
+// {
+//     // Multiply alpha into albedo only for Preserve Specular material diffuse part.
+//     // Preserve Specular material (glass like) has different alpha for diffuse and specular lighting.
+//     // Logically this is "variable" Alpha blending.
+//     // (HW blend mode is premultiply, but with alpha multiply in shader.)
+//     if (USE_ALPHAPREMULTIPLY)
+//     {
+//         return albedo * alpha;
+//     }
+//     return albedo;
+// }
 
 // Normalization used to depend on SHADER_QUALITY
 // Currently we always normalize to avoid lighting issues

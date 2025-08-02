@@ -23,6 +23,9 @@
 // Enable Non Linear Lightmap SH
 // #define _NONLINEAR_LIGHTPROBESH
 
+// Skip compiling vertex light variants to reduce shader size
+// #pragma skip_variants VERTEXLIGHT_ON
+
 // Clustered Birp Toggles (https://github.com/z3y/ClusteredBIRP)
 // #define _CBIRP
 // #define _CBIRP_REFLECTIONS

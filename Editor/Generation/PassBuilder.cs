@@ -208,6 +208,8 @@ namespace Graphlit
             }
             sb.AppendLine();
 
+            sb.AppendLine("#include \"Packages/com.z3y.graphlit/ShaderLibrary/GraphFunctions.hlsl\"");
+
             foreach (var function in functions)
             {
                 if (string.IsNullOrEmpty(function))

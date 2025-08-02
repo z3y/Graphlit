@@ -35,12 +35,15 @@ float4 frag(Varyings input) : SV_Target
     surface.Albedo *= coatAttenuation;
 
     half3 diffuseColor = surface.Albedo * (1.0 - surface.Metallic);
-    #if defined(_ALPHAMODULATE_ON)
-        diffuseColor = AlphaModulate(diffuseColor, alpha);
-    #endif
-    #if defined(_ALPHAPREMULTIPLY_ON)
+    if (USE_ALPHAMULTIPLY)
+    {
+        
+        diffuseColor = lerp(1.0, diffuseColor, alpha);
+    }
+    if (USE_ALPHAPREMULTIPLY)
+    {
         diffuseColor *= alpha;
-    #endif
+    }
 
     #if defined(_NORMAL_DROPOFF_OFF)
         float3 normalWS = fragment.normalWS;

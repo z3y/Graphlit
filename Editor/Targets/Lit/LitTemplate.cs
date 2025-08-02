@@ -373,7 +373,6 @@ namespace Graphlit
 
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ALPHATEST_ON");
-                pass.pragmas.Add("#pragma shader_feature_local_fragment _ _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
                 pass.pragmas.Add("#define unity_Lightmap _Lightmap");
                 pass.pragmas.Add("#define unity_LightmapInd _LightmapInd");
 
@@ -487,7 +486,6 @@ namespace Graphlit
 
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ALPHATEST_ON");
-                pass.pragmas.Add("#pragma shader_feature_local_fragment _ _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
 
                 pass.pragmas.Add("#pragma multi_compile_fwdadd_fullshadows");
                 pass.pragmas.Add("#pragma multi_compile_fog");
@@ -558,7 +556,6 @@ namespace Graphlit
 
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ALPHATEST_ON");
-                pass.pragmas.Add("#pragma shader_feature_local_fragment _ _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON");
 
                 pass.attributes.RequireUV(0, 2);
                 pass.attributes.RequireUV(1, 2);
@@ -582,6 +579,11 @@ namespace Graphlit
                 builder.AddPass(pass);
             }
 
+            foreach (var pass in builder.passBuilders)
+            {
+                pass.properties.Add(_blendModePreserveSpecular);
+                pass.properties.Add(_surfaceBlend);
+            }
         }
     }
 }

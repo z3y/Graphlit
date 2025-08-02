@@ -39,39 +39,39 @@ float SampleSceneDepth(float2 uv)
     return SAMPLE_TEXTURE2D_X(_CameraDepthTexture, sampler_CameraDepthTexture, uv).r;
 }
 
-void AlphaTransparentBlend(inout half alpha, inout half3 albedo, half metallic)
-{
-    #if defined(_ALPHAPREMULTIPLY_ON)
-        albedo.rgb *= alpha;
-        //alpha = lerp(alpha, 1.0, metallic);
-    #endif
+// void AlphaTransparentBlend(inout half alpha, inout half3 albedo, half metallic)
+// {
+//     if (USE_ALPHAMULTIPLY)
+//     {
+//         albedo = lerp(1.0, albedo, alpha);
+//     }
+//     if (USE_ALPHAPREMULTIPLY)
+//     {
+//         albedo.rgb *= alpha;
+//     }
 
-    #if defined(_ALPHAMODULATE_ON)
-        albedo = lerp(1.0, albedo, alpha);
-    #endif
-
-    #if defined(_SURFACE_TYPE_TRANSPARENT)
-    bool isTransparent = true;
-    #else
-    bool isTransparent = false;
-    #endif
+//     #if defined(_SURFACE_TYPE_TRANSPARENT)
+//     bool isTransparent = true;
+//     #else
+//     bool isTransparent = false;
+//     #endif
     
-    alpha = OutputAlpha(alpha, isTransparent);
-}
+//     alpha = OutputAlpha(alpha, isTransparent);
+// }
 
 void BlendFinalColor(out half3 Color, out half Alpha, half3 diffuse = 1, half3 specular = 0, half3 emission = 0, half3 albedo = 1, half roughness = 0, half metallic = 0, half alpha = 1)
 {
     Color = diffuse;
 
     #ifndef UNITY_PASS_SHADOWCASTER
-        #if defined(_ALPHAPREMULTIPLY_ON)
-            albedo *= alpha;
-            //alpha = lerp(alpha, 1.0, metallic);
-        #endif
-
-        #if defined(_ALPHAMODULATE_ON)
+        if (USE_ALPHAMULTIPLY)
+        {
             albedo = lerp(1.0, albedo, alpha);
-        #endif
+        }
+        if (USE_ALPHAPREMULTIPLY)
+        {
+            albedo *= alpha;
+        }
 
         #if defined(_SURFACE_TYPE_TRANSPARENT)
         bool isTransparent = true;
@@ -88,9 +88,10 @@ void BlendFinalColor(out half3 Color, out half Alpha, half3 diffuse = 1, half3 s
             Color += emission;
         #endif
     #else
-        #if defined(_ALPHAPREMULTIPLY_ON)
+        if (USE_ALPHAPREMULTIPLY)
+        {
             alpha = lerp(alpha, 1.0, metallic);
-        #endif
+        }
     #endif
     Alpha = alpha;
 }
