@@ -393,7 +393,7 @@ namespace Graphlit
                     pass.pragmas.Add("#pragma skip_variants LIGHTMAP_SHADOW_MIXING");
                     pass.pragmas.Add("#pragma skip_variants SHADOWS_SHADOWMASK");
                     pass.pragmas.Add("#pragma skip_variants DYNAMICLIGHTMAP_ON");
-                    pass.pragmas.Add("#pragma skip_variants VERTEXLIGHT_ON");
+                    // pass.pragmas.Add("#pragma skip_variants VERTEXLIGHT_ON");
                 }
 
                 pass.pragmas.Add("#pragma skip_variants LIGHTPROBE_SH");
