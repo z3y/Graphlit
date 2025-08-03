@@ -387,6 +387,14 @@ namespace Graphlit
                     pass.pragmas.Add("#pragma multi_compile_fwdbase");
                     pass.pragmas.Add("#pragma shader_feature_local_fragment VERTEXLIGHT_ON");
                 }
+                if (isLowQuality)
+                {
+                    pass.pragmas.Add("#pragma skip_variants SHADOWS_SCREEN");
+                    pass.pragmas.Add("#pragma skip_variants LIGHTMAP_SHADOW_MIXING");
+                    pass.pragmas.Add("#pragma skip_variants SHADOWS_SHADOWMASK");
+                    pass.pragmas.Add("#pragma skip_variants DYNAMICLIGHTMAP_ON");
+                    pass.pragmas.Add("#pragma skip_variants VERTEXLIGHT_ON");
+                }
 
                 pass.pragmas.Add("#pragma skip_variants LIGHTPROBE_SH");
                 pass.pragmas.Add("#pragma multi_compile_fog");
@@ -543,6 +551,13 @@ namespace Graphlit
             {
                 var pass = new PassBuilder("ShadowCaster", Vertex, FragmentShadow, VERTEX_POSITION, VERTEX_NORMAL, VERTEX_TANGENT, ALPHA, CUTOFF);
                 CreateShadowCaster(pass, urp);
+
+                if (isLowQuality)
+                {
+                    pass.pragmas.Add("#pragma skip_variants SHADOWS_CUBE");
+                    pass.pragmas.Add("#pragma skip_variants SHADOWS_DEPTH");
+                }
+
                 builder.AddPass(pass);
             }
             {
