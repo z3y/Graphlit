@@ -55,6 +55,13 @@
 #define _LightProjectionParams float4(_LightProjectionParams.xy, 0, .97)
 #endif
 
+#ifdef _SURFACE_TYPE_TRANSPARENT
+    #define USE_ALPHAPREMULTIPLY (_Blend == 0 && _BlendModePreserveSpecular != 0)
+    #define USE_ALPHAMULTIPLY (_Blend == 3)
+#else
+    #define USE_ALPHAPREMULTIPLY false
+    #define USE_ALPHAMULTIPLY false
+#endif
 
 SamplerState sampler_BilinearClamp;
 

@@ -212,15 +212,6 @@ half OutputAlpha(half alpha, bool isTransparent)
     }
 }
 
-
-#ifdef _SURFACE_TYPE_TRANSPARENT
-    #define USE_ALPHAPREMULTIPLY (_Blend == 0 && _BlendModePreserveSpecular != 0)
-    #define USE_ALPHAMULTIPLY (_Blend == 3)
-#else
-    #define USE_ALPHAPREMULTIPLY false
-    #define USE_ALPHAMULTIPLY false
-#endif
-
 // half3 AlphaModulate(half3 albedo, half alpha)
 // {
 //     // Fake alpha for multiply blend by lerping albedo towards 1 (white) using alpha.
