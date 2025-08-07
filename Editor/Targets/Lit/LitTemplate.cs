@@ -396,7 +396,7 @@ namespace Graphlit
                     // pass.pragmas.Add("#pragma skip_variants VERTEXLIGHT_ON");
                 }
 
-                pass.pragmas.Add("#pragma skip_variants LIGHTPROBE_SH");
+                //pass.pragmas.Add("#pragma skip_variants LIGHTPROBE_SH");
                 pass.pragmas.Add("#pragma multi_compile_fog");
                 pass.pragmas.Add("#pragma multi_compile_instancing");
 

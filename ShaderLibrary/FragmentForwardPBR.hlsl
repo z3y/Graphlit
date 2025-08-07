@@ -124,7 +124,7 @@ float4 frag(Varyings input) : SV_Target
             bakedGI += LightVolumeEvaluate(normalWS, lvL0, lvL1r, lvL1g, lvL1b);
         #endif
         bakedGI = max(0, bakedGI);
-    #else
+    #elif defined(LIGHTPROBE_SH) || defined(UNIVERSALRP)
         bakedGI = SampleSH(normalWS, positionWS);
         indirectOcclusion = bakedGI;
     #endif
