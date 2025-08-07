@@ -46,7 +46,8 @@
 // Use square falloff instead of the default unity light attenuation
 // #define SQUARE_FALLOFF_ATTENUATION
 
-// Use colored light cookies instead of only sampling the alpha
+// Use RGB channels from light cookies instead of only sampling the alpha
+// Keep a fallback grayscale cookie in the alpha channel for other shaders
 // #define COLORED_COOKIES
 
 // UdonRP
