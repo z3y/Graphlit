@@ -49,11 +49,14 @@ float D_GGX_Lightmap(float NoH, half roughness)
     return k * k * (1.0 / PI);
 }
 
-void SampleLightmap(out half3 illuminance, out half3 specular, float4 lightmapUV, float3 normalWS, float3 viewDirectionWS, half perceptualRoughness, inout half3 indirectOcclusion, float3 reflectVector)
+void SampleLightmap(out half3 illuminance, out half3 specular, out float4 direction, float4 lightmapUV, float3 normalWS, float3 viewDirectionWS, half perceptualRoughness, inout half3 indirectOcclusion, float3 reflectVector)
 {
     illuminance = 0;
     specular = 0;
+    direction = 0;
+
     half3 f0 = 0.5 * 0.5 * 0.16;
+
 
     float4 texelSize;
     unity_Lightmap.GetDimensions(texelSize.x, texelSize.y);
@@ -76,6 +79,7 @@ void SampleLightmap(out half3 illuminance, out half3 specular, float4 lightmapUV
         #else
             float4 directionalLightmap = SAMPLE_TEXTURE2D_LOD(unity_LightmapInd, sampler_BilinearClamp, lightmapUV.xy, 0);
         #endif
+        direction = directionalLightmap;
 
         #ifdef BAKERY_MONOSH
             half3 L0 = illuminance;

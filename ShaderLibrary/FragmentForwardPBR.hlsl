@@ -4,6 +4,10 @@
 #include "GlobalIllumination/LTCGI.hlsl"
 #include "GlobalIllumination/AreaLit.hlsl"
 
+#ifdef CAPSULE_SHADOWS
+#include "GlobalIllumination/CapsuleShadows.hlsl"
+#endif
+
 #ifdef _ACES
     #include "ACES.hlsl"
 #endif
@@ -117,12 +121,22 @@ float4 frag(Varyings input) : SV_Target
     half3 lightmapSpecular = 0;
     half3 indirectOcclusion = 0;
     #if defined(LIGHTMAP_ON) || defined(DYNAMICLIGHTMAP_ON)
-        SampleLightmap(bakedGI, lightmapSpecular, fragment.lightmapUV, normalWS, fragment.viewDirectionWS, shading.perceptualRoughness, indirectOcclusion, shading.reflectVector);
+        half4 directionalLightmap;
+        SampleLightmap(bakedGI, lightmapSpecular, directionalLightmap, fragment.lightmapUV, normalWS, fragment.viewDirectionWS, shading.perceptualRoughness, indirectOcclusion, shading.reflectVector);
+
         #ifdef _VRC_LIGHTVOLUMES
             half3 lvL0; half3 lvL1r; half3 lvL1g; half3 lvL1b;
             LightVolumeAdditiveSH(positionWS, lvL0, lvL1r, lvL1g, lvL1b);
             bakedGI += LightVolumeEvaluate(normalWS, lvL0, lvL1r, lvL1g, lvL1b);
         #endif
+
+        #ifdef CAPSULE_SHADOWS
+            half3 capsuleShadows = CapsuleShadows(positionWS, normalWS, directionalLightmap);
+            bakedGI *= capsuleShadows;
+            indirectOcclusion *= capsuleShadows;
+            lightmapSpecular *= capsuleShadows;
+        #endif
+
         bakedGI = max(0, bakedGI);
     #elif defined(LIGHTPROBE_SH) || defined(UNIVERSALRP)
         bakedGI = SampleSH(normalWS, positionWS);

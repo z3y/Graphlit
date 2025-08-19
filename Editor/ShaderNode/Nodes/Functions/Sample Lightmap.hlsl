@@ -8,7 +8,9 @@ void SampleLightmapAndSpecularNode(out half3 Diffuse, out half3 Specular, out ha
     // unused
     half3 indirectOcclusion = 0;
     half3 reflectVector = 0;
-	SampleLightmap(Diffuse, Specular, lightmapUV, normalWS, viewDirectionWS, roughness, indirectOcclusion, reflectVector);
+	// #ifdef LIGHTMAP_ON
+	SampleLightmap(Diffuse, Specular, Direction, lightmapUV, normalWS, viewDirectionWS, roughness, indirectOcclusion, reflectVector);
+	// #endif
 
     Color = Diffuse; // what was this even supposed to be?
 }
