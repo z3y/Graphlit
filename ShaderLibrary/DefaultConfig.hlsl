@@ -55,8 +55,6 @@
 // #define _UDONRP_ENVIRONMENT_PROBE
 // #define _UDONRP_DIRECTIONAL_COOKIE
 
-// #define CAPSULE_SHADOWS
-
 // Modify Final Color
 /*
 #define _MODIFY_FINAL_COLOR
