@@ -14,6 +14,7 @@
 - To get started read the [Documentation](https://z3y.github.io/Graphlit)
 - You can try out the shader in the [VRChat World](https://vrchat.com/home/world/wrld_6fd2e6c4-d4f2-49ea-8cf6-ce7ccb0e7111)
 - Setup the project [config file](https://z3y.github.io/Graphlit/config)
+- Use one of the included shaders, or create your own `Assets/Create/Graphlit/Lit Graph` (double click to open in the node editor)
 
 ## Support
 
