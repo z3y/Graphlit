@@ -1,0 +1,116 @@
+{
+    "data": {
+        "shaderName": "Graphlit/Terrain",
+        "properties": [
+            {
+                "guid": "d70967c0-e41f-4158-876e-3f81cbfde483",
+                "referenceName": "shader_feature_local_fragment _TERRAIN_BLEND_HEIGHT",
+                "displayName": "Blend Height",
+                "type": 13,
+                "customAttributes": "",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1
+            },
+            {
+                "guid": "902d20b0-8662-4632-8a6a-42103654a3b8",
+                "referenceName": "_HeightTransition",
+                "displayName": "Height Transition",
+                "type": 1,
+                "customAttributes": "",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 1.0,
+                "_value": "0.1",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1
+            }
+        ],
+        "precision": 0,
+        "defaultPreviewState": 1,
+        "customEditor": "",
+        "fallback": "",
+        "include": "",
+        "outlinePass": 0,
+        "depthFillPass": false,
+        "stencil": false,
+        "vrcFallbackTags": {
+            "type": 0,
+            "mode": 0,
+            "doubleSided": false
+        },
+        "unlocked": false,
+        "subgraphOutputs": [],
+        "subgraphInputs": [],
+        "subgraphOutputIdCounter": 0
+    },
+    "nodes": [
+        {
+            "type": "Graphlit.CustomFunctionNode",
+            "guid": "82b77275-0bc5-4c7f-b86c-ab7fd24a819b",
+            "x": -446,
+            "y": 106,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n\\tOut = In;\\n}\",\"_file\":\"\",\"_shaderInclude\":{\"fileID\":10900000,\"guid\":\"7d705532df98dce4e85c464550f2be05\",\"type\":3},\"_useFile\":true}"
+        },
+        {
+            "type": "Graphlit.LitTemplate",
+            "guid": "b93acf00-6028-4098-828b-f559d666806a",
+            "x": 95,
+            "y": -52,
+            "connections": [
+                {
+                    "a": 101,
+                    "b": 3,
+                    "node": "82b77275-0bc5-4c7f-b86c-ab7fd24a819b"
+                },
+                {
+                    "a": 105,
+                    "b": 4,
+                    "node": "82b77275-0bc5-4c7f-b86c-ab7fd24a819b"
+                },
+                {
+                    "a": 104,
+                    "b": 8,
+                    "node": "82b77275-0bc5-4c7f-b86c-ab7fd24a819b"
+                },
+                {
+                    "a": 102,
+                    "b": 6,
+                    "node": "82b77275-0bc5-4c7f-b86c-ab7fd24a819b"
+                },
+                {
+                    "a": 103,
+                    "b": 7,
+                    "node": "82b77275-0bc5-4c7f-b86c-ab7fd24a819b"
+                },
+                {
+                    "a": 106,
+                    "b": 10,
+                    "node": "82b77275-0bc5-4c7f-b86c-ab7fd24a819b"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"forceNoShadowCasting\":false,\"defaultMode\":0,\"defaultCull\":2,\"terrainCompatible\":true,\"_cbirp\":false,\"_cbirpReflections\":false,\"_specular\":true,\"_fwdAddBlendOpMax\":false,\"_normal\":0}"
+        }
+    ],
+    "groups": []
+}
