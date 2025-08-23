@@ -1,5 +1,9 @@
 // #pragma fragment frag
 
+CBUFFER_START(GraphlitMetaPass)
+uniform uint graplhit_MetaControl;
+CBUFFER_END
+
 float4 frag(Varyings input) : SV_Target
 {
     UNITY_SETUP_INSTANCE_ID(input);
@@ -35,6 +39,14 @@ float4 frag(Varyings input) : SV_Target
     #ifdef EDITOR_VISUALIZATION
         meta.VizUV = input.VizUV;
         meta.LightCoord = input.LightCoord;
+        if (graplhit_MetaControl == 1)
+        {
+            return float4(meta.Albedo, alpha);
+        }
+        if (graplhit_MetaControl == 2)
+        {
+            return float4(meta.Emission, alpha);
+        }
     #endif
 
     return UnityMetaFragment(meta);
