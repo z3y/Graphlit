@@ -14,7 +14,15 @@ float4 frag(Varyings input) : SV_Target
     SurfaceDescription surface = SurfaceDescriptionFunction(input);
 
     half3 albedo = surface.Albedo;
-    half alpha = surface.Alpha;
+
+    #if defined(_SURFACE_TYPE_TRANSPARENT)
+        half alpha = surface.Alpha;
+    #elif defined(_ALPHATEST_ON)
+        half alpha = surface.Alpha > surface.Cutoff;
+    #else
+        half alpha = 1;
+    #endif
+
     half3 emissionEDF = surface.Emission;
     half metallic = surface.Metallic;
     half perceptualRoughness = surface.Roughness;
