@@ -9,7 +9,7 @@ using UnityEditor.UIElements;
 namespace Graphlit
 {
     [NodeInfo("Constants/Bool"), Serializable]
-    public class BooleanConstantNode : ShaderNode, IConvertablePropertyNode
+    public class BooleanConstantNode : ConstantPropertyNode, IConvertablePropertyNode
     {
         const int OUT = 0;
         [SerializeField] private bool _value = false;
@@ -55,6 +55,25 @@ namespace Graphlit
         public void CopyConstant(PropertyDescriptor propertyDescriptor)
         {
             _value = propertyDescriptor.FloatValue > 0;
+        }
+
+        public PropertyNode ToProperty()
+        {
+            var graphData = GraphView.graphData;
+
+            var prop = new BooleanPropertyNode
+            {
+                _ref = viewDataKey
+            };
+
+            var desc = new PropertyDescriptor(PropertyType.Bool, GetSuggestedPropertyName())
+            {
+                guid = viewDataKey,
+                FloatValue = _value ? 1 : 0
+            };
+
+            graphData.properties.Add(desc);
+            return prop;
         }
     }
 }

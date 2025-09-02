@@ -9,13 +9,13 @@ namespace Graphlit
 {
 
     [NodeInfo("Constants/Float"), Serializable]
-    public class FloatNode : ShaderNode, IConvertablePropertyNode
+    public class FloatNode : ConstantPropertyNode, IConvertablePropertyNode
     {
         const int OUT = 0;
         [SerializeField] protected float _value;
 
         PropertyDescriptor _descriptor;
-        PropertyDescriptor Descriptor => _descriptor ??= new(PropertyType.Float) { guid = viewDataKey };
+        public PropertyDescriptor Descriptor => _descriptor ??= new(PropertyType.Float) { guid = viewDataKey };
 
         public override bool DisablePreview => true;
 
@@ -60,6 +60,25 @@ namespace Graphlit
         public void CopyConstant(PropertyDescriptor propertyDescriptor)
         {
             _value = propertyDescriptor.FloatValue;
+        }
+
+        public PropertyNode ToProperty()
+        {
+            var graphData = GraphView.graphData;
+
+            var prop = new FloatPropertyNode
+            {
+                _ref = viewDataKey
+            };
+
+            var desc = new PropertyDescriptor(PropertyType.Float, GetSuggestedPropertyName())
+            {
+                guid = viewDataKey,
+                FloatValue = _value
+            };
+
+            graphData.properties.Add(desc);
+            return prop;
         }
     }
 }

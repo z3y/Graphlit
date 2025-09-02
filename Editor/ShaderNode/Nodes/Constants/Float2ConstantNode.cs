@@ -8,7 +8,7 @@ using System.Linq;
 namespace Graphlit
 {
     [NodeInfo("Constants/Float2"), Serializable]
-    public class Float2Node : ShaderNode, IConvertablePropertyNode
+    public class Float2Node : ConstantPropertyNode, IConvertablePropertyNode
     {
         const int OUT = 0;
         [SerializeField] private Vector2 _value;
@@ -53,6 +53,25 @@ namespace Graphlit
         public void CopyConstant(PropertyDescriptor propertyDescriptor)
         {
             _value = propertyDescriptor.VectorValue;
+        }
+
+        public PropertyNode ToProperty()
+        {
+            var graphData = GraphView.graphData;
+
+            var prop = new Float2PropertyNode
+            {
+                _ref = viewDataKey
+            };
+
+            var desc = new PropertyDescriptor(PropertyType.Float2, GetSuggestedPropertyName())
+            {
+                guid = viewDataKey,
+                VectorValue = _value
+            };
+
+            graphData.properties.Add(desc);
+            return prop;
         }
     }
 }

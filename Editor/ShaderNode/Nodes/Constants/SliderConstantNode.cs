@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 namespace Graphlit
 {
     [NodeInfo("Constants/Slider"), Serializable]
-    public class SliderConstantNode : FloatNode
+    public class SliderConstantNode : FloatNode, IConvertablePropertyNode
     {
         [SerializeField] float _min = 0;
         [SerializeField] float _max = 1;
@@ -57,6 +57,34 @@ namespace Graphlit
                 }
             });
             root.Add(minMax);
+        }
+
+        public new void CopyConstant(PropertyDescriptor propertyDescriptor)
+        {
+            _value = propertyDescriptor.FloatValue;
+            _min = propertyDescriptor.rangeX;
+            _max = propertyDescriptor.rangeY;
+        }
+
+        public new PropertyNode ToProperty()
+        {
+            var graphData = GraphView.graphData;
+
+            var prop = new FloatPropertyNode
+            {
+                _ref = viewDataKey
+            };
+
+            var desc = new PropertyDescriptor(PropertyType.Float, GetSuggestedPropertyName())
+            {
+                guid = viewDataKey,
+                rangeX = _min,
+                rangeY = _max,
+                FloatValue = _value
+            };
+
+            graphData.properties.Add(desc);
+            return prop;
         }
     }
 }

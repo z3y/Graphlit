@@ -7,7 +7,7 @@ namespace Graphlit
     public interface IConvertablePropertyNode
     {
         public void CopyConstant(PropertyDescriptor propertyDescriptor);
-        //public PropertyDescriptor ToProperty(PropertyNode node);
+        public PropertyNode ToProperty();
     }
 
     public interface IConstantToProperty

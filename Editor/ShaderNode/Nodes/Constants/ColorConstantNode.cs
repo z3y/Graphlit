@@ -9,7 +9,7 @@ using UnityEditor.UIElements;
 namespace Graphlit
 {
     [NodeInfo("Constants/Color"), Serializable]
-    public class ColorNode : ShaderNode, IConvertablePropertyNode
+    public class ColorNode : ConstantPropertyNode, IConvertablePropertyNode
     {
         const int OUT = 0;
         [SerializeField] private Vector4 _value = Vector4.one;
@@ -62,6 +62,25 @@ namespace Graphlit
         public void CopyConstant(PropertyDescriptor propertyDescriptor)
         {
             _value = propertyDescriptor.VectorValue;
+        }
+
+        public PropertyNode ToProperty()
+        {
+            var graphData = GraphView.graphData;
+
+            var prop = new ColorPropertyNode
+            {
+                _ref = viewDataKey
+            };
+
+            var desc = new PropertyDescriptor(PropertyType.Color, GetSuggestedPropertyName())
+            {
+                guid = viewDataKey,
+                VectorValue = _value
+            };
+
+            graphData.properties.Add(desc);
+            return prop;
         }
     }
 }

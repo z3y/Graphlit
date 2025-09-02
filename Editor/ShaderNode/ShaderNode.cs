@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Graphlit.Nodes;
+using Graphlit.Nodes.PortType;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Graphlit.Nodes;
-using Graphlit.Nodes.PortType;
 using static UnityEditor.Experimental.GraphView.Port;
 
 namespace Graphlit
@@ -86,6 +86,62 @@ namespace Graphlit
                 evt.menu.AppendAction("Preview/Generate", GeneratePreview);
                 evt.menu.AppendAction("Preview/Enable", SetPreviewStateEnabled);
                 evt.menu.AppendAction("Preview/Disable", SetPreviewStateDisabled);
+            }
+            if (this is IConvertablePropertyNode convertableNode)
+            {
+                evt.menu.AppendAction("Convert To Property", (action) =>
+                {
+                    var newNode = convertableNode.ToProperty();
+                    var previousPort = Outputs.First();
+                    var previousConnections = previousPort.connections.ToArray();
+                    var wasConnected = previousPort.connected;
+
+                    var newSerializableNode = new SerializableNode(newNode);
+                    var prevSerializableNode = new SerializableNode(this)
+                    {
+                        type = newSerializableNode.type,
+                        data = newSerializableNode.data
+                    };
+
+                    foreach (var port in Outputs)
+                    {
+                        Disconnect(port);
+                    }
+                    GraphView.RemoveElement(this);
+
+                    var addedNode = GraphView.AddNode(prevSerializableNode);
+
+                    if (wasConnected)
+                    {
+                        foreach (var con in previousConnections)
+                        {
+                            var newEdge = addedNode.Outputs.First().ConnectTo(con.input);
+                            GraphView.AddElement(newEdge);
+                        }
+                    }
+
+                    CleanLooseEdges();
+                });
+            }
+
+
+            if (this is PropertyNode propNode)
+            {
+                evt.menu.AppendAction("Delete Property", (action) =>
+                {
+                    var graphData = GraphView.graphData;
+                    var exists = graphData.properties.Find(x => x.guid == propNode._ref);
+                    if (exists != null)
+                    {
+                        graphData.properties.Remove(exists);
+                    }
+                    foreach (var port in Outputs)
+                    {
+                        Disconnect(port);
+                    }
+                    GraphView.RemoveElement(this);
+                    CleanLooseEdges();
+                });
             }
         }
 
