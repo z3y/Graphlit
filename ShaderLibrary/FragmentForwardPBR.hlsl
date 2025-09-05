@@ -260,6 +260,10 @@ float4 frag(Varyings input) : SV_Target
     bakedGI *= indirectSpecularThroughput;
 
 #if !defined(UNITY_PASS_FORWARDADD) && !defined(DISABLE_SPECULAR_OCCLUSION)
+    #if defined(SHADOWS_SCREEN) && defined(SPECULAR_OCCLUSION_REALTIME_SHADOWS)
+        half NoL = saturate(dot(normalWS, light.direction));
+        indirectOcclusion *= NoL * light.shadowAttenuation;
+    #endif
     half occlusionFromLightmap = sqrt(dot(indirectOcclusion + diffuse, _SpecularOcclusionExp));
     occlusionFromLightmap = saturate(lerp(1.0, occlusionFromLightmap, _SpecularOcclusion));
     indirectSpecular *= occlusionFromLightmap;

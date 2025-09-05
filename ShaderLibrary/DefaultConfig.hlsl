@@ -23,6 +23,9 @@
 // Enable Non Linear Lightmap SH
 // #define _NONLINEAR_LIGHTPROBESH
 
+// Allow realtime directional shadows to affect specular occlusion
+// #define SPECULAR_OCCLUSION_REALTIME_SHADOWS
+
 // Skip compiling vertex light variants to reduce shader size
 // #pragma skip_variants VERTEXLIGHT_ON
 
