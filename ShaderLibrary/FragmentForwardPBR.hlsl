@@ -270,7 +270,6 @@ float4 frag(Varyings input) : SV_Target
         ray.D = newDir;
         ray.P = RayOffset(positionWS, ray.D);
 
-        // #ifdef LIGHTMAP_ON
         Intersection intersection;
         if (SceneIntersects(ray, intersection))
         {
@@ -284,13 +283,11 @@ float4 frag(Varyings input) : SV_Target
         else
         {
             // miss should only sample the skybox
-            float mip = PerceptualRoughnessToMipmapLevel(surface.Roughness * surface.Roughness);
-            half4 encodedIrradiance = half4(SAMPLE_TEXTURECUBE_LOD(_UdonVRCTraceSkybox, sampler_UdonVRCTraceSkybox, shading.reflectVector, mip));
+            half4 encodedIrradiance = half4(SAMPLE_TEXTURECUBE_LOD(_UdonVRCTraceSkybox, sampler_UdonVRCTraceSkybox, shading.reflectVector, 0));
             indirectSpecular = encodedIrradiance.rgb;
         }
         specular = 0;
         lightmapSpecular = 0;
-        // #endif
     #endif
 
     bakedGI *= indirectSpecularThroughput;

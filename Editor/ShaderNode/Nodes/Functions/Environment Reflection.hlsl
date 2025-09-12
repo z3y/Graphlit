@@ -12,13 +12,13 @@ void EnvironmentReflectionNode(out half3 Specular, float3 normalWS, float3 posit
 		#if !defined(QUALITY_LOW)
 			reflectVector = lerp(reflectVector, normalWS, roughness2);
 		#endif
-	float3 vertexNormalWS = normalWS;
+		float3 vertexNormalWS = normalWS;
 
-		#if !defined(_GLOSSYREFLECTIONS_OFF)
+		// #if !defined(_GLOSSYREFLECTIONS_OFF) // probably shouldnt need a hardcoded define
 			Specular = CalculateIrradianceFromReflectionProbes(reflectVector, positionWS, roughness, 0, vertexNormalWS);
 
 			Specular *= BRDF * energyCompensation;
-		#endif
+		// #endif
 	#else
 		Specular = 0;
 	#endif
