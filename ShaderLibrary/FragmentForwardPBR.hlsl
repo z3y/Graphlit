@@ -8,6 +8,10 @@
     #include "ACES.hlsl"
 #endif
 
+#ifdef _VRCTRACE
+    #include "Packages/com.z3y.vrctrace/Runtime/Shaders/VRCTrace.hlsl"
+#endif
+
 
 float4 frag(Varyings input) : SV_Target
 {
@@ -256,6 +260,38 @@ float4 frag(Varyings input) : SV_Target
     indirectSpecular += coatResponse;
     indirectSpecularThroughput = coatThroughput * indirectSpecularThroughput;
 #endif
+
+    #if defined(_VRCTRACE) && defined(UNITY_PASS_FORWARDBASE) && !defined(_GLOSSYREFLECTIONS_OFF) && !defined(QUALITY_LOW)
+
+        float2 xi = GetRand(input.positionCS.xy * _Time.y);
+
+        Ray ray;
+        float3 newDir = lerp(shading.reflectVector, RandomDirectionInHemisphere(normalWS, xi), surface.Roughness * surface.Roughness);
+        ray.D = newDir;
+        ray.P = RayOffset(positionWS, ray.D);
+
+        // #ifdef LIGHTMAP_ON
+        Intersection intersection;
+        if (SceneIntersects(ray, intersection))
+        {
+            float3 hitP, hitN;
+            TrianglePointNormal(intersection, hitP, hitN);
+            hitN = TriangleSmoothNormal(intersection, hitN);
+            float2 hitUV = TriangleUV(intersection);
+            float3 hitCombined = SAMPLE_TEXTURE2D_LOD(_UdonVRCTraceCombinedAtlas, sampler_BilinearClamp, hitUV, 0);
+            indirectSpecular = max(0, hitCombined * dirAlbedo);
+        }
+        else
+        {
+            // miss should only sample the skybox
+            float mip = PerceptualRoughnessToMipmapLevel(surface.Roughness * surface.Roughness);
+            half4 encodedIrradiance = half4(SAMPLE_TEXTURECUBE_LOD(_UdonVRCTraceSkybox, sampler_UdonVRCTraceSkybox, shading.reflectVector, mip));
+            indirectSpecular = encodedIrradiance.rgb;
+        }
+        specular = 0;
+        lightmapSpecular = 0;
+        // #endif
+    #endif
 
     bakedGI *= indirectSpecularThroughput;
 
