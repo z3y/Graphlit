@@ -261,7 +261,7 @@ float4 frag(Varyings input) : SV_Target
     indirectSpecularThroughput = coatThroughput * indirectSpecularThroughput;
 #endif
 
-    #if defined(_VRCTRACE) && defined(UNITY_PASS_FORWARDBASE) && !defined(_GLOSSYREFLECTIONS_OFF) && !defined(QUALITY_LOW)
+    #if defined(_VRCTRACE) && defined(UNITY_PASS_FORWARDBASE) && !defined(QUALITY_LOW)
 
         float2 xi = GetRand(input.positionCS.xy * _Time.y);
 

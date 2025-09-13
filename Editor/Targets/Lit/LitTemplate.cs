@@ -234,6 +234,7 @@ namespace Graphlit
         static readonly PropertyDescriptor _lightmapOverride = new(PropertyType.Texture2D, "Lightmap", "_Lightmap") { DefaultTextureEnum = DefaultTextureName.unity_Lightmap, customAttributes = "[Folder(Advanced Options)][Header(Baked GI)]", defaultAttributes = MaterialPropertyAttribute.NoScaleOffset };
         static readonly PropertyDescriptor _lightmapOverrideInd = new(PropertyType.Texture2D, "Lightmap Dir", "_LightmapInd") { DefaultTextureEnum = DefaultTextureName.unity_LightmapInd, customAttributes = "[Folder(Advanced Options)]", defaultAttributes = MaterialPropertyAttribute.NoScaleOffset };
 
+        static readonly PropertyDescriptor _vrcTraceProp = new(PropertyType.Float, "VRCTrace", "_VRCTrace") { customAttributes = "[Toggle(_VRCTRACE)] [Folder(Advanced Options)]" };
 
         void AddAreaLitProperties(ShaderBuilder builder)
         {
@@ -253,12 +254,14 @@ namespace Graphlit
         const string _cbirpPath = "Packages/z3y.clusteredbirp/Shaders/cbirp.hlsl";
         const string _vrcLightVolumesPath = "Packages/red.sim.lightvolumes/Shaders/LightVolumes.cginc";
         const string _areaLitPath = "Assets/AreaLit/Shader/Lighting.hlsl";
+        const string _vrcTracePath = "Packages/com.z3y.vrctrace/Runtime/Shaders/VRCTrace.hlsl"
 
 
         bool _ltcgiExists = System.IO.File.Exists(_ltcgiPath);
         bool _cbirpExists = System.IO.File.Exists(_cbirpPath);
         bool _lightVolumesExists = System.IO.File.Exists(_vrcLightVolumesPath);
         bool _areaLitExists = System.IO.File.Exists(_areaLitPath);
+        bool _vrcTraceExists = System.IO.File.Exists(_vrcTracePath);
 
         const string Vertex = "Packages/com.z3y.graphlit/ShaderLibrary/Vertex.hlsl";
         const string FragmentForward = "Packages/com.z3y.graphlit/ShaderLibrary/FragmentForwardPBR.hlsl";
@@ -276,7 +279,7 @@ namespace Graphlit
             builder.dependencies.Add(_cbirpPath);
             builder.dependencies.Add(_vrcLightVolumesPath);
             builder.dependencies.Add(_areaLitPath);
-
+            builder.dependencies.Add(_vrcTracePath);
 
             builder.properties.Add(_surfaceOptions);
             builder.properties.Add(_surfaceBlend);
@@ -322,6 +325,10 @@ namespace Graphlit
             {
                 builder.properties.Add(_ltcgi);
                 builder.subshaderTags["LTCGI"] = "_LTCGI";
+            }
+            if (_vrcTraceExists)
+            {
+                builder.properties.Add(_vrcTraceProp);
             }
 
             if (forceNoShadowCasting)
@@ -435,6 +442,10 @@ namespace Graphlit
                 if (_areaLitExists)
                 {
                     pass.pragmas.Add("#pragma shader_feature_local_fragment _AREALIT");
+                }
+                if (_vrcTraceExists)
+                {
+                    pass.pragmas.Add("#pragma shader_feature_local_fragment _VRCTRACE");
                 }
 
                 pass.pragmas.Add(NormalDropoffDefine());
