@@ -254,7 +254,7 @@ namespace Graphlit
         const string _cbirpPath = "Packages/z3y.clusteredbirp/Shaders/cbirp.hlsl";
         const string _vrcLightVolumesPath = "Packages/red.sim.lightvolumes/Shaders/LightVolumes.cginc";
         const string _areaLitPath = "Assets/AreaLit/Shader/Lighting.hlsl";
-        const string _vrcTracePath = "Packages/com.z3y.vrctrace/Runtime/Shaders/VRCTrace.hlsl"
+        const string _vrcTracePath = "Packages/com.z3y.vrctrace/Runtime/Shaders/VRCTrace.hlsl";
 
 
         bool _ltcgiExists = System.IO.File.Exists(_ltcgiPath);
