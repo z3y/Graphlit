@@ -258,6 +258,7 @@ namespace Graphlit
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _NORMALMAP");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _MASKMAP");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _TERRAIN_BLEND_HEIGHT");
+                pass.pragmas.Add("#pragma instancing_options assumeuniformscaling nomatrices nolightprobe nolightmap forwardadd");
             }
         }
         protected static void AddURPLightingPragmas(PassBuilder pass)
