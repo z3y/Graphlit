@@ -20,6 +20,10 @@ float4 frag(Varyings input) : SV_Target
 
     FragmentData fragment = FragmentData::Create(input);
 
+    #ifdef LOD_FADE_CROSSFADE
+        LODDitheringTransition(ComputeFadeMaskSeed(fragment.viewDirectionWS, input.positionCS.xy, true), GetCrossfadeFactor());
+    #endif
+
     SurfaceDescription surface = SurfaceDescriptionFunction(input);
 
     #if !defined(UNITY_PASS_FORWARDADD)

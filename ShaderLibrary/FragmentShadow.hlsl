@@ -7,6 +7,10 @@ void frag(Varyings input)
     
     SurfaceDescription surface = SurfaceDescriptionFunction(input);
 
+    #ifdef LOD_FADE_CROSSFADE
+        LODDitheringTransition(ComputeFadeMaskSeed(float3(0,0,0), input.positionCS.xy, false), GetCrossfadeFactor());
+    #endif
+
     #if defined(_ALPHATEST_ON)
         if (surface.Alpha < surface.Cutoff) discard;
     #endif
