@@ -268,7 +268,7 @@ float4 frag(Varyings input) : SV_Target
         Ray ray;
         float3 newDir = lerp(shading.reflectVector, RandomDirectionInHemisphere(normalWS, xi), surface.Roughness * surface.Roughness);
         ray.D = newDir;
-        ray.P = RayOffset(positionWS, ray.D);
+        ray.P = RayOffset(positionWS, normalWS);
 
         Intersection intersection;
         if (SceneIntersects(ray, intersection))
