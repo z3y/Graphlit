@@ -48,6 +48,8 @@
 - Coat
 - Thin Film iridescence
 - Improved [Box Projection](https://z3y.github.io/Graphlit/udonrp)
+- [Ray Tracing](https://github.com/z3y/VRCTrace)
+
 
 ### Shader Editor
 
