@@ -239,6 +239,10 @@ namespace Graphlit
             {
                 pass.properties.Add(_blendModePreserveSpecular);
                 pass.properties.Add(_surfaceBlend);
+                if (isLowQuality)
+                {
+                    SkipExpensiveVariants(pass);
+                }
             }
         }
     }

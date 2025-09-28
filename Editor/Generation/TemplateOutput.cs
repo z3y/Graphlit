@@ -347,6 +347,13 @@ namespace Graphlit
             PortBindings.Require(pass, ShaderStage.Fragment, PortBinding.PositionWS);
         }
 
+        protected void SkipExpensiveVariants(PassBuilder pass)
+        {
+#if !GRAPHLIT_ALLOW_EXPENSIVE_VARIANTS
+            pass.pragmas.Add("#pragma skip_variants _NONLINEAR_LIGHTPROBESH _MIRROR _VRCTRACE _VRC_LIGHTVOLUMES _PARALLAXMAP _GSAA _ANISOTROPY _COAT _THINFILM _AREALIT _LTCGI");
+#endif
+        }
+
         public void CreateShadowCaster(PassBuilder pass, bool urp)
         {
             TerrainPass(pass);
