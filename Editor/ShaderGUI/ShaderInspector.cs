@@ -949,6 +949,10 @@ namespace Graphlit
         void MaskMapPackingButton(MaterialEditor editor, MaterialProperty property)
         {
             Rect rect = GUILayoutUtility.GetLastRect();
+            if (!property.flags.HasFlag(MaterialProperty.PropFlags.NoScaleOffset))
+            {
+                rect.y -= 22;
+            }
             rect = MaterialEditor.GetRectAfterLabelWidth(rect);
             rect.width = 50;
             //rect.position = new Vector2(Screen.width / 2, rect.position.y);

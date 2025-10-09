@@ -1,6 +1,6 @@
 {
     "data": {
-        "shaderName": "Graphlit/Samples/Unlit",
+        "shaderName": "Graphlit/Unlit",
         "properties": [
             {
                 "guid": "75870dec-983a-4ddd-9da2-8370764ba786",
@@ -112,7 +112,7 @@
             "precision": 0,
             "preview": 0,
             "previewDisabled": false,
-            "data": "{\"forceNoShadowCasting\":false,\"defaultMode\":0,\"defaultCull\":2,\"_customLighting\":false}"
+            "data": "{\"forceNoShadowCasting\":false,\"defaultMode\":0,\"defaultCull\":2,\"terrainCompatible\":false,\"_customLighting\":false}"
         },
         {
             "type": "Graphlit.MultiplyNode",
