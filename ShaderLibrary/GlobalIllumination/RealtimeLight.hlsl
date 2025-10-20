@@ -132,8 +132,7 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
         #endif
 
         #if defined(SPOT) || defined(POINT) || defined(POINT_COOKIE)
-            float3 lightZ = float3(unity_WorldToLight[0][2], unity_WorldToLight[1][2], unity_WorldToLight[2][2]);
-
+            float3 lightZ = unity_WorldToLight._m02_m12_m22;
             float distanceSquare = dot(positionToLight, positionToLight);
             half range = length(lightZ);
 
