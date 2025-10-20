@@ -268,7 +268,13 @@ Light GetAdditionalLight(float3 positionWS, uint i)
     float distanceSquare = dot(positionToLight, positionToLight);
     float range = unity_4LightAtten0[i] / 25.0;
 
-    float attenuation = GetSquareFalloffAttenuation(distanceSquare, range);
+    #ifdef SQUARE_FALLOFF_ATTENUATION
+        float attenuation = GetSquareFalloffAttenuation(distanceSquare, range);
+    #else
+        float attenuation = GetDefaultUnityAttenuation(1.0 / range, distanceSquare);
+    #endif
+
+    attenuation *= LIGHT_ATTENUATION_MULTIPLIER;
 
     light.distanceAttenuation = attenuation;
     light.shadowAttenuation = 1.0;
