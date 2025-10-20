@@ -36,11 +36,15 @@ float GetSpotAngleAttenuation(float3 spotForward, float3 l, float spotScale, flo
     return attenuation * attenuation;
 }
 
-// https://discussions.unity.com/t/point-light-in-v-f-shader/679554/10
+// thanks to error.mdl
+// https://discord.com/channels/419351657743253524/443155141235834881/1429649996084416572
 float GetDefaultUnityAttenuation(float lightRange, float distToLight)
 {
-    float attenUV = sqrt(distToLight) / lightRange;
-    float unityLightFalloff = saturate(1.0 / (1.0 + 25.0 * attenUV * attenUV) * saturate((1 - attenUV) * 5.0));
+    float rangeFraction = (distToLight / lightRange);
+    float hyperbolaFalloff = (0.04 / (rangeFraction + 0.04));
+    // starting at around 0.6407, formula linearly blends toward 0 at rangeFraction of 1
+    float lerpToZeroFactor = saturate((rangeFraction - 0.6407) / (1.0 - 0.6407));
+    float unityLightFalloff = lerp(hyperbolaFalloff, 0, lerpToZeroFactor);
     return unityLightFalloff;
 }
 
@@ -138,7 +142,7 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
 
             #ifndef SQUARE_FALLOFF_ATTENUATION
                 #ifdef NO_ATTENUATION_TEXTURE
-                    light.distanceAttenuation = GetDefaultUnityAttenuation(1.0 / range, distanceSquare);
+                    light.distanceAttenuation = GetDefaultUnityAttenuation(1.0 / (range * range), distanceSquare);
                 #else
                     #if defined(POINT_COOKIE) || defined(SPOT)
                         light.distanceAttenuation = SAMPLE_TEXTURE2D(_LightTextureB0, sampler_LightTextureB0, dot(lightCoord.xyz, lightCoord.xyz).xx).r;
@@ -266,7 +270,7 @@ Light GetAdditionalLight(float3 positionWS, uint i)
     #ifdef SQUARE_FALLOFF_ATTENUATION
         float attenuation = GetSquareFalloffAttenuation(distanceSquare, range);
     #else
-        float attenuation = GetDefaultUnityAttenuation(5.0 * (1.0 / sqrt(unity_4LightAtten0[i])), distanceSquare);
+        float attenuation = GetDefaultUnityAttenuation(1.0 / range, distanceSquare);
     #endif
 
     attenuation *= LIGHT_ATTENUATION_MULTIPLIER;
