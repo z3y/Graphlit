@@ -675,6 +675,8 @@ namespace Graphlit
                 material.SetOverrideTag("RenderType", "Opaque");
                 material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Geometry;
                 material.SetInt("_ZWrite", 1);
+                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
             }
 
             // material.renderQueue += (int)material.GetFloat("_QueueOffset");
