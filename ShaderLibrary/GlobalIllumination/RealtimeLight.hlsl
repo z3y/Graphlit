@@ -3,6 +3,7 @@
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/BSDF.hlsl"
 
 // #define SQUARE_FALLOFF_ATTENUATION
+#define NO_ATTENUATION_TEXTURE
 
 struct Light
 {
@@ -33,6 +34,18 @@ float GetSpotAngleAttenuation(float3 spotForward, float3 l, float spotScale, flo
     float cd = dot(-spotForward, l);
     float attenuation = saturate(cd * spotScale + spotOffset);
     return attenuation * attenuation;
+}
+
+// thanks to error.mdl
+// https://discord.com/channels/419351657743253524/443155141235834881/1429649996084416572
+float GetDefaultUnityAttenuation(float lightRange, float distToLight)
+{
+    float rangeFraction = (distToLight / lightRange);
+    float hyperbolaFalloff = (0.04 / (rangeFraction + 0.04));
+    // starting at around 0.6407, formula linearly blends toward 0 at rangeFraction of 1
+    float lerpToZeroFactor = saturate((rangeFraction - 0.6407) / (1.0 - 0.6407));
+    float unityLightFalloff = lerp(hyperbolaFalloff, 0, lerpToZeroFactor);
+    return unityLightFalloff;
 }
 
 void GetSpotScaleOffset(float outerAngle, float innerAnglePercent, out float spotScale, out float spotOffset)
@@ -129,10 +142,14 @@ Light GetMainLight(float3 positionWS, float4 shadowCoord, float2 lightmapUV)
             half range = length(lightZ);
 
             #ifndef SQUARE_FALLOFF_ATTENUATION
-                #if defined(POINT_COOKIE) || defined(SPOT)
-                    light.distanceAttenuation = SAMPLE_TEXTURE2D(_LightTextureB0, sampler_LightTextureB0, dot(lightCoord.xyz, lightCoord.xyz).xx).r;
-                #elif defined(POINT)
-                    light.distanceAttenuation = SAMPLE_TEXTURE2D(_LightTexture0, sampler_LightTexture0, dot(lightCoord.xyz, lightCoord.xyz).xx).r;
+                #ifdef NO_ATTENUATION_TEXTURE
+                    light.distanceAttenuation = GetDefaultUnityAttenuation(1.0 / (range * range), distanceSquare);
+                #else
+                    #if defined(POINT_COOKIE) || defined(SPOT)
+                        light.distanceAttenuation = SAMPLE_TEXTURE2D(_LightTextureB0, sampler_LightTextureB0, dot(lightCoord.xyz, lightCoord.xyz).xx).r;
+                    #elif defined(POINT)
+                        light.distanceAttenuation = SAMPLE_TEXTURE2D(_LightTexture0, sampler_LightTexture0, dot(lightCoord.xyz, lightCoord.xyz).xx).r;
+                    #endif
                 #endif
             #else
                 light.distanceAttenuation = GetSquareFalloffAttenuation(distanceSquare, range * range);
