@@ -157,6 +157,11 @@
                     "a": 0,
                     "b": 1,
                     "node": "d9970745-7840-4628-807a-769940ca05ff"
+                },
+                {
+                    "a": 102,
+                    "b": 0,
+                    "node": "85d88fea-e2ba-483e-afb0-ba6139ee1653"
                 }
             ],
             "precision": 0,
@@ -182,10 +187,27 @@
             "data": "{\"swizzle\":\"a\"}"
         },
         {
+            "type": "Graphlit.CustomFunctionNode",
+            "guid": "85d88fea-e2ba-483e-afb0-ba6139ee1653",
+            "x": -628,
+            "y": 235,
+            "connections": [
+                {
+                    "a": 2,
+                    "b": 1,
+                    "node": "d9970745-7840-4628-807a-769940ca05ff"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n\\tOut = In;\\n}\",\"_file\":\"\",\"_shaderInclude\":{\"fileID\":10900000,\"guid\":\"66a03437d6d37e44c9d754713b85ddf1\",\"type\":3},\"_useFile\":true}"
+        },
+        {
             "type": "Graphlit.Texture2DPropertyNode",
             "guid": "d9970745-7840-4628-807a-769940ca05ff",
-            "x": -649,
-            "y": 174,
+            "x": -765,
+            "y": 170,
             "connections": [],
             "precision": 1,
             "preview": 0,

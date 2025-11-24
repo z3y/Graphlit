@@ -36,7 +36,7 @@ half4 frag(Varyings varyings) : SV_Target
         // https://bgolus.medium.com/rendering-a-sphere-on-a-quad-13c92025570c
         float2 uv = UNPACK_UV0.xy;
         uv -= 0.5;
-        uv *= 1.02;
+        uv *= 1.05;
         float3 spherePos = float3(0,0,0);
         float3 rayDir = normalize(float3(uv, 1));
         float3 rayOrigin = _WorldSpaceCameraPos.xyz;
@@ -52,7 +52,7 @@ half4 frag(Varyings varyings) : SV_Target
 
         float dist = length(uv);
         float pwidth = length(float2(ddx(dist), ddy(dist)));
-        alpha3D *= smoothstep(0.5, 0.5 - pwidth * 1.5, dist);
+        alpha3D = smoothstep(0.5, 0.5 - pwidth * sqrt(2.0), dist);
 
         #ifdef UNPACK_POSITIONWS
             UNPACK_POSITIONWS = positionWS;
