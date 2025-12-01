@@ -185,13 +185,12 @@ float4 frag(Varyings input) : SV_Target
     half3 indirectSpecular = 0;
 #ifndef UNITY_PASS_FORWARDADD
 #if !defined(_GLOSSYREFLECTIONS_OFF) && !defined(_CBIRP_REFLECTIONS)
-    indirectSpecular = CalculateIrradianceFromReflectionProbes(shading.reflectVector,
-        positionWS, shading.perceptualRoughness, 0, fragment.normalWS);
+    indirectSpecular = CalculateIrradianceFromReflectionProbes(shading.reflectVector, positionWS, shading.perceptualRoughness, normalizedScreenSpaceUV, fragment.normalWS);
 #endif
 #endif
 
 #if !defined(UNITY_PASS_FORWARDADD)
-    half3 coatResponse = CalculateIrradianceFromReflectionProbes(shading.coatReflectVector, positionWS, surface.CoatRoughness, 0, fragment.normalWS);
+    half3 coatResponse = CalculateIrradianceFromReflectionProbes(shading.coatReflectVector, positionWS, surface.CoatRoughness, normalizedScreenSpaceUV, fragment.normalWS);
     half3 coatBrdf, coatEnergyCompensation;
     EnvironmentBRDF(shading.coatNoV, surface.CoatRoughness, shading.coatf0, coatBrdf, coatEnergyCompensation, 1, 0);
     half3 coatAvgDirAlbedo = dot(coatBrdf, 1.0 / 3.0);
