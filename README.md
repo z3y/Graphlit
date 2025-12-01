@@ -31,6 +31,7 @@
 ### PBR Features
 
 - Based on CoreRP, Google Filament, OpenPBR
+- Custom UnityCG include with various improvements
 - [Bakery](https://assetstore.unity.com/packages/tools/level-design/bakery-gpu-lightmapper-122218) Features (MonoSH, Lightmapped Specular, Bicubic Lightmap)
 - [LTCGI](https://github.com/PiMaker/ltcgi), [AreaLit](https://booth.pm/ja/items/3661829)
 - [Clustered BIRP](https://github.com/z3y/ClusteredBIRP)
@@ -68,7 +69,6 @@
 
 Currently not implemented:
 
-- Forward+
 - Dots
 - Decals
 - Rendering Layers

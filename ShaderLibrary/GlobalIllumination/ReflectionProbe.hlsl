@@ -10,6 +10,10 @@
 #define ENABLE_ENVIRONMENT_PROBE
 #endif
 
+#ifdef _GLOSSYREFLECTIONS_OFF
+#define _ENVIRONMENTREFLECTIONS_OFF
+#endif
+
 TEXTURE2D(_DFG);
 SAMPLER(sampler_DFG);
 
@@ -76,10 +80,10 @@ half GetHorizonOcclusion(float3 reflectVector, float3 vertexNormalWS)
 
 half3 CalculateIrradianceFromReflectionProbes(half3 reflectVector, float3 positionWS, half perceptualRoughness, float2 normalizedScreenSpaceUV, float3 vertexNormalWS)
 {
-    half3 irradiance = half3(0.0h, 0.0h, 0.0h);
+    half3 irradiance = 0.0;
     half mip = PerceptualRoughnessToMipmapLevel(perceptualRoughness);
-#if USE_FORWARD_PLUS
-    float totalWeight = 0.0f;
+#if USE_CLUSTER_LIGHT_LOOP && CLUSTER_HAS_REFLECTION_PROBES
+    float totalWeight = 0.0;
     uint probeIndex;
     ClusterIterator it = ClusterInit(normalizedScreenSpaceUV, positionWS, 1);
     [loop] while (ClusterNext(it, probeIndex) && totalWeight < 0.99f)
@@ -192,7 +196,11 @@ half3 CalculateIrradianceFromReflectionProbes(half3 reflectVector, float3 positi
     // Use any remaining weight to blend to environment reflection cube map
     if (totalWeight < 0.99f)
     {
+        #ifdef UNIVERSALRP
+        half4 encodedIrradiance = half4(SAMPLE_TEXTURECUBE_LOD(_GlossyEnvironmentCubeMap, sampler_GlossyEnvironmentCubeMap, reflectVector, mip));
+        #else
         half4 encodedIrradiance = half4(SAMPLE_TEXTURECUBE_LOD(_GlossyEnvironmentCubeMap, samplerunity_SpecCube0, reflectVector, mip));
+        #endif
 
         irradiance += (1.0f - totalWeight) * DecodeHDREnvironment(encodedIrradiance, _GlossyEnvironmentCubeMap_HDR) * GetHorizonOcclusion(reflectVector, vertexNormalWS);
     }

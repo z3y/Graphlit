@@ -175,6 +175,13 @@ float4 frag(Varyings input) : SV_Target
     }
     #endif
 
+    #ifdef UNIVERSALRP
+        float2 normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(input.positionCS);
+    #else
+        // unused
+        float2 normalizedScreenSpaceUV = 0;
+    #endif
+
     half3 indirectSpecular = 0;
 #ifndef UNITY_PASS_FORWARDADD
 #if !defined(_GLOSSYREFLECTIONS_OFF) && !defined(_CBIRP_REFLECTIONS)
@@ -206,6 +213,12 @@ float4 frag(Varyings input) : SV_Target
     #ifdef UNIVERSALRP
         uint pixelLightCount = GetAdditionalLightsCount();
         uint meshRenderingLayers = GetMeshRenderingLayer();
+
+        // Unity expects hard coded variables in macros as usual.
+        InputData inputData = (InputData)0;
+        inputData.positionWS = positionWS;
+        inputData.normalizedScreenSpaceUV = normalizedScreenSpaceUV;
+
     LIGHT_LOOP_BEGIN(pixelLightCount)
         URPLight additionalURPLight = GetAdditionalLight(lightIndex, positionWS, SampleShadowMask(fragment.lightmapUV.xy));
 #ifdef _LIGHT_LAYERS

@@ -278,7 +278,7 @@ namespace Graphlit
             // pass.pragmas.Add("#pragma multi_compile_fragment _ _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3");
             pass.pragmas.Add("#pragma multi_compile_fragment _ _LIGHT_COOKIES");
             pass.pragmas.Add("#pragma multi_compile _ _LIGHT_LAYERS");
-            // pass.pragmas.Add("#pragma multi_compile _ _FORWARD_PLUS");
+            pass.pragmas.Add("#pragma multi_compile _ _CLUSTER_LIGHT_LOOP");
 #if UNITY_6000_0_OR_NEWER
             pass.pragmas.Add("#include_with_pragmas \"Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRenderingKeywords.hlsl\"");
 #endif
