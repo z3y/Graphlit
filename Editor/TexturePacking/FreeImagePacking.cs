@@ -76,7 +76,7 @@ namespace Graphlit
 
         private static void HandleTextureChannel(TextureChannel textureChannel, (int, int) widthHeight, IntPtr newImage, FREE_IMAGE_COLOR_CHANNEL newChannel)
         {
-            var whiteTex = "Packages/com.z3y.shaders/Editor/white.png";
+            var whiteTex = "Packages/com.z3y.graphlit/Editor/TexturePacking/white.png";
 
             if (string.IsNullOrEmpty(textureChannel.Path))
             {
