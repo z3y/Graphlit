@@ -33,10 +33,6 @@ namespace Graphlit
 
         public override void OnImportAsset(AssetImportContext ctx)
         {
-            var sw = new System.Diagnostics.Stopwatch();
-
-            sw.Start();
-
 
             if (this is SubGraphlitImporter)
             {
@@ -52,7 +48,7 @@ namespace Graphlit
 #if USE_CACHE
             _graphViews.TryGetValue(guid, out graphView);
 #endif
-            sw.Restart();
+
             if (graphView is null)
             {
                 var data = ReadGraphData(guid);
@@ -60,9 +56,39 @@ namespace Graphlit
                 graphView = new ShaderGraphView(null, assetPath);
                 data.PopulateGraph(graphView);
             }
-            //Debug.Log("Populate Graph: " + sw.ElapsedMilliseconds);
 
             graphView.UpdateCachedNodesForBuilder();
+
+
+
+            if (graphView.graphData.generateVariants)
+            {
+
+                string name = graphView.graphData.shaderName;
+                var outlineMode = graphView.graphData.outlinePass;
+
+                graphView.graphData.outlinePass = GraphData.OutlinePassMode.Disabled;
+
+                GenerateShaderVariant(ctx, target, graphView, 0);
+
+                if (outlineMode != GraphData.OutlinePassMode.Disabled)
+                {
+                    graphView.graphData.outlinePass = outlineMode;
+                    graphView.graphData.shaderName += " Outline";
+                    GenerateShaderVariant(ctx, target, graphView, 1);
+                }
+
+                graphView.graphData.shaderName = name;
+            }
+            else
+            {
+                GenerateShaderVariant(ctx, target, graphView, 0);
+            }
+
+        }
+
+        private static void GenerateShaderVariant(AssetImportContext ctx, BuildTarget target, ShaderGraphView graphView, int id)
+        {
             var shaderNodes = graphView.cachedNodesForBuilder;
             var dependencies = new HashSet<string>();
 
@@ -78,9 +104,9 @@ namespace Graphlit
             {
                 builder.shaderName = "Graphlit/" + filename;
             }
-            sw.Restart();
+
             builder.BuildTemplate(template);
-            //Debug.Log("Build : " + sw.ElapsedMilliseconds);
+
             var scriptingDefines = PlayerSettings.GetScriptingDefineSymbols(UnityEditor.Build.NamedBuildTarget.Standalone);
             foreach (var pass in builder.passBuilders)
             {
@@ -96,11 +122,9 @@ namespace Graphlit
 
             }
 
-            template.OnImportAsset(ctx, builder);
+            template.OnImportAsset(ctx, builder, id);
 
             dependencies.UnionWith(builder.dependencies);
-
-
 
             foreach (var dependency in dependencies)
             {
@@ -109,9 +133,7 @@ namespace Graphlit
 
 
             ShaderInspector.Reinitialize();
-            sw.Stop();
         }
-
 
         public static void CreateEmptyTemplate(TemplateOutput template, Action<ShaderGraphView> onCreate = null)
         {

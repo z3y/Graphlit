@@ -92,6 +92,10 @@ namespace Graphlit
             cull.RegisterValueChangedCallback(x => defaultCull = (UnityEngine.Rendering.CullMode)x.newValue);
             root.Add(cull);
 
+            var genVars = new Toggle("Generate Variants") { value = graphData.generateVariants };
+            genVars.RegisterValueChangedCallback(x => graphData.generateVariants = x.newValue);
+            root.Add(genVars);
+
             AddVRCTagsElements(root, graphData);
 
             root.Add(PropertyDescriptor.CreateReordableListElement(graphData.properties, GraphView));
@@ -198,7 +202,7 @@ namespace Graphlit
         protected static readonly PropertyDescriptor _dfgProperty = new(PropertyType.Texture2D, "", "_DFG")
         { defaultAttributes = MaterialPropertyAttribute.HideInInspector | MaterialPropertyAttribute.NonModifiableTextureData };
 
-        public virtual void OnImportAsset(AssetImportContext ctx, ShaderBuilder builder)
+        public virtual void OnImportAsset(AssetImportContext ctx, ShaderBuilder builder, int variantId)
         {
             var result = builder.ToString();
             GraphlitImporter._lastImport = result;
@@ -214,7 +218,16 @@ namespace Graphlit
                 EditorMaterialUtility.SetShaderDefaults(shader, builder._defaultTextures.Keys.ToArray(), builder._defaultTextures.Values.ToArray());
             }
 
-            ctx.AddObjectToAsset("Main Asset", shader, GraphlitImporter.Thumbnail);
+
+            if (variantId == 0)
+            {
+                ctx.AddObjectToAsset("Main Asset", shader, GraphlitImporter.Thumbnail);
+                ctx.SetMainObject(shader);
+            }
+            else
+            {
+                ctx.AddObjectToAsset($"Shader {variantId}", shader, GraphlitImporter.Thumbnail);
+            }
 
             var path = AssetDatabase.GUIDToAssetPath(TemplateGUID);
 
@@ -234,10 +247,18 @@ namespace Graphlit
                 name = "Shader Source",
                 hideFlags = HideFlags.HideInHierarchy
             };
-            ctx.AddObjectToAsset("Shader Source", text);
-            ctx.AddObjectToAsset("Material", material);
 
-            ctx.SetMainObject(shader);
+            if (variantId == 0)
+            {
+                ctx.AddObjectToAsset("Shader Source", text);
+                ctx.AddObjectToAsset("Material", material);
+            }
+            else
+            {
+                ctx.AddObjectToAsset($"Shader Source {variantId}", text);
+                ctx.AddObjectToAsset($"Material {variantId}", material);
+            }
+
         }
 
         protected void AddTerrainTag(ShaderBuilder builder)

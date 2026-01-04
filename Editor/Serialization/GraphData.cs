@@ -19,6 +19,9 @@ namespace Graphlit
         public VRCFallbackTags vrcFallbackTags = new VRCFallbackTags();
         public bool unlocked = false;
 
+        public bool generateVariants = false;
+
+
         public List<SerializablePortDescriptor> subgraphOutputs = new();
         public List<SerializablePortDescriptor> subgraphInputs = new();
         public int subgraphOutputIdCounter = 0;
