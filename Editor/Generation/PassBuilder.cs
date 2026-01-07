@@ -244,7 +244,7 @@ namespace Graphlit
                         {
                             default:
                             case PropertyType.Float:
-                                value = mat.GetFloat("").ToString(CultureInfo.InvariantCulture);
+                                value = mat.GetFloat(referenceName).ToString(CultureInfo.InvariantCulture);
                                 break;
                             case PropertyType.Color:
                                 value = typeOnly + mat.GetColor(referenceName).linear.ToString()[4..];
