@@ -619,6 +619,12 @@ namespace Graphlit
             bool preserveSpecular = material.HasFloat("_BlendModePreserveSpecular") ?
                 material.GetFloat("_BlendModePreserveSpecular") > 0 : false;
 
+            if (transclipping)
+            {
+                material.SetFloat("_BlendModePreserveSpecular", 1);
+                preserveSpecular = true;
+            }
+
             ToggleKeyword(material, "_SURFACE_TYPE_TRANSPARENT", surfaceType > 0);
             ToggleKeyword(material, "_ALPHATEST_ON", alphaClip);
             material.SetFloat("_AlphaToMask", alphaClip ? 1 : 0);

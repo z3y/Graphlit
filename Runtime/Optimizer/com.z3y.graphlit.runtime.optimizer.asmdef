@@ -1,0 +1,17 @@
+{
+    "name": "com.z3y.graphlit.runtime.optimizer",
+    "rootNamespace": "",
+    "references": [
+        "GUID:62ced99b048af7f4d8dfe4bed8373d76",
+        "GUID:901e56b065a857d4483a77f8cae73588"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
