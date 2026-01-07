@@ -115,6 +115,65 @@ namespace Graphlit
             }
         }
 
+        bool AllPropertiesHaveSameValue(List<Material> mats, string referenceName, PropertyType type)
+        {
+            if (mats.Count < 2)
+            {
+                return true;
+            }
+
+            if (type == PropertyType.Color)
+            {
+                var value = mats[0].GetColor(referenceName);
+                for (int i = 1; i < mats.Count; i++)
+                {
+                    if (mats[i].GetColor(referenceName) != value)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            else if (type == PropertyType.Float)
+            {
+                var value = mats[0].GetFloat(referenceName);
+                for (int i = 1; i < mats.Count; i++)
+                {
+                    if (mats[i].GetFloat(referenceName) != value)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            else if (type == PropertyType.Integer || type == PropertyType.Bool)
+            {
+                var value = mats[0].GetInteger(referenceName);
+                for (int i = 1; i < mats.Count; i++)
+                {
+                    if (mats[i].GetInteger(referenceName) != value)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4)
+            {
+                var value = mats[0].GetVector(referenceName);
+                for (int i = 1; i < mats.Count; i++)
+                {
+                    if (mats[i].GetVector(referenceName) != value)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+
+            return true;
+        }
+
         public void AppendPassHLSL(ShaderStringBuilder sb, GraphData graphData)
         {
             sb.AppendLine();
@@ -227,50 +286,43 @@ namespace Graphlit
                     {
                         continue;
                     }
-                    string typeOnly = property.GetFieldTypeOnly();
-                    sb.Append($"const static {typeOnly} ");
                     string referenceName = property.GetReferenceName(generationMode);
                     string referenceNameArray = referenceName + "_Array";
-                    sb.Append(referenceNameArray);
-                    int materialCount = graphData.lockMaterials.Count;
-                    sb.Append($"[{materialCount}] = ");
-                    sb.Append("{ ");
+                    string typeOnly = property.GetFieldTypeOnly();
 
-                    for (int i = 0; i < materialCount; i++)
+                    bool sameValue = AllPropertiesHaveSameValue(graphData.lockMaterials, referenceName, property.type);
+
+                    if (sameValue)
                     {
-                        UnityEngine.Material mat = graphData.lockMaterials[i];
-                        string value;
-                        switch (property.type)
-                        {
-                            default:
-                            case PropertyType.Float:
-                                value = mat.GetFloat(referenceName).ToString(CultureInfo.InvariantCulture);
-                                break;
-                            case PropertyType.Color:
-                                value = typeOnly + mat.GetColor(referenceName).linear.ToString()[4..];
-                                break;
-                            case PropertyType.Float2:
-                            case PropertyType.Float3:
-                            case PropertyType.Float4:
-                                value = typeOnly + mat.GetVector(referenceName).ToString();
-                                break;
-                            case PropertyType.Integer:
-                            case PropertyType.Bool:
-                                value = mat.GetInteger(referenceName).ToString();
-                                break;
-                        }
-
-                        sb.Append(value);
-
-                        if (i < materialCount - 1)
-                        {
-                            sb.Append(", ");
-                        }
+                        string stringValue = GetPropertyStringValue(property, typeOnly, referenceName, graphData.lockMaterials[0]);
+                        sb.AppendLine($"const static {typeOnly} {referenceName} = {stringValue};");
                     }
-                    sb.Append(" };");
-                    sb.AppendLine();
+                    else
+                    {
 
-                    sb.AppendLine($"#define {referenceName} {referenceNameArray}[materialID]");
+                        sb.Append($"const static {typeOnly} ");
+                        sb.Append(referenceNameArray);
+                        int materialCount = graphData.lockMaterials.Count;
+                        sb.Append($"[{materialCount}] = ");
+                        sb.Append("{ ");
+
+                        for (int i = 0; i < materialCount; i++)
+                        {
+                            Material mat = graphData.lockMaterials[i];
+                            string value = GetPropertyStringValue(property, typeOnly, referenceName, mat);
+
+                            sb.Append(value);
+
+                            if (i < materialCount - 1)
+                            {
+                                sb.Append(", ");
+                            }
+                        }
+                        sb.Append(" };");
+                        sb.AppendLine();
+
+                        sb.AppendLine($"#define {referenceName} {referenceNameArray}[materialID]");
+                    }
 
                 }
             }
@@ -327,6 +379,32 @@ namespace Graphlit
             }
             sb.AppendLine("#include_with_pragmas \"" + vertexShaderPath + '"');
             sb.AppendLine("#include_with_pragmas \"" + fragmentShaderPath + '"');
+        }
+
+        private static string GetPropertyStringValue(PropertyDescriptor property, string typeOnly, string referenceName, Material mat)
+        {
+            string value;
+            switch (property.type)
+            {
+                default:
+                case PropertyType.Float:
+                    value = mat.GetFloat(referenceName).ToString(CultureInfo.InvariantCulture);
+                    break;
+                case PropertyType.Color:
+                    value = typeOnly + mat.GetColor(referenceName).linear.ToString()[4..];
+                    break;
+                case PropertyType.Float2:
+                case PropertyType.Float3:
+                case PropertyType.Float4:
+                    value = typeOnly + mat.GetVector(referenceName).ToString();
+                    break;
+                case PropertyType.Integer:
+                case PropertyType.Bool:
+                    value = mat.GetInteger(referenceName).ToString();
+                    break;
+            }
+
+            return value;
         }
 
         public void AppendVertexDescription(ShaderStringBuilder sb, GraphData graphData)
