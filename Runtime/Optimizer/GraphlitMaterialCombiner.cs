@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+#if UNITY_EDITOR && NDMF_INCLUDED
 using nadena.dev.ndmf;
 using UnityEngine;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace Graphlit.Optimizer
         {
             InPhase(BuildPhase.Transforming).Run("Add Vertex Stream", ctx =>
             {
-                // CombineMaterials(ctx);
+                CombineMaterials(ctx);
             });
         }
 
