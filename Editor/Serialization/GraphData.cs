@@ -30,6 +30,8 @@ namespace Graphlit
 
         [NonSerialized] public bool enableLockMaterials = false;
         [NonSerialized] public List<Material> lockMaterials;
+        [NonSerialized] public List<int> materialIDThresholds;
+
 
         public enum GraphPrecision
         {

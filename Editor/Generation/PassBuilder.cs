@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEditor.Graphs;
+using UnityEngine;
 
 namespace Graphlit
 {
@@ -113,9 +114,16 @@ namespace Graphlit
                 sb.AppendLine(StencilStates);
             }
         }
+
         public void AppendPassHLSL(ShaderStringBuilder sb, GraphData graphData)
         {
             sb.AppendLine();
+
+            if (graphData.enableLockMaterials)
+            {
+                attributes.RequireVertexID();
+                varyings.RequireCustomString("uint materialID : MATERIALID;");
+            }
 
             sb.AppendLine("#pragma target " + target);
             sb.AppendLine("#pragma vertex vert");
@@ -196,6 +204,21 @@ namespace Graphlit
             }
             else
             {
+                var thresholds = graphData.materialIDThresholds;
+                sb.AppendLine($"const static uint materialIDThresholdsLength = {thresholds.Count - 1};");
+                sb.AppendLine("const static uint materialIDThresholds[materialIDThresholdsLength] = {");
+
+                for (int i = 1; i < thresholds.Count; i++)
+                {
+                    int threshold = thresholds[i];
+                    sb.Append($"{threshold}");
+                    if (i != thresholds.Count - 1)
+                    {
+                        sb.Append(", ");
+                    }
+                }
+
+                sb.Append("};");
                 sb.AppendLine("static uint materialID;");
 
                 foreach (var property in properties)
@@ -223,10 +246,12 @@ namespace Graphlit
                             case PropertyType.Float:
                                 value = mat.GetFloat("").ToString(CultureInfo.InvariantCulture);
                                 break;
+                            case PropertyType.Color:
+                                value = typeOnly + mat.GetColor(referenceName).linear.ToString()[4..];
+                                break;
                             case PropertyType.Float2:
                             case PropertyType.Float3:
                             case PropertyType.Float4:
-                            case PropertyType.Color:
                                 value = typeOnly + mat.GetVector(referenceName).ToString();
                                 break;
                             case PropertyType.Integer:
@@ -288,13 +313,13 @@ namespace Graphlit
 
             sb.AppendInclude(vertexDataPath);
             sb.Space();
-            AppendVertexDescription(sb);
+            AppendVertexDescription(sb, graphData);
 
             varyings.AppendUnpackDefinesForTarget(sb);
 
             sb.AppendInclude(fragmentDataPath);
             sb.Space();
-            AppendSurfaceDescription(sb);
+            AppendSurfaceDescription(sb, graphData);
 
             foreach (var include in preincludes)
             {
@@ -304,22 +329,40 @@ namespace Graphlit
             sb.AppendLine("#include_with_pragmas \"" + fragmentShaderPath + '"');
         }
 
-        public void AppendVertexDescription(ShaderStringBuilder sb)
+        public void AppendVertexDescription(ShaderStringBuilder sb, GraphData graphData)
         {
             sb.AppendLine("VertexDescription VertexDescriptionFunction(Attributes attributes, inout Varyings varyings)");
             sb.Indent();
             sb.AppendLine("VertexData data = VertexData::Create(attributes);");
             sb.AppendLine("VertexDescription output = (VertexDescription)0;");
+            if (graphData.enableLockMaterials)
+            {
+                string materialIdOut = @"materialID = 0;
+                [unroll]
+                for (uint t = 0; t < materialIDThresholdsLength; t++)
+                {
+                    if (attributes.vertexID >= materialIDThresholds[t])
+                    {
+                        materialID++;
+                    }
+                }
+                varyings.materialID = materialID;
+                ";
+                sb.AppendLine(materialIdOut);
+            }
+
             foreach (var line in vertexDescription)
             {
                 sb.AppendLine(line);
             }
             varyings.AppendVaryingPacking(sb);
+
+
             sb.AppendLine("return output;");
             sb.UnIndent();
         }
 
-        public void AppendSurfaceDescription(ShaderStringBuilder sb)
+        public void AppendSurfaceDescription(ShaderStringBuilder sb, GraphData graphData)
         {
             sb.AppendLine("SurfaceDescription SurfaceDescriptionFunction(Varyings varyings)");
             sb.Indent();
@@ -327,6 +370,11 @@ namespace Graphlit
 
             sb.AppendLine("FragmentData data = FragmentData::Create(varyings);");
             sb.AppendLine($"SurfaceDescription output = (SurfaceDescription)0;");
+            if (graphData.enableLockMaterials)
+            {
+                // setup static materialID
+                sb.AppendLine($"materialID = varyings.materialID;");
+            }
             foreach (var line in surfaceDescription)
             {
                 sb.AppendLine(line);

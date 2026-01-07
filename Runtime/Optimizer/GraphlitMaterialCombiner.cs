@@ -182,30 +182,13 @@ namespace Graphlit.Optimizer
 
             var sb = new StringBuilder();
 
-            sb.Append("uint thresholds[");
-            sb.Append((thresholds.Count - 1).ToString());
-            sb.Append("] = {");
-
-            for (int i = 1; i < thresholds.Count; i++)
-            {
-                int threshold = thresholds[i];
-                sb.Append($"{threshold}");
-                if (i != thresholds.Count - 1)
-                {
-                    sb.Append(", ");
-                }
-            }
-
-            sb.Append("};");
-
-
-
             var shader = drawCalls[0].material.shader;
             var shaderPath = AssetDatabase.GetAssetPath(shader);
             var serializedGraph = GraphlitImporter.ReadGraphData(AssetDatabase.GUIDFromAssetPath(shaderPath).ToString());
             serializedGraph.data.unlocked = false;
             serializedGraph.data.enableLockMaterials = true;
             serializedGraph.data.lockMaterials = lockMaterials;
+            serializedGraph.data.materialIDThresholds = thresholds;
 
 
             var graphView = new ShaderGraphView(null, shaderPath);
@@ -220,11 +203,9 @@ namespace Graphlit.Optimizer
 
             var shaderString = builder.ToString();
 
-            GUIUtility.systemCopyBuffer = shaderString;
-
-            // Debug.Log("Generated Shader:");
-            // Debug.Log(shaderString);
-            AssetDatabase.CreateAsset(new TextAsset(shaderString), "Assets/OptimizedShader.asset");
+            // GUIUtility.systemCopyBuffer = shaderString;
+            // AssetDatabase.CreateAsset(new TextAsset(shaderString), "Assets/OptimizedShader.asset");
+            File.WriteAllText("Assets/test.shader", shaderString);
 
             var optimizedShader = ShaderUtil.CreateShaderAsset(shaderString, false);
             ctx.AssetSaver.SaveAsset(optimizedShader);
