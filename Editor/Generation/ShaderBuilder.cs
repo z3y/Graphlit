@@ -377,7 +377,7 @@ namespace Graphlit
             {
                 ports = new int[] { BlendFinalColorNode.METALLIC, BlendFinalColorNode.IN_ALPHA };
             }
-            
+
             // skip generating inputs for keyword toggle that will never be true
             if (GenerationMode == GenerationMode.Final && shaderNode is KeywordPropertyNode propertyNode)
             {
@@ -397,13 +397,13 @@ namespace Graphlit
                                 var incomingNode = (ShaderNode)incomingPort.node;
                                 incomingNode.PortData[incomingPort.GetPortID()] = new GeneratedPortData(new Float(1), "0");
                             }
-                            
+
                             ports = new int[] { KeywordPropertyNode.FALSE };
                         }
                     }
                 }
             }
-            
+
             foreach (var port in shaderNode.Inputs)
             {
                 if (ports is not null && !ports.Contains(port.GetPortID()))
@@ -417,7 +417,7 @@ namespace Graphlit
                     continue;
                 }
 
-                
+
                 Edge input = connections[0];
 
                 var inputNode = (ShaderNode)input.output.node;

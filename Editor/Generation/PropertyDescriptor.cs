@@ -85,7 +85,7 @@ namespace Graphlit
         IntRange = 1 << 10,
         Linear = 1 << 11
     }
-    
+
     [Serializable, Flags]
     public enum KeywordPassFlags
     {
@@ -116,6 +116,9 @@ namespace Graphlit
         [SerializeField] public KeywordPassFlags keywordPassFlags = (KeywordPassFlags)(-1);
 
         [NonSerialized] public bool autoKeyword = false;
+
+        // [NonSerialized]
+        public bool animatable = false;
 
         [NonSerialized] public bool useReferenceName = false;
         [NonSerialized] public Texture tempTexture = null;
@@ -315,6 +318,21 @@ namespace Graphlit
                 PropertyType.TextureCubeArray => $"TEXTURECUBE_ARRAY({referenceName}); SAMPLER(sampler{referenceName});",
                 PropertyType.Texture2DArray => $"TEXTURE2D_ARRAY({referenceName}); SAMPLER(sampler{referenceName});",
                 PropertyType.Texture3D => $"TEXTURE3D({referenceName}); SAMPLER(sampler{referenceName});",
+                _ => throw new System.NotImplementedException()
+            };
+        }
+
+        public string GetFieldTypeOnly()
+        {
+            return type switch
+            {
+                PropertyType.Float => $"float",
+                PropertyType.Float2 => $"float2",
+                PropertyType.Float3 => $"float3",
+                PropertyType.Float4 => $"float4",
+                PropertyType.Color => $"float4",
+                PropertyType.Integer => $"int",
+                PropertyType.Bool => $"float",
                 _ => throw new System.NotImplementedException()
             };
         }

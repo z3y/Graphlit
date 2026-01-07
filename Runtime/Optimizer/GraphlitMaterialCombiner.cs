@@ -4,6 +4,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEditor;
+using System.IO;
 
 [assembly: ExportsPlugin(typeof(Graphlit.Optimizer.GraphlitMaterialCombiner))]
 
@@ -91,7 +93,6 @@ namespace Graphlit.Optimizer
                 return;
             }
 
-
             var groups = drawCalls.GroupBy(x => x.material);
 
             var vertices = new List<Vector3>();
@@ -103,6 +104,8 @@ namespace Graphlit.Optimizer
 
             List<int> thresholds = new();
 
+            var lockMaterials = new List<Material>();
+
             foreach (var group in groups)
             {
                 int materialID = 0;
@@ -110,6 +113,8 @@ namespace Graphlit.Optimizer
                 Debug.Log($"Material: {group.Key.name}, ID: {materialID}, baseVertex {vertexOffset}");
                 thresholds.Add(vertexOffset);
                 materialID++;
+
+                lockMaterials.Add(group.Key);
 
                 foreach (var draw in group)
                 {
@@ -192,6 +197,44 @@ namespace Graphlit.Optimizer
             }
 
             sb.Append("};");
+
+
+
+            var shader = drawCalls[0].material.shader;
+            var shaderPath = AssetDatabase.GetAssetPath(shader);
+            var serializedGraph = GraphlitImporter.ReadGraphData(AssetDatabase.GUIDFromAssetPath(shaderPath).ToString());
+            serializedGraph.data.unlocked = false;
+            serializedGraph.data.enableLockMaterials = true;
+            serializedGraph.data.lockMaterials = lockMaterials;
+
+
+            var graphView = new ShaderGraphView(null, shaderPath);
+            serializedGraph.PopulateGraph(graphView);
+            graphView.UpdateCachedNodesForBuilder();
+
+            var shaderNodes = graphView.cachedNodesForBuilder;
+            var template = shaderNodes.OfType<TemplateOutput>().First();
+
+            var builder = new ShaderBuilder(GenerationMode.Final, graphView);
+            builder.BuildTemplate(template);
+
+            var shaderString = builder.ToString();
+
+            GUIUtility.systemCopyBuffer = shaderString;
+
+            // Debug.Log("Generated Shader:");
+            // Debug.Log(shaderString);
+            AssetDatabase.CreateAsset(new TextAsset(shaderString), "Assets/OptimizedShader.asset");
+
+            var optimizedShader = ShaderUtil.CreateShaderAsset(shaderString, false);
+            ctx.AssetSaver.SaveAsset(optimizedShader);
+
+            var materialCopy = Object.Instantiate(drawCalls[0].material);
+            materialCopy.shader = optimizedShader;
+            ctx.AssetSaver.SaveAsset(materialCopy);
+
+            drawCalls[0].renderer.sharedMaterial = materialCopy;
+
 
             Debug.Log(sb.ToString());
         }

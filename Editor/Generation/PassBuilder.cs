@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Globalization;
+using UnityEditor.Graphs;
 
 namespace Graphlit
 {
@@ -179,13 +181,74 @@ namespace Graphlit
             }
             sb.UnIndent("};");
 
-            sb.AppendLine("CBUFFER_START(UnityPerMaterial)");
-            foreach (var property in properties)
+            if (!graphData.enableLockMaterials)
             {
-                if (property.IsTextureType || property.type == PropertyType.KeywordToggle || property.declaration == PropertyDeclaration.Instance) continue;
-                sb.AppendLine(property.GetFieldDeclaration(generationMode));
+                sb.AppendLine("CBUFFER_START(UnityPerMaterial)");
+                foreach (var property in properties)
+                {
+                    if (property.IsTextureType || property.type == PropertyType.KeywordToggle || property.declaration == PropertyDeclaration.Instance)
+                    {
+                        continue;
+                    }
+                    sb.AppendLine(property.GetFieldDeclaration(generationMode));
+                }
+                sb.AppendLine("CBUFFER_END");
             }
-            sb.AppendLine("CBUFFER_END");
+            else
+            {
+                sb.AppendLine("static uint materialID;");
+
+                foreach (var property in properties)
+                {
+                    if (property.IsTextureType || property.type == PropertyType.KeywordToggle || property.declaration == PropertyDeclaration.Instance)
+                    {
+                        continue;
+                    }
+                    string typeOnly = property.GetFieldTypeOnly();
+                    sb.Append($"const static {typeOnly} ");
+                    string referenceName = property.GetReferenceName(generationMode);
+                    string referenceNameArray = referenceName + "_Array";
+                    sb.Append(referenceNameArray);
+                    int materialCount = graphData.lockMaterials.Count;
+                    sb.Append($"[{materialCount}] = ");
+                    sb.Append("{ ");
+
+                    for (int i = 0; i < materialCount; i++)
+                    {
+                        UnityEngine.Material mat = graphData.lockMaterials[i];
+                        string value;
+                        switch (property.type)
+                        {
+                            default:
+                            case PropertyType.Float:
+                                value = mat.GetFloat("").ToString(CultureInfo.InvariantCulture);
+                                break;
+                            case PropertyType.Float2:
+                            case PropertyType.Float3:
+                            case PropertyType.Float4:
+                            case PropertyType.Color:
+                                value = typeOnly + mat.GetVector(referenceName).ToString();
+                                break;
+                            case PropertyType.Integer:
+                            case PropertyType.Bool:
+                                value = mat.GetInteger(referenceName).ToString();
+                                break;
+                        }
+
+                        sb.Append(value);
+
+                        if (i < materialCount - 1)
+                        {
+                            sb.Append(", ");
+                        }
+                    }
+                    sb.Append(" };");
+                    sb.AppendLine();
+
+                    sb.AppendLine($"#define {referenceName} {referenceNameArray}[materialID]");
+
+                }
+            }
             sb.AppendLine();
             sb.AppendLine("UNITY_INSTANCING_BUFFER_START(UnityPerInstance)");
             foreach (var property in properties)

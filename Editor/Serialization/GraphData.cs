@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 using static Graphlit.SubgraphOutputNode;
 
 namespace Graphlit
@@ -25,6 +27,9 @@ namespace Graphlit
         public List<SerializablePortDescriptor> subgraphOutputs = new();
         public List<SerializablePortDescriptor> subgraphInputs = new();
         public int subgraphOutputIdCounter = 0;
+
+        [NonSerialized] public bool enableLockMaterials = false;
+        [NonSerialized] public List<Material> lockMaterials;
 
         public enum GraphPrecision
         {

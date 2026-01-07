@@ -208,16 +208,7 @@ namespace Graphlit
             GraphlitImporter._lastImport = result;
             var shader = ShaderUtil.CreateShaderAsset(ctx, result, false);
 
-            builder._nonModifiableTextures.Add("_DFG", _dfg);
-            if (builder._nonModifiableTextures.Count > 0)
-            {
-                EditorMaterialUtility.SetShaderNonModifiableDefaults(shader, builder._nonModifiableTextures.Keys.ToArray(), builder._nonModifiableTextures.Values.ToArray());
-            }
-            if (builder._defaultTextures.Count > 0)
-            {
-                EditorMaterialUtility.SetShaderDefaults(shader, builder._defaultTextures.Keys.ToArray(), builder._defaultTextures.Values.ToArray());
-            }
-
+            ApplyDefaultTextures(builder, shader);
 
             if (variantId == 0)
             {
@@ -259,6 +250,19 @@ namespace Graphlit
                 ctx.AddObjectToAsset($"Material {variantId}", material);
             }
 
+        }
+
+        public void ApplyDefaultTextures(ShaderBuilder builder, Shader shader)
+        {
+            builder._nonModifiableTextures.Add("_DFG", _dfg);
+            if (builder._nonModifiableTextures.Count > 0)
+            {
+                EditorMaterialUtility.SetShaderNonModifiableDefaults(shader, builder._nonModifiableTextures.Keys.ToArray(), builder._nonModifiableTextures.Values.ToArray());
+            }
+            if (builder._defaultTextures.Count > 0)
+            {
+                EditorMaterialUtility.SetShaderDefaults(shader, builder._defaultTextures.Keys.ToArray(), builder._defaultTextures.Values.ToArray());
+            }
         }
 
         protected void AddTerrainTag(ShaderBuilder builder)
