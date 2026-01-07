@@ -17,7 +17,11 @@ namespace Graphlit.Optimizer
         {
             InPhase(BuildPhase.Transforming).Run("Add Vertex Stream", ctx =>
             {
-                CombineMaterials(ctx);
+                var optimizer = ctx.AvatarRootObject.GetComponent<GraphlitOptimizer>();
+                if (optimizer)
+                {
+                    CombineMaterials(ctx);
+                }
             });
         }
 
