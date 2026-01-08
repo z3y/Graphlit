@@ -42,7 +42,7 @@ namespace Graphlit.Optimizer
         void CombineMaterials(BuildContext ctx)
         {
 
-            var renderers = ctx.AvatarRootObject.GetComponentsInChildren<Renderer>(true);
+            var renderers = ctx.AvatarRootObject.GetComponentsInChildren<Renderer>(true).Where(x => !x.CompareTag("EditorOnly"));
 
 
             var drawCallsMap = new Dictionary<int, List<DrawCall>>();
@@ -123,6 +123,10 @@ namespace Graphlit.Optimizer
             var hash = new System.HashCode();
 
             var keywords = mat.enabledKeywords;
+
+            var shader = mat.shader;
+
+            hash.Add(shader);
 
             hash.Add(mat.renderQueue);
 
