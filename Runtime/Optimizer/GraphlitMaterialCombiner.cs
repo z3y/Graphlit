@@ -220,6 +220,8 @@ namespace Graphlit.Optimizer
 
             drawCalls[0].renderer.sharedMaterial = materialCopy;
 
+            drawCalls[0].renderer.gameObject.SetActive(true);
+
 
             Debug.Log(sb.ToString());
         }

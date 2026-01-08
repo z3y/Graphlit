@@ -170,6 +170,22 @@ namespace Graphlit
                 }
             }
 
+            else if (type == PropertyType.Texture2D ||
+                type == PropertyType.Texture2DArray ||
+                type == PropertyType.Texture3D ||
+                type == PropertyType.TextureCube ||
+                type == PropertyType.TextureCubeArray)
+            {
+                var value = mats[0].GetTexture(referenceName);
+                for (int i = 1; i < mats.Count; i++)
+                {
+                    if (mats[i].GetTexture(referenceName) != value)
+                    {
+                        return false;
+                    }
+                }
+            }
+
 
             return true;
         }
@@ -260,9 +276,12 @@ namespace Graphlit
                     sb.AppendLine(property.GetFieldDeclaration(generationMode));
                 }
                 sb.AppendLine("CBUFFER_END");
+                sb.AppendLine("#define GRAPHLIT_SAMPLE_TEXTURE2D(tex, smp, uv) SAMPLE_TEXTURE2D(tex, smp, uv)");
             }
             else
             {
+                sb.AppendLine("#define GRAPHLIT_SAMPLE_TEXTURE2D(tex, smp, uv) SAMPLE_TEXTURE2D_SWITCH_##tex(smp, uv)");
+
                 var thresholds = graphData.materialIDThresholds;
                 sb.AppendLine($"const static uint materialIDThresholdsLength = {thresholds.Count - 1};");
                 sb.AppendLine("const static uint materialIDThresholds[materialIDThresholdsLength] = {");
@@ -325,7 +344,67 @@ namespace Graphlit
                     }
 
                 }
+
+                foreach (var property in properties)
+                {
+                    if (!property.IsTextureType)
+                    {
+                        continue;
+                    }
+
+                    string referenceName = property.GetReferenceName(generationMode);
+                    bool sameValue = AllPropertiesHaveSameValue(graphData.lockMaterials, referenceName, property.type);
+
+                    if (sameValue)
+                    {
+
+                    }
+                    else
+                    {
+                        int materialCount = graphData.lockMaterials.Count;
+
+                        string defaultTextureValueString = property.DefaultTextureToValue();
+
+
+                        int firstSampler = -1;
+                        for (int i = 0; i < materialCount; i++)
+                        {
+                            Material mat = graphData.lockMaterials[i];
+                            if (mat.GetTexture(referenceName))
+                            {
+                                sb.AppendLine($"Texture2D {referenceName}{i};");
+                                if (firstSampler < 0)
+                                {
+                                    firstSampler = i;
+                                }
+                            }
+                        }
+                        sb.AppendLine($"SamplerState sampler{referenceName}{firstSampler};");
+
+                        sb.AppendLine($"float4 SAMPLE_TEXTURE2D_SWITCH_{referenceName}(SamplerState smp, float2 uv)");
+                        sb.AppendLine("{ [forcecase] switch (materialID) {");
+                        sb.AppendLine("default:");
+
+                        for (int i = 0; i < materialCount; i++)
+                        {
+                            Material mat = graphData.lockMaterials[i];
+                            if (mat.GetTexture(referenceName))
+                            {
+                                sb.AppendLine($"case {i}: return SAMPLE_TEXTURE2D({referenceName}{i}, sampler{referenceName}{firstSampler}, uv);");
+                            }
+                            else
+                            {
+                                sb.AppendLine($"case {i}: return {defaultTextureValueString};");
+                            }
+                        }
+                        sb.AppendLine("}}");
+
+                    }
+
+
+                }
             }
+
             sb.AppendLine();
             sb.AppendLine("UNITY_INSTANCING_BUFFER_START(UnityPerInstance)");
             foreach (var property in properties)
