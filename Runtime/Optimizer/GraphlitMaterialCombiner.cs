@@ -45,7 +45,7 @@ namespace Graphlit.Optimizer
             var renderers = ctx.AvatarRootObject.GetComponentsInChildren<Renderer>(true);
 
 
-            var drawCalls = new List<DrawCall>();
+            var drawCallsMap = new Dictionary<int, List<DrawCall>>();
 
 
             foreach (var renderer in renderers)
@@ -73,6 +73,13 @@ namespace Graphlit.Optimizer
 
                     var submesh = mesh.GetSubMesh(submeshIndex);
 
+                    var mat = renderer.sharedMaterials[submeshIndex];
+
+                    if (!mat.HasFloat("_GraphlitMaterial"))
+                    {
+                        continue;
+                    }
+
                     var drawCall = new DrawCall
                     {
                         material = renderer.sharedMaterials[submeshIndex],
@@ -84,13 +91,53 @@ namespace Graphlit.Optimizer
                         isSkinned = isSkinned
                     };
 
-                    drawCalls.Add(drawCall);
-                }
+                    int hash = GenerateMaterialHash(mat);
 
+                    if (drawCallsMap.TryGetValue(hash, out var drawCalls))
+                    {
+                        drawCalls.Add(drawCall);
+                    }
+                    else
+                    {
+                        var newDrawCalls = new List<DrawCall>
+                        {
+                            drawCall
+                        };
+
+                        drawCallsMap[hash] = newDrawCalls;
+                    }
+
+                }
             }
 
-            MergeDrawCalls(ctx, drawCalls);
+            foreach (var drawCallGroup in drawCallsMap)
+            {
+                MergeDrawCalls(ctx, drawCallGroup.Value);
+            }
 
+
+        }
+
+        int GenerateMaterialHash(Material mat)
+        {
+            var hash = new System.HashCode();
+
+            var keywords = mat.enabledKeywords;
+
+            hash.Add(mat.renderQueue);
+
+            for (int i = 0; i < keywords.Length; i++)
+            {
+                hash.Add(keywords[i].name);
+            }
+
+            hash.Add(mat.GetFloat("_ZTest"));
+            hash.Add(mat.GetFloat("_ZWrite"));
+            hash.Add(mat.GetFloat("_SrcBlend"));
+            hash.Add(mat.GetFloat("_DstBlend"));
+            hash.Add(mat.GetFloat("_AlphaToMask"));
+
+            return hash.ToHashCode();
         }
 
         void MergeDrawCalls(BuildContext ctx, List<DrawCall> drawCalls)
@@ -203,7 +250,6 @@ namespace Graphlit.Optimizer
             var materialCopy = Object.Instantiate(drawCalls[0].material);
             materialCopy.shader = optimizedShader;
 
-            materialCopy.enabledKeywords = new UnityEngine.Rendering.LocalKeyword[0];
             materialCopy.renderQueue = renderQueue;
 
             if (serializedGraph.data.optimizerMixedCull)
