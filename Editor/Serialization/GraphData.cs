@@ -29,6 +29,7 @@ namespace Graphlit
         public int subgraphOutputIdCounter = 0;
 
         [NonSerialized] public bool enableLockMaterials = false;
+        [NonSerialized] public bool optimizerMixedCull = false;
         [NonSerialized] public List<Material> lockMaterials;
         [NonSerialized] public List<int> materialIDThresholds;
 

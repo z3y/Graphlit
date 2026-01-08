@@ -11,6 +11,8 @@ namespace Graphlit
             _attributes = attributes;
         }
 
+        public bool requireCullFace = false;
+
         public void UnionWith(ShaderVaryings other)
         {
             foreach (var otherCustomVaryingsString in other.customVaryingsStrings)
@@ -35,7 +37,7 @@ namespace Graphlit
         }
 
         readonly ShaderAttributes _attributes;
-        
+
         [System.Serializable]
         public struct VaryingDescriptor
         {
@@ -78,6 +80,7 @@ namespace Graphlit
 
         public string RequireCullFace()
         {
+            requireCullFace = true;
             RequireCustomString("#ifdef SHADER_STAGE_FRAGMENT\nFRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;\n#endif");
             return "varyings.cullFace";
         }
@@ -178,7 +181,7 @@ namespace Graphlit
                     }
 
 
-                    
+
                     string input = Mask("varyings." + b.name, v.channels, offset);
                     if (v.name.StartsWith("uv") && v.channels == 2)
                     {

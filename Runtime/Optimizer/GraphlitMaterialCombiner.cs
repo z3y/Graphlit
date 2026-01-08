@@ -158,6 +158,15 @@ namespace Graphlit.Optimizer
             serializedGraph.data.lockMaterials = lockMaterials;
             // serializedGraph.data.materialIDThresholds = thresholds;
 
+            int referenceCullMode = (int)lockMaterials[0].GetFloat("_Cull");
+            for (int i = 1; i < lockMaterials.Count; i++)
+            {
+                if ((int)lockMaterials[i].GetFloat("_Cull") != referenceCullMode)
+                {
+                    serializedGraph.data.optimizerMixedCull = true;
+                    break;
+                }
+            }
 
             var graphView = new ShaderGraphView(null, shaderPath);
             serializedGraph.PopulateGraph(graphView);
@@ -171,6 +180,7 @@ namespace Graphlit.Optimizer
 
             var shaderString = builder.ToString();
 
+
             // GUIUtility.systemCopyBuffer = shaderString;
             // AssetDatabase.CreateAsset(new TextAsset(shaderString), "Assets/OptimizedShader.asset");
             File.WriteAllText("Assets/test.shader", shaderString);
@@ -181,8 +191,15 @@ namespace Graphlit.Optimizer
 
             ctx.AssetSaver.SaveAsset(optimizedShader);
 
+            int renderQueue = drawCalls[0].material.renderQueue;
+
             var materialCopy = Object.Instantiate(drawCalls[0].material);
             materialCopy.shader = optimizedShader;
+            materialCopy.renderQueue = renderQueue;
+            if (serializedGraph.data.optimizerMixedCull)
+            {
+                materialCopy.SetFloat("_Cull", 0);
+            }
             ctx.AssetSaver.SaveAsset(materialCopy);
 
             materialCopy.name = "Graphlit Optimizer Material";

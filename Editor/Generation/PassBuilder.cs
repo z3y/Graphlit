@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using UnityEditor.Graphs;
 using UnityEngine;
 
@@ -199,6 +200,16 @@ namespace Graphlit
                 // attributes.RequireVertexID();
                 varyings.RequireUV(0, 3);
                 varyings.RequireCustomString("uint materialID : MATERIALID;");
+
+                if (!properties.Any(x => x.referenceName == "_Cull"))
+                {
+                    properties.Add(new PropertyDescriptor(PropertyType.Float, "Cull", "_Cull"));
+                }
+
+                if (graphData.optimizerMixedCull)
+                {
+                    varyings.RequireCullFace();
+                }
             }
 
             sb.AppendLine("#pragma target " + target);
@@ -253,6 +264,11 @@ namespace Graphlit
             sb.Indent();
             varyings.AppendVaryingsStruct(sb);
             sb.UnIndent("};");
+
+            if (varyings.requireCullFace)
+            {
+                sb.AppendLine("#define VARYINGS_NEED_FACE");
+            }
 
             sb.AppendLine("struct VertexDescription");
             sb.Indent();
@@ -565,6 +581,12 @@ namespace Graphlit
             {
                 // setup static materialID
                 sb.AppendLine($"materialID = varyings.materialID;");
+
+                if (graphData.optimizerMixedCull)
+                {
+                    sb.AppendLine("if (_Cull == 1 && data.frontFace) discard; // Cull Back");
+                    sb.AppendLine("if (_Cull == 2 && !data.frontFace) discard; // Cull Front");
+                }
             }
             foreach (var line in surfaceDescription)
             {
