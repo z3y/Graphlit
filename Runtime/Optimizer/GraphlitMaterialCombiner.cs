@@ -95,7 +95,7 @@ namespace Graphlit.Optimizer
 
         void MergeDrawCalls(BuildContext ctx, List<DrawCall> drawCalls)
         {
-            if (drawCalls.Count < 2)
+            if (drawCalls.Count < 1)
             {
                 return;
             }
@@ -107,47 +107,54 @@ namespace Graphlit.Optimizer
 
             int materialID = 0;
 
-            foreach (var group in groups)
+            if (drawCalls.Count > 1)
             {
-                Debug.Log($"Material: {group.Key.name}, ID: {materialID}");
-
-                lockMaterials.Add(group.Key);
-
-                List<DrawCall> list = group.ToList();
-                for (int i = 0; i < list.Count; i++)
+                foreach (var group in groups)
                 {
-                    DrawCall draw = list[i];
-                    var meshCopy = draw.mesh;
+                    // Debug.Log($"Material: {group.Key.name}, ID: {materialID}");
 
-                    List<Vector3> uvs = new();
-                    meshCopy.GetUVs(0, uvs);
+                    lockMaterials.Add(group.Key);
 
-                    float idAsFloat = materialID;
-
-                    var indices = meshCopy.GetIndices(draw.submeshIndex);
-
-                    for (int j = 0; j < indices.Length; j++)
+                    List<DrawCall> list = group.ToList();
+                    for (int i = 0; i < list.Count; i++)
                     {
-                        Vector3 uv = uvs[indices[j]];
-                        uv.z = idAsFloat;
-                        uvs[indices[j]] = uv;
+                        DrawCall draw = list[i];
+                        var meshCopy = draw.mesh;
+
+                        List<Vector3> uvs = new();
+                        meshCopy.GetUVs(0, uvs);
+
+                        float idAsFloat = materialID;
+
+                        var indices = meshCopy.GetIndices(draw.submeshIndex);
+
+                        for (int j = 0; j < indices.Length; j++)
+                        {
+                            Vector3 uv = uvs[indices[j]];
+                            uv.z = idAsFloat;
+                            uvs[indices[j]] = uv;
+                        }
+
+                        meshCopy.SetUVs(0, uvs);
+                        ctx.AssetSaver.SaveAsset(meshCopy);
+                        if (draw.isSkinned)
+                        {
+                            var smr = draw.renderer.GetComponent<SkinnedMeshRenderer>();
+                            smr.sharedMesh = meshCopy;
+                        }
+                        else
+                        {
+                            var filter = draw.renderer.GetComponent<MeshFilter>();
+                            filter.sharedMesh = meshCopy;
+                        }
                     }
 
-                    meshCopy.SetUVs(0, uvs);
-                    ctx.AssetSaver.SaveAsset(meshCopy);
-                    if (draw.isSkinned)
-                    {
-                        var smr = draw.renderer.GetComponent<SkinnedMeshRenderer>();
-                        smr.sharedMesh = meshCopy;
-                    }
-                    else
-                    {
-                        var filter = draw.renderer.GetComponent<MeshFilter>();
-                        filter.sharedMesh = meshCopy;
-                    }
+                    materialID++;
                 }
-
-                materialID++;
+            }
+            else
+            {
+                lockMaterials.Add(drawCalls[0].material);
             }
 
             var shader = drawCalls[0].material.shader;
@@ -195,7 +202,10 @@ namespace Graphlit.Optimizer
 
             var materialCopy = Object.Instantiate(drawCalls[0].material);
             materialCopy.shader = optimizedShader;
+
+            materialCopy.enabledKeywords = new UnityEngine.Rendering.LocalKeyword[0];
             materialCopy.renderQueue = renderQueue;
+
             if (serializedGraph.data.optimizerMixedCull)
             {
                 materialCopy.SetFloat("_Cull", 0);

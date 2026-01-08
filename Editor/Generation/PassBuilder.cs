@@ -219,6 +219,14 @@ namespace Graphlit
             if (graphData.enableLockMaterials)
             {
                 sb.AppendLine("#define GRAPHLIT_OPTIMIZER_ENABLED");
+
+                var enabledKeywords = graphData.lockMaterials[0].enabledKeywords;
+
+                foreach (var keyword in enabledKeywords)
+                {
+                    sb.AppendLine($"#define {keyword.name}");
+                    sb.AppendLine($"#pragma skip_variants {keyword.name}");
+                }
             }
 
             if (TemplateOutput.GetRenderPipeline() == TemplateOutput.RenderPipeline.URP)
@@ -285,6 +293,14 @@ namespace Graphlit
                 sb.AppendLine(s);
             }
             sb.UnIndent("};");
+
+            sb.AppendLine();
+            foreach (var property in properties)
+            {
+                if (!property.IsTextureType) continue;
+                sb.AppendLine(property.GetFieldDeclaration(generationMode));
+            }
+            sb.AppendLine();
 
             if (!graphData.enableLockMaterials)
             {
@@ -466,13 +482,6 @@ namespace Graphlit
                 sb.AppendLine($"#define {referenceName} UNITY_ACCESS_INSTANCED_PROP(UnityPerInstance, {referenceName})");
             }
             sb.AppendLine("UNITY_INSTANCING_BUFFER_END(UnityPerInstance)");
-            sb.AppendLine();
-
-            foreach (var property in properties)
-            {
-                if (!property.IsTextureType) continue;
-                sb.AppendLine(property.GetFieldDeclaration(generationMode));
-            }
             sb.AppendLine();
 
             sb.AppendLine("#include \"Packages/com.z3y.graphlit/ShaderLibrary/GraphFunctions.hlsl\"");
