@@ -134,7 +134,7 @@ namespace Graphlit
                 }
             }
 
-            else if (type == PropertyType.Float)
+            else if (type == PropertyType.Float || type == PropertyType.Bool)
             {
                 var value = mats[0].GetFloat(referenceName);
                 for (int i = 1; i < mats.Count; i++)
@@ -146,7 +146,7 @@ namespace Graphlit
                 }
             }
 
-            else if (type == PropertyType.Integer || type == PropertyType.Bool)
+            else if (type == PropertyType.Integer)
             {
                 var value = mats[0].GetInteger(referenceName);
                 for (int i = 1; i < mats.Count; i++)
@@ -382,11 +382,13 @@ namespace Graphlit
 
 
                         int firstSampler = -1;
+                        int setTexturesCount = 0;
                         for (int i = 0; i < materialCount; i++)
                         {
                             Material mat = graphData.lockMaterials[i];
                             if (mat.GetTexture(referenceName))
                             {
+                                setTexturesCount++;
                                 sb.AppendLine($"Texture2D {referenceName}{i};");
                                 if (firstSampler < 0)
                                 {
@@ -397,8 +399,27 @@ namespace Graphlit
                         sb.AppendLine($"SamplerState sampler{referenceName}{firstSampler};");
 
                         sb.AppendLine($"float4 SAMPLE_TEXTURE2D_SWITCH_{referenceName}(SamplerState smp, float2 uv)");
-                        sb.AppendLine("{ [forcecase] switch (materialID) {");
-                        sb.AppendLine("default:");
+                        sb.AppendLine("{");
+
+                        if (setTexturesCount > 2)
+                        {
+                            sb.AppendLine($"[forcecase] switch (materialID) ");
+                        }
+                        else
+                        {
+                            sb.AppendLine($"switch (materialID) ");
+                        }
+
+                        sb.AppendLine("{");
+
+                        if (setTexturesCount < materialCount)
+                        {
+                            sb.AppendLine($"default: return {defaultTextureValueString};");
+                        }
+                        else
+                        {
+                            sb.AppendLine("default:");
+                        }
 
                         for (int i = 0; i < materialCount; i++)
                         {
@@ -406,10 +427,6 @@ namespace Graphlit
                             if (mat.GetTexture(referenceName))
                             {
                                 sb.AppendLine($"case {i}: return SAMPLE_TEXTURE2D({referenceName}{i}, sampler{referenceName}{firstSampler}, uv);");
-                            }
-                            else
-                            {
-                                sb.AppendLine($"case {i}: return {defaultTextureValueString};");
                             }
                         }
                         sb.AppendLine("}}");
@@ -482,6 +499,7 @@ namespace Graphlit
             {
                 default:
                 case PropertyType.Float:
+                case PropertyType.Bool:
                     value = mat.GetFloat(referenceName).ToString(CultureInfo.InvariantCulture);
                     break;
                 case PropertyType.Color:
@@ -493,8 +511,7 @@ namespace Graphlit
                     value = typeOnly + mat.GetVector(referenceName).ToString();
                     break;
                 case PropertyType.Integer:
-                case PropertyType.Bool:
-                    value = mat.GetFloat(referenceName).ToString();
+                    value = mat.GetInteger(referenceName).ToString();
                     break;
             }
 
