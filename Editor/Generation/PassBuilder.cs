@@ -196,7 +196,8 @@ namespace Graphlit
 
             if (graphData.enableLockMaterials)
             {
-                attributes.RequireVertexID();
+                // attributes.RequireVertexID();
+                varyings.RequireUV(0, 3);
                 varyings.RequireCustomString("uint materialID : MATERIALID;");
             }
 
@@ -284,21 +285,21 @@ namespace Graphlit
             }
             else
             {
-                var thresholds = graphData.materialIDThresholds;
-                sb.AppendLine($"const static uint materialIDThresholdsLength = {thresholds.Count - 1};");
-                sb.AppendLine("const static uint materialIDThresholds[materialIDThresholdsLength] = {");
+                // var thresholds = graphData.materialIDThresholds;
+                // sb.AppendLine($"const static uint materialIDThresholdsLength = {thresholds.Count - 1};");
+                // sb.AppendLine("const static uint materialIDThresholds[materialIDThresholdsLength] = {");
 
-                for (int i = 1; i < thresholds.Count; i++)
-                {
-                    int threshold = thresholds[i];
-                    sb.Append($"{threshold}");
-                    if (i != thresholds.Count - 1)
-                    {
-                        sb.Append(", ");
-                    }
-                }
+                // for (int i = 1; i < thresholds.Count; i++)
+                // {
+                //     int threshold = thresholds[i];
+                //     sb.Append($"{threshold}");
+                //     if (i != thresholds.Count - 1)
+                //     {
+                //         sb.Append(", ");
+                //     }
+                // }
+                // sb.Append("};");
 
-                sb.Append("};");
                 sb.AppendLine("static uint materialID;");
 
                 foreach (var property in properties)
@@ -493,7 +494,7 @@ namespace Graphlit
                     break;
                 case PropertyType.Integer:
                 case PropertyType.Bool:
-                    value = mat.GetInteger(referenceName).ToString();
+                    value = mat.GetFloat(referenceName).ToString();
                     break;
             }
 
@@ -508,18 +509,20 @@ namespace Graphlit
             sb.AppendLine("VertexDescription output = (VertexDescription)0;");
             if (graphData.enableLockMaterials)
             {
-                string materialIdOut = @"materialID = 0;
-                [unroll]
-                for (uint t = 0; t < materialIDThresholdsLength; t++)
-                {
-                    if (attributes.vertexID >= materialIDThresholds[t])
-                    {
-                        materialID++;
-                    }
-                }
-                varyings.materialID = materialID;
-                ";
-                sb.AppendLine(materialIdOut);
+                // string materialIdOut = @"materialID = 0;
+                // [unroll]
+                // for (uint t = 0; t < materialIDThresholdsLength; t++)
+                // {
+                //     if (attributes.vertexID >= materialIDThresholds[t])
+                //     {
+                //         materialID++;
+                //     }
+                // }
+                // varyings.materialID = materialID;
+                // ";
+                // sb.AppendLine(materialIdOut);
+                sb.AppendLine("varyings.materialID = attributes.uv0.z;");
+                sb.AppendLine("materialID = varyings.materialID;");
             }
 
             foreach (var line in vertexDescription)

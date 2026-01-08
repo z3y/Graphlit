@@ -42,7 +42,7 @@ namespace Graphlit.Optimizer
         void CombineMaterials(BuildContext ctx)
         {
 
-            var renderers = ctx.AvatarRootObject.GetComponentsInChildren<Renderer>(false);
+            var renderers = ctx.AvatarRootObject.GetComponentsInChildren<Renderer>(true);
 
 
             var drawCalls = new List<DrawCall>();
@@ -65,6 +65,9 @@ namespace Graphlit.Optimizer
                     mesh = smr.sharedMesh;
                 }
 
+                var meshCopy = Object.Instantiate(mesh);
+                ctx.AssetSaver.SaveAsset(meshCopy);
+
                 for (int submeshIndex = 0; submeshIndex < mesh.subMeshCount; submeshIndex++)
                 {
 
@@ -74,7 +77,7 @@ namespace Graphlit.Optimizer
                     {
                         material = renderer.sharedMaterials[submeshIndex],
                         renderer = renderer,
-                        mesh = mesh,
+                        mesh = meshCopy,
                         submeshIndex = submeshIndex,
                         baseVertex = submesh.baseVertex,
                         vertexCount = submesh.vertexCount,
@@ -99,92 +102,53 @@ namespace Graphlit.Optimizer
 
             var groups = drawCalls.GroupBy(x => x.material);
 
-            var vertices = new List<Vector3>();
-            var uv = new List<Vector2>();
-            var triangles = new List<int>();
-            var normals = new List<Vector3>();
-
-            int vertexOffset = 0;
-
-            List<int> thresholds = new();
 
             var lockMaterials = new List<Material>();
 
+            int materialID = 0;
+
             foreach (var group in groups)
             {
-                int materialID = 0;
-
-                Debug.Log($"Material: {group.Key.name}, ID: {materialID}, baseVertex {vertexOffset}");
-                thresholds.Add(vertexOffset);
-                materialID++;
+                Debug.Log($"Material: {group.Key.name}, ID: {materialID}");
 
                 lockMaterials.Add(group.Key);
 
-                foreach (var draw in group)
+                List<DrawCall> list = group.ToList();
+                for (int i = 0; i < list.Count; i++)
                 {
-                    var mesh = draw.mesh;
+                    DrawCall draw = list[i];
+                    var meshCopy = draw.mesh;
 
-                    var toAdd = mesh.vertices[draw.baseVertex..draw.vertexCount];
-                    var transform = draw.renderer.transform;
+                    List<Vector3> uvs = new();
+                    meshCopy.GetUVs(0, uvs);
 
-                    transform.TransformPoints(toAdd);
+                    float idAsFloat = materialID;
 
-                    transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
-
-                    vertices.AddRange(toAdd);
-                    uv.AddRange(mesh.uv[draw.baseVertex..draw.vertexCount]);
-                    normals.AddRange(mesh.normals[draw.baseVertex..draw.vertexCount]);
-
-                    var indices = mesh.GetIndices(draw.submeshIndex);
+                    var indices = meshCopy.GetIndices(draw.submeshIndex);
 
                     for (int j = 0; j < indices.Length; j++)
                     {
-                        indices[j] = (indices[j] - draw.baseVertex) + vertexOffset;
+                        Vector3 uv = uvs[indices[j]];
+                        uv.z = idAsFloat;
+                        uvs[indices[j]] = uv;
                     }
 
-                    triangles.AddRange(indices);
-
-
-                    vertexOffset = vertices.Count;
-
+                    meshCopy.SetUVs(0, uvs);
+                    ctx.AssetSaver.SaveAsset(meshCopy);
+                    if (draw.isSkinned)
+                    {
+                        var smr = draw.renderer.GetComponent<SkinnedMeshRenderer>();
+                        smr.sharedMesh = meshCopy;
+                    }
+                    else
+                    {
+                        var filter = draw.renderer.GetComponent<MeshFilter>();
+                        filter.sharedMesh = meshCopy;
+                    }
                 }
+
+                materialID++;
             }
-
-            var mergedMesh = new Mesh();
-            mergedMesh.name = "Graphlit Merged Mesh";
-
-            mergedMesh.indexFormat = vertices.Count >= 65536 ? UnityEngine.Rendering.IndexFormat.UInt32 : UnityEngine.Rendering.IndexFormat.UInt16;
-
-            mergedMesh.SetVertices(vertices);
-            mergedMesh.SetUVs(0, uv);
-            mergedMesh.SetNormals(normals);
-            mergedMesh.SetTriangles(triangles, 0);
-
-            ctx.AssetSaver.SaveAsset(mergedMesh);
-
-
-            for (int i = 0; i < drawCalls.Count; i++)
-            {
-                drawCalls[i].renderer.gameObject.SetActive(false);
-                // Object.Destroy(drawCalls[i].renderer.gameObject);
-            }
-
-            DrawCall firstDraw = drawCalls[0];
-
-            Debug.Log($"firstDraw: {firstDraw.renderer.gameObject.name}");
-
-            if (firstDraw.isSkinned)
-            {
-                var smr = firstDraw.renderer.GetComponent<SkinnedMeshRenderer>();
-                smr.sharedMesh = mergedMesh;
-            }
-            else
-            {
-                var filter = firstDraw.renderer.GetComponent<MeshFilter>();
-                filter.sharedMesh = mergedMesh;
-            }
-
-            var sb = new StringBuilder();
 
             var shader = drawCalls[0].material.shader;
             var shaderPath = AssetDatabase.GetAssetPath(shader);
@@ -192,7 +156,7 @@ namespace Graphlit.Optimizer
             serializedGraph.data.unlocked = false;
             serializedGraph.data.enableLockMaterials = true;
             serializedGraph.data.lockMaterials = lockMaterials;
-            serializedGraph.data.materialIDThresholds = thresholds;
+            // serializedGraph.data.materialIDThresholds = thresholds;
 
 
             var graphView = new ShaderGraphView(null, shaderPath);
@@ -221,12 +185,16 @@ namespace Graphlit.Optimizer
             materialCopy.shader = optimizedShader;
             ctx.AssetSaver.SaveAsset(materialCopy);
 
-            drawCalls[0].renderer.sharedMaterial = materialCopy;
+            materialCopy.name = "Graphlit Optimizer Material";
 
-            drawCalls[0].renderer.gameObject.SetActive(true);
+            foreach (var draw in drawCalls)
+            {
+                var sharedMats = draw.renderer.sharedMaterials;
+                sharedMats[draw.submeshIndex] = materialCopy;
+                draw.renderer.sharedMaterials = sharedMats;
+            }
 
 
-            Debug.Log(sb.ToString());
         }
     }
 }
