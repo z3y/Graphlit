@@ -212,6 +212,9 @@ namespace Graphlit.Optimizer
             File.WriteAllText("Assets/test.shader", shaderString);
 
             var optimizedShader = ShaderUtil.CreateShaderAsset(shaderString, false);
+
+            template.ApplyDefaultTextures(builder, optimizedShader);
+
             ctx.AssetSaver.SaveAsset(optimizedShader);
 
             var materialCopy = Object.Instantiate(drawCalls[0].material);

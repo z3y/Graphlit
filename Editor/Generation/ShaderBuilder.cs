@@ -189,6 +189,10 @@ namespace Graphlit
 
             pass.pragmas.Add("#pragma skip_optimizations d3d11");
             pass.pragmas.Add("#define PREVIEW");
+            if (graphView.graphData.enableLockMaterials)
+            {
+                pass.pragmas.Add("#define GRAPHLIT_OPTIMIZER_ENABLED");
+            }
             pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
             pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Preview.hlsl\"");
 
@@ -492,6 +496,37 @@ namespace Graphlit
             return _sb.ToString();
         }
 
+        private void AppendOptimizerProperties(IEnumerable<PropertyDescriptor> props)
+        {
+            var graphData = ShaderGraphView.graphData;
+            if (!graphData.enableLockMaterials)
+            {
+                return;
+            }
+
+            var mats = graphData.lockMaterials;
+
+            foreach (var prop in props)
+            {
+                if (!prop.IsTextureType)
+                {
+                    continue;
+                }
+
+                var referenceName = prop.GetReferenceName(GenerationMode.Final);
+
+
+                for (int i = 0; i < mats.Count; i++)
+                {
+                    Material mat = mats[i];
+                    string arrayName = referenceName + i.ToString();
+                    _sb.AppendLine("[NoScaleOffset]" + arrayName + " (\"Optimizer Property\", Any) = \"\" {}");
+                    _nonModifiableTextures[arrayName] = mat.GetTexture(referenceName);
+                }
+            }
+
+        }
+
         private void AppendProperties()
         {
             if (unlocked)
@@ -535,7 +570,8 @@ namespace Graphlit
             }
             else
             {
-                foreach (var property in properties.Union(ShaderGraphView.graphData.properties))
+                var allProps = properties.Union(ShaderGraphView.graphData.properties);
+                foreach (var property in allProps)
                 {
                     if (property.ShouldDeclare())
                         _sb.AppendLine(property.GetPropertyDeclaration(GenerationMode.Final));
@@ -553,6 +589,8 @@ namespace Graphlit
                         }
                     }
                 }
+
+                AppendOptimizerProperties(allProps);
 
                 _sb.AppendLine("[HideInInspector]__reset(\"\", Float) = 1");
                 _sb.AppendLine("[HideInInspector]_GraphlitMaterial(\"\", Float) = 1");

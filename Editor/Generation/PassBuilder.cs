@@ -276,12 +276,9 @@ namespace Graphlit
                     sb.AppendLine(property.GetFieldDeclaration(generationMode));
                 }
                 sb.AppendLine("CBUFFER_END");
-                sb.AppendLine("#define GRAPHLIT_SAMPLE_TEXTURE2D(tex, smp, uv) SAMPLE_TEXTURE2D(tex, smp, uv)");
             }
             else
             {
-                sb.AppendLine("#define GRAPHLIT_SAMPLE_TEXTURE2D(tex, smp, uv) SAMPLE_TEXTURE2D_SWITCH_##tex(smp, uv)");
-
                 var thresholds = graphData.materialIDThresholds;
                 sb.AppendLine($"const static uint materialIDThresholdsLength = {thresholds.Count - 1};");
                 sb.AppendLine("const static uint materialIDThresholds[materialIDThresholdsLength] = {");
