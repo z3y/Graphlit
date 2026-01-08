@@ -204,6 +204,11 @@ namespace Graphlit
             sb.AppendLine("#pragma vertex vert");
             sb.AppendLine("#pragma fragment frag");
 
+            if (graphData.enableLockMaterials)
+            {
+                sb.AppendLine("#define GRAPHLIT_OPTIMIZER_ENABLED");
+            }
+
             if (TemplateOutput.GetRenderPipeline() == TemplateOutput.RenderPipeline.URP)
             {
                 sb.AppendLine("#define UNIVERSALRP");
@@ -352,15 +357,27 @@ namespace Graphlit
                     string referenceName = property.GetReferenceName(generationMode);
                     bool sameValue = AllPropertiesHaveSameValue(graphData.lockMaterials, referenceName, property.type);
 
+                    string defaultTextureValueString = property.DefaultTextureToValue();
+
                     if (sameValue)
                     {
-
+                        sb.AppendLine($"float4 SAMPLE_TEXTURE2D_SWITCH_{referenceName}(SamplerState smp, float2 uv)");
+                        sb.AppendLine("{");
+                        Material mat = graphData.lockMaterials[0];
+                        if (mat.GetTexture(referenceName))
+                        {
+                            sb.AppendLine($"return SAMPLE_TEXTURE2D({referenceName}, smp, uv);");
+                        }
+                        else
+                        {
+                            sb.AppendLine($"return {defaultTextureValueString};");
+                        }
+                        sb.AppendLine("}");
                     }
                     else
                     {
                         int materialCount = graphData.lockMaterials.Count;
 
-                        string defaultTextureValueString = property.DefaultTextureToValue();
 
 
                         int firstSampler = -1;

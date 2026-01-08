@@ -189,10 +189,6 @@ namespace Graphlit
 
             pass.pragmas.Add("#pragma skip_optimizations d3d11");
             pass.pragmas.Add("#define PREVIEW");
-            if (graphView.graphData.enableLockMaterials)
-            {
-                pass.pragmas.Add("#define GRAPHLIT_OPTIMIZER_ENABLED");
-            }
             pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
             pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Preview.hlsl\"");
 
