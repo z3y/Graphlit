@@ -511,13 +511,22 @@ namespace Graphlit
 
                 var referenceName = prop.GetReferenceName(GenerationMode.Final);
 
+                if (prop.defaultAttributes.HasFlag(MaterialPropertyAttribute.NonModifiableTextureData))
+                {
+                    continue;
+                }
+
 
                 for (int i = 0; i < mats.Count; i++)
                 {
                     Material mat = mats[i];
-                    string arrayName = referenceName + i.ToString();
-                    _sb.AppendLine("[NoScaleOffset]" + arrayName + " (\"Optimizer Property\", Any) = \"\" {}");
-                    _nonModifiableTextures[arrayName] = mat.GetTexture(referenceName);
+                    var tex = mat.GetTexture(referenceName);
+                    if (tex)
+                    {
+                        string arrayName = referenceName + i.ToString();
+                        _sb.AppendLine("[NoScaleOffset]" + arrayName + " (\"Optimizer Property\", Any) = \"\" {}");
+                        _nonModifiableTextures[arrayName] = mat.GetTexture(referenceName);
+                    }
                 }
             }
 
