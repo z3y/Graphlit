@@ -208,7 +208,7 @@ namespace Graphlit.Optimizer
                 lockMaterials.Add(drawCalls[0].material);
             }
 
-            var shader = drawCalls[0].material.shader;
+            var shader = lockMaterials[0].shader;
             var shaderPath = AssetDatabase.GetAssetPath(shader);
             var serializedGraph = GraphlitImporter.ReadGraphData(AssetDatabase.GUIDFromAssetPath(shaderPath).ToString());
             serializedGraph.data.unlocked = false;
@@ -249,9 +249,9 @@ namespace Graphlit.Optimizer
 
             ctx.AssetSaver.SaveAsset(optimizedShader);
 
-            int renderQueue = drawCalls[0].material.renderQueue;
+            int renderQueue = lockMaterials[0].renderQueue;
 
-            var materialCopy = Object.Instantiate(drawCalls[0].material);
+            var materialCopy = Object.Instantiate(lockMaterials[0]);
             materialCopy.shader = optimizedShader;
 
             materialCopy.renderQueue = renderQueue;
@@ -262,7 +262,14 @@ namespace Graphlit.Optimizer
             }
             ctx.AssetSaver.SaveAsset(materialCopy);
 
-            materialCopy.name = "Graphlit Optimizer Material";
+            string materialName = "";
+
+            foreach (var mat in lockMaterials)
+            {
+                materialName += mat.name + " ";
+
+            }
+            materialCopy.name = materialName;
 
             foreach (var draw in drawCalls)
             {
