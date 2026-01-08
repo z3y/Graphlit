@@ -322,7 +322,7 @@ namespace Graphlit
                     else
                     {
 
-                        sb.Append($"const static {typeOnly} ");
+                        sb.Append($" const static {typeOnly} ");
                         sb.Append(referenceNameArray);
                         int materialCount = graphData.lockMaterials.Count;
                         sb.Append($"[{materialCount}] = ");
