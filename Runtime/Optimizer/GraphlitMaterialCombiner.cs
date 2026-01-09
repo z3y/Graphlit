@@ -249,12 +249,19 @@ namespace Graphlit.Optimizer
 
             ctx.AssetSaver.SaveAsset(optimizedShader);
 
-            int renderQueue = lockMaterials[0].renderQueue;
+            Material referenceMaterial = lockMaterials[0];
+            int renderQueue = referenceMaterial.renderQueue;
 
-            var materialCopy = Object.Instantiate(lockMaterials[0]);
-            materialCopy.shader = optimizedShader;
-
+            var materialCopy = new Material(optimizedShader);
+            materialCopy.CopyMatchingPropertiesFromMaterial(referenceMaterial);
             materialCopy.renderQueue = renderQueue;
+
+            // remove main tex so fallback doesnt have random texture
+            if (lockMaterials.Count > 1)
+            {
+                if (materialCopy.HasProperty("_MainTex")) materialCopy.SetTexture("_MainTex", null);
+                if (materialCopy.HasProperty("_Color")) materialCopy.SetColor("_Color", Color.white);
+            }
 
             if (serializedGraph.data.optimizerMixedCull)
             {
@@ -262,14 +269,7 @@ namespace Graphlit.Optimizer
             }
             ctx.AssetSaver.SaveAsset(materialCopy);
 
-            string materialName = "";
-
-            foreach (var mat in lockMaterials)
-            {
-                materialName += mat.name + " ";
-
-            }
-            materialCopy.name = materialName;
+            materialCopy.name = string.Join(" ", lockMaterials.Select(x => x.name));
 
             foreach (var draw in drawCalls)
             {
