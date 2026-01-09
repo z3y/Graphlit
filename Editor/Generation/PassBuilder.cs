@@ -191,6 +191,12 @@ namespace Graphlit
             return true;
         }
 
+        struct MaterialId
+        {
+            public Material material;
+            public int id;
+        }
+
         public void AppendPassHLSL(ShaderStringBuilder sb, GraphData graphData)
         {
             sb.AppendLine();
@@ -409,22 +415,61 @@ namespace Graphlit
                     }
                     else
                     {
-                        int materialCount = graphData.lockMaterials.Count;
+                        var lockMats = graphData.lockMaterials;
+                        int materialCount = lockMats.Count;
 
+                        var sortedMats = new List<MaterialId>();
 
+                        for (int j = 0; j < materialCount; j++)
+                        {
+                            var matId = new MaterialId
+                            {
+                                material = lockMats[j],
+                                id = j
+                            };
+                            sortedMats.Add(matId);
+                        }
+
+                        sortedMats.Sort((a, b) =>
+                        {
+                            var ta = a.material.GetTexture(referenceName);
+                            var tb = b.material.GetTexture(referenceName);
+
+                            if (ta == null && tb == null) return 0;
+                            if (ta == null) return -1;
+                            if (tb == null) return 1;
+
+                            return ta.GetInstanceID().CompareTo(tb.GetInstanceID());
+                        });
+
+                        // foreach (var m in sortedMats)
+                        // {
+                        //     Debug.Log("Sorted Mat" + m.material.GetTexture(referenceName));
+                        // }
 
                         int firstSampler = -1;
-                        int setTexturesCount = 0;
-                        for (int i = 0; i < materialCount; i++)
+                        int nonNullTextureCount = lockMats.Count(x => x.GetTexture(referenceName) != null);
+
+                        Texture previousTexture = null;
+                        for (int i = sortedMats.Count - 1; i >= 0; i--)
                         {
-                            Material mat = graphData.lockMaterials[i];
-                            if (mat.GetTexture(referenceName))
+                            Material mat = sortedMats[i].material;
+                            var tex = mat.GetTexture(referenceName);
+                            if (previousTexture == tex)
                             {
-                                setTexturesCount++;
-                                sb.AppendLine($"Texture2D {referenceName}{i};");
+                                continue;
+                            }
+                            else
+                            {
+                                previousTexture = tex;
+                            }
+
+                            if (tex)
+                            {
+                                sb.AppendLine($"Texture2D {referenceName}{sortedMats[i].id};");
                                 if (firstSampler < 0)
                                 {
-                                    firstSampler = i;
+                                    firstSampler = sortedMats[i].id;
                                 }
                             }
                         }
@@ -433,7 +478,7 @@ namespace Graphlit
                         sb.AppendLine($"float4 SAMPLE_TEXTURE2D_SWITCH_{referenceName}(SamplerState smp, float2 uv)");
                         sb.AppendLine("{");
 
-                        if (setTexturesCount > 2)
+                        if (nonNullTextureCount > 2)
                         {
                             sb.AppendLine($"[forcecase] switch (materialID) ");
                         }
@@ -444,7 +489,7 @@ namespace Graphlit
 
                         sb.AppendLine("{");
 
-                        if (setTexturesCount < materialCount)
+                        if (nonNullTextureCount < materialCount)
                         {
                             sb.AppendLine($"default: return {defaultTextureValueString};");
                         }
@@ -453,13 +498,37 @@ namespace Graphlit
                             sb.AppendLine("default:");
                         }
 
-                        for (int i = 0; i < materialCount; i++)
+                        previousTexture = null;
+
+                        var switchSb = new List<string>();
+
+                        for (int i = sortedMats.Count - 1; i >= 0; i--)
                         {
-                            Material mat = graphData.lockMaterials[i];
-                            if (mat.GetTexture(referenceName))
+                            Material mat = sortedMats[i].material;
+                            int id = sortedMats[i].id;
+                            var tex = mat.GetTexture(referenceName);
+
+                            if (!tex)
                             {
-                                sb.AppendLine($"case {i}: return SAMPLE_TEXTURE2D({referenceName}{i}, sampler{referenceName}{firstSampler}, uv);");
+                                continue;
                             }
+
+                            if (previousTexture == tex)
+                            {
+                                switchSb.Add($"case {id}: // {tex.name}");
+                                continue;
+                            }
+                            else
+                            {
+                                previousTexture = tex;
+                            }
+
+                            switchSb.Add($"case {id}: return SAMPLE_TEXTURE2D({referenceName}{id}, sampler{referenceName}{firstSampler}, uv); // {tex.name}");
+                        }
+
+                        for (int i = switchSb.Count - 1; i >= 0; i--)
+                        {
+                            sb.AppendLine(switchSb[i]);
                         }
                         sb.AppendLine("}}");
 
