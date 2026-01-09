@@ -241,7 +241,7 @@ namespace Graphlit.Optimizer
 
             // GUIUtility.systemCopyBuffer = shaderString;
             // AssetDatabase.CreateAsset(new TextAsset(shaderString), "Assets/OptimizedShader.asset");
-            File.WriteAllText("Assets/test.shader", shaderString);
+            // File.WriteAllText("Assets/test.shader", shaderString);
 
             var optimizedShader = ShaderUtil.CreateShaderAsset(shaderString, false);
 
