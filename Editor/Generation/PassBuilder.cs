@@ -323,219 +323,7 @@ namespace Graphlit
             }
             else
             {
-                // var thresholds = graphData.materialIDThresholds;
-                // sb.AppendLine($"const static uint materialIDThresholdsLength = {thresholds.Count - 1};");
-                // sb.AppendLine("const static uint materialIDThresholds[materialIDThresholdsLength] = {");
-
-                // for (int i = 1; i < thresholds.Count; i++)
-                // {
-                //     int threshold = thresholds[i];
-                //     sb.Append($"{threshold}");
-                //     if (i != thresholds.Count - 1)
-                //     {
-                //         sb.Append(", ");
-                //     }
-                // }
-                // sb.Append("};");
-
-                sb.AppendLine("static uint materialID;");
-
-                foreach (var property in properties)
-                {
-                    if (property.IsTextureType || property.type == PropertyType.KeywordToggle || property.declaration == PropertyDeclaration.Instance)
-                    {
-                        continue;
-                    }
-                    string referenceName = property.GetReferenceName(generationMode);
-                    string referenceNameArray = referenceName + "_Array";
-                    string typeOnly = property.GetFieldTypeOnly();
-
-                    bool sameValue = AllPropertiesHaveSameValue(graphData.lockMaterials, referenceName, property.type);
-
-                    if (sameValue)
-                    {
-                        string stringValue = GetPropertyStringValue(property, typeOnly, referenceName, graphData.lockMaterials[0]);
-                        sb.AppendLine($"const static {typeOnly} {referenceName} = {stringValue};");
-                    }
-                    else
-                    {
-
-                        sb.Append($" const static {typeOnly} ");
-                        sb.Append(referenceNameArray);
-                        int materialCount = graphData.lockMaterials.Count;
-                        sb.Append($"[{materialCount}] = ");
-                        sb.Append("{ ");
-
-                        for (int i = 0; i < materialCount; i++)
-                        {
-                            Material mat = graphData.lockMaterials[i];
-                            string value = GetPropertyStringValue(property, typeOnly, referenceName, mat);
-
-                            sb.Append(value);
-
-                            if (i < materialCount - 1)
-                            {
-                                sb.Append(", ");
-                            }
-                        }
-                        sb.Append(" };");
-                        sb.AppendLine();
-
-                        sb.AppendLine($"#define {referenceName} {referenceNameArray}[materialID]");
-                    }
-
-                }
-
-                foreach (var property in properties)
-                {
-                    if (!property.IsTextureType)
-                    {
-                        continue;
-                    }
-
-                    string referenceName = property.GetReferenceName(generationMode);
-                    bool sameValue = AllPropertiesHaveSameValue(graphData.lockMaterials, referenceName, property.type);
-
-                    string defaultTextureValueString = property.DefaultTextureToValue();
-
-                    if (sameValue)
-                    {
-                        sb.AppendLine($"float4 SAMPLE_TEXTURE2D_SWITCH_{referenceName}(SamplerState smp, float2 uv)");
-                        sb.AppendLine("{");
-                        Material mat = graphData.lockMaterials[0];
-                        if (mat.GetTexture(referenceName))
-                        {
-                            sb.AppendLine($"return SAMPLE_TEXTURE2D({referenceName}, smp, uv);");
-                        }
-                        else
-                        {
-                            sb.AppendLine($"return {defaultTextureValueString};");
-                        }
-                        sb.AppendLine("}");
-                    }
-                    else
-                    {
-                        var lockMats = graphData.lockMaterials;
-                        int materialCount = lockMats.Count;
-
-                        var sortedMats = new List<MaterialId>();
-
-                        for (int j = 0; j < materialCount; j++)
-                        {
-                            var matId = new MaterialId
-                            {
-                                material = lockMats[j],
-                                id = j
-                            };
-                            sortedMats.Add(matId);
-                        }
-
-                        sortedMats.Sort((a, b) =>
-                        {
-                            var ta = a.material.GetTexture(referenceName);
-                            var tb = b.material.GetTexture(referenceName);
-
-                            if (ta == null && tb == null) return 0;
-                            if (ta == null) return -1;
-                            if (tb == null) return 1;
-
-                            return ta.GetInstanceID().CompareTo(tb.GetInstanceID());
-                        });
-
-                        // foreach (var m in sortedMats)
-                        // {
-                        //     Debug.Log("Sorted Mat" + m.material.GetTexture(referenceName));
-                        // }
-
-                        int firstSampler = -1;
-                        int nonNullTextureCount = lockMats.Count(x => x.GetTexture(referenceName) != null);
-
-                        Texture previousTexture = null;
-                        for (int i = sortedMats.Count - 1; i >= 0; i--)
-                        {
-                            Material mat = sortedMats[i].material;
-                            var tex = mat.GetTexture(referenceName);
-                            if (previousTexture == tex)
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                previousTexture = tex;
-                            }
-
-                            if (tex)
-                            {
-                                sb.AppendLine($"Texture2D {referenceName}{sortedMats[i].id};");
-                                if (firstSampler < 0)
-                                {
-                                    firstSampler = sortedMats[i].id;
-                                }
-                            }
-                        }
-                        sb.AppendLine($"SamplerState sampler{referenceName}{firstSampler};");
-
-                        sb.AppendLine($"float4 SAMPLE_TEXTURE2D_SWITCH_{referenceName}(SamplerState smp, float2 uv)");
-                        sb.AppendLine("{");
-
-                        if (nonNullTextureCount > 2)
-                        {
-                            sb.AppendLine($"[forcecase] switch (materialID) ");
-                        }
-                        else
-                        {
-                            sb.AppendLine($"switch (materialID) ");
-                        }
-
-                        sb.AppendLine("{");
-
-                        if (nonNullTextureCount < materialCount)
-                        {
-                            sb.AppendLine($"default: return {defaultTextureValueString};");
-                        }
-                        else
-                        {
-                            sb.AppendLine("default:");
-                        }
-
-                        previousTexture = null;
-
-                        var switchSb = new List<string>();
-
-                        for (int i = sortedMats.Count - 1; i >= 0; i--)
-                        {
-                            Material mat = sortedMats[i].material;
-                            int id = sortedMats[i].id;
-                            var tex = mat.GetTexture(referenceName);
-
-                            if (!tex)
-                            {
-                                continue;
-                            }
-
-                            if (previousTexture == tex)
-                            {
-                                switchSb.Add($"case {id}: // {tex.name}");
-                                continue;
-                            }
-                            else
-                            {
-                                previousTexture = tex;
-                            }
-
-                            switchSb.Add($"case {id}: return SAMPLE_TEXTURE2D({referenceName}{id}, sampler{referenceName}{firstSampler}, uv); // {tex.name}");
-                        }
-
-                        for (int i = switchSb.Count - 1; i >= 0; i--)
-                        {
-                            sb.AppendLine(switchSb[i]);
-                        }
-                        sb.AppendLine("}}");
-
-                    }
-
-
-                }
+                WriteLockMaterialProperties(sb, graphData);
             }
 
             sb.AppendLine();
@@ -584,6 +372,270 @@ namespace Graphlit
             }
             sb.AppendLine("#include_with_pragmas \"" + vertexShaderPath + '"');
             sb.AppendLine("#include_with_pragmas \"" + fragmentShaderPath + '"');
+        }
+
+        int GenerateSamplerStateHash(Texture tex)
+        {
+            var hash = new System.HashCode();
+
+            hash.Add(tex.wrapMode);
+            hash.Add(tex.filterMode);
+            hash.Add(tex.anisoLevel);
+            // hash.Add(tex.wrapModeU);
+            // hash.Add(tex.wrapModeV);
+            // hash.Add(tex.wrapModeW);
+
+            return hash.ToHashCode();
+        }
+
+        void WriteLockMaterialProperties(ShaderStringBuilder sb, GraphData graphData)
+        {
+            sb.AppendLine("static uint materialID;");
+
+            foreach (var property in properties)
+            {
+                if (property.IsTextureType || property.type == PropertyType.KeywordToggle || property.declaration == PropertyDeclaration.Instance)
+                {
+                    continue;
+                }
+                string referenceName = property.GetReferenceName(generationMode);
+                string referenceNameArray = referenceName + "_Array";
+                string typeOnly = property.GetFieldTypeOnly();
+
+                bool sameValue = AllPropertiesHaveSameValue(graphData.lockMaterials, referenceName, property.type);
+
+                if (sameValue)
+                {
+                    string stringValue = GetPropertyStringValue(property, typeOnly, referenceName, graphData.lockMaterials[0]);
+                    sb.AppendLine($"const static {typeOnly} {referenceName} = {stringValue};");
+                }
+                else
+                {
+
+                    sb.Append($" const static {typeOnly} ");
+                    sb.Append(referenceNameArray);
+                    int materialCount = graphData.lockMaterials.Count;
+                    sb.Append($"[{materialCount}] = ");
+                    sb.Append("{ ");
+
+                    for (int i = 0; i < materialCount; i++)
+                    {
+                        Material mat = graphData.lockMaterials[i];
+                        string value = GetPropertyStringValue(property, typeOnly, referenceName, mat);
+
+                        sb.Append(value);
+
+                        if (i < materialCount - 1)
+                        {
+                            sb.Append(", ");
+                        }
+                    }
+                    sb.Append(" };");
+                    sb.AppendLine();
+
+                    sb.AppendLine($"#define {referenceName} {referenceNameArray}[materialID]");
+                }
+
+            }
+
+            var samplerStateMap = new Dictionary<int, string>();
+
+            foreach (var property in properties.Where(x => x.IsTextureType))
+            {
+                string referenceName = property.GetReferenceName(GenerationMode.Final);
+                for (int i = 0; i < graphData.lockMaterials.Count; i++)
+                {
+                    Material mat = graphData.lockMaterials[i];
+                    var tex = mat.GetTexture(referenceName);
+                    if (tex)
+                    {
+                        int samplerHash = GenerateSamplerStateHash(tex);
+
+                        if (!samplerStateMap.TryGetValue(samplerHash, out var name))
+                        {
+                            string sampler = "optimizer_";
+
+                            sampler += tex.filterMode switch
+                            {
+                                FilterMode.Point => "Point",
+                                FilterMode.Bilinear => "Linear",
+                                FilterMode.Trilinear => "Trilinear",
+                                _ => "Linear",
+                            };
+
+                            sampler += tex.wrapMode switch
+                            {
+                                TextureWrapMode.Repeat => "_Repeat",
+                                TextureWrapMode.Clamp => "_Clamp",
+                                TextureWrapMode.Mirror => "_Mirror",
+                                TextureWrapMode.MirrorOnce => "_MirrorOnce",
+                                _ => "_Repeat",
+                            };
+
+                            if (tex.filterMode != FilterMode.Point)
+                            {
+                                sampler += "_Aniso" + (tex.anisoLevel == 1 ? 16 : tex.anisoLevel);
+                            }
+
+                            samplerStateMap[samplerHash] = sampler;
+                            sb.AppendLine($"SamplerState {sampler};");
+                        }
+                    }
+                }
+            }
+
+
+            foreach (var property in properties.Where(x => x.IsTextureType))
+            {
+
+
+                string referenceName = property.GetReferenceName(generationMode);
+                bool sameValue = AllPropertiesHaveSameValue(graphData.lockMaterials, referenceName, property.type);
+
+                string defaultTextureValueString = property.DefaultTextureToValue();
+
+                if (sameValue)
+                {
+                    sb.AppendLine($"float4 SAMPLE_TEXTURE2D_SWITCH_{referenceName}(SamplerState smp, float2 uv)");
+                    sb.AppendLine("{");
+                    Material mat = graphData.lockMaterials[0];
+                    var tex = mat.GetTexture(referenceName);
+                    if (tex)
+                    {
+                        int samplerHash = GenerateSamplerStateHash(tex);
+                        sb.AppendLine($"return SAMPLE_TEXTURE2D({referenceName}, {samplerStateMap[samplerHash]}, uv);");
+                    }
+                    else
+                    {
+                        sb.AppendLine($"return {defaultTextureValueString};");
+                    }
+                    sb.AppendLine("}");
+                }
+                else
+                {
+                    var lockMats = graphData.lockMaterials;
+                    int materialCount = lockMats.Count;
+
+                    var sortedMats = new List<MaterialId>();
+
+                    for (int j = 0; j < materialCount; j++)
+                    {
+                        var matId = new MaterialId
+                        {
+                            material = lockMats[j],
+                            id = j
+                        };
+                        sortedMats.Add(matId);
+                    }
+
+                    sortedMats.Sort((a, b) =>
+                    {
+                        var ta = a.material.GetTexture(referenceName);
+                        var tb = b.material.GetTexture(referenceName);
+
+                        if (ta == null && tb == null) return 0;
+                        if (ta == null) return -1;
+                        if (tb == null) return 1;
+
+                        return ta.GetInstanceID().CompareTo(tb.GetInstanceID());
+                    });
+
+                    // foreach (var m in sortedMats)
+                    // {
+                    //     Debug.Log("Sorted Mat" + m.material.GetTexture(referenceName));
+                    // }
+
+                    int firstSampler = -1;
+                    int nonNullTextureCount = lockMats.Count(x => x.GetTexture(referenceName) != null);
+
+                    Texture previousTexture = null;
+                    for (int i = sortedMats.Count - 1; i >= 0; i--)
+                    {
+                        Material mat = sortedMats[i].material;
+                        var tex = mat.GetTexture(referenceName);
+                        if (previousTexture == tex)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            previousTexture = tex;
+                        }
+
+                        if (tex)
+                        {
+                            sb.AppendLine($"Texture2D {referenceName}{sortedMats[i].id};");
+                            if (firstSampler < 0)
+                            {
+                                firstSampler = sortedMats[i].id;
+                            }
+                        }
+                    }
+                    // sb.AppendLine($"SamplerState sampler{referenceName}{firstSampler};");
+
+                    sb.AppendLine($"float4 SAMPLE_TEXTURE2D_SWITCH_{referenceName}(SamplerState smp, float2 uv)");
+                    sb.AppendLine("{");
+
+                    if (nonNullTextureCount > 2)
+                    {
+                        sb.AppendLine($"[forcecase] switch (materialID) ");
+                    }
+                    else
+                    {
+                        sb.AppendLine($"switch (materialID) ");
+                    }
+
+                    sb.AppendLine("{");
+
+                    if (nonNullTextureCount < materialCount)
+                    {
+                        sb.AppendLine($"default: return {defaultTextureValueString};");
+                    }
+                    else
+                    {
+                        sb.AppendLine("default:");
+                    }
+
+                    previousTexture = null;
+
+                    var switchSb = new List<string>();
+
+                    for (int i = sortedMats.Count - 1; i >= 0; i--)
+                    {
+                        Material mat = sortedMats[i].material;
+                        int id = sortedMats[i].id;
+                        var tex = mat.GetTexture(referenceName);
+
+                        if (!tex)
+                        {
+                            continue;
+                        }
+
+                        if (previousTexture == tex)
+                        {
+                            switchSb.Add($"case {id}: // {tex.name}");
+                            continue;
+                        }
+                        else
+                        {
+                            previousTexture = tex;
+                        }
+
+                        int samplerHash = GenerateSamplerStateHash(tex);
+
+                        switchSb.Add($"case {id}: return SAMPLE_TEXTURE2D({referenceName}{id}, {samplerStateMap[samplerHash]}, uv); // {tex.name}");
+                    }
+
+                    for (int i = switchSb.Count - 1; i >= 0; i--)
+                    {
+                        sb.AppendLine(switchSb[i]);
+                    }
+                    sb.AppendLine("}}");
+
+                }
+
+
+            }
         }
 
         private static string GetPropertyStringValue(PropertyDescriptor property, string typeOnly, string referenceName, Material mat)
