@@ -15,13 +15,9 @@ namespace Graphlit.Optimizer
     {
         protected override void Configure()
         {
-            InPhase(BuildPhase.Transforming).Run("Add Vertex Stream", ctx =>
+            InPhase(BuildPhase.Transforming).Run("Graphlit Material Combiner", ctx =>
             {
-                var optimizer = ctx.AvatarRootObject.GetComponent<GraphlitOptimizer>();
-                if (optimizer)
-                {
-                    CombineMaterials(ctx);
-                }
+                TryCombineMaterials(ctx);
             });
         }
 
@@ -39,8 +35,18 @@ namespace Graphlit.Optimizer
             public bool isSkinned;
         }
 
-        void CombineMaterials(BuildContext ctx)
+        void TryCombineMaterials(BuildContext ctx)
         {
+            var optimizer = ctx.AvatarRootObject.GetComponent<GraphlitOptimizer>();
+            if (!optimizer)
+            {
+                return;
+            }
+
+            if (!optimizer.applyOnBuild)
+            {
+                return;
+            }
 
             var renderers = ctx.AvatarRootObject.GetComponentsInChildren<Renderer>(true).Where(x => !x.CompareTag("EditorOnly"));
 
@@ -112,7 +118,21 @@ namespace Graphlit.Optimizer
 
             foreach (var drawCallGroup in drawCallsMap)
             {
-                MergeDrawCalls(ctx, drawCallGroup.Value);
+                var drawCalls = drawCallGroup.Value;
+                int maxPerBatch = optimizer.maxMaterialsPerBatch;
+
+                if (drawCalls.Count > maxPerBatch)
+                {
+                    for (int i = 0; i < drawCalls.Count; i += maxPerBatch)
+                    {
+                        int count = Mathf.Min(maxPerBatch, drawCalls.Count - i);
+                        MergeDrawCalls(ctx, drawCalls.GetRange(i, count));
+                    }
+                }
+                else
+                {
+                    MergeDrawCalls(ctx, drawCallGroup.Value);
+                }
             }
 
 
@@ -237,11 +257,15 @@ namespace Graphlit.Optimizer
             builder.BuildTemplate(template);
 
             var shaderString = builder.ToString();
-
+            var mergedMaterialName = string.Join(" ", lockMaterials.Select(x => x.name));
+            if (mergedMaterialName.Length > 100)
+            {
+                mergedMaterialName = mergedMaterialName[0..100];
+            }
 
             // GUIUtility.systemCopyBuffer = shaderString;
             // AssetDatabase.CreateAsset(new TextAsset(shaderString), "Assets/OptimizedShader.asset");
-            // File.WriteAllText("Assets/test.shader", shaderString);
+            File.WriteAllText($"Logs/{mergedMaterialName}.shader", shaderString);
 
             var optimizedShader = ShaderUtil.CreateShaderAsset(shaderString, false);
 
@@ -269,7 +293,7 @@ namespace Graphlit.Optimizer
             }
             ctx.AssetSaver.SaveAsset(materialCopy);
 
-            materialCopy.name = string.Join(" ", lockMaterials.Select(x => x.name));
+            materialCopy.name = mergedMaterialName;
 
             foreach (var draw in drawCalls)
             {

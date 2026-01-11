@@ -1,3 +1,4 @@
+#if UNITY_EDITOR && NDMF_INCLUDED
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,10 @@ namespace Graphlit.Optimizer
 {
     public class GraphlitOptimizer : MonoBehaviour, IEditorOnly
     {
+        public bool applyOnBuild = true;
+        [Tooltip("Maximum number of materials that can be merged into 1 Material.\nUnity has a maxium of 64 texture bindings allowed per shader. Reduce this value if the optimized shader doesn't render.")]
+        public int maxMaterialsPerBatch = 64;
 
     }
 }
+#endif
