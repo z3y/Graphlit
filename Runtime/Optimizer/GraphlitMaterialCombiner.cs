@@ -81,6 +81,11 @@ namespace Graphlit.Optimizer
 
                     var mat = renderer.sharedMaterials[submeshIndex];
 
+                    if (optimizer.excludedMaterials.Contains(mat))
+                    {
+                        continue;
+                    }
+
                     if (!mat.HasFloat("_GraphlitMaterial"))
                     {
                         continue;
