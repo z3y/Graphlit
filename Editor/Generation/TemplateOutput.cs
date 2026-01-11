@@ -92,10 +92,6 @@ namespace Graphlit
             cull.RegisterValueChangedCallback(x => defaultCull = (UnityEngine.Rendering.CullMode)x.newValue);
             root.Add(cull);
 
-            var genVars = new Toggle("Generate Variants") { value = graphData.generateVariants };
-            genVars.RegisterValueChangedCallback(x => graphData.generateVariants = x.newValue);
-            root.Add(genVars);
-
             AddVRCTagsElements(root, graphData);
 
             root.Add(PropertyDescriptor.CreateReordableListElement(graphData.properties, GraphView));
