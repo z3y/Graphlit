@@ -544,6 +544,11 @@ namespace Graphlit
                 extraArgs += ", dpdx, dpdy";
             }
 
+            sb.AppendLine($"if (type == -1)");
+            sb.Indent();
+            sb.AppendLine($"return 0;");
+            sb.UnIndent();
+
             foreach (var property in properties.Where(x => x.IsTextureType))
             {
                 sb.AppendLine($"if (type == {properties.IndexOf(property)})");
@@ -709,6 +714,10 @@ namespace Graphlit
                     sb.AppendLine($"#define {referenceName} {structName}");
                 }
             }
+
+            sb.AppendLine($"GraphlitTexture2D nullTextureStruct;");
+            sb.AppendLine($"nullTextureStruct.type = -1;");
+            sb.AppendLine($"#define nullTextureStruct nullTexture");
 
         }
 
