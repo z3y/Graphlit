@@ -503,6 +503,25 @@ namespace Graphlit
 
             sb.AppendLine("float4 Sample(SamplerState smp, float2 uv)");
             sb.Indent();
+            AppendOptimizerTextureSampleMethod(sb, graphData, samplerStateMap, "SAMPLE_TEXTURE2D");
+            sb.UnIndent();
+
+            sb.AppendLine("float4 SampleLevel(SamplerState smp, float2 uv, float arg3)");
+            sb.Indent();
+            AppendOptimizerTextureSampleMethod(sb, graphData, samplerStateMap, "SAMPLE_TEXTURE2D_LOD");
+            sb.UnIndent();
+
+            sb.AppendLine("float4 SampleBias(SamplerState smp, float2 uv, float arg3)");
+            sb.Indent();
+            AppendOptimizerTextureSampleMethod(sb, graphData, samplerStateMap, "SAMPLE_TEXTURE2D_BIAS");
+            sb.UnIndent();
+
+            sb.UnIndent("};");
+        }
+
+        private void AppendOptimizerTextureSampleMethod(ShaderStringBuilder sb, GraphData graphData, Dictionary<int, string> samplerStateMap, string sampleMethod)
+        {
+            bool useArg3 = sampleMethod != "SAMPLE_TEXTURE2D";
 
             foreach (var property in properties.Where(x => x.IsTextureType))
             {
@@ -521,7 +540,7 @@ namespace Graphlit
                     if (tex)
                     {
                         int samplerHash = GenerateSamplerStateHash(tex);
-                        sb.AppendLine($"return SAMPLE_TEXTURE2D({referenceName}, {samplerStateMap[samplerHash]}, uv);");
+                        sb.AppendLine($"return {sampleMethod}({referenceName}, {samplerStateMap[samplerHash]}, uv{(useArg3 ? ", arg3" : "")}); // {tex.name}");
                     }
                     else
                     {
@@ -608,7 +627,7 @@ namespace Graphlit
 
                         int samplerHash = GenerateSamplerStateHash(tex);
 
-                        switchSb.Add($"case {id}: return SAMPLE_TEXTURE2D({referenceName}{id}, {samplerStateMap[samplerHash]}, uv); // {tex.name}");
+                        switchSb.Add($"case {id}: return {sampleMethod}({referenceName}{id}, {samplerStateMap[samplerHash]}, uv{(useArg3 ? ", arg3" : "")}); // {tex.name}");
                     }
 
                     for (int i = switchSb.Count - 1; i >= 0; i--)
@@ -620,10 +639,6 @@ namespace Graphlit
                 }
                 sb.UnIndent();
             }
-
-
-            sb.UnIndent();
-            sb.UnIndent("};");
         }
 
         private static string GetPropertyStringValue(PropertyDescriptor property, string typeOnly, string referenceName, Material mat)
