@@ -516,12 +516,33 @@ namespace Graphlit
             AppendOptimizerTextureSampleMethod(sb, graphData, samplerStateMap, "SAMPLE_TEXTURE2D_BIAS");
             sb.UnIndent();
 
+            sb.AppendLine("float4 SampleGrad(SamplerState smp, float2 uv, float2 dpdx, float2 dpdy)");
+            sb.Indent();
+            AppendOptimizerTextureSampleMethod(sb, graphData, samplerStateMap, "SAMPLE_TEXTURE2D_GRAD");
+            sb.UnIndent();
+
+
             sb.UnIndent("};");
         }
 
         private void AppendOptimizerTextureSampleMethod(ShaderStringBuilder sb, GraphData graphData, Dictionary<int, string> samplerStateMap, string sampleMethod)
         {
             bool useArg3 = sampleMethod != "SAMPLE_TEXTURE2D";
+            bool isGrad = sampleMethod == "SAMPLE_TEXTURE2D_GRAD";
+            if (isGrad)
+            {
+                useArg3 = false;
+            }
+
+            string extraArgs = "";
+            if (sampleMethod == "SAMPLE_TEXTURE2D_LOD" || sampleMethod == "SAMPLE_TEXTURE2D_BIAS")
+            {
+                extraArgs += ", arg3";
+            }
+            if (sampleMethod == "SAMPLE_TEXTURE2D_GRAD")
+            {
+                extraArgs += ", dpdx, dpdy";
+            }
 
             foreach (var property in properties.Where(x => x.IsTextureType))
             {
@@ -540,7 +561,7 @@ namespace Graphlit
                     if (tex)
                     {
                         int samplerHash = GenerateSamplerStateHash(tex);
-                        sb.AppendLine($"return {sampleMethod}({referenceName}, {samplerStateMap[samplerHash]}, uv{(useArg3 ? ", arg3" : "")}); // {tex.name}");
+                        sb.AppendLine($"return {sampleMethod}({referenceName}, {samplerStateMap[samplerHash]}, uv{extraArgs}); // {tex.name}");
                     }
                     else
                     {
@@ -627,7 +648,7 @@ namespace Graphlit
 
                         int samplerHash = GenerateSamplerStateHash(tex);
 
-                        switchSb.Add($"case {id}: return {sampleMethod}({referenceName}{id}, {samplerStateMap[samplerHash]}, uv{(useArg3 ? ", arg3" : "")}); // {tex.name}");
+                        switchSb.Add($"case {id}: return {sampleMethod}({referenceName}{id}, {samplerStateMap[samplerHash]}, uv{extraArgs}); // {tex.name}");
                     }
 
                     for (int i = switchSb.Count - 1; i >= 0; i--)
