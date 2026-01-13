@@ -144,4 +144,3 @@ float pow5(float x)
     return x2 * x2 * x;
 }
 
-#include "Optimizer.hlsl"

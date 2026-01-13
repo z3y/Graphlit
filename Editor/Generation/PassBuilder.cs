@@ -343,6 +343,12 @@ namespace Graphlit
 
             sb.AppendLine("#include \"Packages/com.z3y.graphlit/ShaderLibrary/GraphFunctions.hlsl\"");
 
+
+            if (graphData.enableLockMaterials)
+            {
+                sb.AppendLine("#define Texture2D GraphlitTexture2D");
+            }
+
             foreach (var function in functions)
             {
                 if (string.IsNullOrEmpty(function))
@@ -354,6 +360,11 @@ namespace Graphlit
                 {
                     sb.AppendLine(line);
                 }
+            }
+
+            if (graphData.enableLockMaterials)
+            {
+                sb.AppendLine("#undef Texture2D");
             }
 
             sb.AppendInclude(vertexDataPath);
@@ -450,6 +461,7 @@ namespace Graphlit
                     if (tex)
                     {
                         int samplerHash = GenerateSamplerStateHash(tex);
+                        sb.AppendLine($"Texture2D {referenceName}{i};");
 
                         if (!samplerStateMap.TryGetValue(samplerHash, out var name))
                         {
@@ -484,10 +496,18 @@ namespace Graphlit
                 }
             }
 
+            sb.AppendLine("struct GraphlitTexture2D");
+            sb.Indent();
+            // sb.AppendLine("Texture2D tex;");
+            sb.AppendLine("int type;");
+
+            sb.AppendLine("float4 Sample(SamplerState smp, float2 uv)");
+            sb.Indent();
 
             foreach (var property in properties.Where(x => x.IsTextureType))
             {
-
+                sb.AppendLine($"if (type == {properties.IndexOf(property)})");
+                sb.Indent();
 
                 string referenceName = property.GetReferenceName(generationMode);
                 bool sameValue = AllPropertiesHaveSameValue(graphData.lockMaterials, referenceName, property.type);
@@ -496,8 +516,6 @@ namespace Graphlit
 
                 if (sameValue)
                 {
-                    sb.AppendLine($"float4 SAMPLE_TEXTURE2D_SWITCH_{referenceName}(SamplerState smp, float2 uv)");
-                    sb.AppendLine("{");
                     Material mat = graphData.lockMaterials[0];
                     var tex = mat.GetTexture(referenceName);
                     if (tex)
@@ -509,7 +527,7 @@ namespace Graphlit
                     {
                         sb.AppendLine($"return {defaultTextureValueString};");
                     }
-                    sb.AppendLine("}");
+
                 }
                 else
                 {
@@ -540,41 +558,8 @@ namespace Graphlit
                         return ta.GetInstanceID().CompareTo(tb.GetInstanceID());
                     });
 
-                    // foreach (var m in sortedMats)
-                    // {
-                    //     Debug.Log("Sorted Mat" + m.material.GetTexture(referenceName));
-                    // }
 
-                    int firstSampler = -1;
                     int nonNullTextureCount = lockMats.Count(x => x.GetTexture(referenceName) != null);
-
-                    Texture previousTexture = null;
-                    for (int i = sortedMats.Count - 1; i >= 0; i--)
-                    {
-                        Material mat = sortedMats[i].material;
-                        var tex = mat.GetTexture(referenceName);
-                        if (previousTexture == tex)
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            previousTexture = tex;
-                        }
-
-                        if (tex)
-                        {
-                            sb.AppendLine($"Texture2D {referenceName}{sortedMats[i].id};");
-                            if (firstSampler < 0)
-                            {
-                                firstSampler = sortedMats[i].id;
-                            }
-                        }
-                    }
-                    // sb.AppendLine($"SamplerState sampler{referenceName}{firstSampler};");
-
-                    sb.AppendLine($"float4 SAMPLE_TEXTURE2D_SWITCH_{referenceName}(SamplerState smp, float2 uv)");
-                    sb.AppendLine("{");
 
                     if (nonNullTextureCount > 2)
                     {
@@ -585,7 +570,7 @@ namespace Graphlit
                         sb.AppendLine($"switch (materialID) ");
                     }
 
-                    sb.AppendLine("{");
+                    sb.Indent();
 
                     if (nonNullTextureCount < materialCount)
                     {
@@ -596,7 +581,7 @@ namespace Graphlit
                         sb.AppendLine("default:");
                     }
 
-                    previousTexture = null;
+                    Texture previousTexture = null;
 
                     var switchSb = new List<string>();
 
@@ -630,12 +615,15 @@ namespace Graphlit
                     {
                         sb.AppendLine(switchSb[i]);
                     }
-                    sb.AppendLine("}}");
 
+                    sb.UnIndent();
                 }
-
-
+                sb.UnIndent();
             }
+
+
+            sb.UnIndent();
+            sb.UnIndent("};");
         }
 
         private static string GetPropertyStringValue(PropertyDescriptor property, string typeOnly, string referenceName, Material mat)
@@ -668,6 +656,26 @@ namespace Graphlit
             return value;
         }
 
+        void AppendOptimizerTextureStructs(ShaderStringBuilder sb, GraphData graphData)
+        {
+
+            foreach (var property in properties.Where(x => x.IsTextureType))
+            {
+                var referenceName = property.GetReferenceName(GenerationMode.Final);
+                string structName = referenceName + "Struct";
+
+                int index = properties.IndexOf(property);
+
+                if (property.type == PropertyType.Texture2D)
+                {
+                    sb.AppendLine($"GraphlitTexture2D {structName};");
+                    sb.AppendLine($"{structName}.type = {index};");
+                    sb.AppendLine($"#define {referenceName} {structName}");
+                }
+            }
+
+        }
+
         public void AppendVertexDescription(ShaderStringBuilder sb, GraphData graphData)
         {
             sb.AppendLine("VertexDescription VertexDescriptionFunction(Attributes attributes, inout Varyings varyings)");
@@ -690,6 +698,8 @@ namespace Graphlit
                 // sb.AppendLine(materialIdOut);
                 sb.AppendLine("varyings.materialID = attributes.uv0.z;");
                 sb.AppendLine("materialID = varyings.materialID;");
+
+                AppendOptimizerTextureStructs(sb, graphData);
             }
 
             foreach (var line in vertexDescription)
@@ -715,6 +725,8 @@ namespace Graphlit
             {
                 // setup static materialID
                 sb.AppendLine($"materialID = varyings.materialID;");
+
+                AppendOptimizerTextureStructs(sb, graphData);
 
                 if (graphData.optimizerMixedCull)
                 {

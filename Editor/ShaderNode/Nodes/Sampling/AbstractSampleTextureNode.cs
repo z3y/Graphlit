@@ -33,7 +33,7 @@ namespace Graphlit
         public virtual bool HasBias => false;
         public virtual int Coords => 2;
         public virtual PortBinding UVBinding => PortBinding.UV0;
-        public virtual string SampleMethod => $"GRAPHLIT_SAMPLE_TEXTURE2D({PortData[TEX].Name}, {GetSamplerName(PortData[TEX].Name)}, {PortData[UV].Name})";
+        public virtual string SampleMethod => $"SAMPLE_TEXTURE2D({PortData[TEX].Name}, {GetSamplerName(PortData[TEX].Name)}, {PortData[UV].Name})";
 
         Port _texturePort;
         Port _samplerPort;
