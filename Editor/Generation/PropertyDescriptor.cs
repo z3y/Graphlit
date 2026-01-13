@@ -26,7 +26,7 @@ namespace Graphlit
         TextureCube = 9,
         Texture3D = 10,
         TextureCubeArray = 11,
-        Bool = 12,
+        Toggle = 12,
         KeywordToggle = 13
     }
 
@@ -117,8 +117,7 @@ namespace Graphlit
 
         [NonSerialized] public bool autoKeyword = false;
 
-        // [NonSerialized]
-        public bool animatable = false;
+        [NonSerialized] public bool animatable = false;
 
         [NonSerialized] public bool useReferenceName = false;
         [NonSerialized] public Texture tempTexture = null;
@@ -220,7 +219,7 @@ namespace Graphlit
         }
 
         public bool IsTextureType => type == PropertyType.Texture2D || type == PropertyType.Texture2DArray || type == PropertyType.TextureCube || type == PropertyType.TextureCubeArray || type == PropertyType.Texture3D;
-        public bool SupportsGPUInstancing => type == PropertyType.Float || type == PropertyType.Float2 || type == PropertyType.Float4 || type == PropertyType.Float3 || type == PropertyType.Integer || type == PropertyType.Color || type == PropertyType.Bool;
+        public bool SupportsGPUInstancing => type == PropertyType.Float || type == PropertyType.Float2 || type == PropertyType.Float4 || type == PropertyType.Float3 || type == PropertyType.Integer || type == PropertyType.Color || type == PropertyType.Toggle;
         public bool HasRange => rangeX != rangeY;
 
         public PropertyDescriptor(PropertyType type, string displayName = null, string referenceName = "")
@@ -257,7 +256,7 @@ namespace Graphlit
                 PropertyType.Float4 => VectorValue.ToString(),
                 PropertyType.Color => VectorValue.ToString(),
                 PropertyType.Integer => FloatValue.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                PropertyType.Bool => FloatValue.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                PropertyType.Toggle => FloatValue.ToString(System.Globalization.CultureInfo.InvariantCulture),
                 PropertyType.KeywordToggle => FloatValue.ToString(System.Globalization.CultureInfo.InvariantCulture),
                 _ => throw new System.NotImplementedException(),
             };
@@ -284,7 +283,7 @@ namespace Graphlit
                 PropertyType.TextureCube => "Cube",
                 PropertyType.Texture2DArray => "2DArray",
                 PropertyType.TextureCubeArray => "CubeArray",
-                PropertyType.Bool => "Float",
+                PropertyType.Toggle => "Float",
                 PropertyType.KeywordToggle => "Float",
                 _ => throw new System.NotImplementedException()
             };
@@ -311,7 +310,7 @@ namespace Graphlit
                 PropertyType.Float4 => $"float4 {referenceName};",
                 PropertyType.Color => $"float4 {referenceName};",
                 PropertyType.Integer => $"int {referenceName};",
-                PropertyType.Bool => $"float {referenceName};",
+                PropertyType.Toggle => $"float {referenceName};",
                 PropertyType.KeywordToggle => $"#pragma {referenceName}",
                 PropertyType.Texture2D => $"TEXTURE2D({referenceName}); SAMPLER(sampler{referenceName});",
                 PropertyType.TextureCube => $"TEXTURECUBE({referenceName}); SAMPLER(sampler{referenceName});",
@@ -332,7 +331,7 @@ namespace Graphlit
                 PropertyType.Float4 => $"float4",
                 PropertyType.Color => $"float4",
                 PropertyType.Integer => $"int",
-                PropertyType.Bool => $"float",
+                PropertyType.Toggle => $"float",
                 _ => throw new System.NotImplementedException()
             };
         }
@@ -359,7 +358,7 @@ namespace Graphlit
 
             switch (type)
             {
-                case PropertyType.Bool:
+                case PropertyType.Toggle:
                     sb.Append("[ToggleUI]");
                     break;
                 case PropertyType.KeywordToggle:
@@ -574,7 +573,7 @@ namespace Graphlit
         public void UpdatePreviewMaterial(Material m)
         {
             string name = GetReferenceName(GenerationMode.Preview);
-            if (type == PropertyType.Float || type == PropertyType.Bool) m.SetFloat(name, FloatValue);
+            if (type == PropertyType.Float || type == PropertyType.Toggle) m.SetFloat(name, FloatValue);
             else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) m.SetVector(name, VectorValue);
             else if (type == PropertyType.Color) m.SetColor(name, VectorValue);
             else if (IsTextureType)
@@ -620,7 +619,7 @@ namespace Graphlit
             if (type == PropertyType.Float) OnGUIFloat(rect);
             else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) OnGUIVector(rect);
             else if (type == PropertyType.Color) OnGUIColor(rect);
-            else if (type == PropertyType.Bool || type == PropertyType.KeywordToggle) OnGUIBool(rect);
+            else if (type == PropertyType.Toggle || type == PropertyType.KeywordToggle) OnGUIBool(rect);
             else if (IsTextureType) OnGUITexture(rect);
 
         }
@@ -635,7 +634,7 @@ namespace Graphlit
                 PropertyType.Float4 => typeof(Float4PropertyNode),
                 PropertyType.Color => typeof(ColorPropertyNode),
                 PropertyType.Integer => typeof(IntegerPropertyNode),
-                PropertyType.Bool => typeof(BooleanPropertyNode),
+                PropertyType.Toggle => typeof(BooleanPropertyNode),
                 PropertyType.Texture2D => typeof(Texture2DPropertyNode),
                 PropertyType.KeywordToggle => typeof(KeywordPropertyNode),
                 PropertyType.Texture2DArray => typeof(Texture2DArrayPropertyNode),
@@ -800,7 +799,7 @@ namespace Graphlit
                 PropertyType.Float3 => new Float3Node(),
                 PropertyType.Float4 => new Float4Node(),
                 PropertyType.Color => new ColorNode(),
-                PropertyType.KeywordToggle or PropertyType.Bool => new BooleanConstantNode(),
+                PropertyType.KeywordToggle or PropertyType.Toggle => new BooleanConstantNode(),
                 _ => null,
             };
         }

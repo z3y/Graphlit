@@ -135,7 +135,7 @@ namespace Graphlit
                 }
             }
 
-            else if (type == PropertyType.Float || type == PropertyType.Bool)
+            else if (type == PropertyType.Float || type == PropertyType.Toggle)
             {
                 var value = mats[0].GetFloat(referenceName);
                 for (int i = 1; i < mats.Count; i++)
@@ -645,7 +645,7 @@ namespace Graphlit
             {
                 default:
                 case PropertyType.Float:
-                case PropertyType.Bool:
+                case PropertyType.Toggle:
                     value = mat.GetFloat(referenceName).ToString(CultureInfo.InvariantCulture);
                     break;
                 case PropertyType.Color:
