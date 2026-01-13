@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using UnityEditor;
 using System.IO;
+using nadena.dev.ndmf.vrchat;
 
 [assembly: ExportsPlugin(typeof(Graphlit.Optimizer.GraphlitMaterialCombiner))]
 
@@ -15,7 +16,7 @@ namespace Graphlit.Optimizer
     {
         protected override void Configure()
         {
-            InPhase(BuildPhase.Transforming).Run("Graphlit Material Combiner", ctx =>
+            InPhase(BuildPhase.Optimizing).Run("Graphlit Material Combiner", ctx =>
             {
                 TryCombineMaterials(ctx);
             });
@@ -35,6 +36,53 @@ namespace Graphlit.Optimizer
             public bool isSkinned;
         }
 
+        struct AnimatedProperty
+        {
+            public Renderer renderer;
+            public string referenceName;
+        }
+
+        List<AnimatedProperty> GetAnimatedProperties(BuildContext ctx)
+        {
+            List<AnimatedProperty> animatedProperties = new();
+            var avatarDescriptor = ctx.VRChatAvatarDescriptor();
+
+            var root = avatarDescriptor.transform;
+
+            var clips = avatarDescriptor.baseAnimationLayers.SelectMany(x => x.animatorController.animationClips);
+
+            foreach (var clip in clips)
+            {
+                var bindings = AnimationUtility.GetCurveBindings(clip);
+
+                foreach (var binding in bindings)
+                {
+
+                    var propertyName = binding.propertyName;
+                    if (propertyName.StartsWith("material.", System.StringComparison.Ordinal))
+                    {
+                        var anp = new AnimatedProperty
+                        {
+                            referenceName = propertyName["material.".Length..].Trim()
+                        };
+
+                        var animTarget = root.Find(binding.path);
+                        if (animTarget)
+                        {
+                            anp.renderer = animTarget.GetComponent<Renderer>();
+                        }
+                        if (anp.renderer)
+                        {
+                            animatedProperties.Add(anp);
+                        }
+                    }
+                }
+
+            }
+
+            return animatedProperties;
+        }
+
         void TryCombineMaterials(BuildContext ctx)
         {
             var optimizer = ctx.AvatarRootObject.GetComponent<GraphlitOptimizer>();
@@ -48,6 +96,7 @@ namespace Graphlit.Optimizer
                 return;
             }
 
+            // todo check if parent is editor only
             var renderers = ctx.AvatarRootObject.GetComponentsInChildren<Renderer>(true).Where(x => !x.CompareTag("EditorOnly"));
 
 
@@ -121,6 +170,8 @@ namespace Graphlit.Optimizer
                 }
             }
 
+            var animatedProps = GetAnimatedProperties(ctx);
+
             foreach (var drawCallGroup in drawCallsMap)
             {
                 var drawCalls = drawCallGroup.Value;
@@ -131,12 +182,12 @@ namespace Graphlit.Optimizer
                     for (int i = 0; i < drawCalls.Count; i += maxPerBatch)
                     {
                         int count = Mathf.Min(maxPerBatch, drawCalls.Count - i);
-                        MergeDrawCalls(ctx, drawCalls.GetRange(i, count));
+                        MergeDrawCalls(ctx, drawCalls.GetRange(i, count), animatedProps);
                     }
                 }
                 else
                 {
-                    MergeDrawCalls(ctx, drawCallGroup.Value);
+                    MergeDrawCalls(ctx, drawCallGroup.Value, animatedProps);
                 }
             }
 
@@ -169,7 +220,7 @@ namespace Graphlit.Optimizer
             return hash.ToHashCode();
         }
 
-        void MergeDrawCalls(BuildContext ctx, List<DrawCall> drawCalls)
+        void MergeDrawCalls(BuildContext ctx, List<DrawCall> drawCalls, List<AnimatedProperty> allAnimatedProps)
         {
             if (drawCalls.Count < 1)
             {
@@ -177,6 +228,7 @@ namespace Graphlit.Optimizer
             }
 
             var groups = drawCalls.GroupBy(x => x.material);
+
 
 
             var lockMaterials = new List<Material>();
@@ -266,6 +318,21 @@ namespace Graphlit.Optimizer
 
             var builder = new ShaderBuilder(GenerationMode.Final, graphView);
             builder.shaderName = "Hidden/GraphlitOptimizer/" + mergedMaterialName;
+
+            var batchAnimatedProps = allAnimatedProps.Where(animatedProp => drawCalls.Any(drawCall => drawCall.renderer == animatedProp.renderer));
+
+            var builderProps = graphView.graphData.properties;
+            foreach (var anp in batchAnimatedProps)
+            {
+                var index = builderProps.FindIndex(x => x.GetReferenceName(GenerationMode.Final) == anp.referenceName);
+                if (index >= 0)
+                {
+                    builderProps[index].animatable = true;
+                    Debug.Log($"Setting {anp.referenceName} as animatable on: {anp.renderer.name}");
+                }
+            }
+
+
             builder.BuildTemplate(template);
 
             var shaderString = builder.ToString();
