@@ -652,7 +652,11 @@ namespace Graphlit
                     value = typeOnly + mat.GetColor(referenceName).linear.ToString()[4..];
                     break;
                 case PropertyType.Float2:
+                    value = typeOnly + ((Vector2)mat.GetVector(referenceName)).ToString();
+                    break;
                 case PropertyType.Float3:
+                    value = typeOnly + ((Vector3)mat.GetVector(referenceName)).ToString();
+                    break;
                 case PropertyType.Float4:
                     value = typeOnly + mat.GetVector(referenceName).ToString();
                     break;

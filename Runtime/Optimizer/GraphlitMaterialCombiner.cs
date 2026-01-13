@@ -251,6 +251,12 @@ namespace Graphlit.Optimizer
                 }
             }
 
+            var mergedMaterialName = string.Join(" ", lockMaterials.Select(x => x.name));
+            if (mergedMaterialName.Length > 100)
+            {
+                mergedMaterialName = mergedMaterialName[0..100];
+            }
+
             var graphView = new ShaderGraphView(null, shaderPath);
             serializedGraph.PopulateGraph(graphView);
             graphView.UpdateCachedNodesForBuilder();
@@ -259,14 +265,10 @@ namespace Graphlit.Optimizer
             var template = shaderNodes.OfType<TemplateOutput>().First();
 
             var builder = new ShaderBuilder(GenerationMode.Final, graphView);
+            builder.shaderName = "Hidden/GraphlitOptimizer/" + mergedMaterialName;
             builder.BuildTemplate(template);
 
             var shaderString = builder.ToString();
-            var mergedMaterialName = string.Join(" ", lockMaterials.Select(x => x.name));
-            if (mergedMaterialName.Length > 100)
-            {
-                mergedMaterialName = mergedMaterialName[0..100];
-            }
 
             // GUIUtility.systemCopyBuffer = shaderString;
             // AssetDatabase.CreateAsset(new TextAsset(shaderString), "Assets/OptimizedShader.asset");
