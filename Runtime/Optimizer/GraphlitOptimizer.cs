@@ -12,6 +12,9 @@ namespace Graphlit.Optimizer
         [Tooltip("Maximum number of materials that can be merged into 1 Material.\nUnity has a maxium of 64 texture bindings allowed per shader. Reduce this value if the optimized shader doesn't render.")]
         public int maxMaterialsPerBatch = 64;
         public List<Material> excludedMaterials = new();
+
+        [Tooltip("VRChat fallback shaders can not work properly with the optimizer because multiple main textures get merged into one material. This texture can be used as a fallback instead (default is white).")]
+        public Texture2D fallbackMainTex = null;
     }
 }
 #endif

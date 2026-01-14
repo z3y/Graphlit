@@ -187,12 +187,12 @@ namespace Graphlit.Optimizer
                     for (int i = 0; i < drawCalls.Count; i += maxPerBatch)
                     {
                         int count = Mathf.Min(maxPerBatch, drawCalls.Count - i);
-                        MergeDrawCalls(ctx, drawCalls.GetRange(i, count), animatedProps);
+                        MergeDrawCalls(ctx, optimizer, drawCalls.GetRange(i, count), animatedProps);
                     }
                 }
                 else
                 {
-                    MergeDrawCalls(ctx, drawCallGroup.Value, animatedProps);
+                    MergeDrawCalls(ctx, optimizer, drawCallGroup.Value, animatedProps);
                 }
             }
 
@@ -225,7 +225,7 @@ namespace Graphlit.Optimizer
             return hash.ToHashCode();
         }
 
-        void MergeDrawCalls(BuildContext ctx, List<DrawCall> drawCalls, List<AnimatedProperty> allAnimatedProps)
+        void MergeDrawCalls(BuildContext ctx, GraphlitOptimizer optimizer, List<DrawCall> drawCalls, List<AnimatedProperty> allAnimatedProps)
         {
             if (drawCalls.Count < 1)
             {
@@ -362,7 +362,7 @@ namespace Graphlit.Optimizer
             // remove main tex so fallback doesnt have random texture
             if (lockMaterials.Count > 1)
             {
-                if (materialCopy.HasProperty("_MainTex")) materialCopy.SetTexture("_MainTex", null);
+                if (materialCopy.HasProperty("_MainTex")) materialCopy.SetTexture("_MainTex", optimizer.fallbackMainTex);
                 if (materialCopy.HasProperty("_Color")) materialCopy.SetColor("_Color", Color.white);
             }
 
