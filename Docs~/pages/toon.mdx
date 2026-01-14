@@ -33,6 +33,18 @@ Use the `Outline Pass Branch` to customize the outputs of the outline pass.
 This can be used for example to set a different color for outlines from the base pass.
 ![Image](/outlines.png)
 
+
+### Outline Mask Texture
+
+To control outline thickness per vertex:
+
+- Add a `Sample Texture 2D LOD` node to sample an outline mask texture
+  - In a vertex shader the regular `Sample Texture 2D` function is not available because it requires automatic LOD calculation based on pixel derivatives, which don't exist at the vertex stage
+  - `Sample Texture 2D LOD` lets you explicitly specify the mip level (0 by default)
+- Multiply a single channel from the grayscale outline mask texture with an outline width property
+- Connect it to the `Width` input on the `Outline Scale` node
+
+This allows you to have fine-grained control over which parts of the model display thicker or thinner outlines.
 ## Stylized Specular
 
 Connect the Stylized Specular node to the Toon Light and output to Specular
