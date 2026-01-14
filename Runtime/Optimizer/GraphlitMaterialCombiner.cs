@@ -42,7 +42,7 @@ namespace Graphlit.Optimizer
             public string referenceName;
         }
 
-        List<AnimatedProperty> GetAnimatedProperties(BuildContext ctx)
+        static List<AnimatedProperty> GetAnimatedProperties(BuildContext ctx)
         {
             List<AnimatedProperty> animatedProperties = new();
             var avatarDescriptor = ctx.VRChatAvatarDescriptor();
@@ -83,7 +83,7 @@ namespace Graphlit.Optimizer
             return animatedProperties;
         }
 
-        void TryCombineMaterials(BuildContext ctx)
+        public static void TryCombineMaterials(BuildContext ctx)
         {
             var optimizer = ctx.AvatarRootObject.GetComponent<GraphlitOptimizer>();
             if (!optimizer)
@@ -199,7 +199,7 @@ namespace Graphlit.Optimizer
 
         }
 
-        int GenerateMaterialHash(Material mat)
+        static int GenerateMaterialHash(Material mat)
         {
             var hash = new System.HashCode();
 
@@ -225,7 +225,7 @@ namespace Graphlit.Optimizer
             return hash.ToHashCode();
         }
 
-        void MergeDrawCalls(BuildContext ctx, GraphlitOptimizer optimizer, List<DrawCall> drawCalls, List<AnimatedProperty> allAnimatedProps)
+        static void MergeDrawCalls(BuildContext ctx, GraphlitOptimizer optimizer, List<DrawCall> drawCalls, List<AnimatedProperty> allAnimatedProps)
         {
             if (drawCalls.Count < 1)
             {
@@ -362,7 +362,12 @@ namespace Graphlit.Optimizer
             // remove main tex so fallback doesnt have random texture
             if (lockMaterials.Count > 1)
             {
-                if (materialCopy.HasProperty("_MainTex")) materialCopy.SetTexture("_MainTex", optimizer.fallbackMainTex);
+                if (materialCopy.HasProperty("_MainTex"))
+                {
+                    materialCopy.SetTexture("_MainTex", optimizer.fallbackMainTex);
+                    materialCopy.SetTextureScale("_MainTex", new Vector2(optimizer.fallbackMainTexScaleOffset.x, optimizer.fallbackMainTexScaleOffset.y));
+                    materialCopy.SetTextureOffset("_MainTex", new Vector2(optimizer.fallbackMainTexScaleOffset.z, optimizer.fallbackMainTexScaleOffset.w));
+                }
                 if (materialCopy.HasProperty("_Color")) materialCopy.SetColor("_Color", Color.white);
             }
 

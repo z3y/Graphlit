@@ -15,6 +15,7 @@ namespace Graphlit.Optimizer
 
         [Tooltip("VRChat fallback shaders can not work properly with the optimizer because multiple main textures get merged into one material. This texture can be used as a fallback instead (default is white).")]
         public Texture2D fallbackMainTex = null;
+        public Vector4 fallbackMainTexScaleOffset = new(1, 1, 0, 0);
     }
 }
 #endif
