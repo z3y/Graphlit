@@ -120,8 +120,7 @@ namespace Graphlit.Optimizer
                     mesh = smr.sharedMesh;
                 }
 
-                var meshCopy = Object.Instantiate(mesh);
-                ctx.AssetSaver.SaveAsset(meshCopy);
+                Mesh meshCopy = null;
 
                 for (int submeshIndex = 0; submeshIndex < mesh.subMeshCount; submeshIndex++)
                 {
@@ -138,6 +137,12 @@ namespace Graphlit.Optimizer
                     if (!mat.HasFloat("_GraphlitMaterial"))
                     {
                         continue;
+                    }
+
+                    if (!meshCopy)
+                    {
+                        meshCopy = Object.Instantiate(mesh);
+                        ctx.AssetSaver.SaveAsset(meshCopy);
                     }
 
                     var drawCall = new DrawCall
@@ -328,7 +333,7 @@ namespace Graphlit.Optimizer
                 if (index >= 0)
                 {
                     builderProps[index].animatable = true;
-                    Debug.Log($"Setting {anp.referenceName} as animatable on: {anp.renderer.name}");
+                    Debug.Log($"Setting {anp.referenceName} as animatable on {anp.renderer.name}");
                 }
             }
 
