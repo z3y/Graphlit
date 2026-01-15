@@ -13,12 +13,14 @@
                 "rangeY": 1.0,
                 "_value": "0.5",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": 0
+                "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "e1ca94b3-4667-4599-958b-3255724b8029",
@@ -26,17 +28,19 @@
                 "displayName": "Color",
                 "type": 5,
                 "customAttributes": "",
-                "defaultAttributes": 4,
+                "defaultAttributes": 0,
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "(1.00, 1.00, 1.00, 1.00)",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": 0
+                "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "1def5047-ee96-4414-98df-73a3507eaedd",
@@ -49,12 +53,14 @@
                 "rangeY": 0.0,
                 "_value": "white",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": 0
+                "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "397933d7-29cb-407d-948d-24e81f984f39",
@@ -67,12 +73,14 @@
                 "rangeY": 0.0,
                 "_value": "",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": -1
+                "keywordPassFlags": -1,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "0e92774a-ea69-40aa-a62a-2d2d37a4982c",
@@ -85,12 +93,14 @@
                 "rangeY": 0.0,
                 "_value": "",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 1,
-                "keywordPassFlags": 0
+                "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "b3b4c422-4e80-48f5-a3fc-d243962b6f65",
@@ -98,17 +108,19 @@
                 "displayName": "Normal Scale",
                 "type": 1,
                 "customAttributes": "",
-                "defaultAttributes": 4,
+                "defaultAttributes": 0,
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "1",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": 0
+                "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "2d2cb45e-029f-4828-ba46-169935e7b05f",
@@ -121,12 +133,14 @@
                 "rangeY": 0.0,
                 "_value": "bump",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": 0
+                "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "8003d520-ea6c-43aa-a941-dfca94d5ac07",
@@ -139,12 +153,14 @@
                 "rangeY": 0.0,
                 "_value": "",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": 0
+                "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "adf3efa8-25dc-471f-a1bf-2b22231e5a7f",
@@ -152,17 +168,19 @@
                 "displayName": "Emission Color",
                 "type": 5,
                 "customAttributes": "[Folder(Emission)]",
-                "defaultAttributes": 6,
+                "defaultAttributes": 2,
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "(1.00, 1.00, 1.00, 1.00)",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": 0
+                "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "b67f4fdb-26e1-4441-b381-8932243f25ff",
@@ -175,12 +193,14 @@
                 "rangeY": 0.0,
                 "_value": "",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": 0
+                "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "2f675410-ba97-4ce0-aa12-d3aa3cd8bead",
@@ -193,12 +213,14 @@
                 "rangeY": 1.0,
                 "_value": "0",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": 0
+                "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "4c8eaa25-a004-468c-badc-e237b0dd38a2",
@@ -211,12 +233,14 @@
                 "rangeY": 1.0,
                 "_value": "0",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": 0
+                "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "06151f0b-8baf-42a2-8d6d-73bc34fb43ba",
@@ -229,12 +253,14 @@
                 "rangeY": 0.0,
                 "_value": "(0.82, 0.76, 0.85, 1.00)",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": 0
+                "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "f0d53a4e-4974-4670-b10a-c291dfcc542c",
@@ -247,12 +273,14 @@
                 "rangeY": 1.0,
                 "_value": "0.5",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": 0
+                "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "9b321213-aabc-4028-b355-10559e8458ec",
@@ -265,12 +293,14 @@
                 "rangeY": 1.0,
                 "_value": "0.1",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": 0
+                "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "6dbcf349-554e-4ca3-af7e-d747b0e7793a",
@@ -283,12 +313,14 @@
                 "rangeY": 0.0,
                 "_value": "(0.68, 0.66, 0.79, 1.00)",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": 0
+                "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "3a12811e-32b3-4559-982a-dd53b07f0512",
@@ -301,12 +333,14 @@
                 "rangeY": 1.0,
                 "_value": "0.15",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": 0
+                "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "2c0a29d5-6aac-4416-9086-ee1f4d7d004d",
@@ -319,12 +353,14 @@
                 "rangeY": 1.0,
                 "_value": "0.4",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": 0
+                "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "0ea8ff37-6ac1-48dd-86dd-56dc1248c170",
@@ -337,12 +373,14 @@
                 "rangeY": 0.0,
                 "_value": "(1.00, 0.10, 0.00, 1.00)",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": 0
+                "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "55ae5405-d47f-43ba-91b8-e78c73e9591f",
@@ -355,12 +393,14 @@
                 "rangeY": 1.0,
                 "_value": "0.08",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": 0
+                "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "53ce5f4e-5fb1-458c-a1b1-eb3bddf0d131",
@@ -373,12 +413,14 @@
                 "rangeY": 0.0,
                 "_value": "",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": -1
+                "keywordPassFlags": -1,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "ba9a9cc2-255b-4f37-96fd-3d1579539c8f",
@@ -386,17 +428,19 @@
                 "displayName": "Outline Width",
                 "type": 1,
                 "customAttributes": "[Folder(Outline)]",
-                "defaultAttributes": 4,
+                "defaultAttributes": 0,
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "1",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": -1
+                "keywordPassFlags": -1,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "551497ef-e212-4c09-a4a2-d2c2f45f5b89",
@@ -409,12 +453,14 @@
                 "rangeY": 0.0,
                 "_value": "",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": -1
+                "keywordPassFlags": -1,
+                "isStaticKeywordToggle": false
             },
             {
                 "guid": "088ed917-70e0-4a2e-92fb-be254fa4faf1",
@@ -422,17 +468,79 @@
                 "displayName": "Color",
                 "type": 5,
                 "customAttributes": "[Folder(Outline)]",
-                "defaultAttributes": 4,
+                "defaultAttributes": 0,
                 "rangeX": 0.0,
                 "rangeY": 0.0,
                 "_value": "(0.60, 0.56, 0.73, 1.00)",
                 "_autoKeywordName": "",
+                "_toggleKeywordName": "",
                 "_defaultTexture": "",
                 "_defaultTextureObject": {
                     "instanceID": 0
                 },
                 "declaration": 0,
-                "keywordPassFlags": -1
+                "keywordPassFlags": -1,
+                "isStaticKeywordToggle": false
+            },
+            {
+                "guid": "83245580-5101-45d4-b7b7-7c417f565813",
+                "referenceName": "",
+                "displayName": "Enable Matcap",
+                "type": 12,
+                "customAttributes": "[Folder(Matcap)]",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "",
+                "_autoKeywordName": "",
+                "_toggleKeywordName": "shader_feature_local_fragment _MATCAP",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1,
+                "isStaticKeywordToggle": true
+            },
+            {
+                "guid": "79b028ca-1d3a-49de-ba12-08319c22a292",
+                "referenceName": "_MatCapTex",
+                "displayName": "Matcap",
+                "type": 7,
+                "customAttributes": "[Folder(Matcap)]\n[ExtraProperty(_MatCapColor)]",
+                "defaultAttributes": 32,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "black",
+                "_autoKeywordName": "",
+                "_toggleKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1,
+                "isStaticKeywordToggle": false
+            },
+            {
+                "guid": "66a19956-5577-4c27-9318-4e52c2636259",
+                "referenceName": "_MatCapColor",
+                "displayName": "Color",
+                "type": 5,
+                "customAttributes": "[Folder(Matcap)]",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "(1.00, 1.00, 1.00, 1.00)",
+                "_autoKeywordName": "",
+                "_toggleKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1,
+                "isStaticKeywordToggle": false
             }
         ],
         "precision": 0,
@@ -557,6 +665,17 @@
         },
         {
             "type": "Graphlit.FloatNode",
+            "guid": "1c4d9c15-2463-46b9-a7d2-8fe7d879d948",
+            "x": -731,
+            "y": -798,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_value\":0.0}"
+        },
+        {
+            "type": "Graphlit.FloatNode",
             "guid": "1df54403-069a-4d91-a430-de4a26a055f3",
             "x": -754,
             "y": 686,
@@ -565,6 +684,28 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_value\":0.0}"
+        },
+        {
+            "type": "Graphlit.MultiplyNode",
+            "guid": "1e906518-338b-4fd9-b9f5-6cf82da6e815",
+            "x": -832,
+            "y": -906,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 0,
+                    "node": "7ba40c34-1522-4df5-b6fe-a387c9b4aa22"
+                },
+                {
+                    "a": 3,
+                    "b": 1,
+                    "node": "cf29c474-f7a8-47b3-be65-a910d31de42c"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
         },
         {
             "type": "Graphlit.CustomFunctionNode",
@@ -630,8 +771,8 @@
         {
             "type": "Graphlit.CustomFunctionNode",
             "guid": "306409c8-f8f1-4fac-aa1b-4a9e81862b7f",
-            "x": -1565,
-            "y": -779,
+            "x": -2164,
+            "y": -497,
             "connections": [
                 {
                     "a": 2,
@@ -677,6 +818,17 @@
             "data": "{\"forceNoShadowCasting\":false,\"defaultMode\":0,\"defaultCull\":2,\"terrainCompatible\":false,\"_customLighting\":true}"
         },
         {
+            "type": "Graphlit.CustomFunctionNode",
+            "guid": "3481d96f-0cba-4c80-9e37-ea3041a60830",
+            "x": -1351,
+            "y": -808,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n\\tOut = In;\\n}\",\"_file\":\"\",\"_shaderInclude\":{\"fileID\":10900000,\"guid\":\"9025e30cbf9112146a13240d95b1ab98\",\"type\":3},\"_useFile\":true}"
+        },
+        {
             "type": "Graphlit.MultiplyNode",
             "guid": "3831f770-e979-4091-b948-48ea94d51d18",
             "x": -1116,
@@ -701,13 +853,13 @@
         {
             "type": "Graphlit.RegisterVariableNode",
             "guid": "393c96ec-1493-4676-a2f8-2d4128db625c",
-            "x": -480,
-            "y": -478,
+            "x": -254,
+            "y": -662,
             "connections": [
                 {
-                    "a": 1,
+                    "a": 2,
                     "b": 0,
-                    "node": "522ea996-6c8e-474b-a6b6-7286ad4c464a"
+                    "node": "80355bb0-1a76-4b13-9f30-c373f7ae9b30"
                 }
             ],
             "precision": 0,
@@ -718,8 +870,8 @@
         {
             "type": "Graphlit.PreviewNode",
             "guid": "3adda51b-4e9e-43b2-8487-dd0a10ee46b4",
-            "x": -1224,
-            "y": -1174,
+            "x": -1833,
+            "y": -1033,
             "connections": [
                 {
                     "a": 102,
@@ -790,8 +942,8 @@
         {
             "type": "Graphlit.OutlinePassBranchNode",
             "guid": "4e377b21-5a5e-4cb0-b7c7-6f4e2289daae",
-            "x": -933,
-            "y": -502,
+            "x": -1060,
+            "y": -540,
             "connections": [
                 {
                     "a": 2,
@@ -823,8 +975,8 @@
         {
             "type": "Graphlit.SwizzleNode",
             "guid": "522ea996-6c8e-474b-a6b6-7286ad4c464a",
-            "x": -596,
-            "y": -478,
+            "x": -610,
+            "y": -528,
             "connections": [
                 {
                     "a": 3,
@@ -890,8 +1042,8 @@
         {
             "type": "Graphlit.SampleTexture2DNode",
             "guid": "5d8bd984-f7b2-4bf3-90ce-1956b0ddf31b",
-            "x": -1391,
-            "y": -827,
+            "x": -1990,
+            "y": -545,
             "connections": [
                 {
                     "a": 0,
@@ -1011,8 +1163,8 @@
         {
             "type": "Graphlit.Texture2DPropertyNode",
             "guid": "71c66f44-74bb-4593-9d25-d1212480199f",
-            "x": -1689,
-            "y": -827,
+            "x": -2288,
+            "y": -545,
             "connections": [],
             "precision": 1,
             "preview": 0,
@@ -1108,6 +1260,17 @@
             "data": "{\"_ref\":\"9b321213-aabc-4028-b355-10559e8458ec\"}"
         },
         {
+            "type": "Graphlit.ColorPropertyNode",
+            "guid": "7ba40c34-1522-4df5-b6fe-a387c9b4aa22",
+            "x": -946,
+            "y": -976,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"66a19956-5577-4c27-9318-4e52c2636259\"}"
+        },
+        {
             "type": "Graphlit.OutlinePassBranchNode",
             "guid": "7f4c012e-bca8-4d38-8d1a-aa66bd2bcc8c",
             "x": -620,
@@ -1130,6 +1293,28 @@
             "data": "{}"
         },
         {
+            "type": "Graphlit.AddNode",
+            "guid": "80355bb0-1a76-4b13-9f30-c373f7ae9b30",
+            "x": -379,
+            "y": -662,
+            "connections": [
+                {
+                    "a": 3,
+                    "b": 0,
+                    "node": "83caf6e2-b2ea-4a5c-9fca-86d6cc9cf510"
+                },
+                {
+                    "a": 1,
+                    "b": 1,
+                    "node": "522ea996-6c8e-474b-a6b6-7286ad4c464a"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
+        },
+        {
             "type": "Graphlit.SwizzleNode",
             "guid": "81e5dc01-a582-4b04-ad6e-7578ddaf5032",
             "x": -777,
@@ -1145,6 +1330,33 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"swizzle\":\"a\"}"
+        },
+        {
+            "type": "Graphlit.BranchNode",
+            "guid": "83caf6e2-b2ea-4a5c-9fca-86d6cc9cf510",
+            "x": -593,
+            "y": -918,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 0,
+                    "node": "8db1176a-5e13-4cd5-81d1-d5fda52b82d1"
+                },
+                {
+                    "a": 1,
+                    "b": 1,
+                    "node": "dec81b96-c88a-4225-a4eb-2fce6c4730cc"
+                },
+                {
+                    "a": 0,
+                    "b": 2,
+                    "node": "1c4d9c15-2463-46b9-a7d2-8fe7d879d948"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_dynamicBranch\":false}"
         },
         {
             "type": "Graphlit.MultiplyNode",
@@ -1167,6 +1379,17 @@
             "preview": 0,
             "previewDisabled": true,
             "data": ""
+        },
+        {
+            "type": "Graphlit.BooleanPropertyNode",
+            "guid": "8db1176a-5e13-4cd5-81d1-d5fda52b82d1",
+            "x": -731,
+            "y": -988,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"83245580-5101-45d4-b7b7-7c417f565813\"}"
         },
         {
             "type": "Graphlit.RegisterVariableNode",
@@ -1260,8 +1483,8 @@
         {
             "type": "Graphlit.RegisterVariableNode",
             "guid": "a643de88-0bd6-4912-9100-7a2507752a79",
-            "x": -1086,
-            "y": -1174,
+            "x": -1695,
+            "y": -1033,
             "connections": [
                 {
                     "a": 1,
@@ -1288,8 +1511,8 @@
         {
             "type": "Graphlit.Texture2DPropertyNode",
             "guid": "a901865a-a366-40ac-8f85-89a0d557d14f",
-            "x": -1602,
-            "y": -1165,
+            "x": -2211,
+            "y": -1024,
             "connections": [],
             "precision": 1,
             "preview": 0,
@@ -1316,8 +1539,8 @@
         {
             "type": "Graphlit.ColorPropertyNode",
             "guid": "bc82ae42-d649-4518-8345-16ca849efb5e",
-            "x": -1229,
-            "y": -755,
+            "x": -1828,
+            "y": -473,
             "connections": [],
             "precision": 0,
             "preview": 0,
@@ -1388,8 +1611,8 @@
         {
             "type": "Graphlit.CustomFunctionNode",
             "guid": "c7813f37-f0c1-4c78-b8ad-742d7f99c181",
-            "x": -1436,
-            "y": -1154,
+            "x": -2045,
+            "y": -1013,
             "connections": [
                 {
                     "a": 2,
@@ -1405,8 +1628,8 @@
         {
             "type": "Graphlit.MultiplyNode",
             "guid": "c785957e-b283-4682-a3f7-7e1510d0f485",
-            "x": -1108,
-            "y": -827,
+            "x": -1707,
+            "y": -545,
             "connections": [
                 {
                     "a": 3,
@@ -1487,6 +1710,28 @@
             "data": "{\"_name\":\"UV\"}"
         },
         {
+            "type": "Graphlit.SampleTexture2DNode",
+            "guid": "cf29c474-f7a8-47b3-be65-a910d31de42c",
+            "x": -1020,
+            "y": -888,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 1,
+                    "node": "d9d12708-cb12-406e-991c-23c7e08846bd"
+                },
+                {
+                    "a": 102,
+                    "b": 0,
+                    "node": "3481d96f-0cba-4c80-9e37-ea3041a60830"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"autoKeyword\":false}"
+        },
+        {
             "type": "Graphlit.AppendNode",
             "guid": "d24189b9-bc30-4e4b-b5da-39f687b320dd",
             "x": 876,
@@ -1525,9 +1770,9 @@
             "y": -545,
             "connections": [
                 {
-                    "a": 1,
+                    "a": 2,
                     "b": 0,
-                    "node": "522ea996-6c8e-474b-a6b6-7286ad4c464a"
+                    "node": "80355bb0-1a76-4b13-9f30-c373f7ae9b30"
                 }
             ],
             "precision": 0,
@@ -1556,6 +1801,17 @@
             "preview": 0,
             "previewDisabled": false,
             "data": "{\"_ref\":\"1def5047-ee96-4414-98df-73a3507eaedd\"}"
+        },
+        {
+            "type": "Graphlit.Texture2DPropertyNode",
+            "guid": "d9d12708-cb12-406e-991c-23c7e08846bd",
+            "x": -1193,
+            "y": -942,
+            "connections": [],
+            "precision": 1,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"79b028ca-1d3a-49de-ba12-08319c22a292\"}"
         },
         {
             "type": "Graphlit.CustomFunctionNode",
@@ -1667,6 +1923,23 @@
             "data": ""
         },
         {
+            "type": "Graphlit.SwizzleNode",
+            "guid": "dec81b96-c88a-4225-a4eb-2fce6c4730cc",
+            "x": -717,
+            "y": -906,
+            "connections": [
+                {
+                    "a": 2,
+                    "b": 0,
+                    "node": "1e906518-338b-4fd9-b9f5-6cf82da6e815"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"swizzle\":\"rgb\"}"
+        },
+        {
             "type": "Graphlit.FetchVariableNode",
             "guid": "e1fe3349-2b07-42d6-ae78-f2f988c56317",
             "x": 798,
@@ -1768,9 +2041,9 @@
             "y": 922,
             "connections": [
                 {
-                    "a": 1,
+                    "a": 2,
                     "b": 0,
-                    "node": "522ea996-6c8e-474b-a6b6-7286ad4c464a"
+                    "node": "80355bb0-1a76-4b13-9f30-c373f7ae9b30"
                 }
             ],
             "precision": 0,
@@ -1826,7 +2099,7 @@
             ]
         },
         {
-            "x": 762,
+            "x": 763,
             "y": 822,
             "title": "Final Color",
             "elements": [
@@ -1872,14 +2145,13 @@
         },
         {
             "x": -1562,
-            "y": -561,
+            "y": -599,
             "title": "Main Texture",
             "elements": [
                 "0716f433-6d19-4b87-9d16-eacdd1b3ea92",
                 "144685c4-7f16-4a56-b8b6-0cd0b0ad226a",
                 "2fe63cb5-8066-43f1-ada5-5bd5748122da",
                 "3831f770-e979-4091-b948-48ea94d51d18",
-                "393c96ec-1493-4676-a2f8-2d4128db625c",
                 "4e377b21-5a5e-4cb0-b7c7-6f4e2289daae",
                 "522ea996-6c8e-474b-a6b6-7286ad4c464a",
                 "55b6b0f9-ecbd-46a5-a724-dc5b35da0afd",
@@ -1891,14 +2163,30 @@
             ]
         },
         {
-            "x": -1627,
-            "y": -1233,
+            "x": -2236,
+            "y": -1092,
             "title": "Main UV",
             "elements": [
                 "3adda51b-4e9e-43b2-8487-dd0a10ee46b4",
                 "a643de88-0bd6-4912-9100-7a2507752a79",
                 "a901865a-a366-40ac-8f85-89a0d557d14f",
                 "c7813f37-f0c1-4c78-b8ad-742d7f99c181"
+            ]
+        },
+        {
+            "x": -1376,
+            "y": -1047,
+            "title": "Matcap",
+            "elements": [
+                "1c4d9c15-2463-46b9-a7d2-8fe7d879d948",
+                "1e906518-338b-4fd9-b9f5-6cf82da6e815",
+                "3481d96f-0cba-4c80-9e37-ea3041a60830",
+                "7ba40c34-1522-4df5-b6fe-a387c9b4aa22",
+                "83caf6e2-b2ea-4a5c-9fca-86d6cc9cf510",
+                "8db1176a-5e13-4cd5-81d1-d5fda52b82d1",
+                "cf29c474-f7a8-47b3-be65-a910d31de42c",
+                "d9d12708-cb12-406e-991c-23c7e08846bd",
+                "dec81b96-c88a-4225-a4eb-2fce6c4730cc"
             ]
         },
         {
@@ -1919,8 +2207,8 @@
             ]
         },
         {
-            "x": -1714,
-            "y": -886,
+            "x": -2313,
+            "y": -604,
             "title": "Outline Color",
             "elements": [
                 "306409c8-f8f1-4fac-aa1b-4a9e81862b7f",
