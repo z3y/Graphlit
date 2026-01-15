@@ -361,6 +361,78 @@
                 },
                 "declaration": 0,
                 "keywordPassFlags": 0
+            },
+            {
+                "guid": "53ce5f4e-5fb1-458c-a1b1-eb3bddf0d131",
+                "referenceName": "_OutlineWidthMask",
+                "displayName": "Mask",
+                "type": 7,
+                "customAttributes": "[Folder(Outline)]\n[ExtraProperty(_OutlineWidth)]",
+                "defaultAttributes": 32,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1
+            },
+            {
+                "guid": "ba9a9cc2-255b-4f37-96fd-3d1579539c8f",
+                "referenceName": "_OutlineWidth",
+                "displayName": "Outline Width",
+                "type": 1,
+                "customAttributes": "[Folder(Outline)]",
+                "defaultAttributes": 4,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "1",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1
+            },
+            {
+                "guid": "551497ef-e212-4c09-a4a2-d2c2f45f5b89",
+                "referenceName": "_OutlineTex",
+                "displayName": "Main Texture",
+                "type": 7,
+                "customAttributes": "[Folder(Outline)]\n[ExtraProperty(_OutlineColor)]",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1
+            },
+            {
+                "guid": "088ed917-70e0-4a2e-92fb-be254fa4faf1",
+                "referenceName": "_OutlineColor",
+                "displayName": "Color",
+                "type": 5,
+                "customAttributes": "[Folder(Outline)]",
+                "defaultAttributes": 4,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "(0.60, 0.56, 0.73, 1.00)",
+                "_autoKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1
             }
         ],
         "precision": 0,
@@ -382,6 +454,23 @@
         "subgraphOutputIdCounter": 0
     },
     "nodes": [
+        {
+            "type": "Graphlit.CustomFunctionNode",
+            "guid": "04a56366-dd6d-4a15-8ddb-9beb0a07d043",
+            "x": 934,
+            "y": 507,
+            "connections": [
+                {
+                    "a": 2,
+                    "b": 4,
+                    "node": "86a02d3a-aedf-49aa-812b-c8a79bfd8afe"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n\\tOut = In;\\n}\",\"_file\":\"\",\"_shaderInclude\":{\"fileID\":10900000,\"guid\":\"71d155ff5380e6942810d80d67172caf\",\"type\":3},\"_useFile\":true}"
+        },
         {
             "type": "Graphlit.ColorPropertyNode",
             "guid": "06a5f803-3584-41f6-b08e-0db5ca3ede73",
@@ -407,8 +496,8 @@
         {
             "type": "Graphlit.FloatPropertyNode",
             "guid": "0840305d-5728-40c4-9ecc-c71cac954d75",
-            "x": 744,
-            "y": 636,
+            "x": 1090,
+            "y": 1258,
             "connections": [],
             "precision": 0,
             "preview": 0,
@@ -452,8 +541,8 @@
         {
             "type": "Graphlit.FetchVariableNode",
             "guid": "1a442b7f-3ff3-463e-8547-73680ae9e745",
-            "x": 497,
-            "y": 348,
+            "x": 807,
+            "y": 1002,
             "connections": [
                 {
                     "a": 2,
@@ -502,8 +591,8 @@
         {
             "type": "Graphlit.FetchVariableNode",
             "guid": "2a22653a-c58c-4404-804e-8ecfd84b7df7",
-            "x": 452,
-            "y": 463,
+            "x": 788,
+            "y": 1083,
             "connections": [
                 {
                     "a": 3,
@@ -539,11 +628,33 @@
             "data": ""
         },
         {
+            "type": "Graphlit.CustomFunctionNode",
+            "guid": "306409c8-f8f1-4fac-aa1b-4a9e81862b7f",
+            "x": -1565,
+            "y": -779,
+            "connections": [
+                {
+                    "a": 2,
+                    "b": 1,
+                    "node": "71c66f44-74bb-4593-9d25-d1212480199f"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n\\tOut = In;\\n}\",\"_file\":\"\",\"_shaderInclude\":{\"fileID\":10900000,\"guid\":\"66a03437d6d37e44c9d754713b85ddf1\",\"type\":3},\"_useFile\":true}"
+        },
+        {
             "type": "Graphlit.UnlitTemplate",
             "guid": "31a6de1d-7e74-41cb-b79d-921e8cbf1dc4",
-            "x": 947,
-            "y": 259,
+            "x": 1293,
+            "y": 881,
             "connections": [
+                {
+                    "a": 103,
+                    "b": 0,
+                    "node": "04a56366-dd6d-4a15-8ddb-9beb0a07d043"
+                },
                 {
                     "a": 0,
                     "b": 3,
@@ -568,8 +679,8 @@
         {
             "type": "Graphlit.MultiplyNode",
             "guid": "3831f770-e979-4091-b948-48ea94d51d18",
-            "x": -932,
-            "y": -446,
+            "x": -1116,
+            "y": -443,
             "connections": [
                 {
                     "a": 0,
@@ -607,8 +718,8 @@
         {
             "type": "Graphlit.PreviewNode",
             "guid": "3adda51b-4e9e-43b2-8487-dd0a10ee46b4",
-            "x": -758,
-            "y": -907,
+            "x": -1224,
+            "y": -1174,
             "connections": [
                 {
                     "a": 102,
@@ -644,6 +755,17 @@
             "data": "{\"autoKeyword\":false}"
         },
         {
+            "type": "Graphlit.Texture2DPropertyNode",
+            "guid": "45c08bf5-a5ed-41a8-a77a-34a84ab7ef12",
+            "x": 309,
+            "y": 527,
+            "connections": [],
+            "precision": 1,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"53ce5f4e-5fb1-458c-a1b1-eb3bddf0d131\"}"
+        },
+        {
             "type": "Graphlit.BooleanConstantNode",
             "guid": "46008793-075b-409c-bd09-9d8c13d8de91",
             "x": 1733,
@@ -668,13 +790,13 @@
         {
             "type": "Graphlit.OutlinePassBranchNode",
             "guid": "4e377b21-5a5e-4cb0-b7c7-6f4e2289daae",
-            "x": -795,
-            "y": -500,
+            "x": -933,
+            "y": -502,
             "connections": [
                 {
-                    "a": 0,
+                    "a": 2,
                     "b": 1,
-                    "node": "4edeb8b8-26e6-4e74-a968-054a05179975"
+                    "node": "c785957e-b283-4682-a3f7-7e1510d0f485"
                 },
                 {
                     "a": 2,
@@ -697,17 +819,6 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_ref\":\"6dbcf349-554e-4ca3-af7e-d747b0e7793a\"}"
-        },
-        {
-            "type": "Graphlit.ColorNode",
-            "guid": "4edeb8b8-26e6-4e74-a968-054a05179975",
-            "x": -932,
-            "y": -540,
-            "connections": [],
-            "precision": 0,
-            "preview": 0,
-            "previewDisabled": true,
-            "data": "{\"_value\":{\"x\":1.0,\"y\":1.0,\"z\":1.0,\"w\":1.0}}"
         },
         {
             "type": "Graphlit.SwizzleNode",
@@ -751,8 +862,8 @@
         {
             "type": "Graphlit.ColorPropertyNode",
             "guid": "55b6b0f9-ecbd-46a5-a724-dc5b35da0afd",
-            "x": -1057,
-            "y": -500,
+            "x": -1241,
+            "y": -497,
             "connections": [],
             "precision": 0,
             "preview": 0,
@@ -777,6 +888,28 @@
             "data": ""
         },
         {
+            "type": "Graphlit.SampleTexture2DNode",
+            "guid": "5d8bd984-f7b2-4bf3-90ce-1956b0ddf31b",
+            "x": -1391,
+            "y": -827,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 1,
+                    "node": "71c66f44-74bb-4593-9d25-d1212480199f"
+                },
+                {
+                    "a": 102,
+                    "b": 0,
+                    "node": "306409c8-f8f1-4fac-aa1b-4a9e81862b7f"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"autoKeyword\":false}"
+        },
+        {
             "type": "Graphlit.FloatPropertyNode",
             "guid": "60b411e9-0bd2-4c7f-877c-e2a55c1b98eb",
             "x": 1511,
@@ -790,8 +923,8 @@
         {
             "type": "Graphlit.SampleTexture2DNode",
             "guid": "60fab7be-41fa-4fcf-8d0b-4512bdb5ebc5",
-            "x": -1153,
-            "y": -373,
+            "x": -1337,
+            "y": -370,
             "connections": [
                 {
                     "a": 0,
@@ -874,6 +1007,17 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_ref\":\"b67f4fdb-26e1-4441-b381-8932243f25ff\"}"
+        },
+        {
+            "type": "Graphlit.Texture2DPropertyNode",
+            "guid": "71c66f44-74bb-4593-9d25-d1212480199f",
+            "x": -1689,
+            "y": -827,
+            "connections": [],
+            "precision": 1,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"551497ef-e212-4c09-a4a2-d2c2f45f5b89\"}"
         },
         {
             "type": "Graphlit.NormalNode",
@@ -992,15 +1136,37 @@
             "y": -336,
             "connections": [
                 {
-                    "a": 2,
+                    "a": 3,
                     "b": 0,
-                    "node": "3831f770-e979-4091-b948-48ea94d51d18"
+                    "node": "4e377b21-5a5e-4cb0-b7c7-6f4e2289daae"
                 }
             ],
             "precision": 0,
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"swizzle\":\"a\"}"
+        },
+        {
+            "type": "Graphlit.MultiplyNode",
+            "guid": "86a02d3a-aedf-49aa-812b-c8a79bfd8afe",
+            "x": 784,
+            "y": 507,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 0,
+                    "node": "a6cd67e4-0d2b-4274-a82f-9fb391e37ff5"
+                },
+                {
+                    "a": 4,
+                    "b": 1,
+                    "node": "c753211a-a13d-460f-bdf7-afc93a83acea"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
         },
         {
             "type": "Graphlit.RegisterVariableNode",
@@ -1094,8 +1260,8 @@
         {
             "type": "Graphlit.RegisterVariableNode",
             "guid": "a643de88-0bd6-4912-9100-7a2507752a79",
-            "x": -620,
-            "y": -907,
+            "x": -1086,
+            "y": -1174,
             "connections": [
                 {
                     "a": 1,
@@ -1109,10 +1275,21 @@
             "data": "{\"_name\":\"UV\"}"
         },
         {
+            "type": "Graphlit.FloatPropertyNode",
+            "guid": "a6cd67e4-0d2b-4274-a82f-9fb391e37ff5",
+            "x": 640,
+            "y": 507,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"ba9a9cc2-255b-4f37-96fd-3d1579539c8f\"}"
+        },
+        {
             "type": "Graphlit.Texture2DPropertyNode",
             "guid": "a901865a-a366-40ac-8f85-89a0d557d14f",
-            "x": -1136,
-            "y": -898,
+            "x": -1602,
+            "y": -1165,
             "connections": [],
             "precision": 1,
             "preview": 0,
@@ -1135,6 +1312,17 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n  Out = In;\\n}\",\"_file\":\"10900000|66a03437d6d37e44c9d754713b85ddf1\",\"_shaderInclude\":{\"instanceID\":0},\"_useFile\":true}"
+        },
+        {
+            "type": "Graphlit.ColorPropertyNode",
+            "guid": "bc82ae42-d649-4518-8345-16ca849efb5e",
+            "x": -1229,
+            "y": -755,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"088ed917-70e0-4a2e-92fb-be254fa4faf1\"}"
         },
         {
             "type": "Graphlit.SampleTexture2DNode",
@@ -1181,10 +1369,27 @@
             "data": "{\"_value\":0.0}"
         },
         {
+            "type": "Graphlit.SampleTexture2DLodNode",
+            "guid": "c753211a-a13d-460f-bdf7-afc93a83acea",
+            "x": 463,
+            "y": 527,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 1,
+                    "node": "45c08bf5-a5ed-41a8-a77a-34a84ab7ef12"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"autoKeyword\":false}"
+        },
+        {
             "type": "Graphlit.CustomFunctionNode",
             "guid": "c7813f37-f0c1-4c78-b8ad-742d7f99c181",
-            "x": -970,
-            "y": -887,
+            "x": -1436,
+            "y": -1154,
             "connections": [
                 {
                     "a": 2,
@@ -1196,6 +1401,28 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n    Out = In;\\n}\",\"_file\":\"10900000|66a03437d6d37e44c9d754713b85ddf1\",\"_shaderInclude\":{\"instanceID\":0},\"_useFile\":true}"
+        },
+        {
+            "type": "Graphlit.MultiplyNode",
+            "guid": "c785957e-b283-4682-a3f7-7e1510d0f485",
+            "x": -1108,
+            "y": -827,
+            "connections": [
+                {
+                    "a": 3,
+                    "b": 0,
+                    "node": "5d8bd984-f7b2-4bf3-90ce-1956b0ddf31b"
+                },
+                {
+                    "a": 0,
+                    "b": 1,
+                    "node": "bc82ae42-d649-4518-8345-16ca849efb5e"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
         },
         {
             "type": "Graphlit.PreviewNode",
@@ -1322,8 +1549,8 @@
         {
             "type": "Graphlit.Texture2DPropertyNode",
             "guid": "d9970745-7840-4628-807a-769940ca05ff",
-            "x": -1353,
-            "y": -373,
+            "x": -1537,
+            "y": -370,
             "connections": [],
             "precision": 1,
             "preview": 0,
@@ -1410,8 +1637,8 @@
         {
             "type": "Graphlit.BlendFinalColorNode",
             "guid": "da46e9b6-3298-466b-8772-d9a62d17ce19",
-            "x": 616,
-            "y": 348,
+            "x": 962,
+            "y": 970,
             "connections": [
                 {
                     "a": 1,
@@ -1442,8 +1669,8 @@
         {
             "type": "Graphlit.FetchVariableNode",
             "guid": "e1fe3349-2b07-42d6-ae78-f2f988c56317",
-            "x": 452,
-            "y": 544,
+            "x": 798,
+            "y": 1160,
             "connections": [
                 {
                     "a": 1,
@@ -1503,8 +1730,8 @@
         {
             "type": "Graphlit.FetchVariableNode",
             "guid": "f5c9ce10-56fc-4bc9-9fb5-242ea1cedf7b",
-            "x": -1304,
-            "y": -237,
+            "x": -1488,
+            "y": -234,
             "connections": [
                 {
                     "a": 1,
@@ -1537,8 +1764,8 @@
         {
             "type": "Graphlit.FetchVariableNode",
             "guid": "fd5c95d7-b2fb-4a1d-9d1e-222772e82295",
-            "x": 452,
-            "y": 299,
+            "x": 799,
+            "y": 922,
             "connections": [
                 {
                     "a": 1,
@@ -1599,8 +1826,8 @@
             ]
         },
         {
-            "x": 427,
-            "y": 200,
+            "x": 762,
+            "y": 822,
             "title": "Final Color",
             "elements": [
                 "0840305d-5728-40c4-9ecc-c71cac954d75",
@@ -1644,8 +1871,8 @@
             ]
         },
         {
-            "x": -1378,
-            "y": -599,
+            "x": -1562,
+            "y": -561,
             "title": "Main Texture",
             "elements": [
                 "0716f433-6d19-4b87-9d16-eacdd1b3ea92",
@@ -1654,7 +1881,6 @@
                 "3831f770-e979-4091-b948-48ea94d51d18",
                 "393c96ec-1493-4676-a2f8-2d4128db625c",
                 "4e377b21-5a5e-4cb0-b7c7-6f4e2289daae",
-                "4edeb8b8-26e6-4e74-a968-054a05179975",
                 "522ea996-6c8e-474b-a6b6-7286ad4c464a",
                 "55b6b0f9-ecbd-46a5-a724-dc5b35da0afd",
                 "60fab7be-41fa-4fcf-8d0b-4512bdb5ebc5",
@@ -1665,8 +1891,8 @@
             ]
         },
         {
-            "x": -1161,
-            "y": -966,
+            "x": -1627,
+            "y": -1233,
             "title": "Main UV",
             "elements": [
                 "3adda51b-4e9e-43b2-8487-dd0a10ee46b4",
@@ -1690,6 +1916,30 @@
                 "954fbcc3-f8f9-467d-afca-ea2f167f67c3",
                 "ca1c4dea-6307-43d5-bd60-eace251591b9",
                 "cec36d1f-e00d-4974-aa29-f661ce5efa6d"
+            ]
+        },
+        {
+            "x": -1714,
+            "y": -886,
+            "title": "Outline Color",
+            "elements": [
+                "306409c8-f8f1-4fac-aa1b-4a9e81862b7f",
+                "5d8bd984-f7b2-4bf3-90ce-1956b0ddf31b",
+                "71c66f44-74bb-4593-9d25-d1212480199f",
+                "bc82ae42-d649-4518-8345-16ca849efb5e",
+                "c785957e-b283-4682-a3f7-7e1510d0f485"
+            ]
+        },
+        {
+            "x": 284,
+            "y": 448,
+            "title": "Outlines",
+            "elements": [
+                "04a56366-dd6d-4a15-8ddb-9beb0a07d043",
+                "45c08bf5-a5ed-41a8-a77a-34a84ab7ef12",
+                "86a02d3a-aedf-49aa-812b-c8a79bfd8afe",
+                "a6cd67e4-0d2b-4274-a82f-9fb391e37ff5",
+                "c753211a-a13d-460f-bdf7-afc93a83acea"
             ]
         }
     ]
