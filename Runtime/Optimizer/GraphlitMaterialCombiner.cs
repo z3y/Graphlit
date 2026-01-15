@@ -301,7 +301,6 @@ namespace Graphlit.Optimizer
             serializedGraph.data.unlocked = false;
             serializedGraph.data.enableLockMaterials = true;
             serializedGraph.data.lockMaterials = lockMaterials;
-            // serializedGraph.data.materialIDThresholds = thresholds;
 
             int referenceCullMode = (int)lockMaterials[0].GetFloat("_Cull");
             for (int i = 1; i < lockMaterials.Count; i++)

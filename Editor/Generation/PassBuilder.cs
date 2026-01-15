@@ -730,18 +730,6 @@ namespace Graphlit
             sb.AppendLine("VertexDescription output = (VertexDescription)0;");
             if (graphData.enableLockMaterials)
             {
-                // string materialIdOut = @"materialID = 0;
-                // [unroll]
-                // for (uint t = 0; t < materialIDThresholdsLength; t++)
-                // {
-                //     if (attributes.vertexID >= materialIDThresholds[t])
-                //     {
-                //         materialID++;
-                //     }
-                // }
-                // varyings.materialID = materialID;
-                // ";
-                // sb.AppendLine(materialIdOut);
                 sb.AppendLine("varyings.materialID = asint(attributes.uv0.z);");
                 sb.AppendLine("materialID = varyings.materialID & 0xFFF;");
                 sb.AppendLine("rendererID = varyings.materialID >> 12;");
