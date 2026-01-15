@@ -197,6 +197,45 @@ namespace Graphlit
             public int id;
         }
 
+        void WriteShaderToggleUniforms(ShaderStringBuilder sb, GraphData graphData)
+        {
+            var shaderToggles = graphData.shaderToggles;
+            if (shaderToggles is null || shaderToggles.Count == 0)
+            {
+                return;
+            }
+            int length = shaderToggles.Count;
+
+            sb.AppendLine("#define OPTIMIZER_SHADER_TOGGLES");
+
+            sb.AppendLine("cbuffer ShaderToggles");
+            sb.Indent();
+
+            sb.AppendLine($"bool _ShaderToggle[{length}] : packoffset(c0);");
+
+            for (int i = 0; i < length; i++)
+            {
+                sb.AppendLine($"bool _ShaderToggle_{shaderToggles[i].name} : packoffset(c{i});");
+            }
+
+            sb.UnIndent("};");
+        }
+
+        void WriteShaderToggleUniformsCompilerWorkaround(ShaderStringBuilder sb, GraphData graphData)
+        {
+            var shaderToggles = graphData.shaderToggles;
+            if (shaderToggles is null || shaderToggles.Count == 0)
+            {
+                return;
+            }
+            int length = shaderToggles.Count;
+
+            for (int i = 0; i < length; i++)
+            {
+                sb.Append($" + _ShaderToggle_{shaderToggles[i].name}");
+            }
+        }
+
         public void AppendPassHLSL(ShaderStringBuilder sb, GraphData graphData)
         {
             sb.AppendLine();
@@ -324,6 +363,7 @@ namespace Graphlit
             else
             {
                 WriteLockMaterialProperties(sb, graphData);
+                WriteShaderToggleUniforms(sb, graphData);
             }
 
             sb.AppendLine();
@@ -401,6 +441,7 @@ namespace Graphlit
 
         void WriteLockMaterialProperties(ShaderStringBuilder sb, GraphData graphData)
         {
+            sb.AppendLine("float uniformZero;");
             sb.AppendLine("static uint materialID;");
             sb.AppendLine("static uint rendererID;");
 
@@ -722,6 +763,26 @@ namespace Graphlit
 
         }
 
+        void AppendCompilerWorkaround(ShaderStringBuilder sb, GraphData graphData, string output)
+        {
+            var shaderToggles = graphData.shaderToggles;
+            if (shaderToggles is null || shaderToggles.Count == 0)
+            {
+                return;
+            }
+
+            sb.AppendLine("[branch] if (uniformZero) ");
+            sb.Indent();
+
+            sb.Append($"{output} = 0");
+            WriteShaderToggleUniformsCompilerWorkaround(sb, graphData);
+            sb.Append(";");
+
+            sb.AppendLine();
+
+            sb.UnIndent();
+        }
+
         public void AppendVertexDescription(ShaderStringBuilder sb, GraphData graphData)
         {
             sb.AppendLine("VertexDescription VertexDescriptionFunction(Attributes attributes, inout Varyings varyings)");
@@ -733,6 +794,8 @@ namespace Graphlit
                 sb.AppendLine("varyings.materialID = asint(attributes.uv0.z);");
                 sb.AppendLine("materialID = varyings.materialID & 0xFFF;");
                 sb.AppendLine("rendererID = varyings.materialID >> 12;");
+
+                AppendCompilerWorkaround(sb, graphData, "varyings.positionCS.x");
 
                 AppendOptimizerTextureStructs(sb, graphData);
             }

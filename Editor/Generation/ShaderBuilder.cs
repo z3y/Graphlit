@@ -492,6 +492,21 @@ namespace Graphlit
             return _sb.ToString();
         }
 
+
+        void AppendShaderToggleProperties()
+        {
+            var shaderToggles = ShaderGraphView.graphData.shaderToggles;
+            if (shaderToggles is null || shaderToggles.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var toggle in shaderToggles)
+            {
+                _sb.AppendLine($"[ToggleUI] _ShaderToggle_{toggle.name}(\"Shader Toggle {toggle.name}\", Float) = 0");
+            }
+        }
+
         private void AppendOptimizerProperties(IEnumerable<PropertyDescriptor> props)
         {
             var graphData = ShaderGraphView.graphData;
@@ -530,6 +545,7 @@ namespace Graphlit
                 }
             }
 
+            AppendShaderToggleProperties();
         }
 
         private void AppendProperties()

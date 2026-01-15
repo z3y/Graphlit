@@ -104,7 +104,6 @@ namespace Graphlit.Optimizer
 
             var drawCallsMap = new Dictionary<int, List<DrawCall>>();
 
-            int rendererId = 0;
             foreach (var renderer in renderers)
             {
                 Mesh mesh;
@@ -156,10 +155,7 @@ namespace Graphlit.Optimizer
                         baseVertex = submesh.baseVertex,
                         vertexCount = submesh.vertexCount,
                         isSkinned = isSkinned,
-                        rendererId = rendererId
                     };
-
-                    rendererId++;
 
                     int hash = GenerateMaterialHash(mat);
 
@@ -181,6 +177,7 @@ namespace Graphlit.Optimizer
             }
 
             var animatedProps = GetAnimatedProperties(ctx);
+
 
             foreach (var drawCallGroup in drawCallsMap)
             {
@@ -239,7 +236,22 @@ namespace Graphlit.Optimizer
 
             var groups = drawCalls.GroupBy(x => x.material);
 
+            var shaderToggles = new List<ShaderToggle>();
 
+            int rendererId = 0;
+            for (int i = 0; i < drawCalls.Count; i++)
+            {
+                DrawCall draw = drawCalls[i];
+                draw.rendererId = rendererId++;
+                drawCalls[i] = draw;
+
+                ShaderToggle toggle = new()
+                {
+                    index = draw.rendererId,
+                    name = draw.renderer.name.RemoveWhitespace().Replace("(", "").Replace(")", "")
+                };
+                shaderToggles.Add(toggle);
+            }
 
             var lockMaterials = new List<Material>();
 
@@ -301,6 +313,7 @@ namespace Graphlit.Optimizer
             serializedGraph.data.unlocked = false;
             serializedGraph.data.enableLockMaterials = true;
             serializedGraph.data.lockMaterials = lockMaterials;
+            serializedGraph.data.shaderToggles = shaderToggles;
 
             int referenceCullMode = (int)lockMaterials[0].GetFloat("_Cull");
             for (int i = 1; i < lockMaterials.Count; i++)

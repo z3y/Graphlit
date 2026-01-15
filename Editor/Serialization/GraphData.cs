@@ -5,6 +5,12 @@ using static Graphlit.SubgraphOutputNode;
 
 namespace Graphlit
 {
+    public struct ShaderToggle
+    {
+        public string name;
+        public int index;
+    }
+
     [System.Serializable]
     public class GraphData
     {
@@ -30,7 +36,7 @@ namespace Graphlit
         [NonSerialized] public bool optimizerMixedCull = false;
         [NonSerialized] public List<Material> lockMaterials;
         [NonSerialized] public List<int> materialIDThresholds;
-
+        [NonSerialized] public List<ShaderToggle> shaderToggles;
 
         public enum GraphPrecision
         {
