@@ -27,7 +27,7 @@ namespace Graphlit
         Texture3D = 10,
         TextureCubeArray = 11,
         Toggle = 12,
-        KeywordToggle = 13
+        KeywordToggle = 13 // Deprecated, use Toggle with isStaticKeywordToggle instead
     }
 
     [Serializable]
@@ -516,7 +516,7 @@ namespace Graphlit
         void OnGUIToggle(Rect rect)
         {
             EditorGUI.BeginChangeCheck();
-            isStaticKeywordToggle = EditorGUILayout.Toggle("Toggle Keyword", isStaticKeywordToggle);
+            isStaticKeywordToggle = EditorGUILayout.Toggle(new GUIContent("Toggle Keyword", "Use a static keyword toggle evaluated at compile time instead of an if statement"), isStaticKeywordToggle);
             if (EditorGUI.EndChangeCheck())
             {
                 if (isStaticKeywordToggle && string.IsNullOrEmpty(_toggleKeywordName))
@@ -761,7 +761,8 @@ namespace Graphlit
             {
                 void OnTypeSelected(object data)
                 {
-                    var type = (PropertyType)data;
+                    var enumName = (string)data;
+                    Enum.TryParse(enumName, out PropertyType type);
                     properties.Add(new PropertyDescriptor(type));
                     list.Select(properties.Count - 1);
                 }
@@ -777,13 +778,32 @@ namespace Graphlit
                     list.Select(properties.Count - 1);
                 }
 
-                var menu = new GenericMenu();
-                foreach (PropertyType value in Enum.GetValues(typeof(PropertyType)))
+                void OnKeywordToggleSelected(object data)
                 {
-                    menu.AddItem(new GUIContent(Enum.GetName(typeof(PropertyType), value)), false, OnTypeSelected, value);
+                    var p = new PropertyDescriptor(PropertyType.Toggle)
+                    {
+                        isStaticKeywordToggle = true,
+                        _toggleKeywordName = "shader_feature_local_fragment _KEYWORD"
+                    };
+                    properties.Add(p);
+                    list.Select(properties.Count - 1);
                 }
 
-                menu.AddItem(new GUIContent("Texture 2D (Normal Map)"), false, OnNormalMapSelected, null);
+                var menu = new GenericMenu();
+                var enumNames = Enum.GetNames(typeof(PropertyType));
+                foreach (var enumName in enumNames.OrderBy(n => n).ToArray())
+                {
+                    menu.AddItem(new GUIContent(enumName), false, OnTypeSelected, enumName);
+                    if (enumName == "Texture2D")
+                    {
+                        menu.AddItem(new GUIContent("Texture 2D (Normal Map)"), false, OnNormalMapSelected, null);
+                    }
+                    else if (enumName == "Toggle")
+                    {
+                        menu.AddItem(new GUIContent("Toggle (Keyword)"), false, OnKeywordToggleSelected, null);
+                    }
+                }
+
 
 
                 menu.ShowAsContext();
