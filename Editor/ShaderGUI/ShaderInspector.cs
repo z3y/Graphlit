@@ -236,6 +236,18 @@ namespace Graphlit
             _shader = _material.shader;
 
             PraseProperties(editor, properties);
+
+            PropertyElement[] array = _folders.SelectMany(x => x.elements).Where(x => x.extraProperty >= 0).ToArray();
+            for (int i = 0; i < array.Length; i++)
+            {
+                PropertyElement property = array[i];
+                var extraName = properties[property.extraProperty].name;
+
+                foreach (var folder in _folders)
+                {
+                    folder.elements.RemoveAll(x => x.referenceName == extraName);
+                }
+            }
         }
 
 
