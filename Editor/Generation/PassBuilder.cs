@@ -285,7 +285,7 @@ namespace Graphlit
             if (outlinePass) sb.AppendLine("#define OUTLINE_PASS");
             foreach (var property in properties)
             {
-                if (property.type == PropertyType.KeywordToggle)
+                if (property.type == PropertyType.KeywordToggle || property.isStaticKeywordToggle)
                 {
                     if (property.keywordPassFlags == 0 || generationMode == GenerationMode.Preview)
                     {
@@ -299,6 +299,16 @@ namespace Graphlit
                             sb.AppendLine(property.GetFieldDeclaration(generationMode));
                         }
                     }
+                }
+
+                if (property.isStaticKeywordToggle)
+                {
+                    var refName = property.GetReferenceName(generationMode);
+                    sb.AppendLine($"#ifdef {property.KeywordName}");
+                    sb.AppendLine($"static const bool {refName} = true;");
+                    sb.AppendLine("#else");
+                    sb.AppendLine($"static const bool {refName} = false;");
+                    sb.AppendLine("#endif");
                 }
             }
             if (AudioLinkExists)
@@ -353,6 +363,10 @@ namespace Graphlit
                 foreach (var property in properties)
                 {
                     if (property.IsTextureType || property.type == PropertyType.KeywordToggle || property.declaration == PropertyDeclaration.Instance)
+                    {
+                        continue;
+                    }
+                    if (property.isStaticKeywordToggle)
                     {
                         continue;
                     }
@@ -451,6 +465,11 @@ namespace Graphlit
                 {
                     continue;
                 }
+                if (property.isStaticKeywordToggle)
+                {
+                    continue;
+                }
+
                 string referenceName = property.GetReferenceName(generationMode);
                 string referenceNameArray = referenceName + "_Array";
                 string typeOnly = property.GetFieldTypeOnly();

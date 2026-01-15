@@ -110,10 +110,13 @@ namespace Graphlit
         [SerializeField] public float rangeY;
         [SerializeField] string _value;
         [SerializeField] string _autoKeywordName;
+        [SerializeField] string _toggleKeywordName;
         [SerializeField] string _defaultTexture; // read only
         [SerializeField] Texture _defaultTextureObject;
         [SerializeField] public PropertyDeclaration declaration = PropertyDeclaration.Local;
         [SerializeField] public KeywordPassFlags keywordPassFlags = (KeywordPassFlags)(-1);
+
+        [SerializeField] public bool isStaticKeywordToggle = false;
 
         [NonSerialized] public bool autoKeyword = false;
 
@@ -208,10 +211,17 @@ namespace Graphlit
         {
             get
             {
-                string[] split = referenceName.Split(' ');
+                string name = referenceName;
+
+                if (isStaticKeywordToggle)
+                {
+                    name = _toggleKeywordName;
+                }
+
+                string[] split = name.Split(' ');
                 if (split.Length < 2)
                 {
-                    Debug.LogError($"Wrong keyword declaration: {referenceName}");
+                    Debug.LogError($"Wrong keyword declaration: {name}");
                     return "_KEYWORD";
                 }
                 return split[1];
@@ -302,6 +312,11 @@ namespace Graphlit
                 return string.Empty;
             }
 
+            if (isStaticKeywordToggle)
+            {
+                return $"#pragma {_toggleKeywordName}";
+            }
+
             return type switch
             {
                 PropertyType.Float => $"float {referenceName};",
@@ -359,7 +374,7 @@ namespace Graphlit
             switch (type)
             {
                 case PropertyType.Toggle:
-                    sb.Append("[ToggleUI]");
+                    sb.Append(isStaticKeywordToggle ? $"[Toggle({KeywordName})]" : "[ToggleUI]");
                     break;
                 case PropertyType.KeywordToggle:
                     sb.Append($"[Toggle({KeywordName})]");
@@ -462,7 +477,7 @@ namespace Graphlit
                 _autoKeywordName = EditorGUILayout.TextField("Auto Keyword Name", _autoKeywordName);
             }
 
-            if (type == PropertyType.KeywordToggle)
+            if (type == PropertyType.KeywordToggle || isStaticKeywordToggle)
             {
                 keywordPassFlags = (KeywordPassFlags)EditorGUILayout.EnumFlagsField("Pass Flags", keywordPassFlags);
             }
@@ -490,13 +505,31 @@ namespace Graphlit
         void OnGUIBool(Rect rect)
         {
             EditorGUI.BeginChangeCheck();
-            bool newValue = EditorGUI.Toggle(rect, ShouldDisplayName(rect) ? "Value" : "", FloatValue == 1);
+            bool newValue = EditorGUI.Toggle(rect, ShouldDisplayName(rect) ? "Toggle Value" : "", FloatValue == 1);
             if (EditorGUI.EndChangeCheck())
             {
                 FloatValue = newValue ? 1 : 0;
                 UpdatePreviewMaterial();
             }
         }
+
+        void OnGUIToggle(Rect rect)
+        {
+            EditorGUI.BeginChangeCheck();
+            isStaticKeywordToggle = EditorGUILayout.Toggle("Toggle Keyword", isStaticKeywordToggle);
+            if (EditorGUI.EndChangeCheck())
+            {
+                if (isStaticKeywordToggle && string.IsNullOrEmpty(_toggleKeywordName))
+                {
+                    _toggleKeywordName = "shader_feature_local_fragment _KEYWORD";
+                }
+            }
+
+            _toggleKeywordName = EditorGUILayout.TextField(new GUIContent("Keyword Declaration", "Example:\n shader_feature_local_fragment _KEYWORD"), _toggleKeywordName);
+
+            EditorGUILayout.Space();
+        }
+
         void OnGUIVector(Rect rect)
         {
             EditorGUI.BeginChangeCheck();
@@ -607,11 +640,18 @@ namespace Graphlit
 
         public void PropertyEditorGUI()
         {
-            OnDefaultGUI();
-
             var rect = EditorGUILayout.GetControlRect();
 
             MaterialPropertyGUI(rect);
+
+            EditorGUILayout.Space();
+
+            if (type == PropertyType.Toggle)
+            {
+                OnGUIToggle(rect);
+            }
+
+            OnDefaultGUI();
         }
 
         public void MaterialPropertyGUI(Rect rect)
@@ -621,7 +661,6 @@ namespace Graphlit
             else if (type == PropertyType.Color) OnGUIColor(rect);
             else if (type == PropertyType.Toggle || type == PropertyType.KeywordToggle) OnGUIBool(rect);
             else if (IsTextureType) OnGUITexture(rect);
-
         }
 
         public Type GetNodeType()
