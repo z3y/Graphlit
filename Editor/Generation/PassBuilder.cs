@@ -402,6 +402,7 @@ namespace Graphlit
         void WriteLockMaterialProperties(ShaderStringBuilder sb, GraphData graphData)
         {
             sb.AppendLine("static uint materialID;");
+            sb.AppendLine("static uint rendererID;");
 
             foreach (var property in properties)
             {
@@ -741,8 +742,9 @@ namespace Graphlit
                 // varyings.materialID = materialID;
                 // ";
                 // sb.AppendLine(materialIdOut);
-                sb.AppendLine("varyings.materialID = attributes.uv0.z;");
-                sb.AppendLine("materialID = varyings.materialID;");
+                sb.AppendLine("varyings.materialID = asint(attributes.uv0.z);");
+                sb.AppendLine("materialID = varyings.materialID & 0xFFF;");
+                sb.AppendLine("rendererID = varyings.materialID >> 12;");
 
                 AppendOptimizerTextureStructs(sb, graphData);
             }
@@ -768,8 +770,9 @@ namespace Graphlit
             sb.AppendLine($"SurfaceDescription output = (SurfaceDescription)0;");
             if (graphData.enableLockMaterials)
             {
-                // setup static materialID
-                sb.AppendLine($"materialID = varyings.materialID;");
+                // setup static materialID and rendererID
+                sb.AppendLine("materialID = varyings.materialID & 0xFFF;");
+                sb.AppendLine("rendererID = varyings.materialID >> 12;");
 
                 AppendOptimizerTextureStructs(sb, graphData);
 

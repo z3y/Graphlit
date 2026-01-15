@@ -7,6 +7,7 @@ using System.Text;
 using UnityEditor;
 using System.IO;
 using nadena.dev.ndmf.vrchat;
+using Unity.Mathematics;
 
 [assembly: ExportsPlugin(typeof(Graphlit.Optimizer.GraphlitMaterialCombiner))]
 
@@ -34,6 +35,7 @@ namespace Graphlit.Optimizer
             public int baseVertex;
             public int vertexCount;
             public bool isSkinned;
+            public int rendererId;
         }
 
         struct AnimatedProperty
@@ -102,7 +104,7 @@ namespace Graphlit.Optimizer
 
             var drawCallsMap = new Dictionary<int, List<DrawCall>>();
 
-
+            int rendererId = 0;
             foreach (var renderer in renderers)
             {
                 Mesh mesh;
@@ -153,8 +155,11 @@ namespace Graphlit.Optimizer
                         submeshIndex = submeshIndex,
                         baseVertex = submesh.baseVertex,
                         vertexCount = submesh.vertexCount,
-                        isSkinned = isSkinned
+                        isSkinned = isSkinned,
+                        rendererId = rendererId
                     };
+
+                    rendererId++;
 
                     int hash = GenerateMaterialHash(mat);
 
@@ -257,14 +262,14 @@ namespace Graphlit.Optimizer
                         List<Vector3> uvs = new();
                         meshCopy.GetUVs(0, uvs);
 
-                        float idAsFloat = materialID;
+                        float uvz = math.asfloat(materialID + (draw.rendererId << 12));
 
                         var indices = meshCopy.GetIndices(draw.submeshIndex);
 
                         for (int j = 0; j < indices.Length; j++)
                         {
                             Vector3 uv = uvs[indices[j]];
-                            uv.z = idAsFloat;
+                            uv.z = uvz;
                             uvs[indices[j]] = uv;
                         }
 
