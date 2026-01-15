@@ -116,6 +116,11 @@ namespace Graphlit
 
             foreach (var folder in _folders)
             {
+                if (folder.elements.Count == 0)
+                {
+                    continue;
+                }
+
                 EditorGUI.indentLevel = baseIndentation;
                 CoreEditorUtils.DrawSplitter();
                 const string folderPrefix = "folder_";
