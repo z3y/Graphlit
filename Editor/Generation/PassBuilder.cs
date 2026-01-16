@@ -739,7 +739,21 @@ namespace Graphlit
                     value = mat.GetFloat(referenceName).ToString(CultureInfo.InvariantCulture);
                     break;
                 case PropertyType.Color:
-                    value = typeOnly + mat.GetColor(referenceName).linear.ToString()[4..];
+                    if (property.defaultAttributes.HasFlag(MaterialPropertyAttribute.HDR))
+                    {
+                        if (property.defaultAttributes.HasFlag(MaterialPropertyAttribute.Gamma))
+                        {
+                            value = typeOnly + mat.GetColor(referenceName).linear.ToString()[4..];
+                        }
+                        else
+                        {
+                            value = typeOnly + mat.GetColor(referenceName).ToString()[4..];
+                        }
+                    }
+                    else
+                    {
+                        value = typeOnly + mat.GetColor(referenceName).linear.ToString()[4..];
+                    }
                     break;
                 case PropertyType.Float2:
                     value = typeOnly + ((Vector2)mat.GetVector(referenceName)).ToString();
