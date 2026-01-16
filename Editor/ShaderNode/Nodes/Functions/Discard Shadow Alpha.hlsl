@@ -1,7 +1,10 @@
-void DiscardShadowAlpha(half alpha, out half Alpha)
+void DiscardShadowAlpha(half alpha, bool shouldDiscard, out half Alpha)
 {
 	#ifdef UNITY_PASS_SHADOWCASTER
-	discard;
+	if (shouldDiscard)
+	{
+		discard;
+	}
 	#endif
 	Alpha = alpha;
 }
