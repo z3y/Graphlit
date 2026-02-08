@@ -701,6 +701,26 @@
                 "declaration": 0,
                 "keywordPassFlags": -1,
                 "isStaticKeywordToggle": false
+            },
+            {
+                "guid": "886efa4d-c026-4349-84b7-34e4a4d40028",
+                "referenceName": "",
+                "displayName": "Rim Mask",
+                "type": 7,
+                "customAttributes": "[Folder(Rim Light)]",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "",
+                "_autoKeywordName": "",
+                "_toggleKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1,
+                "isStaticKeywordToggle": false
             }
         ],
         "precision": 0,
@@ -742,7 +762,7 @@
         {
             "type": "Graphlit.RegisterVariableNode",
             "guid": "03c48492-e43f-4517-94ff-5d4cfd2f655a",
-            "x": -1039,
+            "x": -961,
             "y": 1779,
             "connections": [
                 {
@@ -898,7 +918,7 @@
                 {
                     "a": 3,
                     "b": 0,
-                    "node": "8deb5c67-159c-43ff-a6d7-4661fa142fea"
+                    "node": "58ded25d-b8dc-4688-82de-4f4c4ac40749"
                 }
             ],
             "precision": 0,
@@ -1004,6 +1024,23 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_code\":\"void CustomFunction(float3 In, out float3 Out)\\n{\\n  Out = In;\\n}\",\"_file\":\"10900000|85a00f5fef33e1449bd1f3c09192fcfd\",\"_shaderInclude\":{\"instanceID\":0},\"_useFile\":true}"
+        },
+        {
+            "type": "Graphlit.SampleTexture2DNode",
+            "guid": "233906b5-7375-4aa3-a670-118ce4b1abaf",
+            "x": -1158,
+            "y": 2119,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 1,
+                    "node": "6cac7963-28e1-4732-96e8-785759aed422"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"autoKeyword\":false}"
         },
         {
             "type": "Graphlit.LerpNode",
@@ -1547,6 +1584,33 @@
             "data": ""
         },
         {
+            "type": "Graphlit.LerpNode",
+            "guid": "58ded25d-b8dc-4688-82de-4f4c4ac40749",
+            "x": -962,
+            "y": 1943,
+            "connections": [
+                {
+                    "a": 0,
+                    "b": 0,
+                    "node": "f3bcb37d-dcc4-49d7-9400-e7073b28636d"
+                },
+                {
+                    "a": 3,
+                    "b": 1,
+                    "node": "8deb5c67-159c-43ff-a6d7-4661fa142fea"
+                },
+                {
+                    "a": 4,
+                    "b": 2,
+                    "node": "233906b5-7375-4aa3-a670-118ce4b1abaf"
+                }
+            ],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": ""
+        },
+        {
             "type": "Graphlit.SplitNode",
             "guid": "5a897092-59f5-43ab-ad34-37dafeb9a049",
             "x": 763,
@@ -1672,6 +1736,17 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"_ref\":\"3a12811e-32b3-4559-982a-dd53b07f0512\"}"
+        },
+        {
+            "type": "Graphlit.Texture2DPropertyNode",
+            "guid": "6cac7963-28e1-4732-96e8-785759aed422",
+            "x": -1285,
+            "y": 2119,
+            "connections": [],
+            "precision": 1,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_ref\":\"886efa4d-c026-4349-84b7-34e4a4d40028\"}"
         },
         {
             "type": "Graphlit.FloatPropertyNode",
@@ -2347,13 +2422,13 @@
         {
             "type": "Graphlit.RegisterVariableNode",
             "guid": "d1af0887-e23d-4fe7-aac6-71c8af72638f",
-            "x": -1039,
-            "y": 1850,
+            "x": -839,
+            "y": 1858,
             "connections": [
                 {
                     "a": 3,
                     "b": 0,
-                    "node": "8deb5c67-159c-43ff-a6d7-4661fa142fea"
+                    "node": "58ded25d-b8dc-4688-82de-4f4c4ac40749"
                 }
             ],
             "precision": 0,
@@ -2690,6 +2765,17 @@
             "preview": 0,
             "previewDisabled": true,
             "data": "{\"autoKeyword\":false}"
+        },
+        {
+            "type": "Graphlit.FloatNode",
+            "guid": "f3bcb37d-dcc4-49d7-9400-e7073b28636d",
+            "x": -1075,
+            "y": 1952,
+            "connections": [],
+            "precision": 0,
+            "preview": 0,
+            "previewDisabled": true,
+            "data": "{\"_value\":0.0}"
         },
         {
             "type": "Graphlit.LerpNode",
@@ -3033,14 +3119,18 @@
             "title": "Rim Light",
             "elements": [
                 "03c48492-e43f-4517-94ff-5d4cfd2f655a",
+                "233906b5-7375-4aa3-a670-118ce4b1abaf",
                 "30c170d8-0400-4b56-b7f8-3b249307862f",
                 "422ab769-6283-40ca-8cc9-261774f524c4",
                 "46673322-d5a4-4dcf-9848-1fc95f5c0b71",
+                "58ded25d-b8dc-4688-82de-4f4c4ac40749",
+                "6cac7963-28e1-4732-96e8-785759aed422",
                 "8deb5c67-159c-43ff-a6d7-4661fa142fea",
                 "a15c2659-f923-48dd-a3e3-7b3ae85139ef",
                 "c4e554b6-9c5b-4731-8efe-28f21c5fb01c",
                 "ca0cf8df-78d3-40fe-9482-0f27d46c6592",
-                "d1af0887-e23d-4fe7-aac6-71c8af72638f"
+                "d1af0887-e23d-4fe7-aac6-71c8af72638f",
+                "f3bcb37d-dcc4-49d7-9400-e7073b28636d"
             ]
         }
     ]
