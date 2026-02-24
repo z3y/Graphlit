@@ -266,6 +266,7 @@ namespace Graphlit
             if (terrainCompatible)
             {
                 builder.subshaderTags["TerrainCompatible"] = "True";
+                builder.subshaderTags["SplatCount"] = "16";
             }
         }
         protected void TerrainPass(PassBuilder pass)

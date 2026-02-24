@@ -54,19 +54,15 @@ TEXTURE2D(_Splat1);
 TEXTURE2D(_Splat2);
 TEXTURE2D(_Splat3);
 
-#ifdef _NORMALMAP
 TEXTURE2D(_Normal0); SAMPLER(sampler_Normal0);
 TEXTURE2D(_Normal1);
 TEXTURE2D(_Normal2);
 TEXTURE2D(_Normal3);
-#endif
 
-#ifdef _MASKMAP
 TEXTURE2D(_Mask0); SAMPLER(sampler_Mask0);
 TEXTURE2D(_Mask1);
 TEXTURE2D(_Mask2);
 TEXTURE2D(_Mask3);
-#endif
 
 #ifdef _ALPHATEST_ON
     TEXTURE2D(_TerrainHolesTexture);
