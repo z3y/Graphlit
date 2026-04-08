@@ -12,6 +12,10 @@
     #include "Packages/com.z3y.vrctrace/Runtime/Shaders/VRCTrace.hlsl"
 #endif
 
+// make config still work
+#ifdef _LIGHTMAPPED_SPECULAR
+#define _LightmappedSpecular true
+#endif
 
 float4 frag(Varyings input) : SV_Target
 {

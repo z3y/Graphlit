@@ -19,8 +19,6 @@ namespace Graphlit
             data.shaderName += " " + nameSuffix;
             data.outlinePass = outlinePass;
             data.depthFillPass = depthFillPass;
-
-            Debug.Log(data.shaderName);
         }
 
         public override void OnImportAsset(AssetImportContext ctx)
