@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 136f046c9694c9246a2d865113f77b72
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 49a6204b5cb3efd48b8e16ffeba76eda, type: 3}
+  graphRelativePath: Toon
+  nameSuffix: Outline
+  outlinePass: 1
+  depthFillPass: 0

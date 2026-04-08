@@ -64,7 +64,7 @@ namespace Graphlit
 
         }
 
-        private static void GenerateShaderVariant(AssetImportContext ctx, BuildTarget target, ShaderGraphView graphView, int id)
+        public static void GenerateShaderVariant(AssetImportContext ctx, BuildTarget target, ShaderGraphView graphView, int id)
         {
             var shaderNodes = graphView.cachedNodesForBuilder;
             var dependencies = new HashSet<string>();
