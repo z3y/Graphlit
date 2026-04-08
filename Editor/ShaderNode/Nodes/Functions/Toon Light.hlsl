@@ -74,7 +74,7 @@ void ComputeLightDirection(float3 mainLightDir, float3 mainLightCol, out float3 
     lightDirectionForSH9 = dot(lightDirectionForSH9, lightDirectionForSH9) < 0.000001 ? 0 : normalize(lightDirectionForSH9);
 }
 
-void FlatLightNode(float4 ShadowCoord, float2 LightmapUV, float3 PositionWS, out float3 Color, out float3 Direction, out float DistanceAttenuation, out float ShadowAttenuation, out float3 shMin, out float3 shMax, float Min = 0, float Max = 1, float MonochromeLighting = 0, bool applyShadow = true)
+void FlatLightNode(float4 ShadowCoord, float4 LightmapUV, float3 PositionWS, out float3 Color, out float3 Direction, out float DistanceAttenuation, out float ShadowAttenuation, out float3 shMin, out float3 shMax, float Min = 0, float Max = 1, float MonochromeLighting = 0, bool applyShadow = true)
 {
     shMin = 0;
     shMax = 0;
@@ -95,7 +95,7 @@ void FlatLightNode(float4 ShadowCoord, float2 LightmapUV, float3 PositionWS, out
     
 		float3 lightCol;
 		float3 lightDir;
-        MainLightData(ShadowCoord, LightmapUV, PositionWS, lightCol, lightDir, DistanceAttenuation, ShadowAttenuation);
+        MainLightData(ShadowCoord, LightmapUV.xy, PositionWS, lightCol, lightDir, DistanceAttenuation, ShadowAttenuation);
 		float3 lightDirectionForSH9;
 		ComputeLightDirection(lightDir, lightCol, Direction, lightDirectionForSH9, L1r, L1g, L1b);
 

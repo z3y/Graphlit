@@ -26,8 +26,8 @@ namespace Graphlit
         TextureCube = 9,
         Texture3D = 10,
         TextureCubeArray = 11,
-        Bool = 12,
-        KeywordToggle = 13
+        Toggle = 12,
+        KeywordToggle = 13 // Deprecated, use Toggle with isStaticKeywordToggle instead
     }
 
     [Serializable]
@@ -85,7 +85,7 @@ namespace Graphlit
         IntRange = 1 << 10,
         Linear = 1 << 11
     }
-    
+
     [Serializable, Flags]
     public enum KeywordPassFlags
     {
@@ -110,12 +110,17 @@ namespace Graphlit
         [SerializeField] public float rangeY;
         [SerializeField] string _value;
         [SerializeField] string _autoKeywordName;
+        [SerializeField] string _toggleKeywordName;
         [SerializeField] string _defaultTexture; // read only
         [SerializeField] Texture _defaultTextureObject;
         [SerializeField] public PropertyDeclaration declaration = PropertyDeclaration.Local;
         [SerializeField] public KeywordPassFlags keywordPassFlags = (KeywordPassFlags)(-1);
 
+        [SerializeField] public bool isStaticKeywordToggle = false;
+
         [NonSerialized] public bool autoKeyword = false;
+
+        [NonSerialized] public bool animatable = false;
 
         [NonSerialized] public bool useReferenceName = false;
         [NonSerialized] public Texture tempTexture = null;
@@ -206,10 +211,17 @@ namespace Graphlit
         {
             get
             {
-                string[] split = referenceName.Split(' ');
+                string name = referenceName;
+
+                if (isStaticKeywordToggle)
+                {
+                    name = _toggleKeywordName;
+                }
+
+                string[] split = name.Split(' ');
                 if (split.Length < 2)
                 {
-                    Debug.LogError($"Wrong keyword declaration: {referenceName}");
+                    Debug.LogError($"Wrong keyword declaration: {name}");
                     return "_KEYWORD";
                 }
                 return split[1];
@@ -217,7 +229,7 @@ namespace Graphlit
         }
 
         public bool IsTextureType => type == PropertyType.Texture2D || type == PropertyType.Texture2DArray || type == PropertyType.TextureCube || type == PropertyType.TextureCubeArray || type == PropertyType.Texture3D;
-        public bool SupportsGPUInstancing => type == PropertyType.Float || type == PropertyType.Float2 || type == PropertyType.Float4 || type == PropertyType.Float3 || type == PropertyType.Integer || type == PropertyType.Color || type == PropertyType.Bool;
+        public bool SupportsGPUInstancing => type == PropertyType.Float || type == PropertyType.Float2 || type == PropertyType.Float4 || type == PropertyType.Float3 || type == PropertyType.Integer || type == PropertyType.Color || type == PropertyType.Toggle;
         public bool HasRange => rangeX != rangeY;
 
         public PropertyDescriptor(PropertyType type, string displayName = null, string referenceName = "")
@@ -254,7 +266,7 @@ namespace Graphlit
                 PropertyType.Float4 => VectorValue.ToString(),
                 PropertyType.Color => VectorValue.ToString(),
                 PropertyType.Integer => FloatValue.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                PropertyType.Bool => FloatValue.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                PropertyType.Toggle => FloatValue.ToString(System.Globalization.CultureInfo.InvariantCulture),
                 PropertyType.KeywordToggle => FloatValue.ToString(System.Globalization.CultureInfo.InvariantCulture),
                 _ => throw new System.NotImplementedException(),
             };
@@ -281,7 +293,7 @@ namespace Graphlit
                 PropertyType.TextureCube => "Cube",
                 PropertyType.Texture2DArray => "2DArray",
                 PropertyType.TextureCubeArray => "CubeArray",
-                PropertyType.Bool => "Float",
+                PropertyType.Toggle => "Float",
                 PropertyType.KeywordToggle => "Float",
                 _ => throw new System.NotImplementedException()
             };
@@ -300,6 +312,11 @@ namespace Graphlit
                 return string.Empty;
             }
 
+            if (isStaticKeywordToggle)
+            {
+                return $"#pragma {_toggleKeywordName}";
+            }
+
             return type switch
             {
                 PropertyType.Float => $"float {referenceName};",
@@ -308,13 +325,28 @@ namespace Graphlit
                 PropertyType.Float4 => $"float4 {referenceName};",
                 PropertyType.Color => $"float4 {referenceName};",
                 PropertyType.Integer => $"int {referenceName};",
-                PropertyType.Bool => $"float {referenceName};",
+                PropertyType.Toggle => $"float {referenceName};",
                 PropertyType.KeywordToggle => $"#pragma {referenceName}",
                 PropertyType.Texture2D => $"TEXTURE2D({referenceName}); SAMPLER(sampler{referenceName});",
                 PropertyType.TextureCube => $"TEXTURECUBE({referenceName}); SAMPLER(sampler{referenceName});",
                 PropertyType.TextureCubeArray => $"TEXTURECUBE_ARRAY({referenceName}); SAMPLER(sampler{referenceName});",
                 PropertyType.Texture2DArray => $"TEXTURE2D_ARRAY({referenceName}); SAMPLER(sampler{referenceName});",
                 PropertyType.Texture3D => $"TEXTURE3D({referenceName}); SAMPLER(sampler{referenceName});",
+                _ => throw new System.NotImplementedException()
+            };
+        }
+
+        public string GetFieldTypeOnly()
+        {
+            return type switch
+            {
+                PropertyType.Float => $"float",
+                PropertyType.Float2 => $"float2",
+                PropertyType.Float3 => $"float3",
+                PropertyType.Float4 => $"float4",
+                PropertyType.Color => $"float4",
+                PropertyType.Integer => $"int",
+                PropertyType.Toggle => $"float",
                 _ => throw new System.NotImplementedException()
             };
         }
@@ -341,8 +373,8 @@ namespace Graphlit
 
             switch (type)
             {
-                case PropertyType.Bool:
-                    sb.Append("[ToggleUI]");
+                case PropertyType.Toggle:
+                    sb.Append(isStaticKeywordToggle ? $"[Toggle({KeywordName})]" : "[ToggleUI]");
                     break;
                 case PropertyType.KeywordToggle:
                     sb.Append($"[Toggle({KeywordName})]");
@@ -445,7 +477,7 @@ namespace Graphlit
                 _autoKeywordName = EditorGUILayout.TextField("Auto Keyword Name", _autoKeywordName);
             }
 
-            if (type == PropertyType.KeywordToggle)
+            if (type == PropertyType.KeywordToggle || isStaticKeywordToggle)
             {
                 keywordPassFlags = (KeywordPassFlags)EditorGUILayout.EnumFlagsField("Pass Flags", keywordPassFlags);
             }
@@ -473,13 +505,31 @@ namespace Graphlit
         void OnGUIBool(Rect rect)
         {
             EditorGUI.BeginChangeCheck();
-            bool newValue = EditorGUI.Toggle(rect, ShouldDisplayName(rect) ? "Value" : "", FloatValue == 1);
+            bool newValue = EditorGUI.Toggle(rect, ShouldDisplayName(rect) ? "Toggle Value" : "", FloatValue == 1);
             if (EditorGUI.EndChangeCheck())
             {
                 FloatValue = newValue ? 1 : 0;
                 UpdatePreviewMaterial();
             }
         }
+
+        void OnGUIToggle(Rect rect)
+        {
+            EditorGUI.BeginChangeCheck();
+            isStaticKeywordToggle = EditorGUILayout.Toggle(new GUIContent("Toggle Keyword", "Use a static keyword toggle evaluated at compile time instead of an if statement"), isStaticKeywordToggle);
+            if (EditorGUI.EndChangeCheck())
+            {
+                if (isStaticKeywordToggle && string.IsNullOrEmpty(_toggleKeywordName))
+                {
+                    _toggleKeywordName = "shader_feature_local_fragment _KEYWORD";
+                }
+            }
+
+            _toggleKeywordName = EditorGUILayout.TextField(new GUIContent("Keyword Declaration", "Example:\n shader_feature_local_fragment _KEYWORD"), _toggleKeywordName);
+
+            EditorGUILayout.Space();
+        }
+
         void OnGUIVector(Rect rect)
         {
             EditorGUI.BeginChangeCheck();
@@ -556,7 +606,7 @@ namespace Graphlit
         public void UpdatePreviewMaterial(Material m)
         {
             string name = GetReferenceName(GenerationMode.Preview);
-            if (type == PropertyType.Float || type == PropertyType.Bool) m.SetFloat(name, FloatValue);
+            if (type == PropertyType.Float || type == PropertyType.Toggle) m.SetFloat(name, FloatValue);
             else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) m.SetVector(name, VectorValue);
             else if (type == PropertyType.Color) m.SetColor(name, VectorValue);
             else if (IsTextureType)
@@ -590,11 +640,18 @@ namespace Graphlit
 
         public void PropertyEditorGUI()
         {
-            OnDefaultGUI();
-
             var rect = EditorGUILayout.GetControlRect();
 
             MaterialPropertyGUI(rect);
+
+            EditorGUILayout.Space();
+
+            if (type == PropertyType.Toggle)
+            {
+                OnGUIToggle(rect);
+            }
+
+            OnDefaultGUI();
         }
 
         public void MaterialPropertyGUI(Rect rect)
@@ -602,9 +659,8 @@ namespace Graphlit
             if (type == PropertyType.Float) OnGUIFloat(rect);
             else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4) OnGUIVector(rect);
             else if (type == PropertyType.Color) OnGUIColor(rect);
-            else if (type == PropertyType.Bool || type == PropertyType.KeywordToggle) OnGUIBool(rect);
+            else if (type == PropertyType.Toggle || type == PropertyType.KeywordToggle) OnGUIBool(rect);
             else if (IsTextureType) OnGUITexture(rect);
-
         }
 
         public Type GetNodeType()
@@ -617,7 +673,7 @@ namespace Graphlit
                 PropertyType.Float4 => typeof(Float4PropertyNode),
                 PropertyType.Color => typeof(ColorPropertyNode),
                 PropertyType.Integer => typeof(IntegerPropertyNode),
-                PropertyType.Bool => typeof(BooleanPropertyNode),
+                PropertyType.Toggle => typeof(BooleanPropertyNode),
                 PropertyType.Texture2D => typeof(Texture2DPropertyNode),
                 PropertyType.KeywordToggle => typeof(KeywordPropertyNode),
                 PropertyType.Texture2DArray => typeof(Texture2DArrayPropertyNode),
@@ -705,7 +761,8 @@ namespace Graphlit
             {
                 void OnTypeSelected(object data)
                 {
-                    var type = (PropertyType)data;
+                    var enumName = (string)data;
+                    Enum.TryParse(enumName, out PropertyType type);
                     properties.Add(new PropertyDescriptor(type));
                     list.Select(properties.Count - 1);
                 }
@@ -721,13 +778,32 @@ namespace Graphlit
                     list.Select(properties.Count - 1);
                 }
 
-                var menu = new GenericMenu();
-                foreach (PropertyType value in Enum.GetValues(typeof(PropertyType)))
+                void OnKeywordToggleSelected(object data)
                 {
-                    menu.AddItem(new GUIContent(Enum.GetName(typeof(PropertyType), value)), false, OnTypeSelected, value);
+                    var p = new PropertyDescriptor(PropertyType.Toggle)
+                    {
+                        isStaticKeywordToggle = true,
+                        _toggleKeywordName = "shader_feature_local_fragment _KEYWORD"
+                    };
+                    properties.Add(p);
+                    list.Select(properties.Count - 1);
                 }
 
-                menu.AddItem(new GUIContent("Texture 2D (Normal Map)"), false, OnNormalMapSelected, null);
+                var menu = new GenericMenu();
+                var enumNames = Enum.GetNames(typeof(PropertyType));
+                foreach (var enumName in enumNames.OrderBy(n => n).ToArray())
+                {
+                    menu.AddItem(new GUIContent(enumName), false, OnTypeSelected, enumName);
+                    if (enumName == "Texture2D")
+                    {
+                        menu.AddItem(new GUIContent("Texture 2D (Normal Map)"), false, OnNormalMapSelected, null);
+                    }
+                    else if (enumName == "Toggle")
+                    {
+                        menu.AddItem(new GUIContent("Toggle (Keyword)"), false, OnKeywordToggleSelected, null);
+                    }
+                }
+
 
 
                 menu.ShowAsContext();
@@ -782,7 +858,7 @@ namespace Graphlit
                 PropertyType.Float3 => new Float3Node(),
                 PropertyType.Float4 => new Float4Node(),
                 PropertyType.Color => new ColorNode(),
-                PropertyType.KeywordToggle or PropertyType.Bool => new BooleanConstantNode(),
+                PropertyType.KeywordToggle or PropertyType.Toggle => new BooleanConstantNode(),
                 _ => null,
             };
         }

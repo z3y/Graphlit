@@ -377,7 +377,7 @@ namespace Graphlit
             {
                 ports = new int[] { BlendFinalColorNode.METALLIC, BlendFinalColorNode.IN_ALPHA };
             }
-            
+
             // skip generating inputs for keyword toggle that will never be true
             if (GenerationMode == GenerationMode.Final && shaderNode is KeywordPropertyNode propertyNode)
             {
@@ -397,13 +397,13 @@ namespace Graphlit
                                 var incomingNode = (ShaderNode)incomingPort.node;
                                 incomingNode.PortData[incomingPort.GetPortID()] = new GeneratedPortData(new Float(1), "0");
                             }
-                            
+
                             ports = new int[] { KeywordPropertyNode.FALSE };
                         }
                     }
                 }
             }
-            
+
             foreach (var port in shaderNode.Inputs)
             {
                 if (ports is not null && !ports.Contains(port.GetPortID()))
@@ -417,7 +417,7 @@ namespace Graphlit
                     continue;
                 }
 
-                
+
                 Edge input = connections[0];
 
                 var inputNode = (ShaderNode)input.output.node;
@@ -492,6 +492,62 @@ namespace Graphlit
             return _sb.ToString();
         }
 
+
+        void AppendShaderToggleProperties()
+        {
+            var shaderToggles = ShaderGraphView.graphData.shaderToggles;
+            if (shaderToggles is null || shaderToggles.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var toggle in shaderToggles)
+            {
+                _sb.AppendLine($"[ToggleUI] _ShaderToggle_{toggle.name}(\"Shader Toggle {toggle.name}\", Float) = 0");
+            }
+        }
+
+        private void AppendOptimizerProperties(IEnumerable<PropertyDescriptor> props)
+        {
+            var graphData = ShaderGraphView.graphData;
+            if (!graphData.enableLockMaterials)
+            {
+                return;
+            }
+
+            var mats = graphData.lockMaterials;
+
+            foreach (var prop in props)
+            {
+                if (!prop.IsTextureType)
+                {
+                    continue;
+                }
+
+                var referenceName = prop.GetReferenceName(GenerationMode.Final);
+
+                if (prop.defaultAttributes.HasFlag(MaterialPropertyAttribute.NonModifiableTextureData))
+                {
+                    continue;
+                }
+
+
+                for (int i = 0; i < mats.Count; i++)
+                {
+                    Material mat = mats[i];
+                    var tex = mat.GetTexture(referenceName);
+                    if (tex)
+                    {
+                        string arrayName = referenceName + i.ToString();
+                        _sb.AppendLine("[NoScaleOffset]" + arrayName + " (\"Optimizer Property\", Any) = \"\" {}");
+                        _nonModifiableTextures[arrayName] = mat.GetTexture(referenceName);
+                    }
+                }
+            }
+
+            AppendShaderToggleProperties();
+        }
+
         private void AppendProperties()
         {
             if (unlocked)
@@ -535,7 +591,8 @@ namespace Graphlit
             }
             else
             {
-                foreach (var property in properties.Union(ShaderGraphView.graphData.properties))
+                var allProps = properties.Union(ShaderGraphView.graphData.properties);
+                foreach (var property in allProps)
                 {
                     if (property.ShouldDeclare())
                         _sb.AppendLine(property.GetPropertyDeclaration(GenerationMode.Final));
@@ -553,6 +610,8 @@ namespace Graphlit
                         }
                     }
                 }
+
+                AppendOptimizerProperties(allProps);
 
                 _sb.AppendLine("[HideInInspector]__reset(\"\", Float) = 1");
                 _sb.AppendLine("[HideInInspector]_GraphlitMaterial(\"\", Float) = 1");

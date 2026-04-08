@@ -60,30 +60,7 @@ namespace Graphlit
             graphView.UpdateCachedNodesForBuilder();
 
 
-
-            if (graphView.graphData.generateVariants)
-            {
-
-                string name = graphView.graphData.shaderName;
-                var outlineMode = graphView.graphData.outlinePass;
-
-                graphView.graphData.outlinePass = GraphData.OutlinePassMode.Disabled;
-
-                GenerateShaderVariant(ctx, target, graphView, 0);
-
-                if (outlineMode != GraphData.OutlinePassMode.Disabled)
-                {
-                    graphView.graphData.outlinePass = outlineMode;
-                    graphView.graphData.shaderName += " Outline";
-                    GenerateShaderVariant(ctx, target, graphView, 1);
-                }
-
-                graphView.graphData.shaderName = name;
-            }
-            else
-            {
-                GenerateShaderVariant(ctx, target, graphView, 0);
-            }
+            GenerateShaderVariant(ctx, target, graphView, 0);
 
         }
 

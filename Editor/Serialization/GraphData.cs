@@ -1,8 +1,16 @@
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 using static Graphlit.SubgraphOutputNode;
 
 namespace Graphlit
 {
+    public struct ShaderToggle
+    {
+        public string name;
+        public int index;
+    }
+
     [System.Serializable]
     public class GraphData
     {
@@ -19,12 +27,16 @@ namespace Graphlit
         public VRCFallbackTags vrcFallbackTags = new VRCFallbackTags();
         public bool unlocked = false;
 
-        public bool generateVariants = false;
-
 
         public List<SerializablePortDescriptor> subgraphOutputs = new();
         public List<SerializablePortDescriptor> subgraphInputs = new();
         public int subgraphOutputIdCounter = 0;
+
+        [NonSerialized] public bool enableLockMaterials = false;
+        [NonSerialized] public bool optimizerMixedCull = false;
+        [NonSerialized] public List<Material> lockMaterials;
+        [NonSerialized] public List<int> materialIDThresholds;
+        [NonSerialized] public List<ShaderToggle> shaderToggles;
 
         public enum GraphPrecision
         {

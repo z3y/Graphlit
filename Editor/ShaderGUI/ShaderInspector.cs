@@ -116,6 +116,11 @@ namespace Graphlit
 
             foreach (var folder in _folders)
             {
+                if (folder.elements.Count == 0)
+                {
+                    continue;
+                }
+
                 EditorGUI.indentLevel = baseIndentation;
                 CoreEditorUtils.DrawSplitter();
                 const string folderPrefix = "folder_";
@@ -231,6 +236,18 @@ namespace Graphlit
             _shader = _material.shader;
 
             PraseProperties(editor, properties);
+
+            PropertyElement[] array = _folders.SelectMany(x => x.elements).Where(x => x.extraProperty >= 0).ToArray();
+            for (int i = 0; i < array.Length; i++)
+            {
+                PropertyElement property = array[i];
+                var extraName = properties[property.extraProperty].name;
+
+                foreach (var folder in _folders)
+                {
+                    folder.elements.RemoveAll(x => x.referenceName == extraName);
+                }
+            }
         }
 
 
@@ -618,6 +635,12 @@ namespace Graphlit
 
             bool preserveSpecular = material.HasFloat("_BlendModePreserveSpecular") ?
                 material.GetFloat("_BlendModePreserveSpecular") > 0 : false;
+
+            if (transclipping)
+            {
+                material.SetFloat("_BlendModePreserveSpecular", 1);
+                preserveSpecular = true;
+            }
 
             ToggleKeyword(material, "_SURFACE_TYPE_TRANSPARENT", surfaceType > 0);
             ToggleKeyword(material, "_ALPHATEST_ON", alphaClip);

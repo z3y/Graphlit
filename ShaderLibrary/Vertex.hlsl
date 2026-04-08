@@ -18,6 +18,21 @@ Varyings vert(Attributes input)
     ApplyDecalaryOffsets(positionWS);
     #endif
 
+    #ifdef OPTIMIZER_SHADER_TOGGLES
+    [branch]
+    if (uniformZero) 
+    {
+        return varyings;
+    }
+
+    [branch]
+    if (_ShaderToggle[asint(input.uv0.z) >> 12])
+    {
+        varyings.positionCS = asfloat(-1);
+        return varyings;
+    }
+    #endif
+
 
 #if !defined(UNITY_PASS_META) 
     #ifdef UNPACK_POSITIONWS

@@ -15,7 +15,7 @@ namespace Graphlit
         [SerializeField] private bool _value = false;
 
         PropertyDescriptor _descriptor;
-        PropertyDescriptor Descriptor => _descriptor ??= new(PropertyType.Bool) { guid = viewDataKey };
+        PropertyDescriptor Descriptor => _descriptor ??= new(PropertyType.Toggle) { guid = viewDataKey };
 
         public override bool DisablePreview => true;
         public override void Initialize()
@@ -66,7 +66,7 @@ namespace Graphlit
                 _ref = viewDataKey
             };
 
-            var desc = new PropertyDescriptor(PropertyType.Bool, GetSuggestedPropertyName())
+            var desc = new PropertyDescriptor(PropertyType.Toggle, GetSuggestedPropertyName())
             {
                 guid = viewDataKey,
                 FloatValue = _value ? 1 : 0

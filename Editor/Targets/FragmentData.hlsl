@@ -47,7 +47,7 @@ struct FragmentData
         #if defined(VARYINGS_NEED_FACE) && defined(SHADER_STAGE_FRAGMENT)
             output.frontFace = IS_FRONT_VFACE(varyings.cullFace, true, false);
             #if !defined(LIGHTMAP_ON)
-                if (!output.frontFace) output.normalWS *= -1;
+                // if (!output.frontFace) output.normalWS *= -1;
             #endif
         #endif
 

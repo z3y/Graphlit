@@ -1,4 +1,8 @@
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using UnityEditor.Graphs;
+using UnityEngine;
 
 namespace Graphlit
 {
@@ -111,13 +115,164 @@ namespace Graphlit
                 sb.AppendLine(StencilStates);
             }
         }
+
+        bool AllPropertiesHaveSameValue(List<Material> mats, string referenceName, PropertyType type)
+        {
+            if (mats.Count < 2)
+            {
+                return true;
+            }
+
+            if (type == PropertyType.Color)
+            {
+                var value = mats[0].GetColor(referenceName);
+                for (int i = 1; i < mats.Count; i++)
+                {
+                    if (mats[i].GetColor(referenceName) != value)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            else if (type == PropertyType.Float || type == PropertyType.Toggle)
+            {
+                var value = mats[0].GetFloat(referenceName);
+                for (int i = 1; i < mats.Count; i++)
+                {
+                    if (mats[i].GetFloat(referenceName) != value)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            else if (type == PropertyType.Integer)
+            {
+                var value = mats[0].GetInteger(referenceName);
+                for (int i = 1; i < mats.Count; i++)
+                {
+                    if (mats[i].GetInteger(referenceName) != value)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            else if (type == PropertyType.Float2 || type == PropertyType.Float3 || type == PropertyType.Float4)
+            {
+                var value = mats[0].GetVector(referenceName);
+                for (int i = 1; i < mats.Count; i++)
+                {
+                    if (mats[i].GetVector(referenceName) != value)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            else if (type == PropertyType.Texture2D ||
+                type == PropertyType.Texture2DArray ||
+                type == PropertyType.Texture3D ||
+                type == PropertyType.TextureCube ||
+                type == PropertyType.TextureCubeArray)
+            {
+                var value = mats[0].GetTexture(referenceName);
+                for (int i = 1; i < mats.Count; i++)
+                {
+                    if (mats[i].GetTexture(referenceName) != value)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+
+            return true;
+        }
+
+        struct MaterialId
+        {
+            public Material material;
+            public int id;
+        }
+
+        void WriteShaderToggleUniforms(ShaderStringBuilder sb, GraphData graphData)
+        {
+            var shaderToggles = graphData.shaderToggles;
+            if (shaderToggles is null || shaderToggles.Count == 0)
+            {
+                return;
+            }
+            int length = shaderToggles.Count;
+
+            sb.AppendLine("#define OPTIMIZER_SHADER_TOGGLES");
+
+            sb.AppendLine("cbuffer ShaderToggles");
+            sb.Indent();
+
+            sb.AppendLine($"bool _ShaderToggle[{length}] : packoffset(c0);");
+
+            for (int i = 0; i < length; i++)
+            {
+                sb.AppendLine($"bool _ShaderToggle_{shaderToggles[i].name} : packoffset(c{i});");
+            }
+
+            sb.UnIndent("};");
+        }
+
+        void WriteShaderToggleUniformsCompilerWorkaround(ShaderStringBuilder sb, GraphData graphData)
+        {
+            var shaderToggles = graphData.shaderToggles;
+            if (shaderToggles is null || shaderToggles.Count == 0)
+            {
+                return;
+            }
+            int length = shaderToggles.Count;
+
+            for (int i = 0; i < length; i++)
+            {
+                sb.Append($" + _ShaderToggle_{shaderToggles[i].name}");
+            }
+        }
+
         public void AppendPassHLSL(ShaderStringBuilder sb, GraphData graphData)
         {
             sb.AppendLine();
 
+            if (graphData.enableLockMaterials)
+            {
+                // attributes.RequireVertexID();
+                varyings.RequireUV(0, 3);
+                varyings.RequireCustomString("uint materialID : MATERIALID;");
+
+                if (!properties.Any(x => x.referenceName == "_Cull"))
+                {
+                    properties.Add(new PropertyDescriptor(PropertyType.Float, "Cull", "_Cull"));
+                }
+
+                if (graphData.optimizerMixedCull)
+                {
+                    varyings.RequireCullFace();
+                }
+            }
+
             sb.AppendLine("#pragma target " + target);
             sb.AppendLine("#pragma vertex vert");
             sb.AppendLine("#pragma fragment frag");
+
+            if (graphData.enableLockMaterials)
+            {
+                sb.AppendLine("#define GRAPHLIT_OPTIMIZER_ENABLED");
+
+                var enabledKeywords = graphData.lockMaterials[0].enabledKeywords;
+
+                foreach (var keyword in enabledKeywords)
+                {
+                    sb.AppendLine($"#define {keyword.name}");
+                    sb.AppendLine($"#pragma skip_variants {keyword.name}");
+                }
+            }
 
             if (TemplateOutput.GetRenderPipeline() == TemplateOutput.RenderPipeline.URP)
             {
@@ -130,7 +285,7 @@ namespace Graphlit
             if (outlinePass) sb.AppendLine("#define OUTLINE_PASS");
             foreach (var property in properties)
             {
-                if (property.type == PropertyType.KeywordToggle)
+                if (property.type == PropertyType.KeywordToggle || property.isStaticKeywordToggle)
                 {
                     if (property.keywordPassFlags == 0 || generationMode == GenerationMode.Preview)
                     {
@@ -144,6 +299,16 @@ namespace Graphlit
                             sb.AppendLine(property.GetFieldDeclaration(generationMode));
                         }
                     }
+                }
+
+                if (property.isStaticKeywordToggle)
+                {
+                    var refName = property.GetReferenceName(generationMode);
+                    sb.AppendLine($"#ifdef {property.KeywordName}");
+                    sb.AppendLine($"static const bool {refName} = true;");
+                    sb.AppendLine("#else");
+                    sb.AppendLine($"static const bool {refName} = false;");
+                    sb.AppendLine("#endif");
                 }
             }
             if (AudioLinkExists)
@@ -163,6 +328,11 @@ namespace Graphlit
             varyings.AppendVaryingsStruct(sb);
             sb.UnIndent("};");
 
+            if (varyings.requireCullFace)
+            {
+                sb.AppendLine("#define VARYINGS_NEED_FACE");
+            }
+
             sb.AppendLine("struct VertexDescription");
             sb.Indent();
             foreach (var s in vertexDescriptionStruct)
@@ -179,13 +349,37 @@ namespace Graphlit
             }
             sb.UnIndent("};");
 
-            sb.AppendLine("CBUFFER_START(UnityPerMaterial)");
+            sb.AppendLine();
             foreach (var property in properties)
             {
-                if (property.IsTextureType || property.type == PropertyType.KeywordToggle || property.declaration == PropertyDeclaration.Instance) continue;
+                if (!property.IsTextureType) continue;
                 sb.AppendLine(property.GetFieldDeclaration(generationMode));
             }
-            sb.AppendLine("CBUFFER_END");
+            sb.AppendLine();
+
+            if (!graphData.enableLockMaterials)
+            {
+                sb.AppendLine("CBUFFER_START(UnityPerMaterial)");
+                foreach (var property in properties)
+                {
+                    if (property.IsTextureType || property.type == PropertyType.KeywordToggle || property.declaration == PropertyDeclaration.Instance)
+                    {
+                        continue;
+                    }
+                    if (property.isStaticKeywordToggle)
+                    {
+                        continue;
+                    }
+                    sb.AppendLine(property.GetFieldDeclaration(generationMode));
+                }
+                sb.AppendLine("CBUFFER_END");
+            }
+            else
+            {
+                WriteLockMaterialProperties(sb, graphData);
+                WriteShaderToggleUniforms(sb, graphData);
+            }
+
             sb.AppendLine();
             sb.AppendLine("UNITY_INSTANCING_BUFFER_START(UnityPerInstance)");
             foreach (var property in properties)
@@ -201,14 +395,13 @@ namespace Graphlit
             sb.AppendLine("UNITY_INSTANCING_BUFFER_END(UnityPerInstance)");
             sb.AppendLine();
 
-            foreach (var property in properties)
-            {
-                if (!property.IsTextureType) continue;
-                sb.AppendLine(property.GetFieldDeclaration(generationMode));
-            }
-            sb.AppendLine();
-
             sb.AppendLine("#include \"Packages/com.z3y.graphlit/ShaderLibrary/GraphFunctions.hlsl\"");
+
+
+            if (graphData.enableLockMaterials)
+            {
+                sb.AppendLine("#define Texture2D GraphlitTexture2D");
+            }
 
             foreach (var function in functions)
             {
@@ -223,15 +416,20 @@ namespace Graphlit
                 }
             }
 
+            if (graphData.enableLockMaterials)
+            {
+                sb.AppendLine("#undef Texture2D");
+            }
+
             sb.AppendInclude(vertexDataPath);
             sb.Space();
-            AppendVertexDescription(sb);
+            AppendVertexDescription(sb, graphData);
 
             varyings.AppendUnpackDefinesForTarget(sb);
 
             sb.AppendInclude(fragmentDataPath);
             sb.Space();
-            AppendSurfaceDescription(sb);
+            AppendSurfaceDescription(sb, graphData);
 
             foreach (var include in preincludes)
             {
@@ -241,22 +439,412 @@ namespace Graphlit
             sb.AppendLine("#include_with_pragmas \"" + fragmentShaderPath + '"');
         }
 
-        public void AppendVertexDescription(ShaderStringBuilder sb)
+        int GenerateSamplerStateHash(Texture tex)
+        {
+            var hash = new System.HashCode();
+
+            hash.Add(tex.wrapMode);
+            hash.Add(tex.filterMode);
+            hash.Add(tex.anisoLevel);
+            // hash.Add(tex.wrapModeU);
+            // hash.Add(tex.wrapModeV);
+            // hash.Add(tex.wrapModeW);
+
+            return hash.ToHashCode();
+        }
+
+        void WriteLockMaterialProperties(ShaderStringBuilder sb, GraphData graphData)
+        {
+            sb.AppendLine("float uniformZero;");
+            sb.AppendLine("static uint materialID;");
+            sb.AppendLine("static uint rendererID;");
+
+            foreach (var property in properties)
+            {
+                if (property.IsTextureType || property.type == PropertyType.KeywordToggle || property.declaration == PropertyDeclaration.Instance)
+                {
+                    continue;
+                }
+                if (property.isStaticKeywordToggle)
+                {
+                    continue;
+                }
+
+                string referenceName = property.GetReferenceName(generationMode);
+                string referenceNameArray = referenceName + "_Array";
+                string typeOnly = property.GetFieldTypeOnly();
+
+                bool sameValue = AllPropertiesHaveSameValue(graphData.lockMaterials, referenceName, property.type);
+
+                if (sameValue)
+                {
+                    string stringValue = GetPropertyStringValue(property, typeOnly, referenceName, graphData.lockMaterials[0]);
+                    sb.AppendLine($"const static {typeOnly} {referenceName} = {stringValue};");
+                }
+                else
+                {
+
+                    sb.Append($" const static {typeOnly} ");
+                    sb.Append(referenceNameArray);
+                    int materialCount = graphData.lockMaterials.Count;
+                    sb.Append($"[{materialCount}] = ");
+                    sb.Append("{ ");
+
+                    for (int i = 0; i < materialCount; i++)
+                    {
+                        Material mat = graphData.lockMaterials[i];
+                        string value = GetPropertyStringValue(property, typeOnly, referenceName, mat);
+
+                        sb.Append(value);
+
+                        if (i < materialCount - 1)
+                        {
+                            sb.Append(", ");
+                        }
+                    }
+                    sb.Append(" };");
+                    sb.AppendLine();
+
+                    sb.AppendLine($"#define {referenceName} {referenceNameArray}[materialID]");
+                }
+
+            }
+
+            var samplerStateMap = new Dictionary<int, string>();
+
+            foreach (var property in properties.Where(x => x.IsTextureType))
+            {
+                string referenceName = property.GetReferenceName(GenerationMode.Final);
+                for (int i = 0; i < graphData.lockMaterials.Count; i++)
+                {
+                    Material mat = graphData.lockMaterials[i];
+                    var tex = mat.GetTexture(referenceName);
+                    if (tex)
+                    {
+                        int samplerHash = GenerateSamplerStateHash(tex);
+                        sb.AppendLine($"Texture2D {referenceName}{i};");
+
+                        if (!samplerStateMap.TryGetValue(samplerHash, out var name))
+                        {
+                            string sampler = "optimizer_";
+
+                            sampler += tex.filterMode switch
+                            {
+                                FilterMode.Point => "Point",
+                                FilterMode.Bilinear => "Linear",
+                                FilterMode.Trilinear => "Trilinear",
+                                _ => "Linear",
+                            };
+
+                            sampler += tex.wrapMode switch
+                            {
+                                TextureWrapMode.Repeat => "_Repeat",
+                                TextureWrapMode.Clamp => "_Clamp",
+                                TextureWrapMode.Mirror => "_Mirror",
+                                TextureWrapMode.MirrorOnce => "_MirrorOnce",
+                                _ => "_Repeat",
+                            };
+
+                            if (tex.filterMode != FilterMode.Point)
+                            {
+                                sampler += "_Aniso" + (tex.anisoLevel == 1 ? 16 : tex.anisoLevel);
+                            }
+
+                            samplerStateMap[samplerHash] = sampler;
+                            sb.AppendLine($"SamplerState {sampler};");
+                        }
+                    }
+                }
+            }
+
+            sb.AppendLine("struct GraphlitTexture2D");
+            sb.Indent();
+            // sb.AppendLine("Texture2D tex;");
+            sb.AppendLine("int type;");
+
+            sb.AppendLine("float4 Sample(SamplerState smp, float2 uv)");
+            sb.Indent();
+            AppendOptimizerTextureSampleMethod(sb, graphData, samplerStateMap, "SAMPLE_TEXTURE2D");
+            sb.UnIndent();
+
+            sb.AppendLine("float4 SampleLevel(SamplerState smp, float2 uv, float arg3)");
+            sb.Indent();
+            AppendOptimizerTextureSampleMethod(sb, graphData, samplerStateMap, "SAMPLE_TEXTURE2D_LOD");
+            sb.UnIndent();
+
+            sb.AppendLine("float4 SampleBias(SamplerState smp, float2 uv, float arg3)");
+            sb.Indent();
+            AppendOptimizerTextureSampleMethod(sb, graphData, samplerStateMap, "SAMPLE_TEXTURE2D_BIAS");
+            sb.UnIndent();
+
+            sb.AppendLine("float4 SampleGrad(SamplerState smp, float2 uv, float2 dpdx, float2 dpdy)");
+            sb.Indent();
+            AppendOptimizerTextureSampleMethod(sb, graphData, samplerStateMap, "SAMPLE_TEXTURE2D_GRAD");
+            sb.UnIndent();
+
+
+            sb.UnIndent("};");
+        }
+
+        private void AppendOptimizerTextureSampleMethod(ShaderStringBuilder sb, GraphData graphData, Dictionary<int, string> samplerStateMap, string sampleMethod)
+        {
+            bool useArg3 = sampleMethod != "SAMPLE_TEXTURE2D";
+            bool isGrad = sampleMethod == "SAMPLE_TEXTURE2D_GRAD";
+            if (isGrad)
+            {
+                useArg3 = false;
+            }
+
+            string extraArgs = "";
+            if (sampleMethod == "SAMPLE_TEXTURE2D_LOD" || sampleMethod == "SAMPLE_TEXTURE2D_BIAS")
+            {
+                extraArgs += ", arg3";
+            }
+            if (sampleMethod == "SAMPLE_TEXTURE2D_GRAD")
+            {
+                extraArgs += ", dpdx, dpdy";
+            }
+
+            sb.AppendLine($"if (type == -1)");
+            sb.Indent();
+            sb.AppendLine($"return 0;");
+            sb.UnIndent();
+
+            foreach (var property in properties.Where(x => x.IsTextureType))
+            {
+                sb.AppendLine($"if (type == {properties.IndexOf(property)})");
+                sb.Indent();
+
+                string referenceName = property.GetReferenceName(generationMode);
+                bool sameValue = AllPropertiesHaveSameValue(graphData.lockMaterials, referenceName, property.type);
+
+                string defaultTextureValueString = property.DefaultTextureToValue();
+
+                if (sameValue)
+                {
+                    Material mat = graphData.lockMaterials[0];
+                    var tex = mat.GetTexture(referenceName);
+                    if (tex)
+                    {
+                        int samplerHash = GenerateSamplerStateHash(tex);
+                        sb.AppendLine($"return {sampleMethod}({referenceName}, {samplerStateMap[samplerHash]}, uv{extraArgs}); // {tex.name}");
+                    }
+                    else
+                    {
+                        sb.AppendLine($"return {defaultTextureValueString};");
+                    }
+
+                }
+                else
+                {
+                    var lockMats = graphData.lockMaterials;
+                    int materialCount = lockMats.Count;
+
+                    var sortedMats = new List<MaterialId>();
+
+                    for (int j = 0; j < materialCount; j++)
+                    {
+                        var matId = new MaterialId
+                        {
+                            material = lockMats[j],
+                            id = j
+                        };
+                        sortedMats.Add(matId);
+                    }
+
+                    sortedMats.Sort((a, b) =>
+                    {
+                        var ta = a.material.GetTexture(referenceName);
+                        var tb = b.material.GetTexture(referenceName);
+
+                        if (ta == null && tb == null) return 0;
+                        if (ta == null) return -1;
+                        if (tb == null) return 1;
+
+                        return ta.GetInstanceID().CompareTo(tb.GetInstanceID());
+                    });
+
+
+                    int nonNullTextureCount = lockMats.Count(x => x.GetTexture(referenceName) != null);
+
+                    if (nonNullTextureCount > 2)
+                    {
+                        sb.AppendLine($"[forcecase] switch (materialID) ");
+                    }
+                    else
+                    {
+                        sb.AppendLine($"switch (materialID) ");
+                    }
+
+                    sb.Indent();
+
+                    if (nonNullTextureCount < materialCount)
+                    {
+                        sb.AppendLine($"default: return {defaultTextureValueString};");
+                    }
+                    else
+                    {
+                        sb.AppendLine("default:");
+                    }
+
+                    Texture previousTexture = null;
+
+                    var switchSb = new List<string>();
+
+                    for (int i = sortedMats.Count - 1; i >= 0; i--)
+                    {
+                        Material mat = sortedMats[i].material;
+                        int id = sortedMats[i].id;
+                        var tex = mat.GetTexture(referenceName);
+
+                        if (!tex)
+                        {
+                            continue;
+                        }
+
+                        if (previousTexture == tex)
+                        {
+                            switchSb.Add($"case {id}: // {tex.name}");
+                            continue;
+                        }
+                        else
+                        {
+                            previousTexture = tex;
+                        }
+
+                        int samplerHash = GenerateSamplerStateHash(tex);
+
+                        switchSb.Add($"case {id}: return {sampleMethod}({referenceName}{id}, {samplerStateMap[samplerHash]}, uv{extraArgs}); // {tex.name}");
+                    }
+
+                    for (int i = switchSb.Count - 1; i >= 0; i--)
+                    {
+                        sb.AppendLine(switchSb[i]);
+                    }
+
+                    sb.UnIndent();
+                }
+                sb.UnIndent();
+            }
+        }
+
+        private static string GetPropertyStringValue(PropertyDescriptor property, string typeOnly, string referenceName, Material mat)
+        {
+            string value;
+            switch (property.type)
+            {
+                default:
+                case PropertyType.Float:
+                case PropertyType.Toggle:
+                    value = mat.GetFloat(referenceName).ToString(CultureInfo.InvariantCulture);
+                    break;
+                case PropertyType.Color:
+                    if (property.defaultAttributes.HasFlag(MaterialPropertyAttribute.HDR))
+                    {
+                        if (property.defaultAttributes.HasFlag(MaterialPropertyAttribute.Gamma))
+                        {
+                            value = typeOnly + mat.GetColor(referenceName).linear.ToString()[4..];
+                        }
+                        else
+                        {
+                            value = typeOnly + mat.GetColor(referenceName).ToString()[4..];
+                        }
+                    }
+                    else
+                    {
+                        value = typeOnly + mat.GetColor(referenceName).linear.ToString()[4..];
+                    }
+                    break;
+                case PropertyType.Float2:
+                    value = typeOnly + ((Vector2)mat.GetVector(referenceName)).ToString();
+                    break;
+                case PropertyType.Float3:
+                    value = typeOnly + ((Vector3)mat.GetVector(referenceName)).ToString();
+                    break;
+                case PropertyType.Float4:
+                    value = typeOnly + mat.GetVector(referenceName).ToString();
+                    break;
+                case PropertyType.Integer:
+                    value = mat.GetInteger(referenceName).ToString();
+                    break;
+            }
+
+            return value;
+        }
+
+        void AppendOptimizerTextureStructs(ShaderStringBuilder sb, GraphData graphData)
+        {
+
+            foreach (var property in properties.Where(x => x.IsTextureType))
+            {
+                var referenceName = property.GetReferenceName(GenerationMode.Final);
+                string structName = referenceName + "Struct";
+
+                int index = properties.IndexOf(property);
+
+                if (property.type == PropertyType.Texture2D)
+                {
+                    sb.AppendLine($"GraphlitTexture2D {structName};");
+                    sb.AppendLine($"{structName}.type = {index};");
+                    sb.AppendLine($"#define {referenceName} {structName}");
+                }
+            }
+
+            sb.AppendLine($"GraphlitTexture2D nullTextureStruct;");
+            sb.AppendLine($"nullTextureStruct.type = -1;");
+            sb.AppendLine($"#define nullTextureStruct nullTexture");
+
+        }
+
+        void AppendCompilerWorkaround(ShaderStringBuilder sb, GraphData graphData, string output)
+        {
+            var shaderToggles = graphData.shaderToggles;
+            if (shaderToggles is null || shaderToggles.Count == 0)
+            {
+                return;
+            }
+
+            sb.AppendLine("[branch] if (uniformZero) ");
+            sb.Indent();
+
+            sb.Append($"{output} = 0");
+            WriteShaderToggleUniformsCompilerWorkaround(sb, graphData);
+            sb.Append(";");
+
+            sb.AppendLine();
+
+            sb.UnIndent();
+        }
+
+        public void AppendVertexDescription(ShaderStringBuilder sb, GraphData graphData)
         {
             sb.AppendLine("VertexDescription VertexDescriptionFunction(Attributes attributes, inout Varyings varyings)");
             sb.Indent();
             sb.AppendLine("VertexData data = VertexData::Create(attributes);");
             sb.AppendLine("VertexDescription output = (VertexDescription)0;");
+            if (graphData.enableLockMaterials)
+            {
+                sb.AppendLine("varyings.materialID = asint(attributes.uv0.z);");
+                sb.AppendLine("materialID = varyings.materialID & 0xFFF;");
+                sb.AppendLine("rendererID = varyings.materialID >> 12;");
+
+                AppendCompilerWorkaround(sb, graphData, "varyings.positionCS.x");
+
+                AppendOptimizerTextureStructs(sb, graphData);
+            }
+
             foreach (var line in vertexDescription)
             {
                 sb.AppendLine(line);
             }
             varyings.AppendVaryingPacking(sb);
+
+
             sb.AppendLine("return output;");
             sb.UnIndent();
         }
 
-        public void AppendSurfaceDescription(ShaderStringBuilder sb)
+        public void AppendSurfaceDescription(ShaderStringBuilder sb, GraphData graphData)
         {
             sb.AppendLine("SurfaceDescription SurfaceDescriptionFunction(Varyings varyings)");
             sb.Indent();
@@ -264,6 +852,20 @@ namespace Graphlit
 
             sb.AppendLine("FragmentData data = FragmentData::Create(varyings);");
             sb.AppendLine($"SurfaceDescription output = (SurfaceDescription)0;");
+            if (graphData.enableLockMaterials)
+            {
+                // setup static materialID and rendererID
+                sb.AppendLine("materialID = varyings.materialID & 0xFFF;");
+                sb.AppendLine("rendererID = varyings.materialID >> 12;");
+
+                AppendOptimizerTextureStructs(sb, graphData);
+
+                if (graphData.optimizerMixedCull)
+                {
+                    sb.AppendLine("if (_Cull == 1 && data.frontFace) discard; // Cull Back");
+                    sb.AppendLine("if (_Cull == 2 && !data.frontFace) discard; // Cull Front");
+                }
+            }
             foreach (var line in surfaceDescription)
             {
                 sb.AppendLine(line);
