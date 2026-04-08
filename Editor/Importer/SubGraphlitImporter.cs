@@ -13,7 +13,7 @@ namespace Graphlit
             ctx.AddObjectToAsset("Subgraph Asset", ScriptableObject.CreateInstance<SubgraphObject>());
         }
 
-        [MenuItem("Assets/Create/Graphlit/Subgraph")]
+        [MenuItem("Assets/Create/Graphlit/Experimental/Subgraph")]
         public static void CreateVariantFile()
         {
             const string samplePath = "Packages/com.z3y.graphlit/Shaders/Subgraph.subgraphlit";
