@@ -8,7 +8,7 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 49a6204b5cb3efd48b8e16ffeba76eda, type: 3}
-  graphRelativePath: Toon
-  nameSuffix: Outline
+  graphPath: Toon
   outlinePass: 1
   depthFillPass: 0
+  nameSuffix: Outline

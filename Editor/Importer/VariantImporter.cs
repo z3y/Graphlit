@@ -9,28 +9,38 @@ namespace Graphlit
     [ScriptedImporter(1, new[] { "graphlitvariant" }, -1)]
     public class VariantImporter : ScriptedImporter
     {
-        [SerializeField] public string graphRelativePath = "";
-        [SerializeField] public string nameSuffix = "Variant";
+        [SerializeField][Tooltip("Relative or Absolute Path to the Graphlit asset")] public string graphPath = "";
         [SerializeField] public OutlinePassMode outlinePass = OutlinePassMode.Disabled;
         [SerializeField] public bool depthFillPass = false;
+        [SerializeField] public string nameSuffix = "Variant";
 
         internal void OverrideVariantData(GraphData data)
         {
             data.shaderName += " " + nameSuffix;
             data.outlinePass = outlinePass;
             data.depthFillPass = depthFillPass;
+
+            Debug.Log(data.shaderName);
         }
 
         public override void OnImportAsset(AssetImportContext ctx)
         {
             var target = ctx.selectedBuildTarget;
-
             string assetPath = "Packages/com.z3y.graphlit/Shaders/Unlit.graphlit";
 
-            if (!string.IsNullOrEmpty(graphRelativePath))
+            if (!string.IsNullOrEmpty(graphPath))
             {
-                var dir = Path.GetDirectoryName(ctx.assetPath);
-                assetPath = Path.Combine(dir, graphRelativePath) + ".graphlit";
+                bool isAbsolute = graphPath.StartsWith("Assets/") || graphPath.StartsWith("Packages/");
+                if (isAbsolute)
+                {
+                    assetPath = graphPath;
+                }
+                else
+                {
+                    var dir = Path.GetDirectoryName(ctx.assetPath);
+                    assetPath = Path.Combine(dir, graphPath) + ".graphlit";
+                }
+                ctx.DependsOnSourceAsset(assetPath);
             }
             string guid = AssetDatabase.AssetPathToGUID(assetPath);
 
