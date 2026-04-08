@@ -315,6 +315,10 @@ namespace Graphlit
             {
                 sb.AppendInclude(AudioLinkPath);
             }
+            if (graphData.outlinePass != GraphData.OutlinePassMode.Disabled)
+            {
+                sb.AppendLine("#define OUTLINE_PASS_ENABLED");
+            }
             sb.AppendLine();
 
             attributes.AppendAttributeDefines(sb);
