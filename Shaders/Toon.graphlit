@@ -83,26 +83,6 @@
                 "isStaticKeywordToggle": false
             },
             {
-                "guid": "9b362265-bac7-40ce-89a5-96ee565461da",
-                "referenceName": "_DiscardShadowAlpha",
-                "displayName": "Discard Shadow Alpha",
-                "type": 12,
-                "customAttributes": "",
-                "defaultAttributes": 0,
-                "rangeX": 0.0,
-                "rangeY": 0.0,
-                "_value": "",
-                "_autoKeywordName": "",
-                "_toggleKeywordName": "",
-                "_defaultTexture": "",
-                "_defaultTextureObject": {
-                    "instanceID": 0
-                },
-                "declaration": 0,
-                "keywordPassFlags": -1,
-                "isStaticKeywordToggle": false
-            },
-            {
                 "guid": "b3b4c422-4e80-48f5-a3fc-d243962b6f65",
                 "referenceName": "_BumpScale",
                 "displayName": "Normal Scale",
@@ -140,6 +120,26 @@
                 },
                 "declaration": 0,
                 "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
+            },
+            {
+                "guid": "9b362265-bac7-40ce-89a5-96ee565461da",
+                "referenceName": "_DiscardShadowAlpha",
+                "displayName": "Discard Shadow Alpha",
+                "type": 12,
+                "customAttributes": "",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "",
+                "_autoKeywordName": "",
+                "_toggleKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1,
                 "isStaticKeywordToggle": false
             },
             {
@@ -420,6 +420,26 @@
                 },
                 "declaration": 0,
                 "keywordPassFlags": 0,
+                "isStaticKeywordToggle": false
+            },
+            {
+                "guid": "b82e3957-9f85-4152-801f-b7e82e5a0457",
+                "referenceName": "",
+                "displayName": "Requires the shader with Outline suffix",
+                "type": 1,
+                "customAttributes": "[HelpBox]\n[Folder(Outline)]",
+                "defaultAttributes": 0,
+                "rangeX": 0.0,
+                "rangeY": 0.0,
+                "_value": "",
+                "_autoKeywordName": "",
+                "_toggleKeywordName": "",
+                "_defaultTexture": "",
+                "_defaultTextureObject": {
+                    "instanceID": 0
+                },
+                "declaration": 0,
+                "keywordPassFlags": -1,
                 "isStaticKeywordToggle": false
             },
             {
@@ -779,8 +799,8 @@
         {
             "type": "Graphlit.CustomFunctionNode",
             "guid": "04a56366-dd6d-4a15-8ddb-9beb0a07d043",
-            "x": 934,
-            "y": 507,
+            "x": 2088,
+            "y": 778,
             "connections": [
                 {
                     "a": 2,
@@ -1149,6 +1169,11 @@
             "y": 1337,
             "connections": [
                 {
+                    "a": 103,
+                    "b": 0,
+                    "node": "04a56366-dd6d-4a15-8ddb-9beb0a07d043"
+                },
+                {
                     "a": 0,
                     "b": 3,
                     "node": "da46e9b6-3298-466b-8772-d9a62d17ce19"
@@ -1311,8 +1336,8 @@
         {
             "type": "Graphlit.Texture2DPropertyNode",
             "guid": "45c08bf5-a5ed-41a8-a77a-34a84ab7ef12",
-            "x": 309,
-            "y": 527,
+            "x": 1463,
+            "y": 798,
             "connections": [],
             "precision": 1,
             "preview": 0,
@@ -1900,8 +1925,8 @@
         {
             "type": "Graphlit.MultiplyNode",
             "guid": "86a02d3a-aedf-49aa-812b-c8a79bfd8afe",
-            "x": 784,
-            "y": 507,
+            "x": 1938,
+            "y": 778,
             "connections": [
                 {
                     "a": 0,
@@ -2111,8 +2136,8 @@
         {
             "type": "Graphlit.FloatPropertyNode",
             "guid": "a6cd67e4-0d2b-4274-a82f-9fb391e37ff5",
-            "x": 640,
-            "y": 507,
+            "x": 1794,
+            "y": 778,
             "connections": [],
             "precision": 0,
             "preview": 0,
@@ -2271,8 +2296,8 @@
         {
             "type": "Graphlit.SampleTexture2DLodNode",
             "guid": "c753211a-a13d-460f-bdf7-afc93a83acea",
-            "x": 463,
-            "y": 527,
+            "x": 1617,
+            "y": 798,
             "connections": [
                 {
                     "a": 0,
@@ -2931,7 +2956,7 @@
     ],
     "groups": [
         {
-            "x": 105,
+            "x": 104,
             "y": 1065,
             "title": "Blending",
             "elements": [
@@ -3102,8 +3127,8 @@
             ]
         },
         {
-            "x": 284,
-            "y": 448,
+            "x": 1438,
+            "y": 719,
             "title": "Outlines",
             "elements": [
                 "04a56366-dd6d-4a15-8ddb-9beb0a07d043",
