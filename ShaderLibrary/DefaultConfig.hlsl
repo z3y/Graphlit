@@ -14,9 +14,6 @@
 // Enable Bakery MonoSH
 // #define _BAKERY_MONOSH
 
-// Enable Lightmapped Specular
-// #define _LIGHTMAPPED_SPECULAR
-
 // Enable Bicubic Lightmap Filtering
 // #define _BICUBIC_LIGHTMAP
 

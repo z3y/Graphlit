@@ -126,7 +126,7 @@ float4 frag(Varyings input) : SV_Target
     half3 indirectOcclusion = 0;
     #if defined(LIGHTMAP_ON) || defined(DYNAMICLIGHTMAP_ON)
         half4 directionalLightmap;
-        SampleLightmap(bakedGI, lightmapSpecular, directionalLightmap, fragment.lightmapUV, normalWS, fragment.viewDirectionWS, shading.perceptualRoughness, indirectOcclusion, shading.reflectVector);
+        SampleLightmap(bakedGI, lightmapSpecular, directionalLightmap, fragment.lightmapUV, normalWS, fragment.viewDirectionWS, shading.perceptualRoughness, indirectOcclusion, shading.reflectVector, _LightmappedSpecular);
 
         #ifdef _VRC_LIGHTVOLUMES
             half3 lvL0; half3 lvL1r; half3 lvL1g; half3 lvL1b;
@@ -158,8 +158,8 @@ float4 frag(Varyings input) : SV_Target
     half3 diffuse = 0;
     half3 specular = 0;
 
-    #if defined(LIGHTMAP_SPECULAR) && !defined(LIGHTMAP_ON)
-    if (!light.enabled)
+    #if !defined(LIGHTMAP_ON)
+    if (!light.enabled && _LightmappedSpecular)
     {
         #ifdef _VRC_LIGHTVOLUMES
             half3 lvL0; half3 lvL1r; half3 lvL1g; half3 lvL1b;

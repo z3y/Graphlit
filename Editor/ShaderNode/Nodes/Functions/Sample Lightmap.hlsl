@@ -1,4 +1,4 @@
-void SampleLightmapAndSpecularNode(out half3 Diffuse, out half3 Specular, out half3 Color, out half4 Direction, float4 lightmapUV, float3 normalWS, float3 viewDirectionWS, half roughness)
+void SampleLightmapAndSpecularNode(out half3 Diffuse, out half3 Specular, out half3 Color, out half4 Direction, float4 lightmapUV, float3 normalWS, float3 viewDirectionWS, half roughness, bool enableSpecular = false)
 {
 	Diffuse = 0;
 	Color = 0;
@@ -9,7 +9,7 @@ void SampleLightmapAndSpecularNode(out half3 Diffuse, out half3 Specular, out ha
     half3 indirectOcclusion = 0;
     half3 reflectVector = 0;
 	// #ifdef LIGHTMAP_ON
-	SampleLightmap(Diffuse, Specular, Direction, lightmapUV, normalWS, viewDirectionWS, roughness, indirectOcclusion, reflectVector);
+	SampleLightmap(Diffuse, Specular, Direction, lightmapUV, normalWS, viewDirectionWS, roughness, indirectOcclusion, reflectVector, enableSpecular);
 	// #endif
 
     Color = Diffuse; // what was this even supposed to be?

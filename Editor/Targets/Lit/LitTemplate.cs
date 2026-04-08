@@ -222,7 +222,7 @@ namespace Graphlit
         static readonly PropertyDescriptor _specularOcclusionExp = new(PropertyType.Float, "Specular Occlusion Exponent", "_SpecularOcclusionExp") { FloatValue = 1, Range = new Vector2(0, 25), customAttributes = "[Folder(Advanced Options)]" };
 
         static readonly PropertyDescriptor _mirror = new(PropertyType.Float, "Mirror", "_Mirror") { customAttributes = "[Toggle(_MIRROR)] [Folder(Advanced Options)]" };
-        static readonly PropertyDescriptor _lmSpec = new(PropertyType.Float, "Lightmapped Specular", "_LightmappedSpecular") { customAttributes = "[Toggle(_LIGHTMAPPED_SPECULAR)] [Folder(Advanced Options)]" };
+        static readonly PropertyDescriptor _lmSpec = new(PropertyType.Float, "Lightmapped Specular", "_LightmappedSpecular") { customAttributes = "[ToggleUI] [Folder(Advanced Options)]" };
         static readonly PropertyDescriptor _ltcgi = new(PropertyType.Float, "LTCGI", "_LTCGI") { customAttributes = "[Toggle(_LTCGI)] [Folder(Advanced Options)]" };
         static readonly PropertyDescriptor _lightVolumes = new(PropertyType.Float, "VRC Light Volumes", "_VRC_LightVolumes") { customAttributes = "[Toggle(_VRC_LIGHTVOLUMES)] [Folder(Advanced Options)]" };
 
@@ -476,6 +476,8 @@ namespace Graphlit
 
                 pass.properties.Add(_specularOcclusion);
                 pass.properties.Add(_specularOcclusionExp);
+                pass.properties.Add(_lmSpec);
+
                 builder.AddPass(pass);
 
             }
@@ -541,6 +543,7 @@ namespace Graphlit
 
                 pass.properties.Add(_specularOcclusion);
                 pass.properties.Add(_specularOcclusionExp);
+                pass.properties.Add(_lmSpec);
 
                 IncludeConfig(pass);
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
@@ -598,6 +601,7 @@ namespace Graphlit
 
                 pass.properties.Add(_specularOcclusion);
                 pass.properties.Add(_specularOcclusionExp);
+                pass.properties.Add(_lmSpec);
 
                 pass.pragmas.Add("#include \"Packages/com.z3y.graphlit/ShaderLibrary/Core.hlsl\"");
                 pass.pragmas.Add("#include \"Packages/com.unity.render-pipelines.core/ShaderLibrary/MetaPass.hlsl\"");

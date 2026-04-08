@@ -15,9 +15,6 @@
 #ifdef _BAKERY_MONOSH
 #define BAKERY_MONOSH
 #endif
-#ifdef _LIGHTMAPPED_SPECULAR
-#define LIGHTMAP_SPECULAR
-#endif
 
 #ifndef QUALITY_LOW
     #define BAKERY_SHNONLINEAR
@@ -49,7 +46,7 @@ float D_GGX_Lightmap(float NoH, half roughness)
     return k * k * (1.0 / PI);
 }
 
-void SampleLightmap(out half3 illuminance, out half3 specular, out float4 direction, float4 lightmapUV, float3 normalWS, float3 viewDirectionWS, half perceptualRoughness, inout half3 indirectOcclusion, float3 reflectVector)
+void SampleLightmap(out half3 illuminance, out half3 specular, out float4 direction, float4 lightmapUV, float3 normalWS, float3 viewDirectionWS, half perceptualRoughness, inout half3 indirectOcclusion, float3 reflectVector, bool enableSpecular = false)
 {
     illuminance = 0;
     specular = 0;
@@ -102,7 +99,8 @@ void SampleLightmap(out half3 illuminance, out half3 specular, out float4 direct
                 illuminance = L0 + normalWS.x * L1x + normalWS.y * L1y + normalWS.z * L1z;
             #endif
 
-            #ifdef LIGHTMAP_SPECULAR
+            if (enableSpecular)
+            {
                 float3 dominantDir = nL1;
                 float3 directionality = normalize(dominantDir);
                 float3 halfVector = SafeNormalize(directionality + viewDirectionWS);
@@ -111,7 +109,7 @@ void SampleLightmap(out half3 illuminance, out half3 specular, out float4 direct
                 half3 sh2 = L0 + dominantDir.x * L1x + dominantDir.y * L1y + dominantDir.z * L1z;
                 half LoH = saturate(dot(directionality, halfVector));
                 specular = max(spec * sh2, 0.0);
-            #endif
+            }
         #else
             half halfLambert = dot(normalWS, directionalLightmap.xyz - 0.5) + 0.5;
             halfLambert *= halfLambert;
