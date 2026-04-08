@@ -201,7 +201,6 @@ namespace Graphlit
         public virtual void OnImportAsset(AssetImportContext ctx, ShaderBuilder builder, int variantId)
         {
             var result = builder.ToString();
-            GraphlitImporter._lastImport = result;
             var shader = ShaderUtil.CreateShaderAsset(ctx, result, false);
 
             ApplyDefaultTextures(builder, shader);

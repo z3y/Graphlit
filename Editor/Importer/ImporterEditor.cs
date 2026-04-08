@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using System.IO;
 using UnityEditorInternal;
+using System.Linq;
 namespace Graphlit
 {
 
@@ -27,6 +28,15 @@ namespace Graphlit
             ApplyRevertGUI();
         }*/
 
+        public string GetShaderSource(string assetPath)
+        {
+            var assets = AssetDatabase.LoadAllAssetsAtPath(assetPath);
+
+            var textAsset = assets.OfType<TextAsset>().FirstOrDefault(a => a.name == "Shader Source");
+
+            return textAsset != null ? textAsset.text : string.Empty;
+        }
+
         public override void OnInspectorGUI()
         {
             var importer = (GraphlitImporter)serializedObject.targetObject;
@@ -39,15 +49,13 @@ namespace Graphlit
             }
             if (GUILayout.Button("Show Generated Shader"))
             {
-                AssetDatabase.ImportAsset(importer.assetPath, ImportAssetOptions.ForceUpdate);
-                string path = "Temp/Graphlit.shader";
-                File.WriteAllText(path, GraphlitImporter._lastImport);
-                InternalEditorUtility.OpenFileAtLineExternal(Path.GetFullPath(path), 0);
+                string tempPath = "Temp/Graphlit.shader";
+                File.WriteAllText(tempPath, GetShaderSource(importer.assetPath));
+                InternalEditorUtility.OpenFileAtLineExternal(Path.GetFullPath(tempPath), 0);
             }
             if (GUILayout.Button("Copy Shader"))
             {
-                AssetDatabase.ImportAsset(importer.assetPath, ImportAssetOptions.ForceUpdate);
-                GUIUtility.systemCopyBuffer = GraphlitImporter._lastImport;
+                GUIUtility.systemCopyBuffer = GetShaderSource(importer.assetPath);
             }
         }
 
