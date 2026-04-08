@@ -409,7 +409,6 @@ namespace Graphlit
 
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _BAKERY_MONOSH");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _BICUBIC_LIGHTMAP");
-                pass.pragmas.Add("#pragma shader_feature_local_fragment _LIGHTMAPPED_SPECULAR");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _NONLINEAR_LIGHTPROBESH");
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _MIRROR");
 
