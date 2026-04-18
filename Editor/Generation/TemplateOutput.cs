@@ -170,7 +170,12 @@ namespace Graphlit
         internal const string _graphlitConfigPath = "Assets/Settings/GraphlitConfig.hlsl";
         internal bool _graphlitConfigExists = System.IO.File.Exists(_graphlitConfigPath);
 
+        // only for vrchat avatars
+#if VRC_SDK_VRCSDK3 && !UDONSHARP
         public const string FOG_VARIANTS_NAME = "#pragma dynamic_branch FOG_EXP FOG_EXP2 FOG_LINEAR";
+#else
+        public const string FOG_VARIANTS_NAME = "#pragma multi_compile_fog";
+#endif
 
         protected void IncludeConfig(PassBuilder pass)
         {
