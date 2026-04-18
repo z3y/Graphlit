@@ -170,6 +170,8 @@ namespace Graphlit
         internal const string _graphlitConfigPath = "Assets/Settings/GraphlitConfig.hlsl";
         internal bool _graphlitConfigExists = System.IO.File.Exists(_graphlitConfigPath);
 
+        public const string FOG_VARIANTS_NAME = "#pragma dynamic_branch FOG_EXP FOG_EXP2 FOG_LINEAR";
+
         protected void IncludeConfig(PassBuilder pass)
         {
             if (_graphlitConfigExists)
