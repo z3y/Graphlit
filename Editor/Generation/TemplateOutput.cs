@@ -171,11 +171,13 @@ namespace Graphlit
         internal bool _graphlitConfigExists = System.IO.File.Exists(_graphlitConfigPath);
 
         // only for vrchat avatars
-#if VRC_SDK_VRCSDK3 && !UDONSHARP
-        public const string FOG_VARIANTS_NAME = "#pragma dynamic_branch _ FOG_EXP FOG_EXP2 FOG_LINEAR\n#define FOG_DYNAMIC_BRANCH";
-#else
+        // requires https://github.com/Error-mdl/Unity2022-Dynamic-Variant-Fix
+        // still needs testing, something isnt right
+        // #if VRC_SDK_VRCSDK3 && !UDONSHARP && DYNAMIC_VARIANT_FIX_INCLUDED
+        // public const string FOG_VARIANTS_NAME = "#pragma dynamic_branch _ FOG_EXP FOG_EXP2 FOG_LINEAR\n#define FOG_DYNAMIC_BRANCH";
+        // #else
         public const string FOG_VARIANTS_NAME = "#pragma multi_compile_fog";
-#endif
+        // #endif
 
         protected void IncludeConfig(PassBuilder pass)
         {
