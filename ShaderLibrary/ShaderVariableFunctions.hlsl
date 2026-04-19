@@ -1,5 +1,11 @@
 #pragma once
 
+#ifndef FOG_DYNAMIC_BRANCH
+    #define FOG_EXP 0
+    #define FOG_EXP2 0
+    #define FOG_LINEAR 0
+#endif
+
 float4 GetScaledScreenParams()
 {
     return _ScaledScreenParams;

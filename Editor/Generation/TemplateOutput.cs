@@ -172,7 +172,7 @@ namespace Graphlit
 
         // only for vrchat avatars
 #if VRC_SDK_VRCSDK3 && !UDONSHARP
-        public const string FOG_VARIANTS_NAME = "#pragma dynamic_branch FOG_EXP FOG_EXP2 FOG_LINEAR";
+        public const string FOG_VARIANTS_NAME = "#pragma dynamic_branch _ FOG_EXP FOG_EXP2 FOG_LINEAR\n#define FOG_DYNAMIC_BRANCH";
 #else
         public const string FOG_VARIANTS_NAME = "#pragma multi_compile_fog";
 #endif
