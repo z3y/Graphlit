@@ -14,12 +14,6 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [
-        {
-            "name": "com.emdl.dynamic-variant-fix",
-            "expression": "1",
-            "define": "DYNAMIC_VARIANT_FIX_INCLUDED"
-        }
-    ],
+    "versionDefines": [],
     "noEngineReferences": false
 }

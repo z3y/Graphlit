@@ -141,7 +141,7 @@ namespace Graphlit
                         pass.pragmas.Add("#pragma shader_feature_local_fragment VERTEXLIGHT_ON");
                     }
                 }
-                pass.pragmas.Add(FOG_VARIANTS_NAME);
+                pass.pragmas.Add("#pragma multi_compile_fog");
                 pass.pragmas.Add("#pragma multi_compile_instancing");
                 if (urp)
                 {
@@ -190,7 +190,7 @@ namespace Graphlit
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ALPHATEST_ON");
 
                 pass.pragmas.Add("#pragma multi_compile_fwdadd_fullshadows");
-                pass.pragmas.Add(FOG_VARIANTS_NAME);
+                pass.pragmas.Add("#pragma multi_compile_fog");
                 pass.pragmas.Add("#pragma multi_compile_instancing");
 
                 pass.attributes.RequirePositionOS();
