@@ -355,6 +355,7 @@ float ComputeFogIntensity(float fogFactor)
     return fogIntensity;
 }
 
+
 half3 MixFogColor(half3 fragColor, half3 fogColor, half fogFactor)
 {
     #if defined(FOG_LINEAR) || defined(FOG_EXP) || defined(FOG_EXP2)

@@ -284,12 +284,12 @@ namespace Graphlit
         }
         protected static void AddFogKeywords(PassBuilder pass)
         {
-#if VRC_AVATARS_SDK_INCLUDED
+            // #if VRC_AVATARS_SDK_INCLUDED
             pass.pragmas.Add("#pragma multi_compile_vertex _ FOG_EXP2");
             pass.varyings.RequireCustom(1, "data.fogType", "FOG_TYPE");
-#else
-            pass.pragmas.Add("#pragma multi_compile_fragment _ FOG_LINEAR FOG_EXP FOG_EXP2");
-#endif
+            // #else
+            // pass.pragmas.Add("#pragma multi_compile_fragment _ FOG_LINEAR FOG_EXP FOG_EXP2");
+            // #endif
         }
         protected static void AddURPLightingPragmas(PassBuilder pass)
         {
