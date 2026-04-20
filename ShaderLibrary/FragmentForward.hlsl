@@ -19,7 +19,12 @@ float4 frag(Varyings input) : SV_Target
 
     float4 color = float4(diffuseColor, alpha);
 
-    color.rgb = MixFog(color.rgb, InitializeInputDataFog(float4(fragment.positionWS, 1), 0));
+    #ifdef UNPACK_FOG_TYPE
+        Varyings varyings = input;
+        GraphlitApplyFog(fragment.positionWS, UNPACK_FOG_TYPE, color.rgb);
+    #else
+        color.rgb = MixFog(color.rgb, InitializeInputDataFog(float4(fragment.positionWS, 1), 0));
+    #endif
 
     #if defined(_SURFACE_TYPE_TRANSPARENT)
         bool isTransparent = true;
