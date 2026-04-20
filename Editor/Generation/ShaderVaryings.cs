@@ -60,17 +60,17 @@ namespace Graphlit
             customVaryingsStrings.Add(varying);
         }
         private int _interpCounter = 0;
-        public string RequireCustom(int channels, string value)
+        public void RequireCustom(int channels, string value, string name)
         {
             var desc = new VaryingDescriptor
             {
-                name = "interp" + _interpCounter++,
+                name = name,
                 channels = channels,
                 passthrough = value,
             };
             varyings.Add(desc);
 
-            return Mask(desc.name, channels);
+            // return Mask(desc.name, channels);
         }
 
         public string RequireUV(int texcoord, int channels = 2)

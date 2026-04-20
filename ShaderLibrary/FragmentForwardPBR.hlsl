@@ -340,7 +340,13 @@ float4 frag(Varyings input) : SV_Target
     color.rgb += emissionEDF;
 #endif
 
-    color.rgb = MixFog(color.rgb, InitializeInputDataFog(float4(positionWS, 1), 0));
+    #ifdef UNPACK_FOG_TYPE
+        Varyings varyings = input;
+        GraphlitApplyFog(positionWS, UNPACK_FOG_TYPE, color.rgb);
+    #else
+        color.rgb = MixFog(color.rgb, InitializeInputDataFog(float4(positionWS, 1), 0));
+    #endif
+
 
     #if defined(_SURFACE_TYPE_TRANSPARENT)
         bool isTransparent = true;

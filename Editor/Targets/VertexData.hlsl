@@ -16,6 +16,7 @@ struct VertexData
     bool frontFace;
     float4 positionCSR;
     float2 lightmapUV;
+    float fogType;
 
     static VertexData Create(inout Attributes attributes)
     {
@@ -83,6 +84,8 @@ struct VertexData
         #if defined(LIGHTMAP_ON) || defined(SHADOWS_SHADOWMASK)
             output.lightmapUV = mad(attributes.uv1.xy, unity_LightmapST.xy, unity_LightmapST.zw);
         #endif
+
+        output.fogType = GetFogTypeVarying();
 
         return output;
     }

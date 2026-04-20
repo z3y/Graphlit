@@ -282,6 +282,12 @@ namespace Graphlit
                 pass.pragmas.Add("#pragma instancing_options assumeuniformscaling nomatrices nolightprobe nolightmap forwardadd");
             }
         }
+        protected static void AddFogKeywords(PassBuilder pass)
+        {
+            // pass.pragmas.Add("#pragma multi_compile_fog");
+            pass.pragmas.Add("#pragma multi_compile_vertex _ FOG_EXP2");
+            pass.varyings.RequireCustom(1, "data.fogType", "FOG_TYPE");
+        }
         protected static void AddURPLightingPragmas(PassBuilder pass)
         {
             pass.pragmas.Add("#define UNIVERSAL_FORWARD");

@@ -115,6 +115,7 @@ float shEvaluateDiffuseL1Geomerics(float L0, float3 L1, float3 n)
 #include "GlobalIllumination/Lightmap.hlsl"
 #include "GlobalIllumination/RealtimeLight.hlsl"
 #include "GlobalIllumination/ReflectionProbe.hlsl"
+#include "GlobalIllumination/Fog.hlsl"
 // #include "GlobalIllumination/SurfaceDescription.hlsl"
 
 #include "BlendModes.hlsl"

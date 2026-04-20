@@ -404,7 +404,7 @@ namespace Graphlit
                 }
 
                 //pass.pragmas.Add("#pragma skip_variants LIGHTPROBE_SH");
-                pass.pragmas.Add("#pragma multi_compile_fog");
+                AddFogKeywords(pass);
                 pass.pragmas.Add("#pragma multi_compile_instancing");
 
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _BAKERY_MONOSH");
@@ -508,7 +508,7 @@ namespace Graphlit
                 pass.pragmas.Add("#pragma shader_feature_local_fragment _ALPHATEST_ON");
 
                 pass.pragmas.Add("#pragma multi_compile_fwdadd_fullshadows");
-                pass.pragmas.Add("#pragma multi_compile_fog");
+                AddFogKeywords(pass);
                 pass.pragmas.Add("#pragma multi_compile_instancing");
 
                 if (!_specular)
