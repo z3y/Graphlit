@@ -2,6 +2,10 @@
 
 float GetFogTypeVarying()
 {
+    #ifdef GRAPHLIT_DISABLE_FOG
+    return 0;
+    #endif
+
     float fogType = 0;
     bool isExp2 = false;
     #ifdef FOG_EXP2
@@ -33,6 +37,10 @@ float GraphlitComputeFogFactorZ0ToFar(float z, float fogType)
 
 void GraphlitApplyFog(float3 positionWS, float fogType, inout float3 color)
 {
+    #ifdef GRAPHLIT_DISABLE_FOG
+    return;
+    #endif
+
     [branch]
     if (fogType != 0)
     {
@@ -62,5 +70,4 @@ void GraphlitApplyFog(float3 positionWS, float fogType, inout float3 color)
 
         color = color * fogIntensity + fogColor * (half(1.0) - fogIntensity);
     }
-
 }

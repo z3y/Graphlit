@@ -286,7 +286,21 @@ float4 frag(Varyings input) : SV_Target
         float2 xi = GetRand(input.positionCS.xy * _Time.y);
 
         Ray ray;
-        float3 newDir = lerp(shading.reflectVector, RandomDirectionInHemisphere(normalWS, xi), surface.Roughness * surface.Roughness);
+        float3x3 tbn = GetTangentFrame(normalWS);
+        float3 viewDirectionTS = mul(tbn, fragment.viewDirectionWS);
+        float3 halfVectorTS = SampleGGXVNDF(viewDirectionTS, surface.Roughness*surface.Roughness, xi);
+        float3 halfVectorWS = mul(halfVectorTS, tbn);
+        #if 1
+        float3 newDir = reflect(-fragment.viewDirectionWS, halfVectorWS);
+        if (surface.Roughness < 0.002)
+        {
+            newDir = reflect(-fragment.viewDirectionWS, normalWS);
+        }
+        #else
+        float3 newDir = lerp(shading.reflectVector, RandomDirectionInHemisphere(normalWS, xi), surface.Roughness*surface.Roughness);
+        #endif
+       
+
         ray.D = newDir;
         ray.P = RayOffset(positionWS, normalWS);
         ray.tMin = 0;
@@ -299,7 +313,7 @@ float4 frag(Varyings input) : SV_Target
             TrianglePointNormal(intersection, hitP, hitN);
             hitN = TriangleSmoothNormal(intersection, hitN);
             float2 hitUV = TriangleUV(intersection);
-            float3 hitCombined = SAMPLE_TEXTURE2D_LOD(_UdonVRCTraceCombinedAtlas, sampler_BilinearClamp, hitUV, 0);
+            float3 hitCombined = SAMPLE_TEXTURE2D_LOD(_UdonVRCTraceCombinedAtlas, sampler_BilinearClamp, hitUV, 0).rgb;
             indirectSpecular = max(0, hitCombined * dirAlbedo);
         }
         else

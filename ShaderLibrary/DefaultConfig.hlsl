@@ -20,6 +20,9 @@
 // Enable Bicubic Lightmap Filtering
 // #define _BICUBIC_LIGHTMAP
 
+// Enable Bicubic Shadowmask Filtering
+// #define _BICUBIC_SHADOWMASK
+
 // Enable Non Linear Lightmap SH
 // #define _NONLINEAR_LIGHTPROBESH
 
@@ -66,3 +69,7 @@ void ModifyFinalColor(inout half4 color)
 
 }
 */
+
+
+// disable fog
+// #define GRAPHLIT_DISABLE_FOG
