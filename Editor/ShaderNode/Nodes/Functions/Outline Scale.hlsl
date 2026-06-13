@@ -2,11 +2,7 @@
 
 float3 OutlineHeadDirection(float3 positionWS)
 {
-#if defined(USING_STEREO_MATRICES)
-    return (unity_StereoWorldSpaceCameraPos[0].xyz + unity_StereoWorldSpaceCameraPos[1].xyz) * 0.5 - positionWS;
-#else
-    return _WorldSpaceCameraPos.xyz - positionWS;
-#endif
+    return GetCameraPositionWSCenter() - positionWS;
 }
 
 void OutlineScale(float3 PositionOS, float3 NormalOS, float3 PositionWS, out float3 ScaledPositionWS, float Width = 0.1, float WidthFix = 0.3, bool applyToShadow = true)

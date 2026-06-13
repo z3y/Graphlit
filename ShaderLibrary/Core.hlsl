@@ -1,6 +1,8 @@
 #pragma once
 
+#if !defined(UNITY_PASS_SHADOWCASTER) && !defined(UNITY_PASS_META)
 #define SHADEROPTIONS_CAMERA_RELATIVE_RENDERING 1
+#endif
 
 #ifndef UNITY_PBS_USE_BRDF1
     #define QUALITY_LOW
@@ -97,10 +99,26 @@ float4x4 GetCameraRelativeModelViewProjectionMatrix()
     // todo redefine all transform to world
     float3 TransformObjectToWorldCameraRelative(float3 positionOS)
     {
-        return mul(GetCameraRelativeModelMatrix(), float4(positionOS, 1.0)).xyz;
+        return mul(UNITY_MATRIX_M, float4(positionOS, 1.0)).xyz;
     }
-
     #define TransformObjectToWorld TransformObjectToWorldCameraRelative
+
+    float4 TransformWorldToHClipCameraRelative(float3 positionWS)
+    {
+        return mul(UNITY_MATRIX_VP, float4(positionWS, 1.0));
+    }
+    #define TransformWorldToHClip TransformWorldToHClipCameraRelative
+
+    float4 TransformObjectToHClipCameraRelative(float3 positionOS)
+    {
+        return mul(UNITY_MATRIX_MVP, float4(positionOS, 1.0));
+    }
+    #define TransformObjectToHClip TransformObjectToHClipCameraRelative
+
+    float3 CameraOffsetPositionWS(float3 positionCR)
+    {
+        return positionCR + _WorldSpaceCameraPos;
+    }
 #endif
 
 

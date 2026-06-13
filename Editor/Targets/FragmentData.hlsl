@@ -101,6 +101,10 @@ struct FragmentData
             output.lightmapUV.zw = varyings.lightmapUV.zw;
         #endif
 
+#if (SHADEROPTIONS_CAMERA_RELATIVE_RENDERING != 0)
+        output.positionWS += _WorldSpaceCameraPos;
+#endif
+
         output.shadowCoords = TransformWorldToShadowCoord(output.positionWS);
 
         #ifdef UNPACK_UV0
@@ -116,9 +120,6 @@ struct FragmentData
             output.uv3 = UNPACK_UV3;
         #endif
 
-#if (SHADEROPTIONS_CAMERA_RELATIVE_RENDERING != 0)
-        output.positionWS += _WorldSpaceCameraPos;
-#endif
 
         return output;
     }

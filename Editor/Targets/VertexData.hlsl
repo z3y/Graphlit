@@ -1,7 +1,7 @@
 
 struct VertexData
 {
-    float3 positionWS;
+    float3 positionWS; // this can be now camera relative insted
     float3 positionOS;
     float3 normalWS;
     float3 normalOS;

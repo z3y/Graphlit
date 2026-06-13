@@ -138,7 +138,7 @@ half UnityComputeShadowFade(float fadeDist)
 
 half GetMainLightShadowFade(float3 positionWS)
 {
-    float zDist = dot(_WorldSpaceCameraPos - positionWS, UNITY_MATRIX_V[2].xyz);
+    float zDist = dot(GetCameraPositionWS() - positionWS, UNITY_MATRIX_V[2].xyz);
     float fadeDist = UnityComputeShadowFadeDistance(positionWS, zDist);
     return UnityComputeShadowFade(fadeDist);
 }
