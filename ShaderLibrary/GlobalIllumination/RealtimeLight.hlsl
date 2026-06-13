@@ -338,6 +338,11 @@ void ShadeLight(inout half3 diffuse, inout half3 specular, Light light, ShadingD
     {
         half3 lightColor = NoL * light.distanceAttenuation * light.shadowAttenuation * light.color;
 
+        #ifdef LAMBERT_SHADING
+            diffuse += lightColor;
+            return;
+        #endif
+
         float3 halfVector = SafeNormalize(light.direction + shading.viewDirectionWS);
         half LoV = saturate(dot(light.direction, shading.viewDirectionWS));
         half LoH = saturate(dot(light.direction, halfVector));

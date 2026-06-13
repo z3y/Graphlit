@@ -1,5 +1,7 @@
 #pragma once
 
+#define SHADEROPTIONS_CAMERA_RELATIVE_RENDERING 1
+
 #ifndef UNITY_PBS_USE_BRDF1
     #define QUALITY_LOW
 #endif
@@ -54,6 +56,53 @@
 #define unity_LightShadowBias float4(unity_LightShadowBias.x != 0.0 ? -0.001 : unity_LightShadowBias.x, unity_LightShadowBias.yzw)
 #define _LightProjectionParams float4(_LightProjectionParams.xy, 0, .97)
 #endif
+
+float4x4 GetCameraRelativeModelMatrix()
+{
+    float4x4 modelMatrix = UNITY_MATRIX_M;
+    modelMatrix._m03_m13_m23 -= _WorldSpaceCameraPos;
+    return modelMatrix;
+}
+
+float4x4 GetCameraRelativeViewMatrix()
+{
+    float4x4 viewMatrix = UNITY_MATRIX_V;
+    viewMatrix._m03_m13_m23 = float3(0.0, 0.0, 0.0);
+    return viewMatrix;
+}
+
+float4x4 GetCameraRelativeViewProjectionMatrix()
+{
+    float4x4 viewMatrix = GetCameraRelativeViewMatrix();
+    return mul(UNITY_MATRIX_P, viewMatrix);
+}
+
+float4x4 GetCameraRelativeModelViewProjectionMatrix()
+{
+    return mul(GetCameraRelativeViewProjectionMatrix(), GetCameraRelativeModelMatrix());
+}
+
+
+#if (SHADEROPTIONS_CAMERA_RELATIVE_RENDERING != 0)
+    #undef UNITY_MATRIX_M
+    #undef UNITY_MATRIX_V
+    #undef UNITY_MATRIX_VP
+    #undef UNITY_MATRIX_MVP
+
+    #define UNITY_MATRIX_M GetCameraRelativeModelMatrix()
+    #define UNITY_MATRIX_V GetCameraRelativeViewMatrix()
+    #define UNITY_MATRIX_VP GetCameraRelativeViewProjectionMatrix()
+    #define UNITY_MATRIX_MVP GetCameraRelativeModelViewProjectionMatrix()
+
+    // todo redefine all transform to world
+    float3 TransformObjectToWorldCameraRelative(float3 positionOS)
+    {
+        return mul(GetCameraRelativeModelMatrix(), float4(positionOS, 1.0)).xyz;
+    }
+
+    #define TransformObjectToWorld TransformObjectToWorldCameraRelative
+#endif
+
 
 #ifdef _SURFACE_TYPE_TRANSPARENT
     #define USE_ALPHAPREMULTIPLY (_Blend == 0 && _BlendModePreserveSpecular != 0)

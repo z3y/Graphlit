@@ -13,17 +13,24 @@ bool IsPerspectiveProjection()
 
 float3 GetCameraPositionWS()
 {
-    // Currently we do not support Camera Relative Rendering so
-    // we simply return the _WorldSpaceCameraPos until then
-    return _WorldSpaceCameraPos;
+    #if (SHADEROPTIONS_CAMERA_RELATIVE_RENDERING != 0)
+        return float3(0, 0, 0);
+    #else
+        return _WorldSpaceCameraPos;
+    #endif
+}
 
-    // We will replace the code above with this one once
-    // we start supporting Camera Relative Rendering
-    //#if (SHADEROPTIONS_CAMERA_RELATIVE_RENDERING != 0)
-    //    return float3(0, 0, 0);
-    //#else
-    //    return _WorldSpaceCameraPos;
-    //#endif
+float3 GetCameraPositionWSCenter()
+{
+    #if (SHADEROPTIONS_CAMERA_RELATIVE_RENDERING != 0)
+        return float3(0, 0, 0);
+    #else
+        #if defined(USING_STEREO_MATRICES)
+            return (unity_StereoWorldSpaceCameraPos[0].xyz + unity_StereoWorldSpaceCameraPos[1].xyz) * 0.5;
+        #else
+            return _WorldSpaceCameraPos.xyz;
+        #endif
+    #endif
 }
 
 // Could be e.g. the position of a primary camera or a shadow-casting light.

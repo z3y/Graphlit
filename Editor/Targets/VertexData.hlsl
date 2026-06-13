@@ -56,7 +56,7 @@ struct VertexData
 
         output.tangentSpaceTransform = float3x3(output.tangentWS, output.bitangentWS, output.normalWS);
 
-        output.viewDirectionWS = normalize(_WorldSpaceCameraPos.xyz - output.positionWS);
+        output.viewDirectionWS = normalize(GetCameraPositionWS() - output.positionWS);
         output.viewDirectionOS = TransformWorldToObjectDir(output.viewDirectionWS);
         output.viewDirectionTS = mul(output.tangentSpaceTransform, output.viewDirectionWS);
 

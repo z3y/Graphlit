@@ -63,11 +63,21 @@ Varyings vert(Attributes input)
     #elif defined(UNITY_PASS_META)
         varyings.positionCS = UnityMetaVertexPosition(input.positionOS, input.uv1.xy, input.uv2.xy);
     #else
-        #ifdef SKIP_VERTEX_FUNCTION
-            varyings.positionCS = TransformObjectToHClip(input.positionOS);
-        #else
-            varyings.positionCS = TransformWorldToHClip(positionWS);
-        #endif
+        // #ifdef SKIP_VERTEX_FUNCTION
+            #if (SHADEROPTIONS_CAMERA_RELATIVE_RENDERING != 0)
+                float4x4 modelMatrix = GetCameraRelativeModelMatrix();
+                float4x4 viewMatrix = GetCameraRelativeViewMatrix();
+
+                float3 positionCR = mul(modelMatrix, float4(input.positionOS, 1));
+                float3 positionVS = mul(viewMatrix, positionCR).xyz;
+                varyings.positionCS = mul(UNITY_MATRIX_P, float4(positionVS, 1));
+
+            #else
+                varyings.positionCS = TransformObjectToHClip(input.positionOS);
+            #endif
+        // #else
+        //     varyings.positionCS = TransformWorldToHClip(positionWS);
+        // #endif
     #endif
 
     #if defined(LIGHTMAP_ON) || defined(SHADOWS_SHADOWMASK)

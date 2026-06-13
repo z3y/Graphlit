@@ -73,7 +73,7 @@ struct FragmentData
 
         output.tangentSpaceTransform = float3x3(output.tangentWS, output.bitangentWS, output.normalWS);
 
-        output.viewDirectionWS = normalize(_WorldSpaceCameraPos.xyz - output.positionWS);
+        output.viewDirectionWS = normalize(GetCameraPositionWS() - output.positionWS);
         output.viewDirectionOS = TransformWorldToObjectDir(output.viewDirectionWS);
         output.viewDirectionTS = mul(output.tangentSpaceTransform, output.viewDirectionWS);
 
@@ -115,6 +115,10 @@ struct FragmentData
         #ifdef UNPACK_UV3
             output.uv3 = UNPACK_UV3;
         #endif
+
+#if (SHADEROPTIONS_CAMERA_RELATIVE_RENDERING != 0)
+        output.positionWS += _WorldSpaceCameraPos;
+#endif
 
         return output;
     }
