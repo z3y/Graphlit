@@ -2,6 +2,7 @@
 
 #if !defined(UNITY_PASS_SHADOWCASTER) && !defined(UNITY_PASS_META)
 #define SHADEROPTIONS_CAMERA_RELATIVE_RENDERING 1
+// todo for shadows maybe from unity_WorldToShadow?
 #endif
 
 #ifndef UNITY_PBS_USE_BRDF1
