@@ -102,7 +102,7 @@ struct FragmentData
         #endif
 
 #if (SHADEROPTIONS_CAMERA_RELATIVE_RENDERING != 0)
-        output.positionWS += _WorldSpaceCameraPos;
+        output.positionWS += GetCameraPositionCenterVR();
 #endif
 
         output.shadowCoords = TransformWorldToShadowCoord(output.positionWS);

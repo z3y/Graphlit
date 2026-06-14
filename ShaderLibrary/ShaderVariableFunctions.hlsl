@@ -11,10 +11,33 @@ bool IsPerspectiveProjection()
     return (unity_OrthoParams.w == 0);
 }
 
+
+float3 GetCameraPositionCenterVR()
+{
+    #if defined(USING_STEREO_MATRICES)
+        double3 p0 = unity_StereoWorldSpaceCameraPos[0].xyz;
+        double3 p1 = unity_StereoWorldSpaceCameraPos[1].xyz;
+        double3 average = (p0 + p1) * 0.5;
+        return (float3)average;
+    #else
+        return _WorldSpaceCameraPos.xyz;
+    #endif
+}
+
+float3 CameraRelativeOrigin()
+{
+    float4x4 viewMatrix = UNITY_MATRIX_V;
+
+    float3 centerVR = GetCameraPositionCenterVR();
+    viewMatrix._m03_m13_m23 += mul((float3x3)viewMatrix, centerVR);
+
+    return viewMatrix._m03_m13_m23;
+}
+
 float3 GetCameraPositionWS()
 {
     #if (SHADEROPTIONS_CAMERA_RELATIVE_RENDERING != 0)
-        return float3(0, 0, 0);
+        return CameraRelativeOrigin();
     #else
         return _WorldSpaceCameraPos;
     #endif
@@ -23,13 +46,9 @@ float3 GetCameraPositionWS()
 float3 GetCameraPositionWSCenter()
 {
     #if (SHADEROPTIONS_CAMERA_RELATIVE_RENDERING != 0)
-        return float3(0, 0, 0);
+        return CameraRelativeOrigin();
     #else
-        #if defined(USING_STEREO_MATRICES)
-            return (unity_StereoWorldSpaceCameraPos[0].xyz + unity_StereoWorldSpaceCameraPos[1].xyz) * 0.5;
-        #else
-            return _WorldSpaceCameraPos.xyz;
-        #endif
+        return GetCameraPositionCenterVR();
     #endif
 }
 

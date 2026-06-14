@@ -62,14 +62,19 @@
 float4x4 GetCameraRelativeModelMatrix()
 {
     float4x4 modelMatrix = UNITY_MATRIX_M;
-    modelMatrix._m03_m13_m23 -= _WorldSpaceCameraPos;
+    modelMatrix._m03_m13_m23 -= GetCameraPositionCenterVR();
     return modelMatrix;
 }
 
 float4x4 GetCameraRelativeViewMatrix()
 {
     float4x4 viewMatrix = UNITY_MATRIX_V;
-    viewMatrix._m03_m13_m23 = float3(0.0, 0.0, 0.0);
+    // viewMatrix._m03_m13_m23 = float3(0.0, 0.0, 0.0);
+
+    float3 centerVR = GetCameraPositionCenterVR();
+
+    viewMatrix._m03_m13_m23 = CameraRelativeOrigin();
+
     return viewMatrix;
 }
 
