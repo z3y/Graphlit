@@ -15,6 +15,7 @@ namespace Graphlit
     public class GraphlitImporter : ScriptedImporter
     {
         internal static Dictionary<string, ShaderGraphView> _graphViews = new();
+        private const string _newGraphName = "New Shader Graph.graphlit";
 
         public static Texture2D Thumbnail => AssetDatabase.LoadAssetAtPath<Texture2D>("Packages/com.z3y.graphlit/Editor/icon.psd");
 
@@ -125,7 +126,11 @@ namespace Graphlit
             var graph = ReadGraphData(AssetDatabase.AssetPathToGUID(samplePath));
             graph.data.shaderName = "Default Shader";
             var jsonData = EditorJsonUtility.ToJson(graph, true);
-            ProjectWindowUtil.CreateAssetWithContent($"New Graphlit Shader.graphlit", jsonData);
+#if UNITY_6000_5_OR_NEWER
+            ProjectWindowUtil.CreateAssetWithTextContent(_newGraphName, jsonData);
+#else
+            ProjectWindowUtil.CreateAssetWithContent(_newGraphName, jsonData);
+#endif
         }
         public static void CreateEmptyTemplate<T>() where T : TemplateOutput, new()
         {
@@ -140,7 +145,11 @@ namespace Graphlit
             graph.data.shaderName = "Default Shader";
 
             var jsonData = EditorJsonUtility.ToJson(graph, true);
-            ProjectWindowUtil.CreateAssetWithContent($"New Shader Graph.graphlit", jsonData);
+#if UNITY_6000_5_OR_NEWER
+            ProjectWindowUtil.CreateAssetWithTextContent(_newGraphName, jsonData);
+#else
+            ProjectWindowUtil.CreateAssetWithContent(_newGraphName, jsonData);
+#endif
         }
 
         public static void OpenInGraphView(string guid)
@@ -189,10 +198,24 @@ namespace Graphlit
             }
         }
 
+#if UNITY_6000_5_OR_NEWER
+        [OnOpenAsset]
+        public static bool OnOpenAsset(EntityId entityId, int line)
+        {
+            var unityObject = EditorUtility.EntityIdToObject(entityId);
+            return OnOpenAssetImpl(unityObject, line);
+        }
+#else
         [OnOpenAsset]
         public static bool OnOpenAsset(int instanceID, int line)
         {
             var unityObject = EditorUtility.InstanceIDToObject(instanceID);
+            return OnOpenAssetImpl(unityObject, line);
+        }
+#endif
+
+        public static bool OnOpenAssetImpl(UnityEngine.Object unityObject, int line)
+        {
             var path = AssetDatabase.GetAssetPath(unityObject);
             var importer = AssetImporter.GetAtPath(path);
             if (importer is not GraphlitImporter shaderGraphImporter)

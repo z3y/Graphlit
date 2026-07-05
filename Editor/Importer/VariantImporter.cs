@@ -14,6 +14,8 @@ namespace Graphlit
         [SerializeField] public bool depthFillPass = false;
         [SerializeField] public string nameSuffix = "Variant";
 
+        private const string _newVariantName = "Graphlit Variant.graphlitvariant";
+
         internal void OverrideVariantData(GraphData data)
         {
             data.shaderName += " " + nameSuffix;
@@ -56,7 +58,11 @@ namespace Graphlit
         [MenuItem("Assets/Create/Graphlit/Variant")]
         public static void CreateVariantFile()
         {
-            ProjectWindowUtil.CreateAssetWithContent($"Graphlit Variant.graphlitvariant", "");
+#if UNITY_6000_5_OR_NEWER
+            ProjectWindowUtil.CreateAssetWithTextContent(_newVariantName, "");
+#else
+            ProjectWindowUtil.CreateAssetWithContent(_newVariantName, "");
+#endif
         }
     }
 }
