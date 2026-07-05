@@ -664,8 +664,11 @@ namespace Graphlit
                         if (ta == null && tb == null) return 0;
                         if (ta == null) return -1;
                         if (tb == null) return 1;
-
+#if UNITY_6000_5_OR_NEWER
+                        return ta.GetEntityId().CompareTo(tb.GetEntityId());
+#else
                         return ta.GetInstanceID().CompareTo(tb.GetInstanceID());
+#endif
                     });
 
 

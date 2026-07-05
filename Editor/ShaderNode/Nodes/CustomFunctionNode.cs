@@ -13,11 +13,16 @@ namespace Graphlit
     [NodeInfo("Input/Custom Function"), Serializable]
     public class CustomFunctionNode : ShaderNode
     {
+        private const string _customFileName = "CustomFunction.hlsl";
         public static readonly string[] Tag = new[] { "GraphlitFunction", "ZSGFunction" };
         [MenuItem("Assets/Create/Graphlit/Shader Include", priority = -1)]
         public static void CreateVariantFile()
         {
-            ProjectWindowUtil.CreateAssetWithContent("CustomFunction.hlsl", DefaultFunction);
+#if UNITY_6000_5_OR_NEWER
+            ProjectWindowUtil.CreateAssetWithTextContent(_customFileName, DefaultFunction);
+#else
+            ProjectWindowUtil.CreateAssetWithContent(_customFileName, DefaultFunction);
+#endif
             var include = new ShaderInclude();
             AssetDatabase.SetLabels(include, new[] { Tag[0] });
         }
