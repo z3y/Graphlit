@@ -68,6 +68,14 @@ SamplerState sampler_BilinearClamp;
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonMaterial.hlsl"
 
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/EntityLighting.hlsl"
+
+// Built-in RP: use the engine-provided decode values (same as UnityCG DecodeLightmap)
+// instead of SRP compile-time constants, which can mismatch the actual lightmap encoding.
+#ifdef UNIVERSALRP
+    #define LIGHTMAP_DECODE_INSTRUCTIONS half4(LIGHTMAP_HDR_MULTIPLIER, LIGHTMAP_HDR_EXPONENT, 0.0h, 0.0h)
+#else
+    #define LIGHTMAP_DECODE_INSTRUCTIONS unity_Lightmap_HDR
+#endif
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Packing.hlsl"
 
 #ifndef UNIVERSALRP

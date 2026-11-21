@@ -59,7 +59,7 @@ void SampleLightmap(out half3 illuminance, out half3 specular, out float4 direct
     unity_Lightmap.GetDimensions(texelSize.x, texelSize.y);
     texelSize.zw = 1.0 / texelSize.xy;
 
-    half4 decodeInstructions = half4(LIGHTMAP_HDR_MULTIPLIER, LIGHTMAP_HDR_EXPONENT, 0.0h, 0.0h);
+    half4 decodeInstructions = LIGHTMAP_DECODE_INSTRUCTIONS;
     #ifdef BICUBIC_LIGHTMAP
         half4 lightmap = SampleTexture2DBicubic(TEXTURE2D_ARGS(unity_Lightmap, sampler_BilinearClamp), lightmapUV.xy, texelSize, 1.0, 0);
     #else
